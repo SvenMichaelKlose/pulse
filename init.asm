@@ -6,6 +6,7 @@ c           = $2d
 
 chars       = $1000
 charsize    = numchars * 8
+charmask    = charsize-1
 realstart   = $1000 + charsize
 reallen     = realend-realstart
 end         = start+reallen
@@ -26,7 +27,7 @@ main:
     lda #%11111100
     sta $9005
     ; Screen and border to black.
-    lda #$00
+    lda #$10
     sta $900f
     lda #<rels
     sta s
@@ -71,15 +72,34 @@ sprbits     = $37
 sprchar     = $43
 col         = $61
 curcol      = $63
+sprlines    = $64
+sprx        = $65
+spry        = $66
+tmp         = $67
+tmp2        = $68
+tmp3        = $69
+counter     = $6b
+counter_u   = $6c
+counter_l   = $6d
+tmp4        = $6e
+sprshiftx   = $6f
+sprshifty   = $70
+sprbits_u   = $71
+spr_u       = $72
+spr_l       = $73
 
 start:
 * = realstart
-    jsr clear_chars
     jsr clear_screen
 
-    lda #0
-    sta scrx
-    sta scry
+    lda #<spr1
+    sta spr
+    lda #>spr1
+    sta spr+1
+    lda #4
+    sta sprx
+    lda #4
+    sta spry
     lda #cyan
     sta curcol
 
@@ -87,19 +107,165 @@ start_sprites:
     lda #1
     sta sprchar
 
+; Clear characters,
+    lda #<chars
+    sta d
+    lda #>chars
+    sta d+1
+    lda #<charsize
+    ldy #>charsize
+    jsr bzero
+
 ; Get character address to write to.
+.(
+    lda sprx
+    lsr
+    lsr
+    lsr
+    sta scrx
+    lda spry
+    lsr
+    lsr
+    lsr
+    sta scry
+
+    lda spr
+    sta spr_u
+
+; Write upper left half of char.
+    jsr get_spritechar
+
+    lda sprx
+    and #%111
+    sta sprshiftx
+    sta tmp3
+
+    lda spry
+    and #%111
+    sta sprshifty
+    clc
+    adc sprbits
+    sta sprbits
+    sta sprbits_u
+    sta tmp2
+    lda #8
+    sec
+    sbc sprshifty
+    sta tmp
+    sta counter
+    sta counter_u
+
+    ldy #0
+    jsr write_sprite
+
+    ldx sprshifty
+    beq n1
+
+; Write lower half of char.
+    sty tmp             ; Save pointer to sprite data.
+    lda tmp3            ; Init X shift.
+    sta sprshiftx
+    inc scry            ; Prepare next line.
+    jsr get_spritechar
+    lda spr
+    sta tmp4
+    clc
+    adc sprshifty
+    sta spr
+    sta spr_l
+    lda #8
+    sec
+    sbc tmp
+    sta counter
+    sta counter_l
+    jsr write_sprite
+
+n1:lda sprshiftx
+    beq n2
+
+; Make shift.
+    lda #8
+    sec
+    sbc sprshiftx
+    sta sprshiftx
+
+; Write upper right
+    dec scry
+    inc scrx            ; Prepare next line.
+    jsr get_spritechar
+    lda spr_u
+    sta spr
+    lda sprbits
+    clc
+    adc sprshifty
+    sta sprbits
+    lda counter_u
+    sta counter
+    ldy #0
+    jsr write_sprite_r
+
+    ldx sprshifty
+    beq n2
+
+; Write lower left
+    inc scry
+    jsr get_spritechar
+    lda spr_l
+    sta spr
+    lda counter_l
+    sta counter
+    ldy #0
+    jsr write_sprite_r
+
+n2:
+.)
+
+block:
+    jmp block
+
+write_sprite:
+.(
+l1: lda (spr),y
+    ldx sprshiftx
+s2: dex
+    bmi s1
+    lsr
+    jmp s2
+s1: sta (sprbits),y
+    iny
+    dec counter
+    bpl l1
+    rts
+.)
+
+write_sprite_r:
+.(
+l1: lda (spr),y
+    ldx sprshiftx
+s2: dex
+    bmi s1
+    asl
+    jmp s2
+s1: sta (sprbits),y
+    iny
+    dec counter
+    bpl l1
+    rts
+.)
+
+get_spritechar:
 .(
     jsr scraddr
     ldy #0
     lda curcol
     sta (col),y
-
     lda (scr),y
     bne l1          ; Reuse existing character.
     lda sprchar     ; Pick fresh one from top.
+    and #charmask
     inc sprchar
     sta (scr),y
-l1: rol
+l1: rol             ; Get char address.
     rol
     rol
     tax
@@ -109,22 +275,8 @@ l1: rol
     and #%00000111
     ora #>chars
     sta sprbits+1
+    rts
 .)
-
-    lda #<spr1
-    sta spr
-    lda #>spr1
-    sta spr+1
-.(
-    ldy #7
-l1: lda (spr),y
-    sta (sprbits),y
-    dey
-    bpl l1
-.)
-
-block:
-    jmp block
 
 bzero:
 .(
@@ -145,16 +297,6 @@ w:  tya
     jmp l1
 e1: rts
 .)
-
-clear_chars:
-    lda #<chars
-    sta d
-    lda #>chars
-    sta d+1
-    lda #<charsize
-    ldy #>charsize
-    jsr bzero
-    rts
 
 clear_screen:
     lda #<screen
