@@ -1,4 +1,4 @@
-numchars    = 32
+numchars    = 128
 
 s           = $14
 d           = $2b
@@ -6,7 +6,7 @@ c           = $2d
 
 chars       = $1000
 charsize    = numchars * 8
-charmask    = charsize-1
+charmask    = numchars-1
 realstart   = $1000 + charsize
 reallen     = realend-realstart
 end         = start+reallen
@@ -17,11 +17,11 @@ rels     = end-1
 reld     = realend-1
 
 main:
-    cli
-    lda #$7f
-    sta $912e     ; disable and acknowledge interrupts
-    sta $912d
-    sta $911e     ; disable NMIs (Restore key)
+;    cli
+;    lda #$7f
+;    sta $912e     ; disable and acknowledge interrupts
+;    sta $912d
+;    sta $911e     ; disable NMIs (Restore key)
 
     ; Upcase/downcase chars
     lda #%11111100
@@ -80,10 +80,19 @@ sprshiftx   = $6f
 sprshifty   = $70
 spr_u       = $72
 spr_l       = $73
+tmp         = $74
 
 start:
 * = realstart
     jsr clear_screen
+
+    ldx #numchars-1
+.(
+l1: txa
+    sta screen+17*22,x
+    dex
+    bpl l1
+.)
 
     lda #1
     sta sprchar
@@ -95,38 +104,48 @@ start:
     ldy #>charsize
     jsr bzero
 
-    lda #<spr1
-    sta spr
-    lda #>spr1
-    sta spr+1
     lda #2
     sta sprx
     lda #2
     sta spry
+
+    lda #20
+    sta tmp
+
+loop:
+    lda #<spr1
+    sta spr
+    lda #>spr1
+    sta spr+1
     lda #cyan
     sta curcol
     jsr draw_sprite
-
-    lda #<spr1
-    sta spr
-    lda #>spr1
-    sta spr+1
-    lda #6
-    sta sprx
-    lda #6
-    sta spry
-    lda #red
-    sta curcol
-    jsr draw_sprite
+    inc sprx
+    inc sprx
+    inc sprx
+    inc spry
+    inc spry
+    inc spry
+    inc spry
+    inc spry
+    ldx #0
+    ldy #0
+.(
+l1: iny
+    bne l1
+    inx
+    bne l1
+    dec tmp
+    bpl loop
+.)
 
 block:
     jmp block
 
 draw_sprite:
 
-; Get character address to write to.
 .(
-    lda sprx
+    lda sprx        ; Get char position on screen.
     lsr
     lsr
     lsr
@@ -137,7 +156,7 @@ draw_sprite:
     lsr
     sta scry
 
-    lda sprx
+    lda sprx        ; Get leftovers for shifting.
     and #%111
     sta sprshiftx
     lda spry
@@ -149,21 +168,20 @@ draw_sprite:
 
 ; Write upper left half of char.
     jsr get_spritechar
-
     lda sprbits
     clc
     adc sprshifty
     sta sprbits
-
+    lda sprbits+1
+    adc #0
+    sta sprbits+1
     lda #8
     sec
     sbc sprshifty
     sta counter
     sta counter_u
-
     ldy #0
     jsr write_sprite_l
-
     ldx sprshifty
     beq n1
 
@@ -179,6 +197,7 @@ draw_sprite:
     sta counter
     ldy #0
     jsr write_sprite_l
+    dec scry
 
 n1:lda sprshiftx
     beq n2
@@ -190,36 +209,30 @@ n1:lda sprshiftx
     sta sprshiftx
 
 ; Write upper right
-    dec scry
     inc scrx            ; Prepare next line.
     jsr get_spritechar
-
     lda sprbits
     clc
     adc sprshifty
     sta sprbits
-
+    lda sprbits+1
+    adc #0
+    sta sprbits+1
     lda spr_u
     sta spr
-
     lda counter_u
     sta counter
-
     jsr write_sprite_r
-
     ldx sprshifty
     beq n2
 
 ; Write lower left
     inc scry
     jsr get_spritechar
-
     lda spr_l
     sta spr
-
     lda sprshifty
     sta counter
-
     jsr write_sprite_r
 
 n2: rts
@@ -237,7 +250,7 @@ s1: ora (sprbits),y
     sta (sprbits),y
     iny
     dec counter
-    bpl l1
+    bne l1
     rts
 .)
 
@@ -253,7 +266,7 @@ s1: ora (sprbits),y
     sta (sprbits),y
     iny
     dec counter
-    bpl l1
+    bne l1
     rts
 .)
 
@@ -266,12 +279,15 @@ get_spritechar:
     lda (scr),y
     bne l1          ; Reuse existing character.
     lda sprchar     ; Pick fresh one from top.
-    and #charmask
+;    and #charmask
     inc sprchar
     sta (scr),y
 l1: rol             ; Get char address.
+    adc #0
     rol
+    adc #0
     rol
+    adc #0
     tax
     and #%11111000
     sta sprbits
@@ -281,6 +297,40 @@ l1: rol             ; Get char address.
     sta sprbits+1
     rts
 .)
+
+scraddr:
+    ldy scry
+    lda line_offsets_l,y
+    clc
+    adc scrx
+    sta scr
+    sta col
+    php
+    lda #>screen
+    adc line_offsets_h,y
+    sta scr+1
+    plp
+    lda #>colors
+    adc line_offsets_h,y
+    sta col+1
+    rts
+
+clear_screen:
+    lda #<screen
+    sta d
+    lda #>screen
+    sta d+1
+    lda #<screensize
+    ldy #>screensize
+    jsr bzero
+    lda #<colors
+    sta d
+    lda #>colors
+    sta d+1
+    lda #<screensize
+    ldy #>screensize
+    jsr bzero
+    rts
 
 bzero:
 .(
@@ -301,40 +351,6 @@ w:  tya
     jmp l1
 e1: rts
 .)
-
-clear_screen:
-    lda #<screen
-    sta d
-    lda #>screen
-    sta d+1
-    lda #<screensize
-    ldy #>screensize
-    jsr bzero
-    lda #<colors
-    sta d
-    lda #>colors
-    sta d+1
-    lda #<screensize
-    ldy #>screensize
-    jsr bzero
-    rts
-
-scraddr:
-    ldy scry
-    lda line_offsets_l,y
-    clc
-    adc scrx
-    sta scr
-    sta col
-    php
-    lda #>screen
-    adc line_offsets_h,y
-    sta scr+1
-    plp
-    lda #>colors
-    adc line_offsets_h,y
-    sta col+1
-    rts
 
 spr1:
     .byte %11111111
