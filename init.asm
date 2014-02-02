@@ -72,19 +72,12 @@ sprbits     = $37
 sprchar     = $43
 col         = $61
 curcol      = $63
-sprlines    = $64
 sprx        = $65
 spry        = $66
-tmp         = $67
-tmp2        = $68
-tmp3        = $69
 counter     = $6b
 counter_u   = $6c
-counter_l   = $6d
-tmp4        = $6e
 sprshiftx   = $6f
 sprshifty   = $70
-sprbits_u   = $71
 spr_u       = $72
 spr_l       = $73
 
@@ -92,29 +85,44 @@ start:
 * = realstart
     jsr clear_screen
 
-    lda #<spr1
-    sta spr
-    lda #>spr1
-    sta spr+1
-    lda #4
-    sta sprx
-    lda #4
-    sta spry
-    lda #cyan
-    sta curcol
-
-start_sprites:
     lda #1
     sta sprchar
-
-; Clear characters,
-    lda #<chars
+    lda #<chars         ; Clear characters,
     sta d
     lda #>chars
     sta d+1
     lda #<charsize
     ldy #>charsize
     jsr bzero
+
+    lda #<spr1
+    sta spr
+    lda #>spr1
+    sta spr+1
+    lda #2
+    sta sprx
+    lda #2
+    sta spry
+    lda #cyan
+    sta curcol
+    jsr draw_sprite
+
+    lda #<spr1
+    sta spr
+    lda #>spr1
+    sta spr+1
+    lda #6
+    sta sprx
+    lda #6
+    sta spry
+    lda #red
+    sta curcol
+    jsr draw_sprite
+
+block:
+    jmp block
+
+draw_sprite:
 
 ; Get character address to write to.
 .(
@@ -129,56 +137,48 @@ start_sprites:
     lsr
     sta scry
 
+    lda sprx
+    and #%111
+    sta sprshiftx
+    lda spry
+    and #%111
+    sta sprshifty
+
     lda spr
     sta spr_u
 
 ; Write upper left half of char.
     jsr get_spritechar
 
-    lda sprx
-    and #%111
-    sta sprshiftx
-    sta tmp3
-
-    lda spry
-    and #%111
-    sta sprshifty
+    lda sprbits
     clc
-    adc sprbits
+    adc sprshifty
     sta sprbits
-    sta sprbits_u
-    sta tmp2
+
     lda #8
     sec
     sbc sprshifty
-    sta tmp
     sta counter
     sta counter_u
 
     ldy #0
-    jsr write_sprite
+    jsr write_sprite_l
 
     ldx sprshifty
     beq n1
 
 ; Write lower half of char.
-    sty tmp             ; Save pointer to sprite data.
-    lda tmp3            ; Init X shift.
-    sta sprshiftx
     inc scry            ; Prepare next line.
     jsr get_spritechar
     lda spr
-    sta tmp4
     clc
-    adc sprshifty
+    adc counter_u
     sta spr
     sta spr_l
-    lda #8
-    sec
-    sbc tmp
+    lda sprshifty
     sta counter
-    sta counter_l
-    jsr write_sprite
+    ldy #0
+    jsr write_sprite_l
 
 n1:lda sprshiftx
     beq n2
@@ -193,15 +193,18 @@ n1:lda sprshiftx
     dec scry
     inc scrx            ; Prepare next line.
     jsr get_spritechar
-    lda spr_u
-    sta spr
+
     lda sprbits
     clc
     adc sprshifty
     sta sprbits
+
+    lda spr_u
+    sta spr
+
     lda counter_u
     sta counter
-    ldy #0
+
     jsr write_sprite_r
 
     ldx sprshifty
@@ -210,20 +213,19 @@ n1:lda sprshiftx
 ; Write lower left
     inc scry
     jsr get_spritechar
+
     lda spr_l
     sta spr
-    lda counter_l
+
+    lda sprshifty
     sta counter
-    ldy #0
+
     jsr write_sprite_r
 
-n2:
+n2: rts
 .)
 
-block:
-    jmp block
-
-write_sprite:
+write_sprite_l:
 .(
 l1: lda (spr),y
     ldx sprshiftx
@@ -231,7 +233,8 @@ s2: dex
     bmi s1
     lsr
     jmp s2
-s1: sta (sprbits),y
+s1: ora (sprbits),y
+    sta (sprbits),y
     iny
     dec counter
     bpl l1
@@ -246,7 +249,8 @@ s2: dex
     bmi s1
     asl
     jmp s2
-s1: sta (sprbits),y
+s1: ora (sprbits),y
+    sta (sprbits),y
     iny
     dec counter
     bpl l1
@@ -336,10 +340,10 @@ spr1:
     .byte %11111111
     .byte %10000001
     .byte %10000001
-    .byte %11111111
-    .byte %11111111
-    .byte %00011000
-    .byte %00011000
+    .byte %10000001
+    .byte %10000001
+    .byte %10000001
+    .byte %10000001
     .byte %11111111
 
 line_offsets_l:
