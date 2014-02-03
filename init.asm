@@ -9,18 +9,8 @@ d           = $02
 c           = $04
 
 main:
-    cli
-    lda #$7f
-    sta $912e     ; disable and acknowledge interrupts
-    sta $912d
-    sta $911e     ; disable NMIs (Restore key)
-
-    lda #%11111100  ; Our charset.
-    sta $9005
-    lda #8+blue       ; Screen and border.
-    sta $900f
-    lda #red*16     ; Auxiliary color.
-    sta $900e
+    jsr clrscr
+.(
     lda #<rels
     sta s
     lda #>rels
@@ -33,7 +23,6 @@ main:
     sta c
     lda #>reallen
     sta c+1
-.(
     ldy #0
 l1: lda c
     bne l2
@@ -54,6 +43,34 @@ l4: dec d
     jmp l1
 e1:
 .)
+
+    cli
+    lda #$7f
+    sta $912e     ; disable and acknowledge interrupts
+    sta $912d
+    sta $911e     ; disable NMIs (Restore key)
+
+.(
+l1: lda $9004
+    bne l1
+.)
+
+    ; Avoid showing garbage in char 0.
+.(
+    ldx #$0f
+    lda #0
+l1: sta chars,x
+    dex
+    bpl l1
+.)
+
+    lda #%11111100  ; Our charset.
+    sta $9005
+    lda #8+blue       ; Screen and border.
+    sta $900f
+    lda #red*16     ; Auxiliary color.
+    sta $900e
+
     jmp realstart
 
 start:
