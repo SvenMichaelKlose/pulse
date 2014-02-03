@@ -4,6 +4,7 @@
 #include "init.asm"
 #include "main.asm"
 #include "sprites.asm"
+#include "screen.asm"
 #include "gfx.asm"
 #include "bzero.asm"
 #include "end.asm"
