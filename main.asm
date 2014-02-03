@@ -20,9 +20,10 @@ l1: sta chars,x
 
 .(
     lda #0
-    ldx #15
+    ldx #numsprites-1
 l1: sta sprites_ox,x
     sta sprites_oy,x
+    sta sprites_h,x
     dex
     bpl l1
 .)
@@ -71,8 +72,6 @@ l1: lda tmp
     cpx #$0f
     bne l1
 .)
-    lda #0
-    sta sprites_h,x
 
     jsr frame
     jmp mainloop

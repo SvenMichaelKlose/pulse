@@ -13,14 +13,13 @@ l1: sta sprchar
 .(  
 l1: lda $9004
     cmp #130
-    bne l1
+    bcs l1
 .)
 
     ; Draw all sprites in the sprite table.
 .(
-    ldx #0
-loop:
-    lda sprites_h,x
+    ldx #numsprites
+l1: lda sprites_h,x
     beq n1
     sta spr+1
     txa
@@ -36,17 +35,14 @@ loop:
     jsr draw_sprite
     pla
     tax
-    inx
-    jmp loop
-n1:
+n1: dex
+    bpl l1
 .)
 
     ; Remove leftover chars.
 .(
-    ldx #0
-l1: lda sprites_h,x
-    beq e1
-    lda sprites_ox,x
+    ldx #numsprites-1
+l1: lda sprites_ox,x
     sta scrx
     lda sprites_oy,x
     sta scry
@@ -70,8 +66,8 @@ l1: lda sprites_h,x
     lsr
     lsr
     sta sprites_oy,x
-    inx
-    jmp l1
+    dex
+    bpl l1
 e1:
 .)
 
@@ -234,8 +230,8 @@ get_spritechar:
     jmp l1
 l2: lda sprchar     ; Pick fresh one from top.
     and #%01111111  ; Avoid hitting code.
+    pha             ; Delay screen write to reduce artifacts.
     inc sprchar     ; Increment for next allocation.
-    sta (scr),y     ; Put it on the screen.
     jsr l1          ; Get char address.
     tya             ; Clear the new char.
     ldy #7
@@ -243,6 +239,8 @@ l3: sta (sprbits),y
     dey
     bpl l3
     iny
+    pla             ; Put char on screen.
+    sta (scr),y
     rts
 
     ; Get char address.

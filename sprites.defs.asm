@@ -1,3 +1,4 @@
+numsprites  = 16
 numchars    = 128
 
 chars       = $1000
