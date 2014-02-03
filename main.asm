@@ -1,13 +1,13 @@
 startloop:
     jsr clear_screen
 
-.(
-    ldx #numchars-1
-l1: txa
-    sta screen+17*22,x
-    dex
-    bpl l1
-.)
+;.(
+;    ldx #numchars-1
+;l1: txa
+;    sta screen+17*22,x
+;    dex
+;    bpl l1
+;.)
 
 .(
     lda #0
@@ -31,47 +31,45 @@ l1: sta sprites_ox,x
     lda #0
     sta tmp3
 
+    ldy #player_init-sprite_inits
+    jsr add_sprite
+    lda #40
+    sta player_init
+    sta player_init+1
+    ldy #player_init-sprite_inits
+    jsr add_sprite
+
 mainloop:
-    inc tmp3
-    lda tmp3
-    sta tmp2
-    lda #0
-    sta tmp
-
-.(
-    ldx #0
-l1: lda tmp
-    sta sprites_x,x
-    lda tmp2
-    and #127
-    sta tmp2
-    sta sprites_y,x
-    lda #<spr1
-    sta sprites_l,x
-    lda #>spr1
-    sta sprites_h,x
-    txa
-    and #7
-    sta sprites_c,x
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp
-    inc tmp2
-    inc tmp2
-    inc tmp2
-    inx
-    cpx #$0f
-    bne l1
-.)
-
     jsr frame
     jmp mainloop
+
+add_sprite:
+.(
+    ldx #15
+l1: lda sprites_h,x
+    bne l2
+    tya
+    sta sprites_i,x
+    lda sprite_inits,y
+    sta sprites_x,x
+    iny
+    lda sprite_inits,y
+    sta sprites_y,x
+    iny
+    lda sprite_inits,y
+    sta sprites_c,x
+    iny
+    lda sprite_inits,y
+    sta sprites_l,x
+    iny
+    lda sprite_inits,y
+    sta sprites_h,x
+    rts
+l2: dex
+    bpl l1
+    rts
+.)
+
+sprite_inits:
+player_init:
+    .byte 2, 80, cyan, <spr1, >spr1

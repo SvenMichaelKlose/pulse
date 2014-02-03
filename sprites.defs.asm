@@ -36,3 +36,4 @@ sprites_y   = $50
 sprites_c   = $70
 sprites_ox  = $80
 sprites_oy  = $90
+sprites_i   = $a0
