@@ -46,14 +46,14 @@ l1: lda sprites_ox,x
     sta scrx
     lda sprites_oy,x
     sta scry
-    jsr clear_old
+    jsr clear_char
     inc scrx
-    jsr clear_old
+    jsr clear_char
     dec scrx
     inc scry
-    jsr clear_old
+    jsr clear_char
     inc scrx
-    jsr clear_old
+    jsr clear_char
     lda sprites_x,x
     clc
     lsr
@@ -72,21 +72,6 @@ e1:
 .)
 
     rts
-
-; Remove char if it's not in the current bank.
-clear_old:
-.(
-    jsr scraddr
-    ldy #0
-    lda (scr),y
-    beq e1
-    and #bankmask
-    cmp sprbank
-    beq e1
-    tya
-    sta (scr),y
-e1: rts
-.)
 
 ; Draw a single sprite.
 draw_sprite:
@@ -117,7 +102,7 @@ draw_sprite:
     sta sprshifty
 
     ; Draw upper left half of char.
-    jsr get_spritechar
+    jsr get_char
     lda sprbits
     clc
     adc sprshifty
@@ -134,7 +119,7 @@ draw_sprite:
 
     ; Draw lower half of char.
     inc scry            ; Prepare next line.
-    jsr get_spritechar
+    jsr get_char
     lda spr
     clc
     adc counter_u
@@ -156,7 +141,7 @@ n1:lda sprshiftx        ; No right halves to draw...
 
     ; Draw upper right
     inc scrx            ; Prepare next line.
-    jsr get_spritechar
+    jsr get_char
     lda sprbits
     clc
     adc sprshifty
@@ -172,7 +157,7 @@ n1:lda sprshiftx        ; No right halves to draw...
 
     ; Draw lower left
     inc scry
-    jsr get_spritechar
+    jsr get_char
     lda spr_l
     sta spr
     lda sprshifty
@@ -211,52 +196,5 @@ s1: ora (sprbits),y
     iny
     dec counter
     bne l1
-    rts
-.)
-
-get_spritechar:
-.(
-    jsr scraddr
-    ldy #0
-    lda curcol
-    sta (col),y
-    lda (scr),y
-    beq l2
-    tax
-    and #%01000000
-    cmp sprbank
-    bne l2
-    txa
-    jmp l1
-l2: lda sprchar     ; Pick fresh one from top.
-    and #%01111111  ; Avoid hitting code.
-    pha             ; Delay screen write to reduce artifacts.
-    inc sprchar     ; Increment for next allocation.
-    jsr l1          ; Get char address.
-    tya             ; Clear the new char.
-    ldy #7
-l3: sta (sprbits),y
-    dey
-    bpl l3
-    iny
-    pla             ; Put char on screen.
-    sta (scr),y
-    rts
-
-    ; Get char address.
-l1: clc
-    rol
-    adc #0
-    rol
-    adc #0
-    rol
-    adc #0
-    tax
-    and #%11111000
-    sta sprbits
-    txa
-    and #%00000111
-    ora #>chars
-    sta sprbits+1
     rts
 .)
