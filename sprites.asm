@@ -62,7 +62,7 @@ n1: dex
     ldx #numsprites-1
 l1: lda sprites_ox,x
     cmp #$ff
-    beq l3
+    beq l4
     sta scrx
     lda sprites_oy,x
     sta scry
@@ -79,6 +79,8 @@ l1: lda sprites_ox,x
     dey
     sty sprites_ox,x
     jmp l3
+l4: lda sprites_h,x
+    beq l3
 l2: lda sprites_x,x
     clc
     lsr

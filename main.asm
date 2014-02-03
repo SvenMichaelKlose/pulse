@@ -2,19 +2,19 @@ startloop:
     jsr clear_screen
 
 .(
-;    ldx #numchars-1
-;l1: txa
-;    sta screen+17*22,x
-;    dex
-;    bpl l1
+    ldx #numchars-1
+l1: txa
+    sta screen+17*22,x
+    dex
+    bpl l1
 .)
 
 .(
-    lda #0
     ldx #numsprites-1
-l1: sta sprites_ox,x
-    sta sprites_oy,x
+l1: lda #0
     sta sprites_h,x
+    lda #$ff
+    sta sprites_ox,x
     dex
     bpl l1
 .)
@@ -22,17 +22,11 @@ l1: sta sprites_ox,x
     lda #0
     sta tmp3
 
-    ldy #laser_init-sprite_inits
-    jsr add_sprite
-    ldy #player_init-sprite_inits
-    jsr add_sprite
-    lda #80
-    sta player_init
-    lda #100
-    sta player_init+1
     ldy #player_init-sprite_inits
     jsr add_sprite
     ldy #bullet_init-sprite_inits
+    jsr add_sprite
+    ldy #laser_init-sprite_inits
     jsr add_sprite
 
 mainloop:
@@ -43,6 +37,8 @@ mainloop:
 
 add_sprite:
 .(
+    txa
+    pha
     ldx #15
 l1: lda sprites_h,x
     bne l2
@@ -68,9 +64,13 @@ l1: lda sprites_h,x
     iny
     lda sprite_inits,y
     sta sprites_fh,x
+    pla
+    tax
     rts
 l2: dex
     bpl l1
+    pla
+    tax
     rts
 .)
 
@@ -98,12 +98,31 @@ laser_fun:
     adc #15
     cmp #21*8
     bcc l1
-    jsr remove_sprite
-    rts
+    jmp remove_sprite
 l1: sta sprites_x,x
     rts
 .)
 
+foo: .byte 200
+
 player_fun:
+.(
+    lda #0
+    sta $9122
+    lda $9111
+    bit #%00100000
+    dec foo
+    bne n1
+    lda sprites_x,x
+    clc
+    adc #8
+    sta laser_init
+    lda sprites_y,x
+    sta laser_init+1
+    ldy #laser_init-sprite_inits
+    jmp add_sprite
+n1: rts
+.)
+
 bullet_fun:
     rts
