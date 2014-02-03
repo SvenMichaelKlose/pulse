@@ -288,13 +288,6 @@ clear_screen:
     lda #<screensize
     ldy #>screensize
     jsr bzero
-    lda #<colors
-    sta d
-    lda #>colors
-    sta d+1
-    lda #<screensize
-    ldy #>screensize
-    jsr bzero
     rts
 
 line_offsets_l:
