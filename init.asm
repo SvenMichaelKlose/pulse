@@ -1,15 +1,13 @@
 numchars    = 128
 
-s           = $14
-d           = $2b
-c           = $2d
-
 chars       = $1000
 charsize    = numchars * 8
-charmask    = numchars-1
+bufsize     = charsize / 2
+charmask    = numchars - 1
 realstart   = $1000 + charsize
 reallen     = realend-realstart
 end         = start+reallen
+bankmask    = numchars / 2
 
 screensize  = 22 * 23
 
@@ -17,18 +15,18 @@ rels     = end-1
 reld     = realend-1
 
 main:
-;    cli
-;    lda #$7f
-;    sta $912e     ; disable and acknowledge interrupts
-;    sta $912d
-;    sta $911e     ; disable NMIs (Restore key)
+    cli
+    lda #$7f
+    sta $912e     ; disable and acknowledge interrupts
+    sta $912d
+    sta $911e     ; disable NMIs (Restore key)
 
-    ; Upcase/downcase chars
-    lda #%11111100
+    lda #%11111100  ; Our charset.
     sta $9005
-    ; Screen and border to black.
-    lda #$10
+    lda #8+blue       ; Screen and border.
     sta $900f
+    lda #red*16     ; Auxiliary color.
+    sta $900e
     lda #<rels
     sta s
     lda #>rels
@@ -64,93 +62,237 @@ e1:
 .)
     jmp realstart
 
-scr         = $2f
-spr         = $31
-scrx        = $33
-scry        = $34
-sprbits     = $37
-sprchar     = $43
-col         = $61
-curcol      = $63
-sprx        = $65
-spry        = $66
-counter     = $6b
-counter_u   = $6c
-sprshiftx   = $6f
-sprshifty   = $70
-spr_u       = $72
-spr_l       = $73
-tmp         = $74
+s           = $00
+d           = $02
+c           = $04
+
+scr         = $00
+col         = $02
+scrx        = $04
+scry        = $05
+curcol      = $66
+spr         = $07
+sprx        = $09
+spry        = $0a
+sprbits     = $0b
+sprchar     = $0d
+sprshiftx   = $0e
+sprshifty   = $0f
+spr_u       = $10
+spr_l       = $11
+sprbank     = $12
+counter     = $13
+counter_u   = $14
+tmp         = $15
+tmp2        = $16
+tmp3        = $17
+
+sprites_l   = $20
+sprites_h   = $30
+sprites_x   = $40
+sprites_y   = $50
+sprites_c   = $70
+sprites_ox  = $80
+sprites_oy  = $90
 
 start:
 * = realstart
     jsr clear_screen
 
-    ldx #numchars-1
 .(
+    ldx #numchars-1
 l1: txa
     sta screen+17*22,x
     dex
     bpl l1
 .)
 
-    lda #1
-    sta sprchar
-    lda #<chars         ; Clear characters,
-    sta d
-    lda #>chars
-    sta d+1
-    lda #<charsize
-    ldy #>charsize
-    jsr bzero
-
-    lda #2
-    sta sprx
-    lda #2
-    sta spry
-
-    lda #20
-    sta tmp
-
-loop:
-    lda #<spr1
-    sta spr
-    lda #>spr1
-    sta spr+1
-    lda #cyan
-    sta curcol
-    jsr draw_sprite
-    inc sprx
-    inc sprx
-    inc sprx
-    inc spry
-    inc spry
-    inc spry
-    inc spry
-    inc spry
-    ldx #0
-    ldy #0
 .(
-l1: iny
-    bne l1
-    inx
-    bne l1
-    dec tmp
-    bpl loop
+    lda #0
+    sta sprbank
+    ldx #7
+l1: sta chars,x
+    dex
+    bpl l1
 .)
 
-block:
-    jmp block
+.(
+    lda #0
+    ldx #15
+l1: sta sprites_ox,x
+    sta sprites_oy,x
+    dex
+    bpl l1
+.)
 
-draw_sprite:
+    lda #0
+    sta tmp3
+
+mainloop:
+    inc tmp3
+    lda tmp3
+    sta tmp2
+    lda #0
+    sta tmp
 
 .(
+    ldx #0
+l1: lda tmp
+    sta sprites_x,x
+    lda tmp2
+    and #127
+    sta tmp2
+    sta sprites_y,x
+    lda #<spr1
+    sta sprites_l,x
+    lda #>spr1
+    sta sprites_h,x
+    txa
+    and #7
+    sta sprites_c,x
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp
+    inc tmp2
+    inc tmp2
+    inc tmp2
+    inx
+    cpx #$0f
+    bne l1
+.)
+    lda #0
+    sta sprites_h,x
+
+    jsr frame
+;.(
+;    lda #$13
+;    sta $900f
+;    ldx #20
+;l1: dex
+;    bne l1
+;    lda #blue
+;    sta $900f
+;.)
+    jmp mainloop
+
+frame:
+    lda sprbank
+    ora #1
+    sta sprchar
+
+.(  
+l1: lda $9004
+    cmp #110 ;130
+    bne l1
+.)
+;.(
+;    lda #$17
+;    sta $900f
+;    ldx #20
+;l1: dex
+;    bne l1
+;    lda #blue
+;    sta $900f
+;.)
+
+.(
+    ldx #0
+loop:
+    lda sprites_h,x
+    beq n1
+    sta spr+1
+    txa
+    pha
+    lda sprites_l,x
+    sta spr
+    lda sprites_x,x
+    sta sprx
+    lda sprites_y,x
+    sta spry
+    lda sprites_c,x
+    sta curcol
+    jsr draw_sprite
+    pla
+    tax
+    inx
+    jmp loop
+n1:
+.)
+
+    lda sprbank
+    eor #bankmask
+    sta sprbank
+
+; Remove old sprite chars.
+.(
+    ldx #0
+l1: lda sprites_h,x
+    beq e1
+    lda sprites_ox,x
+    sta scrx
+    lda sprites_oy,x
+    sta scry
+    jsr clear_old
+    inc scrx
+    jsr clear_old
+    dec scrx
+    inc scry
+    jsr clear_old
+    inc scrx
+    jsr clear_old
+    lda sprites_x,x
+    clc
+    lsr
+    lsr
+    lsr
+    sta sprites_ox,x
+    lda sprites_y,x
+    clc
+    lsr
+    lsr
+    lsr
+    sta sprites_oy,x
+    inx
+    jmp l1
+e1:
+.)
+
+    rts
+
+clear_old:
+.(
+    jsr scraddr
+    ldy #0
+    lda (scr),y
+    beq e1
+    and #bankmask
+    cmp sprbank
+    bne e1
+    lda #0
+    sta (scr),y
+    sta (col),y
+e1: rts
+.)
+
+draw_sprite:
+.(
     lda sprx        ; Get char position on screen.
+    clc
     lsr
     lsr
     lsr
     sta scrx
     lda spry
+    clc
     lsr
     lsr
     lsr
@@ -277,12 +419,28 @@ get_spritechar:
     lda curcol
     sta (col),y
     lda (scr),y
-    bne l1          ; Reuse existing character.
-    lda sprchar     ; Pick fresh one from top.
-;    and #charmask
+    beq l2
+    tax
+    and #%01000000
+    cmp sprbank
+    bne l2
+    txa
+    jmp l1
+l2: lda sprchar     ; Pick fresh one from top.
+    and #%01111111
     inc sprchar
     sta (scr),y
-l1: rol             ; Get char address.
+    jsr l1
+    ldy #7
+    lda #0
+l3: sta (sprbits),y
+    dey
+    bpl l3
+    ldy #0
+    rts
+
+l1: clc
+    rol             ; Get char address.
     adc #0
     rol
     adc #0
@@ -352,15 +510,60 @@ w:  tya
 e1: rts
 .)
 
+    .byte %11111111
+    .byte %10000001
+    .byte %10000001
+    .byte %10000001
+    .byte %10000001
+    .byte %10000001
+    .byte %10000001
+    .byte %11111111
+
+    .byte %11111111
+    .byte %11111111
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+
 spr1:
+    .byte %01111111
     .byte %11111111
-    .byte %10000001
-    .byte %10000001
-    .byte %10000001
-    .byte %10000001
-    .byte %10000001
-    .byte %10000001
+    .byte %11000000
+    .byte %11000000
+    .byte %11000000
+    .byte %11000000
+    .byte %11000000
+    .byte %11000000
+
+    .byte %11111110
     .byte %11111111
+    .byte %00000011
+    .byte %00000011
+    .byte %00000011
+    .byte %00000011
+    .byte %00000011
+    .byte %00000011
+
+    .byte %11000000
+    .byte %10000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+
+    .byte %00000011
+    .byte %00000001
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
 
 line_offsets_l:
     .byte 0, 22*1, 22*2, 22*3, 22*4, 22*5, 22*6, 22*7, 22*8, 22*9, 22*10, 22*11, <22*12, <22*13, <22*14, <22*15, <22*16, <22*17, <22*18, <22*19, <22*20, <22*21, <22*22
