@@ -1,4 +1,6 @@
 frame:
+    inc framecounter
+
 ;.(
 ;    lda #8+white
 ;    sta $900f

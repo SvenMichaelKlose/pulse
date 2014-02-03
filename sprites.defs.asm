@@ -29,6 +29,7 @@ tmp         = $15
 tmp2        = $16
 tmp3        = $17
 cursprite   = $18
+framecounter = $19
 
 sprites_l   = $20   ; Low character address.
 sprites_h   = $30   ; High character address.
