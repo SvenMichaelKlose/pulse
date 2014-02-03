@@ -1,4 +1,13 @@
 frame:
+;.(
+;    lda #8+white
+;    sta $900f
+;    ldx #10
+;l1: dex
+;    bne l1
+;    lda #8+blue
+;    sta $900f
+;.)
     ; Switch to the unused buffer,
 .(  
     lda sprbank
@@ -13,12 +22,21 @@ l1: sta sprchar
 .(  
 l1: lda $9004
     cmp #130
-    bcs l1
+    bne l1
+.)
+.(
+    lda #8+white
+    sta $900f
+    ldx #10
+l1: dex
+    bne l1
+    lda #8+blue
+    sta $900f
 .)
 
     ; Draw all sprites in the sprite table.
 .(
-    ldx #numsprites
+    ldx #numsprites-1
 l1: lda sprites_h,x
     beq n1
     sta spr+1
@@ -43,6 +61,8 @@ n1: dex
 .(
     ldx #numsprites-1
 l1: lda sprites_ox,x
+    cmp #$ff
+    beq l3
     sta scrx
     lda sprites_oy,x
     sta scry
@@ -54,7 +74,12 @@ l1: lda sprites_ox,x
     jsr clear_char
     inc scrx
     jsr clear_char
-    lda sprites_x,x
+    ldy sprites_h,x
+    bne l2
+    dey
+    sty sprites_ox,x
+    jmp l3
+l2: lda sprites_x,x
     clc
     lsr
     lsr
@@ -66,9 +91,26 @@ l1: lda sprites_ox,x
     lsr
     lsr
     sta sprites_oy,x
-    dex
+l3: dex
     bpl l1
 e1:
+.)
+
+.(
+    ldx #numsprites-1
+l1: lda sprites_h,x
+    beq n1
+    lda sprites_fl,x
+    sta m1+1
+    lda sprites_fh,x
+    sta m1+2
+    txa
+    pha
+m1: jsr $1234
+    pla
+    tax
+n1: dex
+    bpl l1
 .)
 
     rts

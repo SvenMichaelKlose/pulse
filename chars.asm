@@ -3,8 +3,6 @@ get_char:
 .(
     jsr scraddr
     ldy #0
-    lda curcol
-    sta (col),y
     lda (scr),y
     beq l2
     tax
@@ -26,6 +24,8 @@ l3: sta (sprbits),y
     iny
     pla             ; Put char on screen.
     sta (scr),y
+    lda curcol
+    sta (col),y
     rts
 
     ; Get char address.
