@@ -96,7 +96,11 @@ e1: rts
 ; Draw a single sprite.
 draw_sprite:
 .(
-    lda sprx        ; Get char position on screen.
+    lda spr
+    sta spr_u
+
+    ; Get position on screen.
+    lda sprx
     clc
     lsr
     lsr
@@ -109,36 +113,31 @@ draw_sprite:
     lsr
     sta scry
 
-    lda sprx        ; Get leftovers for shifting.
+    ; Get shifts for left half.
+    lda sprx
     and #%111
     sta sprshiftx
     lda spry
     and #%111
     sta sprshifty
 
-    lda spr
-    sta spr_u
-
-; Write upper left half of char.
+    ; Draw upper left half of char.
     jsr get_spritechar
     lda sprbits
     clc
     adc sprshifty
     sta sprbits
-    lda sprbits+1
-    adc #0
-    sta sprbits+1
     lda #8
     sec
     sbc sprshifty
     sta counter
     sta counter_u
-    ldy #0
     jsr write_sprite_l
-    ldx sprshifty
+
+    ldx sprshifty       ; No lower half to draw...
     beq n1
 
-; Write lower half of char.
+    ; Draw lower half of char.
     inc scry            ; Prepare next line.
     jsr get_spritechar
     lda spr
@@ -148,45 +147,42 @@ draw_sprite:
     sta spr_l
     lda sprshifty
     sta counter
-    ldy #0
     jsr write_sprite_l
     dec scry
 
-n1:lda sprshiftx
+n1:lda sprshiftx        ; No right halves to draw...
     beq n2
 
-; Make shift.
+    ; Get shift for the right half.
     lda #8
     sec
     sbc sprshiftx
     sta sprshiftx
 
-; Write upper right
+    ; Draw upper right
     inc scrx            ; Prepare next line.
     jsr get_spritechar
     lda sprbits
     clc
     adc sprshifty
     sta sprbits
-    lda sprbits+1
-    adc #0
-    sta sprbits+1
     lda spr_u
     sta spr
     lda counter_u
     sta counter
     jsr write_sprite_r
-    ldx sprshifty
+
+    ldx sprshifty       ; No lower half to draw...
     beq n2
 
-; Write lower left
+    ; Draw lower left
     inc scry
     jsr get_spritechar
     lda spr_l
     sta spr
     lda sprshifty
     sta counter
-    jsr write_sprite_r
+    jmp write_sprite_r
 
 n2: rts
 .)
@@ -247,7 +243,7 @@ l2: lda sprchar     ; Pick fresh one from top.
 l3: sta (sprbits),y
     dey
     bpl l3
-    ldy #0
+    iny
     rts
 
 l1: clc
