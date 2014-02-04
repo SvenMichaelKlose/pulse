@@ -59,7 +59,7 @@ mainloop:
 .(
 #ifndef STATIC
     lda framecounter
-    and #%1111
+    and #%111
     bne l1
     lda random
     and #127
@@ -159,26 +159,23 @@ find_hit:
 .(
     txa
     pha
+    stx tmp
     ldy #numsprites-1
-l1: sty tmp
-    cpx tmp
+l1: cpy tmp
     beq n1
     lda sprites_h,y
     beq n1
-    lda sprites_x,x
-    clc
-    adc #8
+
+    lda sprites_x,x     ; Get X distance.
     sec
     sbc sprites_x,y
     bpl l2
-    clc
+    clc                 ; Make it positive.
     eor #$ff
     adc #1
-l2: and #%11111000
+l2: and #%11111000      ; Larger than 7?
     bne n1
     lda sprites_y,x
-    clc
-    adc #8
     sec
     sbc sprites_y,y
     bpl l3
