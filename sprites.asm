@@ -28,7 +28,7 @@ l1: sta sprchar
     ; Wait until raster beam leaves the bitmap area.
 .(  
 l1: lda $9004
-    cmp #130-92
+    cmp #130-46 ;92
     bne l1
 .)
 .(
@@ -42,10 +42,13 @@ l1: lda $9004
 .)
 
     ; Draw all sprites in the sprite table.
-.(
     ldx #0
-l1: lda sprites_h,x
-    beq n1
+spriteloop:
+.(
+    lda sprites_h,x
+    beq spriteloopend
+
+    ; Draw sprite from table.
     sta spr+1
     txa
     pha
@@ -64,36 +67,38 @@ l1: lda sprites_h,x
     jsr draw_sprite
     pla
     tax
-n1: inx
-    cpx #numsprites
-    bne l1
-
-    lda #8+black
-    sta $900f
+    pha
 .)
 
     ; Remove leftover chars.
 .(
-    ldx #numsprites-1
-l1: lda sprites_ox,x
+    lda sprites_ox,x
     cmp #$ff
     beq l4
+
     sta scrx
     lda sprites_oy,x
     sta scry
     jsr clear_char
+    lda sprshiftx
+    bne s1
     inc scrx
     jsr clear_char
     dec scrx
+s1: lda sprshifty
+    beq s2
     inc scry
     jsr clear_char
+    lda sprshiftx
+    bne s2
     inc scrx
     jsr clear_char
-    ldy sprites_h,x
+s2: ldy sprites_h,x
     bne l2
     dey
     sty sprites_ox,x
     jmp l3
+
 l4: lda sprites_h,x
     beq l3
 l2: lda sprites_x,x
@@ -108,10 +113,18 @@ l2: lda sprites_x,x
     lsr
     lsr
     sta sprites_oy,x
-l3: dex
-    bpl l1
-e1:
+l3: 
+    pla
+    txa
 .)
+
+spriteloopend:
+    inx
+    cpx #numsprites
+    bne spriteloop
+
+    lda #8+black
+    sta $900f
 
     ; Call controllers.
 .(
