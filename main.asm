@@ -188,7 +188,7 @@ laser_fun:
     beq c1
 n1: lda sprites_x,x
     clc
-    adc #15
+    adc #11
     cmp #21*8
     bcc l1
     jmp remove_sprite
