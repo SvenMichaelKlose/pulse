@@ -197,8 +197,8 @@ draw_sprite:
     lda #8
     sec
     sbc sprshifty
-    sta counter
     sta counter_u
+    tay
     jsr write_sprite_l
 
     ldx sprshifty       ; No lower half to draw...
@@ -212,8 +212,7 @@ draw_sprite:
     adc counter_u
     sta spr
     sta spr_l
-    lda sprshifty
-    sta counter
+    ldy sprshifty
     jsr write_sprite_l
     dec scry
 
@@ -235,8 +234,7 @@ n1:lda sprshiftx        ; No right halves to draw...
     sta sprbits
     lda spr_u
     sta spr
-    lda counter_u
-    sta counter
+    ldy counter_u
     jsr write_sprite_r
 
     ldx sprshifty       ; No lower half to draw...
@@ -247,8 +245,7 @@ n1:lda sprshiftx        ; No right halves to draw...
     jsr get_char
     lda spr_l
     sta spr
-    lda sprshifty
-    sta counter
+    ldy sprshifty
     jmp write_sprite_r
 
 n2: rts
@@ -264,8 +261,7 @@ s2: lsr
     bpl s2
 s1: ora (sprbits),y
     sta (sprbits),y
-    iny
-    dec counter
+    dey
     bne l1
     rts
 .)
@@ -280,8 +276,7 @@ s2: asl
     bpl s2
 s1: ora (sprbits),y
     sta (sprbits),y
-    iny
-    dec counter
+    dey
     bne l1
     rts
 .)

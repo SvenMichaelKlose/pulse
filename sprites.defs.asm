@@ -22,12 +22,11 @@ sprshifty   = $0f
 spr_u       = $10
 spr_l       = $11
 sprbank     = $12
-counter     = $13
-counter_u   = $14
-tmp         = $15
-tmp2        = $16
-framecounter = $19
-random      = $1a
+counter_u   = $13
+tmp         = $14
+tmp2        = $15
+framecounter = $16
+random      = $17
 
 sprites_l   = $20   ; Low character address.
 sprites_h   = $30   ; High character address.
