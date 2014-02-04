@@ -33,6 +33,10 @@ mainloop:
     lda random
     and #127
     sta bullet_init+1
+    lda random
+    and #3
+    ora #8
+    sta bullet_init+3
     ldy #bullet_init-sprite_inits
     jsr add_sprite
 l1:
@@ -169,9 +173,9 @@ player_init:
 laser_init:
     .byte 18, 80, 1, white+8,  <laser, >laser, <laser_fun,  >laser_fun
 laser_up_init:
-    .byte 18, 80, 1, white+8,  <laser_up, >laser_up, <laser_up_fun,  >laser_up_fun
+    .byte 18, 80, 1, yellow,  <laser_up, >laser_up, <laser_up_fun,  >laser_up_fun
 laser_down_init:
-    .byte 18, 80, 1, white+8,  <laser_down, >laser_down, <laser_down_fun,  >laser_down_fun
+    .byte 18, 80, 1, yellow,  <laser_down, >laser_down, <laser_down_fun,  >laser_down_fun
 bullet_init:
     .byte 21*8, 90, 2, yellow+8, <bullet, >bullet, <bullet_fun, >bullet_fun
 
@@ -190,36 +194,57 @@ n1: lda sprites_x,x
     clc
     adc #11
     cmp #21*8
-    bcc l1
-    jmp remove_sprite
-l1: sta sprites_x,x
+    bcs r1
+    sta sprites_x,x
     rts
 c1: jsr remove_sprite
     tya
     tax
-    jmp remove_sprite
+r1: jmp remove_sprite
 .)
 
 laser_up_fun:
-laser_down_fun:
 .(
-    jsr sprite_up
-    jsr sprite_right
     jsr find_hit
-    jmp n1 ;bcc n1
+    bcc n1
     lda sprites_i,y
     cmp #2
     beq c1
 n1: lda sprites_x,x
     clc
-    adc #15
+    adc #8
     cmp #21*8
-    bcc l1
-    jmp remove_sprite
-l1: sta sprites_x,x
+    bcs r1
+    sta sprites_x,x
     lda sprites_y,x
     sec
-    sbc #15
+    sbc #8
+    bmi r1
+    sta sprites_y,x
+    rts
+c1: jsr remove_sprite
+    tya
+    tax
+r1: jmp remove_sprite
+.)
+
+laser_down_fun:
+.(
+    jsr find_hit
+    bcc n1
+    lda sprites_i,y
+    cmp #2
+    beq c1
+n1: lda sprites_x,x
+    clc
+    adc #8
+    cmp #21*8
+    bcs r1
+    sta sprites_x,x
+    lda sprites_y,x
+    clc
+    adc #8
+    cmp #21*8
     bcs r1
     sta sprites_y,x
     rts
@@ -228,6 +253,10 @@ c1: jsr remove_sprite
     tax
 r1: jmp remove_sprite
 .)
+
+
+has_double_laser: .byte 1
+has_autofire:     .byte 0
 
 fired_last_time: .byte 0
 player_fun:
@@ -244,9 +273,11 @@ c1: lda #0              ; Fetch joystick status.
     tay
     and #%00100000
     bne n0
+    lda has_autofire
+    bne a1
     lda fired_last_time
     bne n1
-    lda framecounter    ; Little ramdomness to give the laser some action.
+a1: lda framecounter    ; Little ramdomness to give the laser some action.
     lsr
     lsr
     and #7
@@ -261,11 +292,13 @@ c1: lda #0              ; Fetch joystick status.
     sta laser_down_init+1
     lda #1
     sta fired_last_time
-;    ldy #laser_up_init-sprite_inits
-;    jsr add_sprite
-;    ldy #laser_down_init-sprite_inits
-;    jsr add_sprite
-    ldy #laser_init-sprite_inits
+    lda has_double_laser
+    beq s1
+    ldy #laser_up_init-sprite_inits
+    jsr add_sprite
+    ldy #laser_down_init-sprite_inits
+    jsr add_sprite
+s1: ldy #laser_init-sprite_inits
     jmp add_sprite
 n0: lda #0
     sta fired_last_time

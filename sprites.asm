@@ -29,7 +29,7 @@ l1: sta sprchar
 .(  
 l1: lda $9004
     cmp #130
-    bcc l1
+    bne l1
 .)
 .(
     lda #8+white
