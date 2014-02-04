@@ -21,6 +21,7 @@ l1: lda #0
 
     ldy #player_init-sprite_inits
     jsr add_sprite
+#ifdef STATIC
     ldy #player_init-sprite_inits
     lda player_init
     adc #17
@@ -52,10 +53,11 @@ l1: lda #0
     jsr add_sprite
     ldy #bullet_init-sprite_inits
     jsr add_sprite
+#endif
 
 mainloop:
 .(
-  jmp l1
+#ifndef STATIC
     lda framecounter
     and #%1111
     bne l1
@@ -69,6 +71,7 @@ mainloop:
     ldy #bullet_init-sprite_inits
     jsr add_sprite
 l1:
+#endif
     jsr frame
     jmp mainloop
 .)

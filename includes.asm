@@ -1,3 +1,7 @@
+#ifdef STATIC
+#define TIMING
+#endif
+
 #include "basic-loader.asm"
 #include "kernal.asm"
 #include "sprites.defs.asm"

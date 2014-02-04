@@ -6,15 +6,13 @@ frame:
     sta random
     inc framecounter
 
+#ifdef TIMING
 .(
-;    lda #8+white
-;    sta $900f
-;    ldx #10
-;l1: dex
-;    bne l1
     lda #8+blue
     sta $900f
 .)
+#endif
+
     ; Switch to the unused buffer,
 .(  
     lda sprbank
@@ -28,30 +26,22 @@ l1: sta sprchar
     ; Wait until raster beam leaves the bitmap area.
 .(  
 l1: lda $9004
-    cmp #130-46 ;92
+    cmp #130
     bne l1
 .)
+#ifdef TIMING
 .(
     lda #8+white
     sta $900f
-;    ldx #10
-;l1: dex
-;    bne l1
-;    lda #8+blue
-;    sta $900f
 .)
+#endif
 
-    ; Draw all sprites in the sprite table.
     ldx #0
 spriteloop:
 .(
     lda sprites_h,x
-    beq spriteloopend
-
-    ; Draw sprite from table.
+    beq spriteclear:
     sta spr+1
-    txa
-    pha
     lda sprites_l,x
     sta spr
     lda sprites_x,x
@@ -60,37 +50,35 @@ spriteloop:
     sta spry
     lda sprites_c,x
     sta curcol
+#ifdef TIMING
     txa
     and #7
     ora #8
     sta $900f
+#endif
+    txa
+    pha
     jsr draw_sprite
     pla
     tax
-    pha
 .)
 
     ; Remove leftover chars.
+spriteclear:
 .(
     lda sprites_ox,x
     cmp #$ff
     beq l4
-
     sta scrx
     lda sprites_oy,x
     sta scry
     jsr clear_char
-    lda sprshiftx
-    bne s1
     inc scrx
     jsr clear_char
     dec scrx
-s1: lda sprshifty
-    beq s2
+s1:
     inc scry
     jsr clear_char
-    lda sprshiftx
-    bne s2
     inc scrx
     jsr clear_char
 s2: ldy sprites_h,x
@@ -114,21 +102,20 @@ l2: lda sprites_x,x
     lsr
     sta sprites_oy,x
 l3: 
-    pla
-    txa
 .)
 
-spriteloopend:
     inx
     cpx #numsprites
-    bne spriteloop
+    bne spriteloop2
 
+#ifdef TIMING
     lda #8+black
     sta $900f
+#endif
 
+#ifndef STATIC
     ; Call controllers.
 .(
-  jmp skip
     ldx #numsprites-1
 l1: lda sprites_h,x
     beq n1
@@ -143,10 +130,12 @@ m1: jsr $1234
     tax
 n1: dex
     bpl l1
-    skip:
 .)
+#endif
 
     rts
+spriteloop2:
+    jmp spriteloop
 
 ; Draw a single sprite.
 draw_sprite:
@@ -172,6 +161,7 @@ draw_sprite:
     lda sprx
     and #%111
     sta sprshiftx
+    sta sprshiftxl
     lda spry
     and #%111
     sta sprshifty
@@ -246,7 +236,7 @@ l1: lda (spr),y
     beq s1
 s2: lsr
     dex
-    bpl s2
+    bne s2
 s1: ora (sprbits),y
     sta (sprbits),y
     dey
@@ -261,7 +251,7 @@ l1: lda (spr),y
     beq s1
 s2: asl
     dex
-    bpl s2
+    bne s2
 s1: ora (sprbits),y
     sta (sprbits),y
     dey

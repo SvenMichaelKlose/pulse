@@ -18,6 +18,7 @@ spry        = $0a
 sprbits     = $0b
 sprchar     = $0d
 sprshiftx   = $0e
+sprshiftxl   = $18
 sprshifty   = $0f
 spr_u       = $10
 spr_l       = $11
