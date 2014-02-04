@@ -157,7 +157,7 @@ draw_sprite:
     lsr
     sta scry
 
-    ; Get shifts for left half.
+    ; Get shifts
     lda sprx
     and #%111
     sta sprshiftx
@@ -231,6 +231,7 @@ n2: rts
 
 write_sprite_l:
 .(
+    dey
 l1: lda (spr),y
     ldx sprshiftx
     beq s1
@@ -240,12 +241,13 @@ s2: lsr
 s1: ora (sprbits),y
     sta (sprbits),y
     dey
-    bne l1
+    bpl l1
     rts
 .)
 
 write_sprite_r:
 .(
+    dey
 l1: lda (spr),y
     ldx sprshiftx
     beq s1
@@ -255,6 +257,6 @@ s2: asl
 s1: ora (sprbits),y
     sta (sprbits),y
     dey
-    bne l1
+    bpl l1
     rts
 .)
