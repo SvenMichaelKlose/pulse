@@ -9,9 +9,6 @@ get_char:
     and #%01000000
     cmp sprbank
     bne l2
-
-    lda #1
-    sta spritecollision
     txa
     jmp l1
 

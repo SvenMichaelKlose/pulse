@@ -1,13 +1,5 @@
 restart:
     jsr clear_screen
-.(
-    ldx #255
-    lda #0
-l1: ;txa
-    sta 0,x
-    dex
-    bne l1
-.)
 
 ;.(
 ;    ldx #numchars-1
@@ -62,6 +54,9 @@ l1: lda sprites_h,x
     sta sprites_y,x
     iny
     lda sprite_inits,y
+    sta sprites_i,x
+    iny
+    lda sprite_inits,y
     sta sprites_c,x
     iny
     lda sprite_inits,y
@@ -89,29 +84,6 @@ remove_sprite:
     lda #0
     sta sprites_h,x
     rts
-
-sprite_inits:
-player_init: .byte 02, 80, cyan,     <spr1, >spr1, <player_fun, >player_fun
-laser_init:  .byte 18, 80, white+8,  <spr2, >spr2, <laser_fun,  >laser_fun
-bullet_init: .byte 21*8, 90, yellow+8, <spr3, >spr3, <bullet_fun, >bullet_fun
-
-; Sprite handlers
-; X: Current sprite number.
-sprite_funs:
-
-fired_last_time: .byte 0
-
-laser_fun:
-.(
-    lda sprites_x,x
-    clc
-    adc #15
-    cmp #21*8
-    bcc l1
-    jmp remove_sprite
-l1: sta sprites_x,x
-    rts
-.)
 
 sprite_up:
 .(
@@ -147,13 +119,126 @@ sprite_right:
 e1: rts
 .)
 
+find_hit:
+.(
+    txa
+    pha
+    ldy #numsprites-1
+l1: sty tmp
+    cpx tmp
+    beq n1
+    lda sprites_h,y
+    beq n1
+    lda sprites_x,x
+    clc
+    adc #8
+    sec
+    sbc sprites_x,y
+    bpl l2
+    clc
+    eor #$ff
+    adc #1
+l2: and #%11111000
+    bne n1
+    lda sprites_y,x
+    clc
+    adc #8
+    sec
+    sbc sprites_y,y
+    bpl l3
+    clc
+    eor #$ff
+    adc #1
+l3: and #%11111000
+    beq c1
+n1: dey
+    bpl l1
+    pla
+    tax
+    clc
+    rts
+c1: pla
+    tax
+    stc
+    rts
+.)
+
+sprite_inits:
+player_init:
+    .byte 02, 80, 0, cyan,     <ship, >ship, <player_fun, >player_fun
+laser_init:
+    .byte 18, 80, 1, white+8,  <laser, >laser, <laser_fun,  >laser_fun
+laser_up_init:
+    .byte 18, 80, 1, white+8,  <laser_up, >laser_up, <laser_up_fun,  >laser_up_fun
+laser_down_init:
+    .byte 18, 80, 1, white+8,  <laser_down, >laser_down, <laser_down_fun,  >laser_down_fun
+bullet_init:
+    .byte 21*8, 90, 2, yellow+8, <bullet, >bullet, <bullet_fun, >bullet_fun
+
+; Sprite handlers
+; X: Current sprite number.
+sprite_funs:
+
+laser_fun:
+.(
+    jsr find_hit
+    bcc n1
+    lda sprites_i,y
+    cmp #2
+    beq c1
+n1: lda sprites_x,x
+    clc
+    adc #15
+    cmp #21*8
+    bcc l1
+    jmp remove_sprite
+l1: sta sprites_x,x
+    rts
+c1: jsr remove_sprite
+    tya
+    tax
+    jmp remove_sprite
+.)
+
+laser_up_fun:
+laser_down_fun:
+.(
+    jsr sprite_up
+    jsr sprite_right
+    jsr find_hit
+    jmp n1 ;bcc n1
+    lda sprites_i,y
+    cmp #2
+    beq c1
+n1: lda sprites_x,x
+    clc
+    adc #15
+    cmp #21*8
+    bcc l1
+    jmp remove_sprite
+l1: sta sprites_x,x
+    lda sprites_y,x
+    sec
+    sbc #15
+    bcs r1
+    sta sprites_y,x
+    rts
+c1: jsr remove_sprite
+    tya
+    tax
+r1: jmp remove_sprite
+.)
+
+fired_last_time: .byte 0
 player_fun:
 .(
-    lda sprites_i,x
-    beq c1
+    jsr find_hit
+    bcc c1
+    lda sprites_i,y
+    cmp #2
+    bne c1
     jmp restart
-c1: sta $1e00+21*22
-    lda #0              ; Fetch joystick status.
+c1: lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
     tay
@@ -167,10 +252,19 @@ c1: sta $1e00+21*22
     and #7
     adc sprites_x,x
     sta laser_init
+    lda sprites_x,x
+    sta laser_up_init
+    sta laser_down_init
     lda sprites_y,x
     sta laser_init+1
+    sta laser_up_init+1
+    sta laser_down_init+1
     lda #1
     sta fired_last_time
+;    ldy #laser_up_init-sprite_inits
+;    jsr add_sprite
+;    ldy #laser_down_init-sprite_inits
+;    jsr add_sprite
     ldy #laser_init-sprite_inits
     jmp add_sprite
 n0: lda #0

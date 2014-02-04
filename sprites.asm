@@ -31,15 +31,15 @@ l1: lda $9004
     cmp #130
     bcc l1
 .)
-;.(
-;    lda #8+white
-;    sta $900f
-;    ldx #10
-;l1: dex
-;    bne l1
-;    lda #8+blue
-;    sta $900f
-;.)
+.(
+    lda #8+white
+    sta $900f
+    ldx #10
+l1: dex
+    bne l1
+    lda #8+blue
+    sta $900f
+.)
 
     ; Draw all sprites in the sprite table.
 .(
@@ -57,14 +57,9 @@ l1: lda sprites_h,x
     sta spry
     lda sprites_c,x
     sta curcol
-    lda #0
-    sta spritecollision
     jsr draw_sprite
     pla
     tax
-    lda spritecollision
-    sta sprites_i,x
-    sta $1e00+21*22,x
 n1: inx
     cpx #numsprites
     bne l1

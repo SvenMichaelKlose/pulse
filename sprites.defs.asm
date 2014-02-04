@@ -31,7 +31,6 @@ tmp3        = $17
 cursprite   = $18
 framecounter = $19
 random      = $1a
-spritecollision = $1b
 
 sprites_l   = $20   ; Low character address.
 sprites_h   = $30   ; High character address.
