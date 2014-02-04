@@ -1,5 +1,13 @@
-startloop:
+restart:
     jsr clear_screen
+.(
+    ldx #255
+    lda #0
+l1: ;txa
+    sta 0,x
+    dex
+    bne l1
+.)
 
 ;.(
 ;    ldx #numchars-1
@@ -24,13 +32,18 @@ l1: lda #0
 
     ldy #player_init-sprite_inits
     jsr add_sprite
-    ldy #bullet_init-sprite_inits
-    jsr add_sprite
-    ldy #laser_init-sprite_inits
-    jsr add_sprite
 
 mainloop:
 .(
+    lda framecounter
+    and #%1111
+    bne l1
+    lda random
+    and #127
+    sta bullet_init+1
+    ldy #bullet_init-sprite_inits
+    jsr add_sprite
+l1:
     jsr frame
     jmp mainloop
 .)
@@ -42,8 +55,6 @@ add_sprite:
     ldx #15
 l1: lda sprites_h,x
     bne l2
-    tya
-    sta sprites_i,x
     lda sprite_inits,y
     sta sprites_x,x
     iny
@@ -80,12 +91,9 @@ remove_sprite:
     rts
 
 sprite_inits:
-player_init:
-    .byte 02, 80, cyan,     <spr1, >spr1, <player_fun, >player_fun
-laser_init:
-    .byte 18, 80, white+8,  <spr2, >spr2, <laser_fun,  >laser_fun
-bullet_init:
-    .byte 22*8, 90, yellow+8, <spr3, >spr3, <bullet_fun, >bullet_fun
+player_init: .byte 02, 80, cyan,     <spr1, >spr1, <player_fun, >player_fun
+laser_init:  .byte 18, 80, white+8,  <spr2, >spr2, <laser_fun,  >laser_fun
+bullet_init: .byte 21*8, 90, yellow+8, <spr3, >spr3, <bullet_fun, >bullet_fun
 
 ; Sprite handlers
 ; X: Current sprite number.
@@ -110,7 +118,6 @@ sprite_up:
     lda sprites_y,x
     beq e1
     dec sprites_y,x
-    dec sprites_y,x
 e1: rts
 .)
 
@@ -119,7 +126,6 @@ sprite_down:
     lda sprites_y,x
     cmp #21*8
     bcs e1
-    inc sprites_y,x
     inc sprites_y,x
 e1: rts
 .)
@@ -143,9 +149,12 @@ e1: rts
 
 player_fun:
 .(
-    lda #0
+    lda sprites_i,x
+    beq c1
+    jmp restart
+c1: sta $1e00+21*22
+    lda #0              ; Fetch joystick status.
     sta $9113
-;    sta $9122
     lda $9111
     tay
     and #%00100000
@@ -170,19 +179,23 @@ n1: tya
     and #%00000100
     bne n2
     jsr sprite_up
+    jsr sprite_up
 n2: tya
     and #%00001000
     bne n3
+    jsr sprite_down
     jsr sprite_down
 n3: tya
     and #%00010000
     bne n4
     jsr sprite_left
-n4: lda #0
+    jsr sprite_left
+n4: lda #0              ;Fetch rest of joystick status.
     sta $9122
     lda $9120
     and #%10000000
     bne n5
+    jmp sprite_right
     jmp sprite_right
 n5: rts
 .)

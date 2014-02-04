@@ -9,8 +9,12 @@ get_char:
     and #%01000000
     cmp sprbank
     bne l2
+
+    lda #1
+    sta spritecollision
     txa
     jmp l1
+
 l2: lda sprchar     ; Pick fresh one from top.
     and #%01111111  ; Avoid hitting code.
     pha             ; Delay screen write to reduce artifacts.
