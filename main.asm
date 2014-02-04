@@ -19,9 +19,6 @@ l1: lda #0
     bpl l1
 .)
 
-    lda #0
-    sta tmp3
-
     ldy #player_init-sprite_inits
     jsr add_sprite
 

@@ -1,5 +1,5 @@
-#include "../shared/basic-loader.asm"
-#include "../shared/kernal.asm"
+#include "basic-loader.asm"
+#include "kernal.asm"
 #include "sprites.defs.asm"
 #include "init.asm"
 #include "main.asm"

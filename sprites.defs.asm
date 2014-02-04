@@ -3,10 +3,9 @@ numchars    = 128
 
 chars       = $1000
 charsize    = numchars * 8
-bufsize     = charsize / 2
 charmask    = numchars - 1
-bankmask    = numchars / 2
-screensize  = 22 * 23
+sprbufsize  = charsize / 2
+sprbufmask  = numchars / 2
 
 scr         = $00
 col         = $02
@@ -27,8 +26,6 @@ counter     = $13
 counter_u   = $14
 tmp         = $15
 tmp2        = $16
-tmp3        = $17
-cursprite   = $18
 framecounter = $19
 random      = $1a
 

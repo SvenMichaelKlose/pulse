@@ -18,7 +18,7 @@ frame:
     ; Switch to the unused buffer,
 .(  
     lda sprbank
-    eor #bankmask
+    eor #sprbufmask
     sta sprbank
     bne l1
     ora #1

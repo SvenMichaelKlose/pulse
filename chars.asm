@@ -6,7 +6,7 @@ get_char:
     lda (scr),y
     beq l2
     tax
-    and #%01000000
+    and #sprbufmask
     cmp sprbank
     bne l2
     txa
@@ -54,7 +54,7 @@ clear_char:
     ldy #0
     lda (scr),y
     beq e1
-    and #bankmask
+    and #sprbufmask
     cmp sprbank
     beq e1
     tya
