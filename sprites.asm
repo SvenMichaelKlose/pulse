@@ -6,15 +6,15 @@ frame:
     sta random
     inc framecounter
 
-;.(
+.(
 ;    lda #8+white
 ;    sta $900f
 ;    ldx #10
 ;l1: dex
 ;    bne l1
-;    lda #8+blue
-;    sta $900f
-;.)
+    lda #8+blue
+    sta $900f
+.)
     ; Switch to the unused buffer,
 .(  
     lda sprbank
@@ -28,17 +28,17 @@ l1: sta sprchar
     ; Wait until raster beam leaves the bitmap area.
 .(  
 l1: lda $9004
-    cmp #130
+    cmp #130-92
     bne l1
 .)
 .(
     lda #8+white
     sta $900f
-    ldx #10
-l1: dex
-    bne l1
-    lda #8+blue
-    sta $900f
+;    ldx #10
+;l1: dex
+;    bne l1
+;    lda #8+blue
+;    sta $900f
 .)
 
     ; Draw all sprites in the sprite table.
@@ -57,14 +57,45 @@ l1: lda sprites_h,x
     sta spry
     lda sprites_c,x
     sta curcol
+    txa
+    and #7
+    ora #8
+    sta $900f
     jsr draw_sprite
     pla
     tax
 n1: inx
     cpx #numsprites
     bne l1
+
+    lda #8+black
+    sta $900f
 .)
 
+jmp oldclear
+.(
+    ldx #203
+    ldy #0
+l1: lda screen-1,x
+    and #sprbufmask
+    cmp sprbank
+    beq n1
+    tya
+    sta screen-1,x
+n1: lda screen+202,x
+    and #sprbufmask
+    cmp sprbank
+    beq n2
+    tya
+    sta screen+202,x
+n2: dex
+    bne l1
+.)
+    lda #8+red
+    sta $900f
+jmp noclear
+
+oldclear:
     ; Remove leftover chars.
 .(
     ldx #numsprites-1
@@ -105,8 +136,11 @@ l3: dex
     bpl l1
 e1:
 .)
+noclear:
 
+    ; Call controllers.
 .(
+  jmp skip
     ldx #numsprites-1
 l1: lda sprites_h,x
     beq n1
@@ -121,6 +155,7 @@ m1: jsr $1234
     tax
 n1: dex
     bpl l1
+    skip:
 .)
 
     rts

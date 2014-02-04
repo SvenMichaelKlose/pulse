@@ -21,9 +21,41 @@ l1: lda #0
 
     ldy #player_init-sprite_inits
     jsr add_sprite
+    ldy #player_init-sprite_inits
+    lda player_init
+    adc #17
+    sta player_init
+    jsr add_sprite
+    ldy #player_init-sprite_inits
+    lda player_init
+    adc #18
+    sta player_init
+    jsr add_sprite
+    ldy #player_init-sprite_inits
+    lda player_init
+    adc #17
+    sta player_init
+    jsr add_sprite
+    ldy #player_init-sprite_inits
+    lda player_init
+    adc #17
+    sta player_init
+    jsr add_sprite
+    ldy #player_init-sprite_inits
+    lda player_init
+    adc #17
+    sta player_init
+    jsr add_sprite
+    ldy #player_init-sprite_inits
+    jsr add_sprite
+    ldy #laser_init-sprite_inits
+    jsr add_sprite
+    ldy #bullet_init-sprite_inits
+    jsr add_sprite
 
 mainloop:
 .(
+  jmp l1
     lda framecounter
     and #%1111
     bne l1
@@ -166,7 +198,7 @@ c1: pla
 
 sprite_inits:
 player_init:
-    .byte 02, 80, 0, cyan,     <ship, >ship, <player_fun, >player_fun
+    .byte 02, 81, 0, cyan,     <ship, >ship, <player_fun, >player_fun
 laser_init:
     .byte 18, 80, 1, white+8,  <laser, >laser, <laser_fun,  >laser_fun
 laser_up_init:
@@ -174,7 +206,7 @@ laser_up_init:
 laser_down_init:
     .byte 18, 80, 1, yellow,  <laser_down, >laser_down, <laser_down_fun,  >laser_down_fun
 bullet_init:
-    .byte 21*8, 90, 2, yellow+8, <bullet, >bullet, <bullet_fun, >bullet_fun
+    .byte 21*8, 89, 2, yellow+8, <bullet, >bullet, <bullet_fun, >bullet_fun
 
 ; Sprite handlers
 ; X: Current sprite number.
