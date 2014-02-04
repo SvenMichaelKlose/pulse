@@ -72,30 +72,6 @@ n1: inx
     sta $900f
 .)
 
-jmp oldclear
-.(
-    ldx #203
-    ldy #0
-l1: lda screen-1,x
-    and #sprbufmask
-    cmp sprbank
-    beq n1
-    tya
-    sta screen-1,x
-n1: lda screen+202,x
-    and #sprbufmask
-    cmp sprbank
-    beq n2
-    tya
-    sta screen+202,x
-n2: dex
-    bne l1
-.)
-    lda #8+red
-    sta $900f
-jmp noclear
-
-oldclear:
     ; Remove leftover chars.
 .(
     ldx #numsprites-1
@@ -136,7 +112,6 @@ l3: dex
     bpl l1
 e1:
 .)
-noclear:
 
     ; Call controllers.
 .(
