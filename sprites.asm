@@ -258,10 +258,10 @@ write_sprite_l:
 .(
 l1: lda (spr),y
     ldx sprshiftx
-s2: dex
-    bmi s1
-    lsr
-    jmp s2
+    beq s1
+s2: lsr
+    dex
+    bpl s2
 s1: ora (sprbits),y
     sta (sprbits),y
     iny
@@ -274,10 +274,10 @@ write_sprite_r:
 .(
 l1: lda (spr),y
     ldx sprshiftx
-s2: dex
-    bmi s1
-    asl
-    jmp s2
+    beq s1
+s2: asl
+    dex
+    bpl s2
 s1: ora (sprbits),y
     sta (sprbits),y
     iny
