@@ -1,7 +1,7 @@
 ; Get or allocate a bitmap char.
 get_char:
 .(
-    jsr scraddr
+    jsr scrcoladdr
     ldy #0
     lda (scr),y
     beq l2

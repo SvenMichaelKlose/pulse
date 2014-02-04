@@ -4,6 +4,17 @@ scraddr:
     clc
     adc scrx
     sta scr
+    lda #>screen
+    adc line_offsets_h,y
+    sta scr+1
+    rts
+
+scrcoladdr:
+    ldy scry
+    lda line_offsets_l,y
+    clc
+    adc scrx
+    sta scr
     sta col
     php
     lda #>screen
