@@ -19,6 +19,9 @@ l1: lda #0
     bpl l1
 .)
 
+    lda #0
+    sta is_firing
+
     ldy #player_init-sprite_inits
     jsr add_sprite
 #ifdef STATIC
@@ -59,7 +62,7 @@ mainloop:
 .(
 #ifndef STATIC
     lda framecounter
-    and #%111
+    and #%1111
     bne l1
     lda random
     and #127
@@ -233,7 +236,9 @@ n1: lda sprites_x,x
 c1: jsr remove_sprite
     tya
     tax
-r1: jmp remove_sprite
+r1: lda #0
+    sta is_firing
+    jmp remove_sprite
 .)
 
 laser_up_fun:
@@ -291,7 +296,7 @@ r1: jmp remove_sprite
 has_double_laser: .byte 0
 has_autofire:     .byte 0
 
-fired_last_time: .byte 0
+is_firing: .byte 0
 player_fun:
 .(
     jsr find_hit
@@ -305,10 +310,10 @@ c1: lda #0              ; Fetch joystick status.
     lda $9111
     tay
     and #%00100000
-    bne n0
+    bne n1
     lda has_autofire
     bne a1
-    lda fired_last_time
+    lda is_firing
     bne n1
 a1: lda framecounter    ; Little ramdomness to give the laser some action.
     lsr
@@ -325,7 +330,7 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     sta laser_down_init+1
     inc laser_init+1
     lda #1
-    sta fired_last_time
+    sta is_firing
     lda has_double_laser
     beq s1
     ldy #laser_up_init-sprite_inits
@@ -334,8 +339,6 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     jsr add_sprite
 s1: ldy #laser_init-sprite_inits
     jmp add_sprite
-n0: lda #0
-    sta fired_last_time
 n1: tya
     and #%00000100
     bne n2
