@@ -4,7 +4,6 @@ frame:
     rol
     eor framecounter
     sta random
-    inc framecounter
 
 #ifdef TIMING
 .(
@@ -12,16 +11,6 @@ frame:
     sta $900f
 .)
 #endif
-
-    ; Switch to the unused buffer,
-.(  
-    lda sprbank
-    eor #sprbufmask
-    sta sprbank
-    bne l1
-    ora #1
-l1: sta sprchar
-.)
 
     ; Wait until raster beam leaves the bitmap area.
 .(  
@@ -36,6 +25,101 @@ l1: lda $9004
 .)
 #endif
 
+    ; Switch to the unused buffer,
+.(  
+    lda sprbank
+    eor #sprbufmask
+    sta sprbank
+    bne l1
+    ora #1
+l1: sta sprchar
+.)
+
+bg = $1000+63*8
+
+.(
+    lda #<background
+    sta spr
+    lda #>background
+    sta spr+1
+    lda #$f8
+    sta d
+    ldx #$11
+    lda sprbank
+    beq n1
+    ldx #$13
+n1: stx d+1
+    ldy #7
+    lda #0
+l1: sta (d),y
+    dey
+    bpl l1
+    lda #0
+    sec
+    sbc framecounter
+    and #%110
+    sta sprshiftx
+    ldy #8
+    jsr write_sprite_l
+    lda #8
+    sec
+    sbc sprshiftx
+    sta sprshiftx
+    ldy #8
+    jsr write_sprite_r
+.)
+
+.(
+    lda #<background2
+    sta spr
+    lda #>background2
+    sta spr+1
+    lda #$f0
+    sta d
+    ldx #$11
+    lda sprbank
+    beq n1
+    ldx #$13
+n1: stx d+1
+    ldy #7
+    lda #0
+l1: sta (d),y
+    dey
+    bpl l1
+    lda #0
+    sec
+    sbc framecounter
+    and #%110
+    sta sprshiftx
+    ldy #8
+    jsr write_sprite_l
+    lda #8
+    sec
+    sbc sprshiftx
+    sta sprshiftx
+    ldy #8
+    jsr write_sprite_r
+.)
+
+.(
+    lda framecounter
+    bne n1
+    ldx #22
+l1: lda #$3f
+    sta screen+20*22,x
+    lda #$3e
+    sta screen+21*22,x
+    sta screen+22*22,x
+    lda #yellow+8
+    sta colors+20*22,x
+    sta colors+21*22,x
+    sta colors+22*22,x
+    dex
+    bpl l1
+    n1:
+.)
+    
+    ; Draw all sprites.
 .(
     ldx #0
 l1: lda sprites_h,x     ; Skip unallocated sprites.
@@ -125,6 +209,7 @@ n1: dex
 .)
 #endif
 
+    inc framecounter
     rts
 
 ; Draw a single sprite.

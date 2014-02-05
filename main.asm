@@ -9,6 +9,7 @@ restart:
 ;    bpl l1
 ;.)
 
+; Mark all sprites as dead.
 .(
     ldx #numsprites-1
 l1: lda #0
@@ -20,6 +21,7 @@ l1: lda #0
 .)
 
     lda #0
+    sta framecounter
     sta is_firing
 
     ldy #player_init-sprite_inits
@@ -73,9 +75,9 @@ mainloop:
 #ifndef STATIC
     lda framecounter
 #ifdef MASSACRE
-    and #%0111
+    and #%00111
 #else
-    and #%1111
+    and #%11111
 #endif
     bne l1
     lda random

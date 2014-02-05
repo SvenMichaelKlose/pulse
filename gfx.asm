@@ -50,6 +50,26 @@ bullet:
     .byte %00110000
     .byte %00000000
 
+background:
+    .byte %11111111
+    .byte %11111111
+    .byte %10101010
+    .byte %00000010
+    .byte %11110010
+    .byte %01010010
+    .byte %11010010
+    .byte %01010010
+
+background2:
+    .byte %11010010
+    .byte %01010010
+    .byte %11010010
+    .byte %01010010
+    .byte %11010001
+    .byte %01010011
+    .byte %11010000
+    .byte %01010011
+
 bonus:
     .byte %11111111
     .byte %10000001
