@@ -237,7 +237,23 @@ l1: lda (spr),y
     beq s1
 s2: lsr
     dex
-    bne s2
+    beq s1
+    lsr
+    dex
+    beq s1
+    lsr
+    dex
+    beq s1
+    lsr
+    dex
+    beq s1
+    lsr
+    dex
+    beq s1
+    lsr
+    dex
+    beq s1
+    lsr
 s1: ora (d),y
     sta (d),y
     dey
@@ -253,7 +269,23 @@ l1: lda (spr),y
     beq s1
 s2: asl
     dex
-    bne s2
+    beq s1
+    asl
+    dex
+    beq s1
+    asl
+    dex
+    beq s1
+    asl
+    dex
+    beq s1
+    asl
+    dex
+    beq s1
+    asl
+    dex
+    beq s1
+    asl
 s1: ora (d),y
     sta (d),y
     dey
