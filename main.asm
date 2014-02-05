@@ -168,21 +168,25 @@ l1: cpy tmp
 
     lda sprites_x,x     ; Get X distance.
     sec
+    sbc #8
+    sec
     sbc sprites_x,y
     bpl l2
     clc                 ; Make it positive.
     eor #$ff
     adc #1
-l2: and #%11111000      ; Larger than 7?
+l2: and #%11110000
     bne n1
     lda sprites_y,x
+    clc
+    adc #8
     sec
     sbc sprites_y,y
     bpl l3
     clc
     eor #$ff
     adc #1
-l3: and #%11111000
+l3: and #%11110000
     beq c1
 n1: dey
     bpl l1
@@ -284,7 +288,7 @@ r1: jmp remove_sprite
 .)
 
 
-has_double_laser: .byte 1
+has_double_laser: .byte 0
 has_autofire:     .byte 0
 
 fired_last_time: .byte 0
@@ -319,6 +323,7 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     sta laser_init+1
     sta laser_up_init+1
     sta laser_down_init+1
+    inc laser_init+1
     lda #1
     sta fired_last_time
     lda has_double_laser
