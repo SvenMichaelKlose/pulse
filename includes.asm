@@ -1,7 +1,7 @@
 /*
 #define STATIC
-*/
 #define MASSACRE
+*/
 
 #ifdef STATIC
 #define TIMING
