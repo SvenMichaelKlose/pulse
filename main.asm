@@ -27,26 +27,31 @@ l1: lda #0
 #ifdef STATIC
     ldy #player_init-sprite_inits
     lda player_init
+    clc
     adc #17
     sta player_init
     jsr add_sprite
     ldy #player_init-sprite_inits
     lda player_init
-    adc #18
-    sta player_init
-    jsr add_sprite
-    ldy #player_init-sprite_inits
-    lda player_init
+    clc
     adc #17
     sta player_init
     jsr add_sprite
     ldy #player_init-sprite_inits
     lda player_init
+    clc
     adc #17
     sta player_init
     jsr add_sprite
     ldy #player_init-sprite_inits
     lda player_init
+    clc
+    adc #17
+    sta player_init
+    jsr add_sprite
+    ldy #player_init-sprite_inits
+    lda player_init
+    clc
     adc #17
     sta player_init
     jsr add_sprite
@@ -58,11 +63,20 @@ l1: lda #0
     jsr add_sprite
 #endif
 
+#ifdef MASSACRE
+    lda #1
+    sta has_double_laser
+#endif
+
 mainloop:
 .(
 #ifndef STATIC
     lda framecounter
+#ifdef MASSACRE
+    and #%0111
+#else
     and #%1111
+#endif
     bne l1
     lda random
     and #127
