@@ -39,23 +39,20 @@ l1: lda $9004
     ldx #0
 spriteloop:
 .(
-    lda sprites_h,x
+    lda sprites_h,x     ; Skip unallocated sprites.
     beq spriteclear:
+
     sta spr+1
     lda sprites_l,x
     sta spr
-    lda sprites_x,x
-    sta sprx
-    lda sprites_y,x
-    sta spry
-    lda sprites_c,x
-    sta curcol
+
 #ifdef TIMING
     txa
     and #7
     ora #8
     sta $900f
 #endif
+
     txa
     pha
     jsr draw_sprite
@@ -143,14 +140,17 @@ draw_sprite:
     lda spr
     sta spr_u
 
+    lda sprites_c,x
+    sta curcol
+
     ; Get position on screen.
-    lda sprx
+    lda sprites_x,x
     clc
     lsr
     lsr
     lsr
     sta scrx
-    lda spry
+    lda sprites_y,x
     clc
     lsr
     lsr
@@ -158,11 +158,11 @@ draw_sprite:
     sta scry
 
     ; Get shifts
-    lda sprx
+    lda sprites_x,x
     and #%111
     sta sprshiftx
     sta sprshiftxl
-    lda spry
+    lda sprites_y,x
     and #%111
     sta sprshifty
 
@@ -179,7 +179,7 @@ draw_sprite:
     tay
     jsr write_sprite_l
 
-    ldx sprshifty       ; No lower half to draw...
+    lda sprshifty       ; No lower half to draw...
     beq n1
 
     ; Draw lower half of char.
@@ -215,7 +215,7 @@ n1:lda sprshiftx        ; No right halves to draw...
     ldy counter_u
     jsr write_sprite_r
 
-    ldx sprshifty       ; No lower half to draw...
+    lda sprshifty       ; No lower half to draw...
     beq n2
 
     ; Draw lower left
