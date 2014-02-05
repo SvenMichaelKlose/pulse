@@ -150,7 +150,7 @@ e1: rts
 sprite_down:
 .(
     lda sprites_y,x
-    cmp #21*8
+    cmp #18*8
     bcs e1
     inc sprites_y,x
 e1: rts
@@ -296,7 +296,7 @@ n1: lda sprites_x,x
     lda sprites_y,x
     clc
     adc #8
-    cmp #21*8
+    cmp #19*8
     bcs remove_sprite2
     sta sprites_y,x
     rts
