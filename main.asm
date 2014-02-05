@@ -225,21 +225,24 @@ laser_fun:
     bcc n1
     lda sprites_i,y
     cmp #2
-    beq c1
+    beq remove_sprite_xy
 n1: lda sprites_x,x
     clc
     adc #11
     cmp #21*8
-    bcs r1
+    bcs remove_sprite2
     sta sprites_x,x
     rts
-c1: jsr remove_sprite
+.)
+
+remove_sprite_xy:
+    jsr remove_sprite
     tya
     tax
-r1: lda #0
+remove_sprite2:
+    lda #0
     sta is_firing
     jmp remove_sprite
-.)
 
 laser_up_fun:
 .(
@@ -247,23 +250,19 @@ laser_up_fun:
     bcc n1
     lda sprites_i,y
     cmp #2
-    beq c1
+    beq remove_sprite_xy
 n1: lda sprites_x,x
     clc
     adc #8
     cmp #21*8
-    bcs r1
+    bcs remove_sprite2
     sta sprites_x,x
     lda sprites_y,x
     sec
     sbc #8
-    bmi r1
+    bmi remove_sprite2
     sta sprites_y,x
     rts
-c1: jsr remove_sprite
-    tya
-    tax
-r1: jmp remove_sprite
 .)
 
 laser_down_fun:
@@ -272,26 +271,21 @@ laser_down_fun:
     bcc n1
     lda sprites_i,y
     cmp #2
-    beq c1
+    beq remove_sprite_xy
 n1: lda sprites_x,x
     clc
     adc #8
     cmp #21*8
-    bcs r1
+    bcs remove_sprite2
     sta sprites_x,x
     lda sprites_y,x
     clc
     adc #8
     cmp #21*8
-    bcs r1
+    bcs remove_sprite2
     sta sprites_y,x
     rts
-c1: jsr remove_sprite
-    tya
-    tax
-r1: jmp remove_sprite
 .)
-
 
 has_double_laser: .byte 0
 has_autofire:     .byte 0
