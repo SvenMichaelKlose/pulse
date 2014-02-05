@@ -15,7 +15,6 @@ frame:
     ; Wait until raster beam leaves the bitmap area.
 .(  
 l1: lda $9004
-    cmp #130
     bne l1
 .)
 #ifdef TIMING
@@ -207,6 +206,11 @@ m1: jsr $1234
 n1: dex
     bpl l1
 .)
+#endif
+
+#ifdef TIMING
+    lda #8+white
+    sta $900f
 #endif
 
     inc framecounter
