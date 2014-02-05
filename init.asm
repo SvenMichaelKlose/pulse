@@ -4,8 +4,8 @@ end         = start+reallen
 rels     = end-1
 reld     = realend-1
 
-s           = $00
-d           = $02
+d           = $00
+s           = $02
 c           = $04
 
 main:

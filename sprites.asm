@@ -168,10 +168,10 @@ draw_sprite:
 
     ; Draw upper left half of char.
     jsr get_char
-    lda sprbits
+    lda d
     clc
     adc sprshifty
-    sta sprbits
+    sta d
     lda #8
     sec
     sbc sprshifty
@@ -206,10 +206,10 @@ n1:lda sprshiftx        ; No right halves to draw...
     ; Draw upper right
     inc scrx            ; Prepare next line.
     jsr get_char
-    lda sprbits
+    lda d
     clc
     adc sprshifty
-    sta sprbits
+    sta d
     lda spr_u
     sta spr
     ldy counter_u
@@ -238,8 +238,8 @@ l1: lda (spr),y
 s2: lsr
     dex
     bne s2
-s1: ora (sprbits),y
-    sta (sprbits),y
+s1: ora (d),y
+    sta (d),y
     dey
     bpl l1
     rts
@@ -254,8 +254,8 @@ l1: lda (spr),y
 s2: asl
     dex
     bne s2
-s1: ora (sprbits),y
-    sta (sprbits),y
+s1: ora (d),y
+    sta (d),y
     dey
     bpl l1
     rts

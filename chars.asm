@@ -19,7 +19,7 @@ l2: lda sprchar     ; Pick fresh one from top.
     jsr l1          ; Get char address.
     tya             ; Clear the new char.
     ldy #7
-l3: sta (sprbits),y
+l3: sta (d),y
     dey
     bpl l3
     iny
@@ -39,11 +39,11 @@ l1: clc
     adc #0
     tax
     and #%11111000
-    sta sprbits
+    sta d
     txa
     and #%00000111
     ora #>chars
-    sta sprbits+1
+    sta d+1
     rts
 .)
 

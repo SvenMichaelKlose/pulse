@@ -1,3 +1,7 @@
+/*
+#define STATIC
+*/
+
 #ifdef STATIC
 #define TIMING
 #endif
