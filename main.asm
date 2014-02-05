@@ -1,14 +1,6 @@
 restart:
     jsr clear_screen
 
-;.(
-;    ldx #numchars-1
-;l1: txa
-;    sta screen+17*22,x
-;    dex
-;    bpl l1
-;.)
-
 ; Mark all sprites as dead.
 .(
     ldx #numsprites-1
@@ -74,11 +66,7 @@ mainloop:
 .(
 #ifndef STATIC
     lda framecounter
-#ifdef MASSACRE
-    and #%00111
-#else
-    and #%11111
-#endif
+    and #%01111
     bne l1
     lda random
     and #127
@@ -92,6 +80,17 @@ mainloop:
 l1:
 #endif
     jsr frame
+
+#ifdef SHOW_CHARSET
+    ldx #numchars-1
+l2: txa
+    sta screen,x
+    lda #white
+    sta colors,x
+    dex
+    bpl l2
+#endif
+
     jmp mainloop
 .)
 
