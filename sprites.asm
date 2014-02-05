@@ -36,11 +36,10 @@ l1: lda $9004
 .)
 #endif
 
-    ldx #0
-spriteloop:
 .(
-    lda sprites_h,x     ; Skip unallocated sprites.
-    beq spriteclear:
+    ldx #0
+l1: lda sprites_h,x     ; Skip unallocated sprites.
+    beq n1
 
     sta spr+1
     lda sprites_l,x
@@ -58,14 +57,18 @@ spriteloop:
     jsr draw_sprite
     pla
     tax
+
+n1: inx
+    cpx #numsprites
+    bne l1
 .)
 
     ; Remove leftover chars.
-spriteclear:
 .(
-    lda sprites_ox,x
+    ldx #numsprites-1
+l1: lda sprites_ox,x
     cmp #$ff
-    beq l4
+    beq n2
     sta scrx
     lda sprites_oy,x
     sta scry
@@ -73,20 +76,15 @@ spriteclear:
     inc scrx
     jsr clear_char
     dec scrx
-s1:
     inc scry
     jsr clear_char
     inc scrx
     jsr clear_char
-s2: ldy sprites_h,x
-    bne l2
-    dey
-    sty sprites_ox,x
-    jmp l3
-
-l4: lda sprites_h,x
-    beq l3
-l2: lda sprites_x,x
+    lda #$ff
+    sta sprites_ox,x
+n2: lda sprites_h,x
+    beq n1
+    lda sprites_x,x
     clc
     lsr
     lsr
@@ -98,12 +96,9 @@ l2: lda sprites_x,x
     lsr
     lsr
     sta sprites_oy,x
-l3: 
+n1: dex
+    bpl l1
 .)
-
-    inx
-    cpx #numsprites
-    bne spriteloop2
 
 #ifdef TIMING
     lda #8+black
@@ -131,8 +126,6 @@ n1: dex
 #endif
 
     rts
-spriteloop2:
-    jmp spriteloop
 
 ; Draw a single sprite.
 draw_sprite:
