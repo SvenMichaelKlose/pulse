@@ -3,7 +3,6 @@
 #define MASSACRE
 #define SHOW_CHARSET
 */
-#define MASSACRE
 
 #ifdef STATIC
 #define TIMING
@@ -14,6 +13,7 @@
 #include "sprites.defs.asm"
 #include "init.asm"
 #include "main.asm"
+#include "frame.asm"
 #include "controllers.asm"
 #include "sprites.asm"
 #include "blitter.asm"

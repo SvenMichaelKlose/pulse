@@ -66,7 +66,7 @@ mainloop:
 .(
 #ifndef STATIC
     lda framecounter
-    and #%01111
+    and #%11111
     bne l1
     lda random
     and #127
@@ -79,6 +79,7 @@ mainloop:
     jsr add_sprite
 l1:
 #endif
+
     jsr frame
 
 #ifdef SHOW_CHARSET
@@ -92,128 +93,4 @@ l2: txa
 #endif
 
     jmp mainloop
-.)
-
-add_sprite:
-.(
-    txa
-    pha
-    ldx #15
-l1: lda sprites_h,x
-    bne l2
-    lda sprite_inits,y
-    sta sprites_x,x
-    iny
-    lda sprite_inits,y
-    sta sprites_y,x
-    iny
-    lda sprite_inits,y
-    sta sprites_i,x
-    iny
-    lda sprite_inits,y
-    sta sprites_c,x
-    iny
-    lda sprite_inits,y
-    sta sprites_l,x
-    iny
-    lda sprite_inits,y
-    sta sprites_h,x
-    iny
-    lda sprite_inits,y
-    sta sprites_fl,x
-    iny
-    lda sprite_inits,y
-    sta sprites_fh,x
-    pla
-    tax
-    rts
-l2: dex
-    bpl l1
-    pla
-    tax
-    rts
-.)
-
-remove_sprite:
-    lda #0
-    sta sprites_h,x
-    rts
-
-sprite_up:
-.(
-    lda sprites_y,x
-    beq e1
-    dec sprites_y,x
-e1: rts
-.)
-
-sprite_down:
-.(
-    lda sprites_y,x
-    cmp #18*8
-    bcs e1
-    inc sprites_y,x
-e1: rts
-.)
-
-sprite_left:
-.(
-    lda sprites_x,x
-    beq e1
-    dec sprites_x,x
-e1: rts
-.)
-
-sprite_right:
-.(
-    lda sprites_x,x
-    cmp #21*8
-    bcs e1
-    inc sprites_x,x
-e1: rts
-.)
-
-find_hit:
-.(
-    txa
-    pha
-    stx tmp
-    ldy #numsprites-1
-l1: cpy tmp
-    beq n1
-    lda sprites_h,y
-    beq n1
-
-    lda sprites_x,x     ; Get X distance.
-    sec
-    sbc #8
-    sec
-    sbc sprites_x,y
-    bpl l2
-    clc                 ; Make it positive.
-    eor #$ff
-    adc #1
-l2: and #%11110000
-    bne n1
-    lda sprites_y,x
-    clc
-    adc #8
-    sec
-    sbc sprites_y,y
-    bpl l3
-    clc
-    eor #$ff
-    adc #1
-l3: and #%11110000
-    beq c1
-n1: dey
-    bpl l1
-    pla
-    tax
-    clc
-    rts
-c1: pla
-    tax
-    stc
-    rts
 .)

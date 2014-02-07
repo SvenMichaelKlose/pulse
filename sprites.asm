@@ -1,63 +1,128 @@
-frame:
-    lda $9004
-    rol
-    rol
-    rol
-    rol
-    eor random
-    adc random
-    sta random
-
-#ifdef TIMING
+add_sprite:
 .(
-    lda #8+blue
-    sta $900f
-.)
-#endif
-
-    ; Wait until raster beam leaves the bitmap area.
-.(  
-l1: lda $9004
-    bne l1
-.)
-#ifdef TIMING
-.(
-    lda #8+white
-    sta $900f
-.)
-#endif
-
-#ifndef STATIC
-    ; Call controllers.
-.(
-    ldx #numsprites-1
-l1: lda sprites_h,x
-    beq n1
-    lda sprites_fl,x
-    sta m1+1
-    lda sprites_fh,x
-    sta m1+2
     txa
     pha
-m1: jsr $1234
+    ldx #15
+l1: lda sprites_h,x
+    bne l2
+    lda sprite_inits,y
+    sta sprites_x,x
+    iny
+    lda sprite_inits,y
+    sta sprites_y,x
+    iny
+    lda sprite_inits,y
+    sta sprites_i,x
+    iny
+    lda sprite_inits,y
+    sta sprites_c,x
+    iny
+    lda sprite_inits,y
+    sta sprites_l,x
+    iny
+    lda sprite_inits,y
+    sta sprites_h,x
+    iny
+    lda sprite_inits,y
+    sta sprites_fl,x
+    iny
+    lda sprite_inits,y
+    sta sprites_fh,x
     pla
     tax
-n1: dex
+    rts
+l2: dex
     bpl l1
-.)
-#endif
-
-    ; Switch to the unused buffer,
-.(  
-    lda sprbank
-    eor #sprbufmask
-    sta sprbank
-    bne l1
-    ora #1
-l1: sta sprchar
+    pla
+    tax
+    rts
 .)
 
-    ; Draw all sprites.
+remove_sprite:
+    lda #0
+    sta sprites_h,x
+    rts
+
+sprite_up:
+.(
+    lda sprites_y,x
+    beq e1
+    dec sprites_y,x
+e1: rts
+.)
+
+sprite_down:
+.(
+    lda sprites_y,x
+    cmp #18*8
+    bcs e1
+    inc sprites_y,x
+e1: rts
+.)
+
+sprite_left:
+.(
+    lda sprites_x,x
+    beq e1
+    dec sprites_x,x
+e1: rts
+.)
+
+sprite_right:
+.(
+    lda sprites_x,x
+    cmp #21*8
+    bcs e1
+    inc sprites_x,x
+e1: rts
+.)
+
+find_hit:
+.(
+    txa
+    pha
+    stx tmp
+    ldy #numsprites-1
+l1: cpy tmp
+    beq n1
+    lda sprites_h,y
+    beq n1
+
+    lda sprites_x,x     ; Get X distance.
+    sec
+    sbc #8
+    sec
+    sbc sprites_x,y
+    bpl l2
+    clc                 ; Make it positive.
+    eor #$ff
+    adc #1
+l2: and #%11110000
+    bne n1
+    lda sprites_y,x
+    clc
+    adc #8
+    sec
+    sbc sprites_y,y
+    bpl l3
+    clc
+    eor #$ff
+    adc #1
+l3: and #%11110000
+    beq c1
+n1: dey
+    bpl l1
+    pla
+    tax
+    clc
+    rts
+c1: pla
+    tax
+    stc
+    rts
+.)
+
+draw_sprites:
 .(
     ldx #0
 l1: lda sprites_h,x     ; Skip unallocated sprites.
