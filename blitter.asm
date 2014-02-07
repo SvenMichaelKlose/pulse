@@ -1,8 +1,7 @@
 blit_left_whole_char:
-    ldy #8
+    ldy #7
 blit_left:
 .(
-    dey
 l1: lda (spr),y
     ldx sprshiftx
     beq s1
@@ -33,10 +32,9 @@ s1: ora (d),y
 .)
 
 blit_right_whole_char:
-    ldy #8
+    ldy #7
 blit_right:
 .(
-    dey
 l1: lda (spr),y
     ldx sprshiftx
     beq s1

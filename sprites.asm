@@ -228,7 +228,7 @@ draw_sprite:
     clc
     adc sprshifty
     sta d
-    lda #8
+    lda #7
     sec
     sbc sprshifty
     sta counter_u
@@ -242,11 +242,12 @@ draw_sprite:
     inc scry            ; Prepare next line.
     jsr get_char
     lda spr
-    clc
+    stc
     adc counter_u
     sta spr
     sta spr_l
     ldy sprshifty
+    dey
     jsr blit_left
     dec scry
 
@@ -280,6 +281,7 @@ n1:lda sprshiftx        ; No right halves to draw...
     lda spr_l
     sta spr
     ldy sprshifty
+    dey
     jmp blit_right
 
 n2: rts
