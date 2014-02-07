@@ -240,23 +240,29 @@ laser_fun:
     bcc n1
     lda sprites_i,y
     cmp #2
-    beq remove_sprite_xy
+    beq remove_sprite_xyf
 n1: lda sprites_x,x
     clc
     adc #11
     cmp #21*8
-    bcs remove_sprite2
+    bcs remove_sprite2f
     sta sprites_x,x
     rts
 .)
 
+remove_sprite2f:
+    lda #0
+    sta is_firing
+remove_sprite2:
+    jmp remove_sprite
+
+remove_sprite_xyf:
+    lda #0
+    sta is_firing
 remove_sprite_xy:
     jsr remove_sprite
     tya
     tax
-remove_sprite2:
-    lda #0
-    sta is_firing
     jmp remove_sprite
 
 laser_up_fun:
