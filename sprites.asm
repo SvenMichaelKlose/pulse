@@ -27,6 +27,26 @@ l1: lda $9004
 .)
 #endif
 
+#ifndef STATIC
+    ; Call controllers.
+.(
+    ldx #numsprites-1
+l1: lda sprites_h,x
+    beq n1
+    lda sprites_fl,x
+    sta m1+1
+    lda sprites_fh,x
+    sta m1+2
+    txa
+    pha
+m1: jsr $1234
+    pla
+    tax
+n1: dex
+    bpl l1
+.)
+#endif
+
     ; Switch to the unused buffer,
 .(  
     lda sprbank
@@ -101,36 +121,6 @@ n2: lda sprites_h,x
 n1: dex
     bpl l1
 .)
-
-#ifdef TIMING
-    lda #8+black
-    sta $900f
-#endif
-
-#ifndef STATIC
-    ; Call controllers.
-.(
-    ldx #numsprites-1
-l1: lda sprites_h,x
-    beq n1
-    lda sprites_fl,x
-    sta m1+1
-    lda sprites_fh,x
-    sta m1+2
-    txa
-    pha
-m1: jsr $1234
-    pla
-    tax
-n1: dex
-    bpl l1
-.)
-#endif
-
-#ifdef TIMING
-    lda #8+white
-    sta $900f
-#endif
 
     inc framecounter
     rts
