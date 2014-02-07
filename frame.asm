@@ -2,11 +2,14 @@ frame:
     inc framecounter
     lda $9004
     rol
+    adc #0
     rol
+    adc #0
     rol
+    adc #0
     rol
+    adc $9004
     eor random
-    adc random
     sta random
 
 #ifdef TIMING
