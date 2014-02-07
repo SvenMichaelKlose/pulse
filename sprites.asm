@@ -1,8 +1,11 @@
 frame:
     lda $9004
-    eor random
     rol
-    eor framecounter
+    rol
+    rol
+    rol
+    eor random
+    adc random
     sta random
 
 #ifdef TIMING
@@ -34,90 +37,6 @@ l1: lda $9004
 l1: sta sprchar
 .)
 
-bg = $1000+63*8
-
-.(
-    lda #<background
-    sta spr
-    lda #>background
-    sta spr+1
-    lda #$f8
-    sta d
-    ldx #$11
-    lda sprbank
-    beq n1
-    ldx #$13
-n1: stx d+1
-    ldy #7
-    lda #0
-l1: sta (d),y
-    dey
-    bpl l1
-    lda #0
-    sec
-    sbc framecounter
-    and #%110
-    sta sprshiftx
-    ldy #8
-    jsr write_sprite_l
-    lda #8
-    sec
-    sbc sprshiftx
-    sta sprshiftx
-    ldy #8
-    jsr write_sprite_r
-.)
-
-.(
-    lda #<background2
-    sta spr
-    lda #>background2
-    sta spr+1
-    lda #$f0
-    sta d
-    ldx #$11
-    lda sprbank
-    beq n1
-    ldx #$13
-n1: stx d+1
-    ldy #7
-    lda #0
-l1: sta (d),y
-    dey
-    bpl l1
-    lda #0
-    sec
-    sbc framecounter
-    and #%110
-    sta sprshiftx
-    ldy #8
-    jsr write_sprite_l
-    lda #8
-    sec
-    sbc sprshiftx
-    sta sprshiftx
-    ldy #8
-    jsr write_sprite_r
-.)
-
-.(
-    lda framecounter
-    bne n1
-    ldx #22
-l1: lda #$3f
-    sta screen+20*22,x
-    lda #$3e
-    sta screen+21*22,x
-    sta screen+22*22,x
-    lda #yellow+8
-    sta colors+20*22,x
-    sta colors+21*22,x
-    sta colors+22*22,x
-    dex
-    bpl l1
-    n1:
-.)
-    
     ; Draw all sprites.
 .(
     ldx #0
@@ -259,7 +178,7 @@ draw_sprite:
     sbc sprshifty
     sta counter_u
     tay
-    jsr write_sprite_l
+    jsr blit_left
 
     lda sprshifty       ; No lower half to draw...
     beq n1
@@ -273,7 +192,7 @@ draw_sprite:
     sta spr
     sta spr_l
     ldy sprshifty
-    jsr write_sprite_l
+    jsr blit_left
     dec scry
 
 n1:lda sprshiftx        ; No right halves to draw...
@@ -295,7 +214,7 @@ n1:lda sprshiftx        ; No right halves to draw...
     lda spr_u
     sta spr
     ldy counter_u
-    jsr write_sprite_r
+    jsr blit_right
 
     lda sprshifty       ; No lower half to draw...
     beq n2
@@ -306,71 +225,7 @@ n1:lda sprshiftx        ; No right halves to draw...
     lda spr_l
     sta spr
     ldy sprshifty
-    jmp write_sprite_r
+    jmp blit_right
 
 n2: rts
-.)
-
-write_sprite_l:
-.(
-    dey
-l1: lda (spr),y
-    ldx sprshiftx
-    beq s1
-s2: lsr
-    dex
-    beq s1
-    lsr
-    dex
-    beq s1
-    lsr
-    dex
-    beq s1
-    lsr
-    dex
-    beq s1
-    lsr
-    dex
-    beq s1
-    lsr
-    dex
-    beq s1
-    lsr
-s1: ora (d),y
-    sta (d),y
-    dey
-    bpl l1
-    rts
-.)
-
-write_sprite_r:
-.(
-    dey
-l1: lda (spr),y
-    ldx sprshiftx
-    beq s1
-s2: asl
-    dex
-    beq s1
-    asl
-    dex
-    beq s1
-    asl
-    dex
-    beq s1
-    asl
-    dex
-    beq s1
-    asl
-    dex
-    beq s1
-    asl
-    dex
-    beq s1
-    asl
-s1: ora (d),y
-    sta (d),y
-    dey
-    bpl l1
-    rts
 .)
