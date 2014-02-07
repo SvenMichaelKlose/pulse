@@ -20,5 +20,4 @@
 #include "chars.asm"
 #include "screen.asm"
 #include "gfx.asm"
-#include "bzero.asm"
 #include "end.asm"
