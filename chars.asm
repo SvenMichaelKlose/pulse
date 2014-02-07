@@ -38,18 +38,17 @@ get_char_addrx:
 
     ; Get char address.
 get_char_addr:
-    clc
-    rol
-    adc #0
-    rol
-    adc #0
-    rol
-    adc #0
-    tax
-    and #%11111000
+    sta tmp
+    asl
+    asl
+    asl
     sta d
-    txa
-    and #%00000111
+    lda tmp
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
     ora #>chars
     sta d+1
     rts
