@@ -15,6 +15,7 @@
 #include "main.asm"
 #include "frame.asm"
 #include "controllers.asm"
+#include "background.asm"
 #include "sprites.asm"
 #include "blitter.asm"
 #include "chars.asm"
