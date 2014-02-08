@@ -28,7 +28,7 @@ l1: lda $9004
     lda sprbank
     eor #sprbufmask
     sta sprbank
-    ora #1
+    ora #first_char
     sta sprchar
 .)
 

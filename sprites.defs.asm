@@ -2,6 +2,7 @@ numsprites  = 16
 numchars    = 128
 
 chars       = $1000
+first_char  = 1
 charsize    = numchars * 8
 charmask    = numchars - 1
 sprbufsize  = charsize / 2

@@ -139,7 +139,7 @@ clear_right:
 n4: cmp #<background
     bne n2
     lda sprbank         ; Plot foreground char.
-    ora #1
+    ora #first_char
     jmp n3
 n2: lda bricks_c,x      ; Plot right char.
     clc
