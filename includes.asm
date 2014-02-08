@@ -1,8 +1,8 @@
 /*
 #define STATIC
 #define MASSACRE
-*/
 #define SHOW_CHARSET
+*/
 
 #ifdef STATIC
 #define TIMING

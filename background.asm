@@ -43,6 +43,15 @@ init_background:
     sty leftmost_brick
     rts
 
+draw_middlechar:
+    jsr alloc_char
+    lda tmp2
+    sta sprshiftx
+    jsr blit_left_whole_char
+    lda tmp3
+    sta sprshiftx
+    jsr blit_right_whole_char
+
 ret1:
     rts
 draw_background:
@@ -61,22 +70,25 @@ i1: sta bricks_c,x
     bne n1
     inc scrollchars
 n1: dec scroll
-
-    jsr alloc_char
     lda scroll
     and #%110
     sta sprshiftx
+    and #7
     sta tmp2
-    lda #<background
-    sta spr
-    jsr blit_left_whole_char
-
     lda #8
     sec
     sbc sprshiftx
+    and #7
     sta sprshiftx
     sta tmp3
-    jsr blit_right_whole_char
+
+    lda #<background
+    sta spr
+    jsr draw_middlechar
+
+    lda #<bg_t
+    sta spr
+    jsr draw_middlechar
 
     ldx leftmost_brick
     stx counter
@@ -141,7 +153,12 @@ n4: cmp #<background
     lda sprbank         ; Plot foreground char.
     ora #first_char
     jmp n3
-n2: lda bricks_c,x      ; Plot right char.
+n2: cmp #<bg_t
+    bne n5
+    lda sprbank
+    ora #2
+    jmp n3
+n5: lda bricks_c,x      ; Plot right char.
     clc
     adc #1
 n3: ldy #0
@@ -194,8 +211,5 @@ s3: ldx counter
     sta sprshiftx
     jsr blit_left_whole_char
 
-s4: ldx counter
-    lda scrbricks_i,x
-    tax
-    jmp restart_plotting_chars
+s4: jmp restart_plotting_chars
 .)
