@@ -91,7 +91,7 @@ is_firing: .byte 0
 player_fun:
 .(
     jsr find_hit
-    bcc c1
+jmp c1 ;    bcc c1
     lda sprites_i,y
     cmp #2
     bne c1
@@ -150,7 +150,7 @@ n4: lda #0              ;Fetch rest of joystick status.
     lda $9120
     and #%10000000
     bne n5
-    jmp sprite_right
+    jsr sprite_right
     jmp sprite_right
 n5: rts
 .)

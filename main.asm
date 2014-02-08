@@ -67,7 +67,7 @@ mainloop:
 .(
 #ifndef STATIC
     lda framecounter
-    and #%11111
+    and #%111111
     bne l1
     lda random
     and #127
