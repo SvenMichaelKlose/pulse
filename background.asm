@@ -1,34 +1,39 @@
 scrbricks_i:.byte 0, 1
-            .byte 0, 1
-            .byte 0, 1
-            .byte 0, 1
-            .byte 0, 1
-            .byte 0, 1
-            .byte 0, 1
-            .byte 0, 1
+            .byte 2, 3
+            .byte 2, 3
+            .byte 2, 3
+            .byte 2, 3
+            .byte 2, 3
+            .byte 2, 3
+            .byte 4, 5
             .byte $ff
 scrbricks_x:.byte 22, 28
-            .byte 23, 29
-            .byte 24, 30
-            .byte 25, 31
-            .byte 26, 32
-            .byte 27, 33
-            .byte 28, 34
-            .byte 29, 35
-scrbricks_y:.byte 14, 14
-            .byte 15, 15
+            .byte 22, 28
+            .byte 22, 28
+            .byte 22, 28
+            .byte 22, 28
+            .byte 22, 28
+            .byte 22, 28
+            .byte 28, 45
+scrbricks_y:.byte 15, 15
             .byte 16, 16
             .byte 17, 17
             .byte 18, 18
             .byte 19, 19
             .byte 20, 20
             .byte 21, 21
+            .byte 22, 22
 
 bricks_c:   .byte 0, 0, 0, 0
-bricks_col: .byte yellow+8, yellow+8, 0, 0
-bricks_l:   .byte 0, <background, 0, 0
-bricks_m:   .byte <background, <background, 0, 0
-bricks_r:   .byte <background, 0, 0, 0
+            .byte 0, 0
+bricks_col: .byte yellow+8, yellow+8, yellow+8, yellow+8
+            .byte yellow+8, yellow+8
+bricks_l:   .byte 0, <bg_t, 0, <background
+            .byte <background, <bg_t
+bricks_m:   .byte <bg_tl, <bg_tr, <bg_l, <bg_r
+            .byte <bg_dl, <bg_dr
+bricks_r:   .byte <bg_t, 0, <background, 0
+            .byte <bg_t, <background
 
 init_background:
     ldy #0
@@ -44,7 +49,7 @@ draw_background:
 .(
     lda #0
     sta sprshifty
-    ldx #3
+    ldx #bricks_col-bricks_c-1
 i1: sta bricks_c,x
     dex
     bpl i1
@@ -69,7 +74,6 @@ n1: dec scroll
     lda #8
     sec
     sbc sprshiftx
-    and #7
     sta sprshiftx
     sta tmp3
     jsr blit_right_whole_char
@@ -135,7 +139,6 @@ clear_right:
 n4: cmp #<background
     bne n2
     lda sprbank         ; Plot foreground char.
-    bne n3
     ora #1
     jmp n3
 n2: lda bricks_c,x      ; Plot right char.

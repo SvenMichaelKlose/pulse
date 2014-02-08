@@ -28,9 +28,8 @@ l1: lda $9004
     lda sprbank
     eor #sprbufmask
     sta sprbank
-    bne l1
     ora #1
-l1: sta sprchar
+    sta sprchar
 .)
 
 #ifdef SHOW_CHARSET
