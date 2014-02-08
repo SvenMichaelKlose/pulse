@@ -22,6 +22,37 @@ frame:
 l1: lda $9004
     bne l1
 .)
+
+    ; Switch to the unused buffer,
+.(  
+    lda sprbank
+    eor #sprbufmask
+    sta sprbank
+    bne l1
+    ora #1
+l1: sta sprchar
+.)
+
+#ifdef SHOW_CHARSET
+.(
+    ldx #255
+    lda #0
+l3: sta $1000,x
+    sta $1100,x
+    sta $1200,x
+    sta $1300,x
+    dex
+;    bne l3
+    ldx #numchars-1
+l2: txa
+    sta screen,x
+    lda #white
+    sta colors,x
+    dex
+    bpl l2
+.)
+#endif
+
 #ifdef TIMING
 .(
     lda #8+white
@@ -49,15 +80,6 @@ n1: dex
 .)
 #endif
 
-    ; Switch to the unused buffer,
-.(  
-    lda sprbank
-    eor #sprbufmask
-    sta sprbank
-    bne l1
-    ora #1
-l1: sta sprchar
-.)
-
     jsr draw_background
-    jmp draw_sprites
+    jsr draw_sprites
+    rts

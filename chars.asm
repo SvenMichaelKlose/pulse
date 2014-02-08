@@ -3,9 +3,9 @@ alloc_char:
     lda sprchar     ; Pick fresh one from top.
     inc sprchar     ; Increment for next allocation.
     and #%01111111  ; Avoid hitting code.
-    pha             ; Delay screen write to reduce artifacts.
+    pha
     jsr get_char_addr
-    tya             ; Clear the new char.
+    lda #0          ; Clear the new char.
     ldy #7
 l3: sta (d),y
     dey

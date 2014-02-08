@@ -65,7 +65,6 @@ l1: lda #0
 
 mainloop:
 .(
-  jmp skip
 #ifndef STATIC
     lda framecounter
     and #%11111
@@ -82,24 +81,6 @@ mainloop:
 l1:
 #endif
 skip:
-
-#ifdef SHOW_CHARSET
-    ldx #255
-    lda #0
-l3: sta $1000,x
-    sta $1100,x
-    sta $1200,x
-    sta $1300,x
-    dex
-    bne l3
-    ldx #numchars-1
-l2: txa
-    sta screen,x
-    lda #white
-    sta colors,x
-    dex
-    bpl l2
-#endif
 
     jsr frame
     jmp mainloop

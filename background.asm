@@ -1,100 +1,167 @@
-scrbricks:  .byte $00, $ff
-bricks_x:   .byte 21
-bricks_y:   .byte 18
-bricks_c:   .byte $00
+scrbricks_i:.byte 0, 0, 0, 0, $ff
+scrbricks_x:.byte 21, 21, 21, 21
+scrbricks_y:.byte 18, 19, 20, 21
 
-bricks_col: .byte yellow+8
-bricks_l:   .byte <background
-bricks_m:   .byte <background
-bricks_r:   .byte <background
+bricks_c:   .byte 0, 0, 0, 0
+bricks_col: .byte yellow+8, 0, 0, 0
+bricks_l:   .byte <background, 0, 0, 0
+bricks_m:   .byte <background, 0, 0, 0
+bricks_r:   .byte <background, 0, 0, 0
 
 init_background:
-    lda #0
-    sta leftmost_brick
-    sta scroll
-    sta scrollchars
-add_brick:
+    ldy #0
+    dey
+    sty leftmost_brick
+    sty scroll
+    sty scrollchars
     rts
 
 ret1:
-    inc sprchar
     rts
 draw_background:
 .(
     lda #0
     sta sprshifty
+    ldx #3
+i1: sta bricks_c,x
+    dex
+    bpl i1
+
     lda #>background
     sta spr+1
     inc scroll
     lda scroll
     and #%111
-    bne s1
+    bne n1
     inc scrollchars
-s1: ldx leftmost_brick
-    stx tmp
-l1: ldx tmp             ; Screen brick.
-    inc tmp
-    lda scrbricks,x
+n1:
+
+    jsr alloc_char
+    lda scroll
+    and #%110
+    sta sprshiftx
+    sta tmp2
+    lda #<background
+    sta spr
+    jsr blit_right_whole_char
+
+    lda #8
+    sec
+    sbc sprshiftx
+    and #7
+    sta sprshiftx
+    sta tmp3
+    jsr blit_left_whole_char
+
+    ldx leftmost_brick
+    stx counter
+next_brick:
+    inc counter
+retry_brick:
+    ldx counter         ; Screen brick.
+    lda scrbricks_i,x
     bmi ret1            ; No more bricks to draw.
-    tax
-    lda bricks_x,x
+
+    lda scrbricks_x,x
     sec                 ; Move brick left in matters of progressed scrolling.
     sbc scrollchars
     cmp #$ff            ; Brick outside screen?
-    bne n1
-    inc leftmost_brick  ; Remove left brick.
-;    jsr add_brick       ; Add new on right.
-;    lda bricks_x,y
-;    clc
-;    adc scrollchars
-;    sta bricks_x,y
-    jmp s1
-n1: sta scrx            ; Get screen address.
-    lda bricks_y,x
+    bne plot_chars
+    lda #21
+    clc
+    adc scrollchars
+    sta scrbricks_x,x
+    jmp retry_brick
+
+plot_chars:
+    cmp #22
+    bcs next_brick
+    sta scrx            ; Get screen address.
+    lda scrbricks_y,x
     sta scry
     jsr scrcoladdr
-d1: lda bricks_col,x    ; Set color.
+    lda scrbricks_i,x
+    tax
+    lda bricks_col,x    ; Set color.
     ldy #0
     sta (col),y
-    lda bricks_c,x      ; Plot first char.
-    beq n2              ; Need to make the chars first...
-    sta (scr),y
-    inc scrx            ; Plot second char.
-    ldy scrx
-    cpy #22             ; Ignore off-screen char.
-    beq l1
-    jsr scrcoladdr
+
+restart_plotting_chars:
+    ldx counter
+    lda scrbricks_i,x
+    tax
+    lda bricks_c,x
+    beq draw_chars
     ldy #0
     sta (scr),y
-    jmp l1
-n2: lda scroll          ; Draw brick to charset.
-    and #%111
-    sta sprshiftx
-    sta tmp
-    lda sprchar
-    sta bricks_c,x      ; Save starting char of brick.
+    inc scrx
+    lda scrx
+    cmp #22
+    beq next_brick
+    jsr scraddr
+    lda tmp2
+    bne n2
+    lda bricks_r,x
+    bne n4
+    lda #0
+    jmp n3
+n4: cmp #<background
+    bne n2
+    lda sprbank
+    bne n3
+    ora #1
+    jmp n3
+n2: lda bricks_c,x
+    clc
+    adc #1
+n3: ldy #0
+    sta (scr),y
+    jmp next_brick
+
+draw_chars:
+    ldx counter
+    lda scrbricks_i,x
+    tax
     jsr alloc_char
+    sta bricks_c,x
+
+    lda tmp2
+    sta sprshiftx
     lda bricks_l,x
     sta spr
     jsr blit_right_whole_char
+
+    lda tmp3
+    sta sprshiftx
+    ldx counter
+    lda scrbricks_i,x
+    tax
     lda bricks_m,x
     sta spr
-    sec                 ; Invert shift for right sides.
-    sbc sprshiftx
-    sta sprshiftx
     jsr blit_left_whole_char
-    inc sprchar
-    lda d
-    clc
-    adc #8
-    sta d
+
+    lda tmp2
+    sta sprshiftx
+    jsr alloc_char
+
+    ldx counter
+    lda scrbricks_i,x
+    tax
     lda bricks_r,x
     sta spr
-    jsr blit_left_whole_char
-    lda tmp
+    jsr blit_right_whole_char
+
+    lda tmp3
     sta sprshiftx
+    ldx counter
+    lda scrbricks_i,x
+    tax
     lda bricks_m,x
     sta spr
-    jsr blit_right_whole_char
-    jmp d1
+    jsr blit_left_whole_char
+
+    ldx counter
+    lda scrbricks_i,x
+    tax
+    jmp restart_plotting_chars
 .)
