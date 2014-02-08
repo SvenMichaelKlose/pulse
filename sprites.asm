@@ -216,8 +216,11 @@ draw_sprite:
     ; Get shifts
     lda sprites_x,x
     and #%111
-    sta sprshiftx
     sta sprshiftxl
+    lda #8
+    sec
+    sbc sprshiftxl
+    sta sprshiftxr
     lda sprites_y,x
     and #%111
     sta sprshifty
@@ -251,14 +254,8 @@ draw_sprite:
     jsr blit_left
     dec scry
 
-n1:lda sprshiftx        ; No right halves to draw...
+n1: lda sprshiftxl      ; No right halves to draw...
     beq n2
-
-    ; Get shift for the right half.
-    lda #8
-    sec
-    sbc sprshiftx
-    sta sprshiftx
 
     ; Draw upper right
     inc scrx            ; Prepare next line.

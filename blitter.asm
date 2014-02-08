@@ -3,7 +3,7 @@ blit_left_whole_char:
 blit_left:
 .(
 l1: lda (spr),y
-    ldx sprshiftx
+    ldx sprshiftxl
     beq s1
 s2: lsr
     dex
@@ -36,7 +36,7 @@ blit_right_whole_char:
 blit_right:
 .(
 l1: lda (spr),y
-    ldx sprshiftx
+    ldx sprshiftxr
     beq s1
 s2: asl
     dex

@@ -34,14 +34,6 @@ l1: lda $9004
 
 #ifdef SHOW_CHARSET
 .(
-    ldx #255
-    lda #0
-l3: sta $1000,x
-    sta $1100,x
-    sta $1200,x
-    sta $1300,x
-    dex
-;    bne l3
     ldx #numchars-1
 l2: txa
     sta screen,x

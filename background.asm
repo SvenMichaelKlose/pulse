@@ -44,13 +44,21 @@ init_background:
     rts
 
 draw_middlechar:
+.(
     jsr alloc_char
-    lda tmp2
-    sta sprshiftx
     jsr blit_left_whole_char
-    lda tmp3
-    sta sprshiftx
     jsr blit_right_whole_char
+    lda d+1
+    eor #sprbufmask
+    sta s+1
+    lda d
+    sta s
+    ldy #7
+l1: lda (d),y
+    sta (s),y
+    dey
+    bpl l1
+.)
 
 ret1:
     rts
@@ -70,17 +78,16 @@ i1: sta bricks_c,x
     bne n1
     inc scrollchars
 n1: dec scroll
+
     lda scroll
     and #%110
-    sta sprshiftx
     and #7
-    sta tmp2
+    sta sprshiftxl
     lda #8
     sec
-    sbc sprshiftx
+    sbc sprshiftxl
     and #7
-    sta sprshiftx
-    sta tmp3
+    sta sprshiftxr
 
     lda #<background
     sta spr
@@ -97,6 +104,7 @@ next_brick:
 retry_brick:
     ldx counter         ; Screen brick.
     lda scrbricks_i,x
+    sta tmp2
     bmi ret1            ; No more bricks to draw.
 
     lda scrbricks_y,x
@@ -122,29 +130,23 @@ new_brick:
 plot_chars:
     lda scrx
     jsr scrcoladdr
-    lda scrbricks_i,x
-    tax
+    ldx tmp2
     lda bricks_col,x    ; Set color.
     ldy #0
     sta (col),y
 restart_plotting_chars:
-    ldx counter
-    lda scrbricks_i,x
-    tax
     lda bricks_c,x
     beq draw_chars
     ldy #0
     sta (scr),y
 clear_right:
-    ldx counter
-    lda scrbricks_i,x
-    tax
+    ldx tmp2
     inc scrx
     lda scrx
     cmp #22
     bcs next_brick
     jsr scraddr
-    lda tmp2
+    lda sprshiftxl
     bne n2
     lda bricks_r,x
     beq n3              ; Plot background char.
@@ -166,50 +168,35 @@ n3: ldy #0
     jmp next_brick
 
 draw_chars:
-    ldx counter
-    lda scrbricks_i,x
-    tax
     jsr alloc_char
+    ldx tmp2
     sta bricks_c,x
 
     lda bricks_l,x
     beq s1
     sta spr
-    lda tmp3
-    sta sprshiftx
     jsr blit_right_whole_char
 
-s1: ldx counter
-    lda scrbricks_i,x
-    tax
+s1: ldx tmp2
     lda bricks_m,x
     beq s2
     sta spr
-    lda tmp2
-    sta sprshiftx
     jsr blit_left_whole_char
 
-s2: lda tmp3
-    sta sprshiftx
-    jsr alloc_char
+s2: jsr alloc_char
 
-    ldx counter
-    lda scrbricks_i,x
-    tax
+    ldx tmp2
     lda bricks_m,x
     beq s3
     sta spr
     jsr blit_right_whole_char
 
-s3: ldx counter
-    lda scrbricks_i,x
-    tax
+s3: ldx tmp2
     lda bricks_r,x
     beq s4
     sta spr
-    lda tmp2
-    sta sprshiftx
     jsr blit_left_whole_char
 
-s4: jmp restart_plotting_chars
+s4: ldx tmp2
+    jmp restart_plotting_chars
 .)

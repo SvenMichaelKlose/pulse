@@ -53,12 +53,12 @@ bullet:
 background:
     .byte %01010101
     .byte %01010101
+    .byte %01000101
+    .byte %01010101
+    .byte %01010000
     .byte %01010101
     .byte %01010101
-    .byte %01010101
-    .byte %01010101
-    .byte %01010101
-    .byte %01010101
+    .byte %01000000
 
 bg_tl:
     .byte %11111111
