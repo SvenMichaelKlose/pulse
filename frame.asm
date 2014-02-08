@@ -1,12 +1,10 @@
 frame:
     inc framecounter
     lda $9004
+    cmp #$80
     rol
-    adc #0
     rol
-    adc #0
     rol
-    adc #0
     rol
     adc $9004
     eor random
@@ -61,4 +59,5 @@ n1: dex
 l1: sta sprchar
 .)
 
+    jsr draw_background
     jmp draw_sprites

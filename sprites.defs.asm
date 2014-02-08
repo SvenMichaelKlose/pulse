@@ -29,7 +29,7 @@ random      = $18
 scroll      = $19
 scrollchars = $1a
 leftmost_brick = $1b
-scrbricks   = $1c
+;scrbricks   = $1c
 
 sprites_l   = $20   ; Low character address.
 sprites_h   = $30   ; High character address.
@@ -42,9 +42,9 @@ sprites_fh  = $90   ; Function controlling the sprite.
 sprites_fl  = $a0   ; Function controlling the sprite.
 sprites_i   = $b0   ; Whatever the function needs.
 
-bricks_x    = $c0
-bricks_y    = $d0
-bricks_c    = $e0
-bricks_l    = $f0
-bricks_m    = $100
-bricks_r    = $110
+;bricks_x    = $c0
+;bricks_y    = $d0
+;bricks_c    = $e0
+;bricks_l    = $f0
+;bricks_m    = $100
+;bricks_r    = $110
