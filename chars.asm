@@ -1,6 +1,17 @@
+alloc_squeeze:
+    lda sprbank
+    ora #1
+    jmp fetch_char
+
 alloc_char:
+.(
     lda sprchar     ; Pick fresh one from top.
+    tax
+    and #framechars/2
+    bne alloc_squeeze
+    txa
     inc sprchar     ; Increment for next allocation.
+.)
 
 fetch_char:
 .(
@@ -24,6 +35,9 @@ get_char:
     lda (scr),y
     beq l2
     tax
+    and #framechars/2
+    bne fake_addr
+    txa
     and #sprbufmask
     cmp sprbank
     beq get_char_addrx
@@ -32,6 +46,11 @@ l2: jsr alloc_char
     sta (scr),y
     lda curcol
     sta (col),y
+    rts
+
+fake_addr:
+    lda #0
+    sta d+1
     rts
 .)
 
@@ -60,6 +79,9 @@ clear_char:
 .(
     jsr scraddr
     ldy #0
+    lda (scr),y
+    and #framechars/2
+    bne e1
     lda (scr),y
     beq e1
     and #sprbufmask
