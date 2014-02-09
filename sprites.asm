@@ -1,3 +1,5 @@
+addedsprites: .byt 0
+
 add_sprite:
 .(
     txa
@@ -30,6 +32,7 @@ l1: lda sprites_h,x
     sta sprites_fh,x
     pla
     tax
+    inc addedsprites
     rts
 l2: dex
     bpl l1
@@ -39,6 +42,7 @@ l2: dex
 .)
 
 remove_sprite:
+    dec addedsprites
     lda #0
     sta sprites_h,x
     rts

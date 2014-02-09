@@ -14,6 +14,7 @@ l1: lda #0
 
     lda #0
     sta framecounter
+    sta addedsprites
     sta is_firing
     jsr init_background
 
@@ -66,8 +67,11 @@ l1: lda #0
 mainloop:
 .(
 #ifndef STATIC
+    lda addedsprites
+    cmp #13
+    bcs l1
     lda framecounter
-    and #%11111
+    and #%1111
     bne l1
     lda random
     and #127
