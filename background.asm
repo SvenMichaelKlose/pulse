@@ -64,7 +64,7 @@ init_background:
 
 fetch_bgchar:
     lda bgchar
-    dec bgchar
+    inc bgchar
     jmp fetch_char
 
 draw_tailchar:
@@ -106,7 +106,7 @@ i1: sta bricks_c,x
     lda #>background
     sta s+1
 
-    lda #framechars-1
+    lda #framechars/2+framechars/4
     ora sprbank
     sta bgchar
 
@@ -180,8 +180,8 @@ draw_right:
     lda sprshiftxl
     beq plot_trail      ; No shift, plot trail.
     lda bricks_c,x      ; Plot regular right char.
-    sec
-    sbc #1
+    clc
+    adc #1
 plot:
     ldy #0
     sta (scr),y
@@ -192,13 +192,13 @@ plot_trail:
     cmp #<background
     bne try_foreground
     lda sprbank         ; Plot foreground char.
-    ora #framechars-1
+    ora #framechars/2+framechars/4
     jmp plot
 try_foreground:
     cmp #<bg_t
     bne next_brick
     lda sprbank
-    ora #framechars-2
+    ora #framechars/2+framechars/4+1
     jmp plot
 
 new_brick:
