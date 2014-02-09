@@ -54,7 +54,7 @@ e1: rts
 sprite_down:
 .(
     lda sprites_y,x
-    cmp #18*8
+    cmp #22*8
     bcs e1
     inc sprites_y,x
 e1: rts

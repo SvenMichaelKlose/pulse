@@ -57,7 +57,7 @@ n1: lda sprites_x,x
     lda sprites_y,x
     sec
     sbc #8
-    bmi remove_sprite2
+    bcc remove_sprite2
     sta sprites_y,x
     rts
 .)
@@ -78,7 +78,7 @@ n1: lda sprites_x,x
     lda sprites_y,x
     clc
     adc #8
-    cmp #19*8
+    cmp #22*8
     bcs remove_sprite2
     sta sprites_y,x
     rts
