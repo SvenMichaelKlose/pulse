@@ -135,9 +135,13 @@ n1: tya
     bne n2
     jsr sprite_up
     jsr sprite_up
+    jsr sprite_up
+    jsr sprite_up
 n2: tya
     and #%00001000
     bne n3
+    jsr sprite_down
+    jsr sprite_down
     jsr sprite_down
     jsr sprite_down
 n3: tya
