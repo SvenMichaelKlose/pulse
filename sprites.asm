@@ -128,9 +128,9 @@ draw_sprites:
 l1: lda sprites_h,x     ; Skip unallocated sprites.
     beq n1
 
-    sta spr+1
+    sta s+1
     lda sprites_l,x
-    sta spr
+    sta s
 
 #ifdef TIMING
     txa
@@ -193,7 +193,7 @@ n1: dex
 ; Draw a single sprite.
 draw_sprite:
 .(
-    lda spr
+    lda s
     sta spr_u
 
     lda sprites_c,x
@@ -245,7 +245,7 @@ draw_sprite:
     ; Draw lower half of char.
     inc scry            ; Prepare next line.
     jsr get_char
-    lda spr
+    lda s
     stc
     adc counter_u
     sta spr_l

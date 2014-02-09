@@ -8,12 +8,14 @@ charmask    = numchars - 1
 sprbufsize  = charsize / 2
 sprbufmask  = numchars / 2
 
+s           = $00
+d           = $02
+c           = $04
 scr         = $04
 col         = $06
 scrx        = $08
 scry        = $09
 curcol      = $0a
-spr         = $0b
 sprchar     = $0d
 sprshiftxl  = $0e
 sprshiftxr  = $0f

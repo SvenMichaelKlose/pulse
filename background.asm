@@ -40,20 +40,20 @@ init_background:
 
 draw_tailchar:
 .(
-    sta spr
+    sta s
     jsr alloc_char
-    lda spr
+    lda s
     jsr blit_left_whole_char
-    lda spr
+    lda s
     jsr blit_right_whole_char
     lda d+1
     eor #sprbufmask
-    sta s+1
+    sta scr+1
     lda d
-    sta s
+    sta scr
     ldy #7
 l1: lda (d),y
-    sta (s),y
+    sta (scr),y
     dey
     bpl l1
 .)
@@ -70,7 +70,7 @@ i1: sta bricks_c,x
     bpl i1
 
     lda #>background
-    sta spr+1
+    sta s+1
 
     lda scroll
     and #%111

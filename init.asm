@@ -1,9 +1,5 @@
 realstart   = $1000 + charsize
 
-d           = $00
-s           = $02
-c           = $04
-
 main:
     cli
     lda #$7f

@@ -2,8 +2,8 @@ blit_left_whole_char:
     ldy #7
 blit_left:
 .(
-    sta spr
-l1: lda (spr),y
+    sta s
+l1: lda (s),y
     ldx sprshiftxl
     beq s1
 s2: lsr
@@ -36,8 +36,8 @@ blit_right_whole_char:
     ldy #7
 blit_right:
 .(
-    sta spr
-l1: lda (spr),y
+    sta s
+l1: lda (s),y
     ldx sprshiftxr
     beq s1
 s2: asl
