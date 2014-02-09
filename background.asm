@@ -56,9 +56,14 @@ l1: lda (d),y
     sta (scr),y
     dey
     bpl l1
+    rts
 .)
 
 ret1:
+#ifdef TIMING
+    lda #8+blue
+    sta $900f
+#endif
     rts
 
 draw_background:
@@ -114,6 +119,10 @@ retry_brick:
     lda bricks_c,x
     beq draw_chars
 restart_plotting_chars:
+#ifdef TIMING
+    lda #8+red
+    sta $900f
+#endif
     ldx tmp2
     lda scrx
     cmp #$ff
@@ -168,6 +177,10 @@ new_brick:
     jmp next_brick
 
 draw_chars:
+#ifdef TIMING
+    lda #8+yellow
+    sta $900f
+#endif
     jsr alloc_char
     ldx tmp2
     sta bricks_c,x
