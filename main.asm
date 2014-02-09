@@ -21,40 +21,6 @@ l1: lda #0
     ldy #player_init-sprite_inits
     jsr add_sprite
 #ifdef STATIC
-;    ldy #player_init-sprite_inits
-;    lda player_init
-;    clc
-;    adc #17
-;    sta player_init
-;    jsr add_sprite
-;    ldy #player_init-sprite_inits
-;    lda player_init
-;    clc
-;    adc #17
-;    sta player_init
-;    jsr add_sprite
-;    ldy #player_init-sprite_inits
-;    lda player_init
-;    clc
-;    adc #17
-;    sta player_init
-;    jsr add_sprite
-;    ldy #player_init-sprite_inits
-;    lda player_init
-;    clc
-;    adc #17
-;    sta player_init
-;    jsr add_sprite
-;    ldy #player_init-sprite_inits
-;    lda player_init
-;    clc
-;    adc #17
-;    sta player_init
-;    jsr add_sprite
-;    ldy #player_init-sprite_inits
-;    jsr add_sprite
-;    ldy #laser_init-sprite_inits
-;    jsr add_sprite
     ldy #bullet_init-sprite_inits
     jsr add_sprite
 #endif
@@ -71,7 +37,7 @@ mainloop:
     cmp #13
     bcs l1
     lda framecounter
-    and #%1111
+    and #%111
     bne l1
     lda random
     and #127
