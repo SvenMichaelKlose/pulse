@@ -225,13 +225,13 @@ draw_sprite:
     and #%111
     sta sprshifty
 
-    ; Draw upper left half of char.
+    ; Draw upper left.
     jsr get_char
     lda d
     clc
     adc sprshifty
     sta d
-    lda #7
+    lda #8
     sec
     sbc sprshifty
     sta counter_u
@@ -244,11 +244,11 @@ draw_sprite:
 n3: lda sprshifty       ; No lower half to draw...
     beq n1
 
-    ; Draw lower half of char.
+    ; Draw lower left.
     inc scry            ; Prepare next line.
     jsr get_char
     lda s
-    stc
+    clc
     adc counter_u
     sta spr_l
     lda d+1
@@ -262,7 +262,7 @@ n6: dec scry
 n1: lda sprshiftxl      ; No right halves to draw...
     beq n2
 
-    ; Draw upper right
+    ; Draw upper right.
     inc scrx            ; Prepare next line.
     jsr get_char
     lda d+1
@@ -278,7 +278,7 @@ n1: lda sprshiftxl      ; No right halves to draw...
 n4: lda sprshifty       ; No lower half to draw...
     beq n2
 
-    ; Draw lower left
+    ; Draw lower right.
     inc scry
     jsr get_char
     lda d+1
