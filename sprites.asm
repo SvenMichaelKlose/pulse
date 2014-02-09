@@ -172,13 +172,11 @@ l1: lda sprites_ox,x
 n2: lda sprites_h,x
     beq n1
     lda sprites_x,x
-    clc
     lsr
     lsr
     lsr
     sta sprites_ox,x
     lda sprites_y,x
-    clc
     lsr
     lsr
     lsr
@@ -201,13 +199,11 @@ draw_sprite:
 
     ; Get position on screen.
     lda sprites_x,x
-    clc
     lsr
     lsr
     lsr
     sta scrx
     lda sprites_y,x
-    clc
     lsr
     lsr
     lsr
