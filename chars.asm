@@ -7,8 +7,9 @@ alloc_char:
 .(
     lda sprchar     ; Pick fresh one from top.
     tax
-    and #framechars/2
-    bne alloc_squeeze
+    and #framechars/2+framechars/4
+    cmp #framechars/2+framechars/4
+    beq alloc_squeeze
     txa
     inc sprchar     ; Increment for next allocation.
 .)
@@ -35,8 +36,9 @@ get_char:
     lda (scr),y
     beq l2
     tax
-    and #framechars/2
-    bne fake_addr
+    and #framechars/2+framechars/4
+    cmp #framechars/2+framechars/4
+    beq fake_addr
     txa
     and #sprbufmask
     cmp sprbank
@@ -80,8 +82,9 @@ clear_char:
     jsr scraddr
     ldy #0
     lda (scr),y
-    and #framechars/2
-    bne e1
+    and #framechars/2+framechars/4
+    cmp #framechars/2+framechars/4
+    beq e1
     lda (scr),y
     beq e1
     and #sprbufmask
