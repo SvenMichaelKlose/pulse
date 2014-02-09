@@ -122,7 +122,7 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     sta laser_up_init+1
     sta laser_down_init+1
     inc laser_init+1
-    lda #1
+    lda #8
     sta is_firing
     lda #white
     sta sprites_c,x
@@ -138,7 +138,10 @@ s1: ldy #laser_init-sprite_inits
     jsr add_sprite
     pla
     tay
-n1: tya
+n1: lda is_firing
+    beq i1
+    dec is_firing
+i1: tya
     and #%00000100
     bne n2
     jsr sprite_up
