@@ -90,6 +90,8 @@ has_autofire:     .byte 0
 is_firing: .byte 0
 player_fun:
 .(
+    lda #cyan
+    sta sprites_c,x
     jsr find_hit
 jmp c1 ;    bcc c1
     lda sprites_i,y
@@ -122,6 +124,10 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     inc laser_init+1
     lda #1
     sta is_firing
+    lda #white
+    sta sprites_c,x
+    tya
+    pha
     lda has_double_laser
     beq s1
     ldy #laser_up_init-sprite_inits
@@ -129,7 +135,9 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
 s1: ldy #laser_init-sprite_inits
-    jmp add_sprite
+    jsr add_sprite
+    pla
+    tay
 n1: tya
     and #%00000100
     bne n2
