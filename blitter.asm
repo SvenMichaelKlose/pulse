@@ -2,6 +2,7 @@ blit_left_whole_char:
     ldy #7
 blit_left:
 .(
+    sta spr
 l1: lda (spr),y
     ldx sprshiftxl
     beq s1
@@ -35,6 +36,7 @@ blit_right_whole_char:
     ldy #7
 blit_right:
 .(
+    sta spr
 l1: lda (spr),y
     ldx sprshiftxr
     beq s1

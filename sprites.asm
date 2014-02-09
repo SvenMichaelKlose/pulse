@@ -236,6 +236,7 @@ draw_sprite:
     sbc sprshifty
     sta counter_u
     tay
+    lda spr_u
     jsr blit_left
 
     lda sprshifty       ; No lower half to draw...
@@ -247,7 +248,6 @@ draw_sprite:
     lda spr
     stc
     adc counter_u
-    sta spr
     sta spr_l
     ldy sprshifty
     dey
@@ -264,9 +264,8 @@ n1: lda sprshiftxl      ; No right halves to draw...
     clc
     adc sprshifty
     sta d
-    lda spr_u
-    sta spr
     ldy counter_u
+    lda spr_u
     jsr blit_right
 
     lda sprshifty       ; No lower half to draw...
@@ -275,10 +274,9 @@ n1: lda sprshiftxl      ; No right halves to draw...
     ; Draw lower left
     inc scry
     jsr get_char
-    lda spr_l
-    sta spr
     ldy sprshifty
     dey
+    lda spr_l
     jmp blit_right
 
 n2: rts

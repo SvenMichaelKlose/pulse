@@ -32,7 +32,6 @@ counter     = $1a
 scroll      = $1b
 scrollchars = $1c
 leftmost_brick = $1d
-;scrbricks   = $1e
 
 sprites_l   = $20   ; Low character address.
 sprites_h   = $30   ; High character address.
