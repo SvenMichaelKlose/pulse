@@ -3,6 +3,7 @@
 #define SHOW_CHARSET
 #define MASSACRE
 */
+#define MASSACRE
 
 #ifdef STATIC
 #define TIMING

@@ -122,7 +122,7 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     sta laser_up_init+1
     sta laser_down_init+1
     inc laser_init+1
-    lda #8
+    lda #fire_interval
     sta is_firing
     lda #white
     sta sprites_c,x
@@ -172,6 +172,12 @@ n5: rts
 
 bullet_fun:
 .(
+    jsr sprite_left
+    jsr sprite_left
+    jsr sprite_left
+    jsr sprite_left
+    jsr sprite_left
+    jsr sprite_left
     jsr sprite_left
     jsr sprite_left
     lda sprites_x,x

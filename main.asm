@@ -37,7 +37,7 @@ mainloop:
     cmp #13
     bcs l1
     lda framecounter
-    and #%111
+    and #%11
     bne l1
     lda random
     and #127

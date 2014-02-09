@@ -9,6 +9,8 @@ sprbufsize  = charsize / 2
 sprbufmask  = numchars / 2
 framechars  = numchars / 2
 
+fire_interval = 5
+
 s           = $00
 d           = $02
 c           = $04
