@@ -191,26 +191,21 @@ draw_chars:
     sta $900f
 #endif
     jsr fetch_bgchar
-    ldx tmp2
     sta bricks_c,x
     lda sprshiftxl
     beq s1
     lda bricks_l,x
     beq s1
     jsr blit_right_whole_char
-    ldx tmp2
 s1: lda bricks_m,x
     jsr blit_left_whole_char
     jsr fetch_bgchar
-    ldx tmp2
     lda sprshiftxl
     beq r1
     lda bricks_m,x
     jsr blit_right_whole_char
-    ldx tmp2
     lda bricks_r,x
     beq r1
     jsr blit_left_whole_char
-r1: ldx tmp2
-    jmp restart_plotting_chars
+r1: jmp restart_plotting_chars
 .)

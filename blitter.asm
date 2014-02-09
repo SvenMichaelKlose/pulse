@@ -3,27 +3,19 @@ blit_left_whole_char:
 blit_left:
 .(
     sta s
+    lda #8
+    clc
+    sbc sprshiftxl
+    sta s3+1
 l1: lda (s),y
-    ldx sprshiftxl
-    beq s1
-s2: lsr
-    dex
-    beq s1
+    clc
+s3: bcc s1
     lsr
-    dex
-    beq s1
     lsr
-    dex
-    beq s1
     lsr
-    dex
-    beq s1
     lsr
-    dex
-    beq s1
     lsr
-    dex
-    beq s1
+    lsr
     lsr
 s1: ora (d),y
     sta (d),y
@@ -37,27 +29,19 @@ blit_right_whole_char:
 blit_right:
 .(
     sta s
+    lda #8
+    clc
+    sbc sprshiftxr
+    sta s3+1
 l1: lda (s),y
-    ldx sprshiftxr
-    beq s1
-s2: asl
-    dex
-    beq s1
+    clc
+s3: bcc s1
     asl
-    dex
-    beq s1
     asl
-    dex
-    beq s1
     asl
-    dex
-    beq s1
     asl
-    dex
-    beq s1
     asl
-    dex
-    beq s1
+    asl
     asl
 s1: ora (d),y
     sta (d),y
