@@ -1,7 +1,9 @@
 alloc_char:
-.(
     lda sprchar     ; Pick fresh one from top.
     inc sprchar     ; Increment for next allocation.
+
+fetch_char:
+.(
     and #%01111111  ; Avoid hitting code.
     pha
     jsr get_char_addr

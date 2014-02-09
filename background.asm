@@ -38,10 +38,15 @@ init_background:
     sty leftmost_brick
     rts
 
+fetch_bgchar:
+    lda bgchar
+    dec bgchar
+    jmp fetch_char
+
 draw_tailchar:
 .(
     sta s
-    jsr alloc_char
+    jsr fetch_bgchar
     lda s
     jsr blit_left_whole_char
     lda s
@@ -76,6 +81,10 @@ i1: sta bricks_c,x
 
     lda #>background
     sta s+1
+
+    lda #framechars-1
+    ora sprbank
+    sta bgchar
 
     lda scroll
     and #%111
@@ -147,8 +156,8 @@ draw_right:
     lda sprshiftxl
     beq plot_trail      ; No shift, plot trail.
     lda bricks_c,x      ; Plot regular right char.
-    clc
-    adc #1
+    sec
+    sbc #1
 plot:
     ldy #0
     sta (scr),y
@@ -159,13 +168,13 @@ plot_trail:
     cmp #<background
     bne try_foreground
     lda sprbank         ; Plot foreground char.
-    ora #first_char
+    ora #framechars-1
     jmp plot
 try_foreground:
     cmp #<bg_t
     bne next_brick
     lda sprbank
-    ora #2
+    ora #framechars-2
     jmp plot
 
 new_brick:
@@ -181,7 +190,7 @@ draw_chars:
     lda #8+yellow
     sta $900f
 #endif
-    jsr alloc_char
+    jsr fetch_bgchar
     ldx tmp2
     sta bricks_c,x
     lda sprshiftxl
@@ -192,7 +201,7 @@ draw_chars:
     ldx tmp2
 s1: lda bricks_m,x
     jsr blit_left_whole_char
-    jsr alloc_char
+    jsr fetch_bgchar
     ldx tmp2
     lda sprshiftxl
     beq r1

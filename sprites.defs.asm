@@ -7,6 +7,7 @@ charsize    = numchars * 8
 charmask    = numchars - 1
 sprbufsize  = charsize / 2
 sprbufmask  = numchars / 2
+framechars  = numchars / 2
 
 s           = $00
 d           = $02
@@ -33,6 +34,7 @@ counter     = $17
 scroll      = $18
 scrollchars = $19
 leftmost_brick = $1a
+bgchar      = $1b
 
 sprites_l   = $20   ; Low character address.
 sprites_h   = $30   ; High character address.
