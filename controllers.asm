@@ -48,17 +48,14 @@ laser_up_fun:
     lda sprites_i,y
     cmp #2
     beq remove_sprite_xy
-n1: lda sprites_x,x
-    clc
-    adc #8
-    cmp #21*8
+n1: lda #8
+    jsr sprite_right
+    jsr test_sprite_out_right
     bcs remove_sprite2
-    sta sprites_x,x
-    lda sprites_y,x
-    sec
-    sbc #8
-    bcc remove_sprite2
-    sta sprites_y,x
+    lda #8
+    jsr sprite_up
+    jsr test_sprite_out_top
+    bcs remove_sprite2
     rts
 .)
 
@@ -69,18 +66,14 @@ laser_down_fun:
     lda sprites_i,y
     cmp #2
     beq remove_sprite_xy
-n1: lda sprites_x,x
-    clc
-    adc #8
-    cmp #21*8
+n1: lda #8
+    jsr sprite_right
+    jsr test_sprite_out_right
     bcs remove_sprite2
-    sta sprites_x,x
-    lda sprites_y,x
-    clc
-    adc #8
-    cmp #22*8
+    lda #8
+    jsr sprite_down
+    jsr test_sprite_out_top
     bcs remove_sprite2
-    sta sprites_y,x
     rts
 .)
 
@@ -144,41 +137,41 @@ n1: lda is_firing
 i1: tya
     and #%00000100
     bne n2
-    jsr sprite_up
-    jsr sprite_up
-    jsr sprite_up
+    lda sprites_y,x
+    beq n2
+    lda #4
     jsr sprite_up
 n2: tya
     and #%00001000
     bne n3
-    jsr sprite_down
-    jsr sprite_down
-    jsr sprite_down
+    lda sprites_y,x
+    cmp #22*8
+    bcs n3
+    lda #4
     jsr sprite_down
 n3: tya
     and #%00010000
     bne n4
-    jsr sprite_left
+    lda sprites_x,x
+    beq n4
+    lda #4
     jsr sprite_left
 n4: lda #0              ;Fetch rest of joystick status.
     sta $9122
     lda $9120
     and #%10000000
     bne n5
-    jsr sprite_right
+    lda sprites_x,x
+    cmp #21*8
+    bcs n5
+    lda #4
     jmp sprite_right
 n5: rts
 .)
 
 bullet_fun:
 .(
-    jsr sprite_left
-    jsr sprite_left
-    jsr sprite_left
-    jsr sprite_left
-    jsr sprite_left
-    jsr sprite_left
-    jsr sprite_left
+    lda #8
     jsr sprite_left
     lda sprites_x,x
     bne l1

@@ -49,36 +49,86 @@ remove_sprite:
 
 sprite_up:
 .(
-    lda sprites_y,x
-    beq e1
-    dec sprites_y,x
-e1: rts
+    eor #$ff
+    clc
+    adc #1
+    clc
+    adc sprites_y,x
+    sta sprites_y,x
+    rts
 .)
 
 sprite_down:
 .(
-    lda sprites_y,x
-    cmp #22*8
-    bcs e1
-    inc sprites_y,x
-e1: rts
+    clc
+    adc sprites_y,x
+    sta sprites_y,x
+    rts
 .)
 
 sprite_left:
 .(
-    lda sprites_x,x
-    beq e1
-    dec sprites_x,x
-e1: rts
+    eor #$ff
+    clc
+    adc #1
+    clc
+    adc sprites_x,x
+    sta sprites_x,x
+    rts
 .)
 
 sprite_right:
 .(
+    clc
+    adc sprites_x,x
+    sta sprites_x,x
+    rts
+.)
+
+test_sprite_out_left:
+.(
     lda sprites_x,x
-    cmp #21*8
-    bcs e1
-    inc sprites_x,x
-e1: rts
+    bpl n1
+    cmp #$100-8
+    bcs n1
+    stc
+    rts
+n1: clc
+    rts
+.)
+
+test_sprite_out_right:
+.(
+    lda sprites_x,x
+    cmp #22*8
+    bcs n1
+    stc
+    rts
+n1: clc
+    rts
+.)
+
+test_sprite_out_top:
+.(
+    lda sprites_y,x
+    bpl n1
+    cmp #$100-8
+    bcs n1
+    stc
+    rts
+n1: clc
+    rts
+.)
+
+test_sprite_out_bottom:
+.(
+    lda sprites_x,x
+    cmp #23*8
+    bcs n1
+    stc
+    rts
+n1: clc
+    rts
 .)
 
 find_hit:
