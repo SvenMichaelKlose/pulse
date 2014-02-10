@@ -4,7 +4,7 @@ add_sprite:
 .(
     txa
     pha
-    ldx #15
+    ldx #numsprites-1
 l1: lda sprites_h,x
     bne l2
     lda sprite_inits,y
@@ -181,24 +181,14 @@ draw_sprites:
     ldx #0
 l1: lda sprites_h,x     ; Skip free slots.
     beq n1
-
     sta s+1
     lda sprites_l,x
     sta s
-
-#ifdef TIMING
-    txa
-    and #7
-    ora #8
-    sta $900f
-#endif
-
     txa
     pha
     jsr draw_sprite
     pla
     tax
-
 n1: inx
     cpx #numsprites
     bne l1
@@ -249,7 +239,6 @@ draw_sprite:
     lda sprites_c,x
     sta curcol
 
-    ; Get position on screen.
     lda sprites_x,x
     lsr
     lsr
@@ -261,7 +250,6 @@ draw_sprite:
     lsr
     sta scry
 
-    ; Get shifts
     lda sprites_x,x
     and #%111
     sta blitter_shift_left
@@ -273,19 +261,21 @@ draw_sprite:
     and #%111
     sta sprite_shift_y
 
-    ; Draw upper left.
-    jsr get_char
-    lda d
-    clc
-    adc sprite_shift_y
-    sta d
     lda #8
     sec
     sbc sprite_shift_y
     sta sprite_height_top
-    tay
+
+    ; Draw upper left.
+    jsr get_char
     lda d+1
     beq n3
+    lda d
+    clc
+    adc sprite_shift_y
+    sta d
+
+    ldy sprite_height_top
     lda sprite_data_top
     jsr blit_left
 

@@ -28,8 +28,26 @@ l3: sta (d),y
     rts
 .)
 
+test_position:
+.(
+    lda scrx
+    bmi i
+    cmp #22
+    bcs i
+    lda scry
+    bmi i
+    cmp #23
+    bcs i
+    clc
+    rts
+i:  stc
+    rts
+.)
+
 get_char:
 .(
+    jsr test_position
+    bcs fake_addr
     jsr scrcoladdr
     ldy #0
     lda (scr),y
@@ -43,7 +61,7 @@ get_char:
     cmp spriteframe
     beq get_char_addrx
 l2: jsr alloc_char
-    iny
+    ldy #0
     sta (scr),y
     lda curcol
     sta (col),y
@@ -78,6 +96,8 @@ get_char_addr:
 ; Remove char if it's not in the current bank.
 clear_char:
 .(
+    jsr test_position
+    bcs e1
     jsr scraddr
     ldy #0
     lda (scr),y

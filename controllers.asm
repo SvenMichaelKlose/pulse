@@ -138,16 +138,19 @@ i1: tya
     and #%00000100
     bne n2
     lda sprites_y,x
-    beq n2
+    cmp #$100-8
+    bcs n2
     lda #4
     jsr sprite_up
 n2: tya
     and #%00001000
     bne n3
     lda sprites_y,x
+    cmp #$100-8
+    bcs n6
     cmp #22*8
     bcs n3
-    lda #4
+n6: lda #4
     jsr sprite_down
 n3: tya
     and #%00010000
@@ -162,7 +165,7 @@ n4: lda #0              ;Fetch rest of joystick status.
     and #%10000000
     bne n5
     lda sprites_x,x
-    cmp #22*8
+    cmp #21*8
     bcs n5
     lda #2
     jmp sprite_right
