@@ -154,7 +154,7 @@ n3: tya
     bne n4
     lda sprites_x,x
     beq n4
-    lda #4
+    lda #2
     jsr sprite_left
 n4: lda #0              ;Fetch rest of joystick status.
     sta $9122
@@ -162,9 +162,9 @@ n4: lda #0              ;Fetch rest of joystick status.
     and #%10000000
     bne n5
     lda sprites_x,x
-    cmp #21*8
+    cmp #22*8
     bcs n5
-    lda #4
+    lda #2
     jmp sprite_right
 n5: rts
 .)
