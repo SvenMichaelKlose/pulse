@@ -5,7 +5,7 @@ blit_left:
     sta s
     lda #8
     clc
-    sbc sprshiftxl
+    sbc blitter_shift_left
     sta s3+1
 l1: lda (s),y
     clc
@@ -31,7 +31,7 @@ blit_right:
     sta s
     lda #8
     clc
-    sbc sprshiftxr
+    sbc blitter_shift_right
     sta s3+1
 l1: lda (s),y
     clc

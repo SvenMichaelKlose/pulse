@@ -12,10 +12,20 @@ l1: lda #0
     bpl l1
 .)
 
+init_charset:
+.(
+    lda #0
+    ldx #7
+l1: sta charset,x
+    dex
+    bpl l1
+.)
+
     lda #0
     sta framecounter
     sta addedsprites
     sta is_firing
+    sta has_double_laser
     jsr init_background
 
     ldy #player_init-sprite_inits
@@ -25,19 +35,15 @@ l1: lda #0
     jsr add_sprite
 #endif
 
-#ifdef MASSACRE
-    lda #1
-    sta has_double_laser
-#endif
-
 mainloop:
 .(
 #ifndef STATIC
+background_stars:
     lda addedsprites
     cmp #13
     bcs l1
     lda framecounter
-    and #%11
+    and #%111
     bne l1
     lda random
     and #127

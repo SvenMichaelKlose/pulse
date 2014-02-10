@@ -1,22 +1,22 @@
 alloc_squeeze:
-    lda sprbank
-    ora #1
+    lda spriteframe
+    ora #first_sprite_char
     jmp fetch_char
 
 alloc_char:
 .(
-    lda sprchar     ; Pick fresh one from top.
+    lda next_sprite_char
     tax
-    and #framechars/2+framechars/4
-    cmp #framechars/2+framechars/4
+    and #foreground
+    cmp #foreground
     beq alloc_squeeze
     txa
-    inc sprchar     ; Increment for next allocation.
+    inc next_sprite_char
 .)
 
 fetch_char:
 .(
-    and #%01111111  ; Avoid hitting code.
+    and #charsetmask
     pha
     jsr get_char_addr
     lda #0          ; Clear the new char.
@@ -28,7 +28,6 @@ l3: sta (d),y
     rts
 .)
 
-; Get or allocate a bitmap char.
 get_char:
 .(
     jsr scrcoladdr
@@ -36,12 +35,12 @@ get_char:
     lda (scr),y
     beq l2
     tax
-    and #framechars/2+framechars/4
-    cmp #framechars/2+framechars/4
+    and #foreground
+    cmp #foreground
     beq fake_addr
     txa
-    and #sprbufmask
-    cmp sprbank
+    and #framemask
+    cmp spriteframe
     beq get_char_addrx
 l2: jsr alloc_char
     iny
@@ -72,7 +71,7 @@ get_char_addr:
     lsr
     lsr
     lsr
-    ora #>chars
+    ora #>charset
     sta d+1
     rts
 
@@ -82,13 +81,13 @@ clear_char:
     jsr scraddr
     ldy #0
     lda (scr),y
-    and #framechars/2+framechars/4
-    cmp #framechars/2+framechars/4
+    and #foreground
+    cmp #foreground
     beq e1
     lda (scr),y
     beq e1
-    and #sprbufmask
-    cmp sprbank
+    and #framemask
+    cmp spriteframe
     beq e1
     tya
     sta (scr),y

@@ -1,5 +1,7 @@
 frame:
     inc framecounter
+
+update_random:
     lda $9004
     cmp #$80
     rol
@@ -10,26 +12,19 @@ frame:
     eor random
     sta random
 
-#ifdef TIMING
-.(
-    lda #8+blue
-    sta $900f
-.)
-#endif
-
-    ; Wait until raster beam leaves the bitmap area.
+wait_retrace:
 .(  
 l1: lda $9004
     bne l1
 .)
 
-    ; Switch to the unused buffer,
+switch_frame:
 .(  
-    lda sprbank
-    eor #sprbufmask
-    sta sprbank
-    ora #first_char
-    sta sprchar
+    lda spriteframe
+    eor #framemask
+    sta spriteframe
+    ora #first_sprite_char
+    sta next_sprite_char
 .)
 
 #ifdef SHOW_CHARSET
@@ -44,15 +39,8 @@ l2: txa
 .)
 #endif
 
-#ifdef TIMING
-.(
-    lda #8+white
-    sta $900f
-.)
-#endif
-
 #ifndef STATIC
-    ; Call controllers.
+call_controllers:
 .(
     ldx #numsprites-1
 l1: lda sprites_h,x

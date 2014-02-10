@@ -1,42 +1,48 @@
-numsprites  = 16
 numchars    = 128
+numsprites  = 16
+charset     = $1000
 
-chars       = $1000
-first_char  = 1
-charsize    = numchars * 8
-charmask    = numchars - 1
-sprbufsize  = charsize / 2
-sprbufmask  = numchars / 2
-framechars  = numchars / 2
+charsetsize         = numchars * 8
+charsetmask         = numchars - 1
+framesize           = charsetsize / 2
+framemask           = numchars / 2
+framechars          = numchars / 2
 
-fire_interval = 5
+first_sprite_char   = 1
+fire_interval       = 5
 
-s           = $00
-d           = $02
-c           = $04
-scr         = $04
-col         = $06
-scrx        = $08
-scry        = $09
-curcol      = $0a
-sprchar     = $0b
-sprshiftxl  = $0c
-sprshiftxr  = $0d
-sprshifty   = $0e
-spr_u       = $0f
-spr_l       = $10
-sprbank     = $11
-counter_u   = $12
-tmp         = $13
-tmp2        = $14
-framecounter = $15
-random      = $16
-counter     = $17
+foreground          = framechars / 2 + framechars / 4
 
-scroll      = $18
-scrollchars = $19
-leftmost_brick = $1a
-bgchar      = $1b
+s                   = $00
+d                   = $02
+c                   = $04
+scr                 = $04
+col                 = $06
+scrx                = $08
+scry                = $09
+curcol              = $0a
+
+blitter_shift_left  = $0b
+blitter_shift_right = $0c
+
+framecounter        = $0d
+
+next_sprite_char    = $0e
+sprite_shift_y      = $0f
+sprite_data_top     = $10
+sprite_data_bottom  = $11
+sprite_height_top   = $12
+spriteframe         = $13
+
+scroll              = $14
+scrollchars         = $15
+leftmost_brick      = $16
+next_foreground_char = $17
+
+random      = $18
+tmp         = $19
+tmp2        = $1a
+counter     = $1b
 
 sprites_l   = $20   ; Low character address.
 sprites_h   = $30   ; High character address.

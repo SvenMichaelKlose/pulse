@@ -129,7 +129,7 @@ c1: pla
 draw_sprites:
 .(
     ldx #0
-l1: lda sprites_h,x     ; Skip unallocated sprites.
+l1: lda sprites_h,x     ; Skip free slots.
     beq n1
 
     sta s+1
@@ -154,7 +154,7 @@ n1: inx
     bne l1
 .)
 
-    ; Remove leftover chars.
+clean_screen:
 .(
     ldx #numsprites-1
 l1: lda sprites_ox,x
@@ -188,15 +188,13 @@ n2: lda sprites_h,x
 n1: dex
     bpl l1
 .)
-
-    inc framecounter
     rts
 
 ; Draw a single sprite.
 draw_sprite:
 .(
     lda s
-    sta spr_u
+    sta sprite_data_top
 
     lda sprites_c,x
     sta curcol
@@ -216,32 +214,32 @@ draw_sprite:
     ; Get shifts
     lda sprites_x,x
     and #%111
-    sta sprshiftxl
+    sta blitter_shift_left
     lda #8
     sec
-    sbc sprshiftxl
-    sta sprshiftxr
+    sbc blitter_shift_left
+    sta blitter_shift_right
     lda sprites_y,x
     and #%111
-    sta sprshifty
+    sta sprite_shift_y
 
     ; Draw upper left.
     jsr get_char
     lda d
     clc
-    adc sprshifty
+    adc sprite_shift_y
     sta d
     lda #8
     sec
-    sbc sprshifty
-    sta counter_u
+    sbc sprite_shift_y
+    sta sprite_height_top
     tay
     lda d+1
     beq n3
-    lda spr_u
+    lda sprite_data_top
     jsr blit_left
 
-n3: lda sprshifty       ; No lower half to draw...
+n3: lda sprite_shift_y       ; No lower half to draw...
     beq n1
 
     ; Draw lower left.
@@ -249,17 +247,17 @@ n3: lda sprshifty       ; No lower half to draw...
     jsr get_char
     lda s
     clc
-    adc counter_u
-    sta spr_l
+    adc sprite_height_top
+    sta sprite_data_bottom
     lda d+1
     beq n6
-    lda spr_l
-    ldy sprshifty
+    lda sprite_data_bottom
+    ldy sprite_shift_y
     dey
     jsr blit_left
 n6: dec scry
 
-n1: lda sprshiftxl      ; No right halves to draw...
+n1: lda blitter_shift_left      ; No right halves to draw...
     beq n2
 
     ; Draw upper right.
@@ -269,13 +267,13 @@ n1: lda sprshiftxl      ; No right halves to draw...
     beq n4
     lda d
     clc
-    adc sprshifty
+    adc sprite_shift_y
     sta d
-    ldy counter_u
-    lda spr_u
+    ldy sprite_height_top
+    lda sprite_data_top
     jsr blit_right
 
-n4: lda sprshifty       ; No lower half to draw...
+n4: lda sprite_shift_y       ; No lower half to draw...
     beq n2
 
     ; Draw lower right.
@@ -283,9 +281,9 @@ n4: lda sprshifty       ; No lower half to draw...
     jsr get_char
     lda d+1
     beq n2
-    ldy sprshifty
+    ldy sprite_shift_y
     dey
-    lda spr_l
+    lda sprite_data_bottom
     jmp blit_right
 
 n2: rts

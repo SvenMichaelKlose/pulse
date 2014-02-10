@@ -62,21 +62,21 @@ init_background:
     sty leftmost_brick
     rts
 
-fetch_bgchar:
-    lda bgchar
-    inc bgchar
+fetch_foreground_char:
+    lda next_foreground_char
+    inc next_foreground_char
     jmp fetch_char
 
-draw_tailchar:
+draw_trailchar:
 .(
     sta s
-    jsr fetch_bgchar
+    jsr fetch_foreground_char
     lda s
     jsr blit_left_whole_char
     lda s
     jsr blit_right_whole_char
     lda d+1
-    eor #sprbufmask
+    eor #framemask
     sta scr+1
     lda d
     sta scr
@@ -107,8 +107,8 @@ i1: sta bricks_c,x
     sta s+1
 
     lda #framechars/2+framechars/4
-    ora sprbank
-    sta bgchar
+    ora spriteframe
+    sta next_foreground_char
 
     lda scroll
     and #%111
@@ -116,21 +116,20 @@ i1: sta bricks_c,x
     inc scrollchars
 n1: dec scroll
 
-    lda scroll
+    lda scroll          ; Get shifts.
     and #%110
     and #7
-    sta sprshiftxl
-
+    sta blitter_shift_left
     lda #8
     sec
-    sbc sprshiftxl
+    sbc blitter_shift_left
     and #7
-    sta sprshiftxr
+    sta blitter_shift_right
 
     lda #<background
-    jsr draw_tailchar
+    jsr draw_trailchar
     lda #<bg_t
-    jsr draw_tailchar
+    jsr draw_trailchar
 
     lda leftmost_brick
     sta counter
@@ -138,7 +137,7 @@ n1: dec scroll
 next_brick:
     inc counter
 retry_brick:
-    ldx counter         ; Screen brick.
+    ldx counter
     lda scrbricks_i,x
     bmi ret1            ; No more bricks to draw.
     sta tmp2
@@ -156,7 +155,6 @@ restart_plotting_chars:
     lda #8+red
     sta $900f
 #endif
-    ldx tmp2
     lda scrx
     cmp #$ff
     beq draw_right      ; Draw only right char...
@@ -165,7 +163,7 @@ restart_plotting_chars:
     cmp #22
     bcs next_brick      ; Off-screen...
     jsr scrcoladdr
-    lda bricks_col,x    ; Set color.
+    lda bricks_col,x    ; Set left char and color.
     ldy #0
     sta (col),y
     lda bricks_c,x
@@ -177,7 +175,7 @@ draw_right:
     cmp #22
     bcs next_brick      ; Off-screen.
     jsr scraddr
-    lda sprshiftxl
+    lda blitter_shift_left
     beq plot_trail      ; No shift, plot trail.
     lda bricks_c,x      ; Plot regular right char.
     clc
@@ -191,13 +189,13 @@ plot_trail:
     beq plot            ; Plot background char.
     cmp #<background
     bne try_foreground
-    lda sprbank         ; Plot foreground char.
+    lda spriteframe     ; Plot foreground char.
     ora #framechars/2+framechars/4
     jmp plot
 try_foreground:
     cmp #<bg_t
     bne next_brick
-    lda sprbank
+    lda spriteframe
     ora #framechars/2+framechars/4+1
     jmp plot
 
@@ -214,22 +212,23 @@ draw_chars:
     lda #8+yellow
     sta $900f
 #endif
-    jsr fetch_bgchar
+    jsr fetch_foreground_char
     sta bricks_c,x
-    lda sprshiftxl
+    lda blitter_shift_left
     beq s1
     lda bricks_l,x
     beq s1
     jsr blit_right_whole_char
 s1: lda bricks_m,x
     jsr blit_left_whole_char
-    jsr fetch_bgchar
-    lda sprshiftxl
+    jsr fetch_foreground_char
+    lda blitter_shift_left
     beq r1
     lda bricks_m,x
     jsr blit_right_whole_char
     lda bricks_r,x
     beq r1
     jsr blit_left_whole_char
-r1: jmp restart_plotting_chars
+r1: ldx tmp2
+    jmp restart_plotting_chars
 .)
