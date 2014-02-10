@@ -54,10 +54,10 @@ bricks_l:   .byte 0,        <bg_t,    0,           <background, <background, <bg
 bricks_m:   .byte <bg_tl,   <bg_tr,   <bg_l,       <bg_r,       <bg_dl,      <bg_dr
 bricks_r:   .byte <bg_t,    0,        <background, 0,           <bg_t,       <background
 
-init_background:
+init_foreground:
     ldy #0
-    sty scroll
-    sty scrollchars
+    sty scrolled_bits
+    sty scrolled_chars
     dey
     sty leftmost_brick
     rts
@@ -88,14 +88,14 @@ l1: lda (d),y
     rts
 .)
 
-ret1:
+no_more_bricks:
 #ifdef TIMING
     lda #8+blue
     sta $900f
 #endif
     rts
 
-draw_background:
+draw_foreground:
 .(
     lda #0
     ldx #bricks_col-bricks_c-1
@@ -106,17 +106,17 @@ i1: sta bricks_c,x
     lda #>background
     sta s+1
 
-    lda #framechars/2+framechars/4
+    lda #foreground
     ora spriteframe
     sta next_foreground_char
 
-    lda scroll
+    lda scrolled_bits
     and #%111
     bne n1
-    inc scrollchars
-n1: dec scroll
+    inc scrolled_chars
+n1: dec scrolled_bits
 
-    lda scroll          ; Get shifts.
+    lda scrolled_bits
     and #%110
     and #7
     sta blitter_shift_left
@@ -139,13 +139,13 @@ next_brick:
 retry_brick:
     ldx counter
     lda scrbricks_i,x
-    bmi ret1            ; No more bricks to draw.
+    bmi no_more_bricks
     sta tmp2
-    lda scrbricks_y,x   ; Get screen position.
+    lda scrbricks_y,x
     sta scry
     lda scrbricks_x,x
     sec
-    sbc scrollchars
+    sbc scrolled_chars
     sta scrx
     ldx tmp2
     lda bricks_c,x
@@ -186,23 +186,23 @@ plot:
     jmp next_brick
 plot_trail:
     lda bricks_r,x
-    beq plot            ; Plot background char.
+    beq plot
     cmp #<background
     bne try_foreground
     lda spriteframe     ; Plot foreground char.
-    ora #framechars/2+framechars/4
+    ora #foreground
     jmp plot
 try_foreground:
     cmp #<bg_t
     bne next_brick
     lda spriteframe
-    ora #framechars/2+framechars/4+1
+    ora #foreground+1
     jmp plot
 
 new_brick:
     lda #23
     clc
-    adc scrollchars
+    adc scrolled_chars
     ldx counter
     sta scrbricks_x,x
     jmp next_brick

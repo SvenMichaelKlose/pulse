@@ -26,7 +26,7 @@ l1: sta charset,x
     sta addedsprites
     sta is_firing
     sta has_double_laser
-    jsr init_background
+    jsr init_foreground
 
     ldy #player_init-sprite_inits
     jsr add_sprite

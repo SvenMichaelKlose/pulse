@@ -59,6 +59,6 @@ n1: dex
 .)
 #endif
 
-    jsr draw_background
+    jsr draw_foreground
     jsr draw_sprites
     rts

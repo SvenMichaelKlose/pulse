@@ -1,5 +1,6 @@
 numchars    = 128
 numsprites  = 16
+numbricks   = 16
 charset     = $1000
 
 charsetsize         = numchars * 8
@@ -34,8 +35,8 @@ sprite_data_bottom  = $11
 sprite_height_top   = $12
 spriteframe         = $13
 
-scroll              = $14
-scrollchars         = $15
+scrolled_bits       = $14
+scrolled_chars      = $15
 leftmost_brick      = $16
 next_foreground_char = $17
 

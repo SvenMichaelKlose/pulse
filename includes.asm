@@ -1,13 +1,8 @@
 /*
 #define STATIC
-#define SHOW_CHARSET
-#define MASSACRE
-*/
-#define MASSACRE
-
-#ifdef STATIC
 #define TIMING
-#endif
+#define SHOW_CHARSET
+*/
 
 #include "basic-loader.asm"
 #include "kernal.asm"
@@ -16,7 +11,7 @@
 #include "main.asm"
 #include "frame.asm"
 #include "controllers.asm"
-#include "background.asm"
+#include "foreground.asm"
 #include "sprites.asm"
 #include "blitter.asm"
 #include "chars.asm"
