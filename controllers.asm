@@ -8,23 +8,29 @@ laser_up_init:
 laser_down_init:
     .byte 18, 80, 1, yellow,  <laser_down, >laser_down, <laser_down_fun,  >laser_down_fun
 bullet_init:
-    .byte 21*8, 89, 2, yellow+8, <bullet, >bullet, <bullet_fun, >bullet_fun
+    .byte 22*8, 89, 2, yellow+8, <bullet, >bullet, <bullet_fun, >bullet_fun
 
-laser_fun:
+hit_enemy:
 .(
     jsr find_hit
-    bcc n1
+    bcc n2
     lda sprites_i,y
     cmp #2
-    beq remove_sprite_xyf
-n1: lda sprites_x,x
-    clc
-    adc #11
-    cmp #21*8
-    bcs remove_sprite2f
-    sta sprites_x,x
+    bne n1
+    stc
     rts
+n1: clc
+n2: rts
 .)
+
+laser_fun:
+    jsr hit_enemy
+    bcs remove_sprite_xyf
+    lda #11
+    jsr sprite_right
+    jsr test_sprite_out
+    bcs remove_sprite2f
+    rts
 
 remove_sprite2f:
     lda #0
@@ -41,38 +47,40 @@ remove_sprite_xy:
     tax
     jmp remove_sprite
 
+bullet_fun:
+    lda #8
+    jsr sprite_left
+    lda sprites_x,x
+    jsr test_sprite_out
+    bcs remove_sprite2
+    rts
+
 laser_up_fun:
 .(
-    jsr find_hit
-    bcc n1
-    lda sprites_i,y
-    cmp #2
-    beq remove_sprite_xy
-n1: lda #8
+    jsr hit_enemy
+    bcs remove_sprite_xy
+    lda #8
     jsr sprite_right
-    jsr test_sprite_out_right
+    jsr test_sprite_out
     bcs remove_sprite2
     lda #8
     jsr sprite_up
-    jsr test_sprite_out_top
+    jsr test_sprite_out
     bcs remove_sprite2
     rts
 .)
 
 laser_down_fun:
 .(
-    jsr find_hit
-    bcc n1
-    lda sprites_i,y
-    cmp #2
-    beq remove_sprite_xy
-n1: lda #8
+    jsr hit_enemy
+    bcs remove_sprite_xy
+    lda #8
     jsr sprite_right
-    jsr test_sprite_out_right
+    jsr test_sprite_out
     bcs remove_sprite2
     lda #8
     jsr sprite_down
-    jsr test_sprite_out_top
+    jsr test_sprite_out
     bcs remove_sprite2
     rts
 .)
@@ -170,14 +178,4 @@ n4: lda #0              ;Fetch rest of joystick status.
     lda #2
     jmp sprite_right
 n5: rts
-.)
-
-bullet_fun:
-.(
-    lda #8
-    jsr sprite_left
-    lda sprites_x,x
-    bne l1
-    jsr remove_sprite
-l1: rts
 .)

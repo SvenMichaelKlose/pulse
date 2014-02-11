@@ -33,15 +33,15 @@ test_position:
     lda scrx
     bmi i
     cmp #22
-    bcs i
+    bcs e
     lda scry
     bmi i
     cmp #23
-    bcs i
+    bcs e
     clc
     rts
 i:  stc
-    rts
+e:  rts
 .)
 
 get_char:

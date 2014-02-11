@@ -85,50 +85,14 @@ sprite_right:
     rts
 .)
 
-test_sprite_out_left:
-.(
-    lda sprites_x,x
-    bpl n1
-    cmp #$100-8
-    bcs n1
-    stc
-    rts
-n1: clc
-    rts
-.)
-
-test_sprite_out_right:
+test_sprite_out:
 .(
     lda sprites_x,x
     cmp #22*8
-    bcs n1
-    stc
-    rts
-n1: clc
-    rts
-.)
-
-test_sprite_out_top:
-.(
+    bcs c1
     lda sprites_y,x
-    bpl n1
-    cmp #$100-8
-    bcs n1
-    stc
-    rts
-n1: clc
-    rts
-.)
-
-test_sprite_out_bottom:
-.(
-    lda sprites_x,x
     cmp #23*8
-    bcs n1
-    stc
-    rts
-n1: clc
-    rts
+c1: rts
 .)
 
 find_hit:
