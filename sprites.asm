@@ -150,6 +150,11 @@ l1: lda sprites_h,x     ; Skip free slots.
     sta s
     txa
     pha
+#ifdef TIMING
+    eor #%111
+    ora #8
+    sta $900f
+#endif
     jsr draw_sprite
     pla
     tax
@@ -160,6 +165,10 @@ n1: inx
 
 clean_screen:
 .(
+#ifdef TIMING
+    lda #8+white
+    sta $900f
+#endif
     ldx #numsprites-1
 l1: lda sprites_ox,x
     cmp #$ff
@@ -192,6 +201,10 @@ n2: lda sprites_h,x
 n1: dex
     bpl l1
 .)
+#ifdef TIMING
+    lda #8+blue
+    sta $900f
+#endif
     rts
 
 ; Draw a single sprite.

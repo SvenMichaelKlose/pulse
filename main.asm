@@ -25,14 +25,21 @@ l1: sta charset,x
     sta framecounter
     sta addedsprites
     sta is_firing
+    lda #1
     sta has_double_laser
     jsr init_foreground
 
     ldy #player_init-sprite_inits
     jsr add_sprite
+#ifdef foo
 #ifdef STATIC
-    ldy #bullet_init-sprite_inits
+    lda player_init
+    clc
+    adc #11
+    sta player_init
+    ldy #player_init-sprite_inits
     jsr add_sprite
+#endif
 #endif
 
 mainloop:
@@ -59,5 +66,9 @@ l1:
 skip:
 
     jsr frame
+#ifdef TIMING
+    lda #8+blue
+    sta $900f
+#endif
     jmp mainloop
 .)
