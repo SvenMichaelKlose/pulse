@@ -5,7 +5,7 @@ add_sprite:
     txa
     pha
     ldx #numsprites-1
-l1: lda sprites_h,x
+l1: lda sprites_fh,x
     bne l2
     lda sprite_inits,y
     sta sprites_x,x
@@ -21,9 +21,6 @@ l1: lda sprites_h,x
     iny
     lda sprite_inits,y
     sta sprites_l,x
-    iny
-    lda sprite_inits,y
-    sta sprites_h,x
     iny
     lda sprite_inits,y
     sta sprites_fl,x
@@ -44,7 +41,7 @@ l2: dex
 remove_sprite:
     dec addedsprites
     lda #0
-    sta sprites_h,x
+    sta sprites_fh,x
     rts
 
 sprite_up:
@@ -103,7 +100,7 @@ find_hit:
     ldy #numsprites-1
 l1: cpy tmp
     beq n1
-    lda sprites_h,y
+    lda sprites_fh,y
     beq n1
 
     lda sprites_x,x     ; Get X distance.
@@ -143,8 +140,9 @@ c1: pla
 draw_sprites:
 .(
     ldx #0
-l1: lda sprites_h,x     ; Skip free slots.
+l1: lda sprites_fh,x     ; Skip free slots.
     beq n1
+    lda #>sprite_gfx
     sta s+1
     lda sprites_l,x
     sta s
@@ -186,7 +184,7 @@ l1: lda sprites_ox,x
     jsr clear_char
     lda #$ff
     sta sprites_ox,x
-n2: lda sprites_h,x
+n2: lda sprites_fh,x
     beq n1
     lda sprites_x,x
     lsr

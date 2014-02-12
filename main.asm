@@ -5,7 +5,7 @@ restart:
 .(
     ldx #numsprites-1
 l1: lda #0
-    sta sprites_h,x
+    sta sprites_fh,x
     lda #$ff
     sta sprites_ox,x
     dex

@@ -43,12 +43,11 @@ l2: txa
 call_controllers:
 .(
     ldx #numsprites-1
-l1: lda sprites_h,x
+l1: lda sprites_fh,x
     beq n1
+    sta m1+2
     lda sprites_fl,x
     sta m1+1
-    lda sprites_fh,x
-    sta m1+2
     txa
     pha
 m1: jsr $1234

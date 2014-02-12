@@ -47,8 +47,7 @@ tmp3        = $1b
 counter     = $1c
 repetition  = $1d
 
-sprites_l   = $20   ; Low character address.
-sprites_h   = $30   ; High character address.
+sprites_l   = $30   ; Low character address.
 sprites_x   = $40   ; X position.
 sprites_y   = $50   ; Y position.
 sprites_c   = $60   ; Color.

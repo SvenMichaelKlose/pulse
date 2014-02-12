@@ -1,14 +1,14 @@
 sprite_inits:
 player_init:
-    .byte 02, 81, 0, cyan,     <ship, >ship, <player_fun, >player_fun
+    .byte 02, 81, 0, cyan,     <ship, <player_fun, >player_fun
 laser_init:
-    .byte 18, 80, 1, white+8,  <laser, >laser, <laser_fun,  >laser_fun
+    .byte 18, 80, 1, white+8,  <laser, <laser_fun,  >laser_fun
 laser_up_init:
-    .byte 18, 80, 1, yellow,  <laser_up, >laser_up, <laser_up_fun,  >laser_up_fun
+    .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun
 laser_down_init:
-    .byte 18, 80, 1, yellow,  <laser_down, >laser_down, <laser_down_fun,  >laser_down_fun
+    .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun
 bullet_init:
-    .byte 22*8, 89, 2, yellow+8, <bullet, >bullet, <bullet_fun, >bullet_fun
+    .byte 22*8, 89, 2, yellow+8, <bullet, <bullet_fun, >bullet_fun
 
 hit_enemy:
 .(
