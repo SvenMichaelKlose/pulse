@@ -47,15 +47,15 @@ tmp3        = $1b
 counter     = $1c
 repetition  = $1d
 
-sprites_l   = $30   ; Low character address.
-sprites_x   = $40   ; X position.
-sprites_y   = $50   ; Y position.
+sprites_x   = $30   ; X position.
+sprites_y   = $40   ; Y position.
+sprites_i   = $50   ; Whatever the function needs.
 sprites_c   = $60   ; Color.
-sprites_ox  = $70   ; Former X position for cleaning up.
-sprites_oy  = $80   ; Former Y position for cleaning up.
+sprites_l   = $70   ; Low character address.
+sprites_fl  = $80   ; Function controlling the sprite.
 sprites_fh  = $90   ; Function controlling the sprite.
-sprites_fl  = $a0   ; Function controlling the sprite.
-sprites_i   = $b0   ; Whatever the function needs.
+sprites_ox  = $a0   ; Former X position for cleaning up.
+sprites_oy  = $b0   ; Former Y position for cleaning up.
 
 scrbricks_i = $c0
 scrbricks_x = $d0

@@ -6,33 +6,26 @@ add_sprite:
     pha
     ldx #numsprites-1
 l1: lda sprites_fh,x
-    bne l2
-    lda sprite_inits,y
-    sta sprites_x,x
-    iny
-    lda sprite_inits,y
-    sta sprites_y,x
-    iny
-    lda sprite_inits,y
-    sta sprites_i,x
-    iny
-    lda sprite_inits,y
-    sta sprites_c,x
-    iny
-    lda sprite_inits,y
-    sta sprites_l,x
-    iny
-    lda sprite_inits,y
-    sta sprites_fl,x
-    iny
-    lda sprite_inits,y
-    sta sprites_fh,x
+    beq l2
+    dex
+    bpl l1
     pla
     tax
-    inc addedsprites
     rts
-l2: dex
-    bpl l1
+l2: lda #sprites_x
+    sta sm+1
+l3: lda sprite_inits,y
+sm: sta sprites_x,x
+    iny
+    lda sm+1
+    cmp #sprites_fh
+    beq done
+    clc
+    adc #$10
+    sta sm+1
+    jmp l3
+done:
+    inc addedsprites
     pla
     tax
     rts
