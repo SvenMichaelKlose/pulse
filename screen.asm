@@ -7,6 +7,7 @@ scraddr:
     lda #>screen
     adc line_offsets_h,y
     sta scr+1
+    ldy #0
     rts
 
 scrcoladdr:
@@ -24,6 +25,7 @@ scrcoladdr:
     lda #>colors
     adc line_offsets_h,y
     sta col+1
+    ldy #0
     rts
 
 clear_screen:

@@ -112,7 +112,6 @@ restart_plotting_chars:
     bcs next_brick      ; Off-screen...
     jsr scrcoladdr
     lda bricks_col,x    ; Set left char and color.
-    ldy #0
     sta (col),y
     lda bricks_c,x
     sta (scr),y
@@ -128,7 +127,6 @@ draw_right:
     clc
     adc #1
 plot:
-    ldy #0
     sta (scr),y
     jmp next_brick
 plot_trail:

@@ -1,4 +1,4 @@
-alloc_squeeze:
+alloc_wrap:
     lda spriteframe
     ora #first_sprite_char
     jmp fetch_char
@@ -6,11 +6,10 @@ alloc_squeeze:
 alloc_char:
 .(
     lda next_sprite_char
-    tax
     and #foreground
     cmp #foreground
-    beq alloc_squeeze
-    txa
+    beq alloc_wrap
+    lda next_sprite_char
     inc next_sprite_char
 .)
 
@@ -19,12 +18,13 @@ fetch_char:
     and #charsetmask
     pha
     jsr get_char_addr
-    lda #0          ; Clear the new char.
+    lda #0
     ldy #7
 l3: sta (d),y
     dey
     bpl l3
     pla
+    iny
     rts
 .)
 
@@ -47,36 +47,33 @@ e:  rts
 get_char:
 .(
     jsr test_position
-    bcs fake_addr
+    bcs cant_use_position
     jsr scrcoladdr
-    ldy #0
     lda (scr),y
     beq l2
     tax
     and #foreground
     cmp #foreground
-    beq fake_addr
+    beq cant_use_position
     txa
     and #framemask
     cmp spriteframe
-    beq get_char_addrx
+    beq reuse_char
 l2: jsr alloc_char
-    ldy #0
     sta (scr),y
     lda curcol
     sta (col),y
     rts
 
-fake_addr:
+cant_use_position:
     lda #0
     sta d+1
     rts
 .)
 
-get_char_addrx:
+reuse_char:
     txa
 
-    ; Get char address.
 get_char_addr:
     sta tmp
     asl
@@ -93,13 +90,11 @@ get_char_addr:
     sta d+1
     rts
 
-; Remove char if it's not in the current bank.
 clear_char:
 .(
     jsr test_position
     bcs e1
     jsr scraddr
-    ldy #0
     lda (scr),y
     and #foreground
     cmp #foreground
