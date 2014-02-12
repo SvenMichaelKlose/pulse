@@ -177,3 +177,57 @@ s1: lda bricks_m,x
 r1: ldx tmp2
     jmp restart_plotting_chars
 .)
+
+init_scrbricks:
+.(
+    ldx #0
+    lda #0
+    sta scrbricks_i,x
+    lda #1
+    inx
+    sta scrbricks_i,x
+    inx
+l1: lda #2
+    sta scrbricks_i,x
+    inx
+    lda #3
+    sta scrbricks_i,x
+    inx
+    cpx #12
+    bne l1
+    lda #4
+    sta scrbricks_i,x
+    inx
+    lda #5
+    sta scrbricks_i,x
+    inx
+    lda #$ff
+    sta scrbricks_i,x
+
+    ldx #0
+l2: lda #22
+    sta scrbricks_x,x
+    inx
+    lda #28
+    sta scrbricks_x,x
+    inx
+    cpx #12
+    bne l2
+    lda #28
+    sta scrbricks_x,x
+    inx
+    lda #47
+    sta scrbricks_x,x
+
+    ldy #23-7
+    ldx #0
+l3: tya
+    sta scrbricks_y,x
+    inx
+    sta scrbricks_y,x
+    inx
+    iny
+    cpx #14
+    bne l3
+    rts
+.)

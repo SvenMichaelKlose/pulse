@@ -56,9 +56,7 @@ sprites_fh  = $90   ; Function controlling the sprite.
 sprites_fl  = $a0   ; Function controlling the sprite.
 sprites_i   = $b0   ; Whatever the function needs.
 
-;bricks_x    = $c0
-;bricks_y    = $d0
-;bricks_c    = $e0
-;bricks_l    = $f0
-;bricks_m    = $100
-;bricks_r    = $110
+scrbricks_i = $c0
+scrbricks_x = $d0
+scrbricks_y = $e0
+scrbricks_n = $f0
