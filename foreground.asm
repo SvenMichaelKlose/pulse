@@ -189,20 +189,29 @@ r1: ldx tmp2
     jmp restart_plotting_chars
 .)
 
+hoehe = 15
+hoehe2 = 7
+
 init_scrbricks:
 .(
     ldx #5
 l1: txa
     sta scrbricks_i,x
+    sta scrbricks_i+6,x
     lda #0
     sta scrbricks_n,x
+    sta scrbricks_n+6,x
     dex
     bne l1
-    lda #4
+    lda #hoehe-1
     sta scrbricks_n+2
     sta scrbricks_n+3
+    lda #hoehe2-1
+    sta scrbricks_n+2+6
+    sta scrbricks_n+3+6
+
     lda #$ff
-    sta scrbricks_i+6
+    sta scrbricks_i+12
 
     lda #22
     sta scrbricks_x
@@ -212,19 +221,39 @@ l1: txa
     sta scrbricks_x+2
     lda #28
     sta scrbricks_x+3
-    lda #28
+    lda #22
     sta scrbricks_x+4
-    lda #47
+    lda #28
     sta scrbricks_x+5
 
-    lda #23-7
+    lda #32
+    sta scrbricks_x+6
+    lda #38
+    sta scrbricks_x+1+6
+    lda #32
+    sta scrbricks_x+2+6
+    lda #38
+    sta scrbricks_x+3+6
+    lda #32
+    sta scrbricks_x+4+6
+    lda #38
+    sta scrbricks_x+5+6
+
+    lda #21-hoehe
     sta scrbricks_y
     sta scrbricks_y+1
+    lda #21-hoehe2
+    sta scrbricks_y+6
+    sta scrbricks_y+1+6
     lda #21
     sta scrbricks_y+2
     sta scrbricks_y+3
+    sta scrbricks_y+2+6
+    sta scrbricks_y+3+6
     lda #22
     sta scrbricks_y+4
     sta scrbricks_y+5
+    sta scrbricks_y+4+6
+    sta scrbricks_y+5+6
     rts
 .)
