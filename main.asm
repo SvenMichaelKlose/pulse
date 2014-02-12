@@ -54,7 +54,7 @@ background_stars:
     and #%111
     bne l1
     lda random
-    and #127
+    and #%01111000
     sta bullet_init+1
     lda random
     and #3
