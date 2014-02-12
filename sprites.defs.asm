@@ -43,7 +43,9 @@ next_foreground_char = $17
 random      = $18
 tmp         = $19
 tmp2        = $1a
-counter     = $1b
+tmp3        = $1b
+counter     = $1c
+repetition  = $1d
 
 sprites_l   = $20   ; Low character address.
 sprites_h   = $30   ; High character address.

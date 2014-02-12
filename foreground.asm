@@ -89,11 +89,14 @@ retry_brick:
     lda scrbricks_i,x
     bmi no_more_bricks
     sta tmp2
+    lda scrbricks_n,x
+    sta repetition
     lda scrbricks_y,x
     sta scry
     lda scrbricks_x,x
     sec
     sbc scrolled_chars
+    sta tmp3
     sta scrx
     ldx tmp2
     lda bricks_c,x
@@ -104,6 +107,7 @@ restart_plotting_chars:
     sta $900f
 #endif
     lda scrx
+repeat_plotting_chars:
     cmp #$ff
     beq draw_right      ; Draw only right char...
     cmp #$fe
@@ -119,7 +123,7 @@ draw_right:
     inc scrx
     lda scrx
     cmp #22             ; Off-screen...
-    bcs next_brick
+    bcs repeat
     jsr scraddr
     lda blitter_shift_left
     beq plot_trail      ; No shift, plot trail.
@@ -128,7 +132,14 @@ draw_right:
     adc #1
 plot:
     sta (scr),y
-    jmp next_brick
+repeat:
+    dec repetition
+    lda repetition
+    bmi next_brick
+    dec scry
+    lda tmp3
+    sta scrx
+    jmp repeat_plotting_chars
 plot_trail:
     lda bricks_r,x
     beq plot
@@ -180,54 +191,40 @@ r1: ldx tmp2
 
 init_scrbricks:
 .(
-    ldx #0
+    ldx #5
+l1: txa
+    sta scrbricks_i,x
     lda #0
-    sta scrbricks_i,x
-    lda #1
-    inx
-    sta scrbricks_i,x
-    inx
-l1: lda #2
-    sta scrbricks_i,x
-    inx
-    lda #3
-    sta scrbricks_i,x
-    inx
-    cpx #12
+    sta scrbricks_n,x
+    dex
     bne l1
     lda #4
-    sta scrbricks_i,x
-    inx
-    lda #5
-    sta scrbricks_i,x
-    inx
+    sta scrbricks_n+2
+    sta scrbricks_n+3
     lda #$ff
-    sta scrbricks_i,x
+    sta scrbricks_i+6
 
-    ldx #0
-l2: lda #22
-    sta scrbricks_x,x
-    inx
+    lda #22
+    sta scrbricks_x
     lda #28
-    sta scrbricks_x,x
-    inx
-    cpx #12
-    bne l2
+    sta scrbricks_x+1
+    lda #22
+    sta scrbricks_x+2
     lda #28
-    sta scrbricks_x,x
-    inx
+    sta scrbricks_x+3
+    lda #28
+    sta scrbricks_x+4
     lda #47
-    sta scrbricks_x,x
+    sta scrbricks_x+5
 
-    ldy #23-7
-    ldx #0
-l3: tya
-    sta scrbricks_y,x
-    inx
-    sta scrbricks_y,x
-    inx
-    iny
-    cpx #14
-    bne l3
+    lda #23-7
+    sta scrbricks_y
+    sta scrbricks_y+1
+    lda #21
+    sta scrbricks_y+2
+    sta scrbricks_y+3
+    lda #22
+    sta scrbricks_y+4
+    sta scrbricks_y+5
     rts
 .)
