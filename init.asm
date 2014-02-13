@@ -13,5 +13,13 @@ main:
     lda #red*16     ; Auxiliary color.
     sta $900e
 
+.(
+    ldx #0
+    txa
+l:  sta 0,x
+    dex
+    bne l
+.)
+
 init_end:
     .dsb realstart-init_end, $ea

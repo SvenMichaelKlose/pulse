@@ -25,9 +25,7 @@ l1: sta charset,x
     sta framecounter
     sta addedsprites
     sta is_firing
-    lda #1
     sta has_double_laser
-    jsr init_scrbricks
     jsr init_foreground
 
     ldy #player_init-sprite_inits

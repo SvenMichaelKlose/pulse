@@ -1,9 +1,15 @@
+free_bricks: .byte 0
+
 init_foreground:
-    ldy #0
-    sty scrolled_bits
-    sty scrolled_chars
-    dey
-    sty leftmost_brick
+    lda #0
+    sta scrolled_bits
+    sta scrolled_chars
+    sta free_bricks
+    sta leftmost_brick
+    sta level_delay_bottom
+    sta level_pos
+    lda #22
+    sta level_old_y_bottom
     rts
 
 fetch_foreground_char:
@@ -45,6 +51,12 @@ draw_foreground:
     sta $900f
 #endif
 .(
+    lda scrolled_bits
+    and #%111
+    bne o1
+    jsr new_brick
+o1:
+
     lda #0
     ldx #bricks_col-bricks_c-1
 i1: sta bricks_c,x
@@ -82,13 +94,10 @@ n1: dec scrolled_bits
     lda leftmost_brick
     sta counter
 
-next_brick:
-    inc counter
-retry_brick:
+loop:
     ldx counter
-    lda scrbricks_i,x
-    bmi no_more_bricks
-    sta tmp2
+    cpx free_bricks
+    beq no_more_bricks
     lda scrbricks_n,x
     sta repetition
     lda scrbricks_y,x
@@ -98,7 +107,9 @@ retry_brick:
     sbc scrolled_chars
     sta tmp3
     sta scrx
-    ldx tmp2
+    lda scrbricks_i,x
+    sta tmp2
+    tax
     lda bricks_c,x
     beq draw_chars
 restart_plotting_chars:
@@ -111,7 +122,7 @@ repeat_plotting_chars:
     cmp #$ff
     beq draw_right      ; Draw only right char...
     cmp #$fe
-    beq new_brick       ; Replace brick...
+    beq remove_brick
     cmp #22
     bcs next_brick      ; Off-screen...
     jsr scrcoladdr
@@ -140,6 +151,14 @@ repeat:
     lda tmp3
     sta scrx
     jmp repeat_plotting_chars
+remove_brick:
+    jmp remove_brick2
+next_brick:
+    inc counter
+    lda counter
+    and #numbricks-1
+    sta counter
+    jmp loop
 plot_trail:
     lda bricks_r,x
     beq plot
@@ -154,14 +173,6 @@ try_foreground:
     lda spriteframe
     ora #foreground+1
     jmp plot
-
-new_brick:
-    lda #23
-    clc
-    adc scrolled_chars
-    ldx counter
-    sta scrbricks_x,x
-    jmp next_brick
 
 draw_chars:
 #ifdef TIMING
@@ -187,73 +198,127 @@ s1: lda bricks_m,x
     jsr blit_left_whole_char
 r1: ldx tmp2
     jmp restart_plotting_chars
+remove_brick2:
+    ldx leftmost_brick
+    lda #0
+    sta scrbricks_i,x
+    sta scrbricks_x,x
+    sta scrbricks_y,x
+    sta scrbricks_n,x
+    inc leftmost_brick
+    lda leftmost_brick
+    and #numbricks-1
+    sta leftmost_brick
+    jmp next_brick
 .)
 
-hoehe = 15
-hoehe2 = 7
+level_pos:  .byte 0
+level_delay_bottom: .byte 0
+level_old_y_bottom: .byte 0
+level_data:
+    .byte 4, 15
+    .byte 4, 14
+    .byte 4, 13
+    .byte 4, 12
+    .byte 4, 5
+    .byte 4, 10
+    .byte 4, 9
+    .byte 4, 15
+    .byte 4, 10
+    .byte 4, 5
+    .byte 4, 10
+    .byte 4, 15
+    .byte 4, 10
+    .byte 4, 5
+    .byte 4, 15
+    .byte 4, 5
+    .byte 4, 15
+    .byte 4, 5
+    .byte 4, 10
+    .byte $ff
 
-init_scrbricks:
+add_brick:
 .(
-    ldx #5
-l1: txa
+    pha
+    lda free_bricks
+    and #numbricks-1
+    tax
+    clc
+    adc #1
+    and #numbricks-1
+    sta free_bricks
+    lda #23
+    clc
+    adc scrolled_chars
+    sta scrbricks_x,x
+    lda level_old_y_bottom
+    sta scrbricks_y,x
+    pla
     sta scrbricks_i,x
-    sta scrbricks_i+6,x
-    lda #0
+    rts
+.)
+    
+new_brick:
+.(
+    dec level_delay_bottom
+    bpl done
+    ldy level_pos
+n2: lda level_data,y
+    cmp #$ff
+    bne n1
+    ldy #0
+    jmp n2
+n1: sta level_delay_bottom
+    iny
+    lda level_old_y_bottom
+    cmp level_data,y
+    beq exit
+    bcs up
+
+down:
+    lda #1
+    jsr add_brick
+    inc level_old_y_bottom
+    lda #3
+    jsr add_brick
+    lda level_data,y
+    sec
+    sbc level_old_y_bottom
     sta scrbricks_n,x
-    sta scrbricks_n+6,x
-    dex
-    bne l1
-    lda #hoehe-1
-    sta scrbricks_n+2
-    sta scrbricks_n+3
-    lda #hoehe2-1
-    sta scrbricks_n+2+6
-    sta scrbricks_n+3+6
+    lda level_old_y_bottom
+    clc
+    adc scrbricks_n,x
+    dec scrbricks_n,x
+    sta level_old_y_bottom
+    sta scrbricks_y,x
+    dec scrbricks_y,x
+    lda #5
+    jsr add_brick
+    jmp exit
+done:
+    rts
 
-    lda #$ff
-    sta scrbricks_i+12
+up: lda #4
+    jsr add_brick
+    lda #2
+    jsr add_brick
+    lda level_old_y_bottom
+    sta scrbricks_y,x
+    dec scrbricks_y,x
+    lda level_old_y_bottom
+    sec
+    sbc level_data,y
+    sta scrbricks_n,x
+    lda level_old_y_bottom
+    sec
+    sbc scrbricks_n,x
+    dec scrbricks_n,x
+    sta level_old_y_bottom
+    lda #0
+    jsr add_brick
 
-    lda #22
-    sta scrbricks_x
-    lda #28
-    sta scrbricks_x+1
-    lda #22
-    sta scrbricks_x+2
-    lda #28
-    sta scrbricks_x+3
-    lda #22
-    sta scrbricks_x+4
-    lda #28
-    sta scrbricks_x+5
-
-    lda #32
-    sta scrbricks_x+6
-    lda #38
-    sta scrbricks_x+1+6
-    lda #32
-    sta scrbricks_x+2+6
-    lda #38
-    sta scrbricks_x+3+6
-    lda #32
-    sta scrbricks_x+4+6
-    lda #38
-    sta scrbricks_x+5+6
-
-    lda #21-hoehe
-    sta scrbricks_y
-    sta scrbricks_y+1
-    lda #21-hoehe2
-    sta scrbricks_y+6
-    sta scrbricks_y+1+6
-    lda #21
-    sta scrbricks_y+2
-    sta scrbricks_y+3
-    sta scrbricks_y+2+6
-    sta scrbricks_y+3+6
-    lda #22
-    sta scrbricks_y+4
-    sta scrbricks_y+5
-    sta scrbricks_y+4+6
-    sta scrbricks_y+5+6
+exit:
+    iny
+    sty level_pos
     rts
 .)
