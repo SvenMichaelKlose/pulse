@@ -6,10 +6,10 @@ init_foreground:
     sta scrolled_chars
     sta free_bricks
     sta leftmost_brick
-    sta level_delay_bottom
+    sta level_delay
     sta level_pos
     lda #22
-    sta level_old_y_bottom
+    sta level_old_y
     rts
 
 fetch_foreground_char:
