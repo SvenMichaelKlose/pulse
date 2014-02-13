@@ -1,6 +1,6 @@
 numchars    = 128
 numsprites  = 16
-numbricks   = 16
+numbricks   = 32
 charset     = $1000
 
 charsetsize         = numchars * 8
@@ -58,6 +58,6 @@ sprites_ox  = $a0   ; Former X position for cleaning up.
 sprites_oy  = $b0   ; Former Y position for cleaning up.
 
 scrbricks_i = $c0
-scrbricks_x = $d0
-scrbricks_y = $e0
-scrbricks_n = $f0
+scrbricks_x = $e0
+scrbricks_y = $100
+scrbricks_n = $120
