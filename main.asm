@@ -73,11 +73,26 @@ add_scout:
     and #%01111111
     bne l1
     lda random
+retry:
     and #%01111000
     clc
     adc #16
     sta scout_formation_y
-    lda #8
+    sta scry
+    lda #21
+    sta scrx
+    jsr scraddr
+    ldy #0
+    lda (scr),y
+    and #foreground
+    cmp #foreground
+    bne n1
+    lda random
+    rol
+    eor $9004
+    sta random
+    jmp retry
+n1: lda #8
     sta adding_scout
     sta formation_left_unhit
     lda #3
