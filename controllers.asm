@@ -121,6 +121,7 @@ move_left:
     jmp remove_if_sprite_is_out
 
 scout_fun:
+.(
     ldy #yellow+8
     jsr energize_color
     lda #4
@@ -139,6 +140,7 @@ scout_fun:
     adc sinetab,y
     sta sprites_y,x
     jmp remove_if_sprite_is_out
+.)
 
 laser_fun:
     jsr hit_enemy
@@ -210,16 +212,17 @@ player_fun:
 .(
     ldy #cyan
     jsr energize_color
-;    lda #cyan
-;    sta sprites_c,x
     lda death_timer
     beq d1
-    lda #23*8
-    sta sprites_y,x
+    lda random
+    sta sprites_l,x
+    sta sprites_c,x
     dec death_timer
     bne return2
     jmp restart
-d1: jsr find_hit
+d1: jsr test_foreground_collision
+    bne die
+    jsr find_hit
     bcc c1
     lda sprites_i,y
     and #%00111111
@@ -249,6 +252,7 @@ c3: lda #4
 c2: lda sprites_i,y
     and #64
     beq c1
+die:
     lda #120
     sta death_timer
     rts
