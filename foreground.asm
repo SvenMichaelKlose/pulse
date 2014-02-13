@@ -199,12 +199,6 @@ s1: lda bricks_m,x
 r1: ldx tmp2
     jmp restart_plotting_chars
 remove_brick2:
-    ldx leftmost_brick
-    lda #0
-    sta scrbricks_i,x
-    sta scrbricks_x,x
-    sta scrbricks_y,x
-    sta scrbricks_n,x
     inc leftmost_brick
     lda leftmost_brick
     and #numbricks-1
@@ -253,6 +247,8 @@ add_brick:
     sta scrbricks_x,x
     lda level_old_y_bottom
     sta scrbricks_y,x
+    lda #0
+    sta scrbricks_n,x
     pla
     sta scrbricks_i,x
     rts
