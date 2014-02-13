@@ -77,20 +77,24 @@ down:
     lda #1
     jsr add_brick
     inc level_old_y
-    lda #3
-    jsr add_brick
     lda level_data,y
     sec
     sbc level_old_y
+    sec
+    sbc #1
+    beq n4
+    pha
+    lda #3
+    jsr add_brick
+    pla
     sta scrbricks_n,x
     lda level_old_y
     clc
     adc scrbricks_n,x
-    dec scrbricks_n,x
     sta level_old_y
     sta scrbricks_y,x
-    dec scrbricks_y,x
-    lda #5
+    inc level_old_y
+n4: lda #5
     jsr add_brick
     jmp exit
 done:
@@ -98,19 +102,24 @@ done:
 
 up: lda #4
     jsr add_brick
-    lda #2
-    jsr add_brick
-    dec scrbricks_y,x
+    dec level_old_y
     lda level_old_y
     sec
     sbc level_data,y
+    sec
+    sbc #1
+    beq n3
+    pha
+    lda #2
+    jsr add_brick
+    pla
     sta scrbricks_n,x
     lda level_old_y
     sec
     sbc scrbricks_n,x
-    dec scrbricks_n,x
     sta level_old_y
-    lda #0
+    dec level_old_y
+n3: lda #0
     jsr add_brick
 
 exit:
