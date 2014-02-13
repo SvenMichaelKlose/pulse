@@ -12,6 +12,7 @@
 #include "frame.asm"
 #include "controllers.asm"
 #include "foreground.asm"
+#include "level.asm"
 #include "sprites.asm"
 #include "blitter.asm"
 #include "chars.asm"

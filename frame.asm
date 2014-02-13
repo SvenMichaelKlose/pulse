@@ -60,4 +60,5 @@ n1: dex
 
     jsr draw_foreground
     jsr draw_sprites
+    jsr process_level
     rts
