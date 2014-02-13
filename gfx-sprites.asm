@@ -1,4 +1,3 @@
-.dsb $20
 sprite_gfx:
 ship:
     .byte %10110000

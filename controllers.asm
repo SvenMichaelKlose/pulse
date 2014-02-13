@@ -8,15 +8,53 @@ laser_up_init:
 laser_down_init:
     .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun
 bullet_init:
-    .byte 22*8, 89, 2, yellow+8, <bullet, <bullet_fun, >bullet_fun
+    .byte 22*8, 89, 128+2, yellow+8, <bullet, <bullet_fun, >bullet_fun
 scout_init:
-    .byte 22*8, 89, 2, yellow+8, <scout, <scout_fun, >scout_fun
+    .byte 22*8, 89, 128+3, yellow+8, <scout, <scout_fun, >scout_fun
+bonus_init:
+    .byte 22*8, 89, 4, green, <scout, <bonus_fun, >bonus_fun
+
+sinetab:
+    .byte 0, 0, 1, 2, 3, 5, 7, 7
+    .byte 7, 7, 5, 3, 2, 1, 0, 0
+    .byte 0, 0, $ff, $fe, $fc, $fa, $f8, $f8
+    .byte $f8, $f8, $fa, $fc, $fe, $ff, 0, 0
+
+fire_interval:    .byte 8
+has_double_laser: .byte 0
+has_autofire:     .byte 0
+is_firing: .byte 0
+
+hit_formation:
+.(
+    dec formation_left_unhit
+    bne e
+    lda sprites_x,y
+    sta bonus_init
+    lda sprites_y,y
+    sta bonus_init+1
+    txa
+    pha
+    tya
+    pha
+    ldy #bonus_init-sprite_inits
+    jsr add_sprite
+    pla
+    tay
+    pla
+    tax
+e:  stc
+    rts
+.)
 
 hit_enemy:
 .(
     jsr find_hit
     bcc n2
     lda sprites_i,y
+    and #%01111111
+    cmp #3
+    beq hit_formation
     cmp #2
     bne n1
     stc
@@ -27,14 +65,46 @@ n2:
 return:
     rts
 
+bonus_fun:
+    lda #1
+    jmp move_left
+
 bullet_fun:
-    lda #8
+.(
+    lda sprites_x+15
+    cmp sprites_x,x
+    bcs n1
+    lda #2
+    jsr sprite_right
+    jmp n2
+n1: jsr sprite_left
+    lda sprites_y+15
+    cmp sprites_x,x
+    bcs n1
+    jsr sprite_down
+    jmp n2
+n3: jsr sprite_up
+n2: jmp remove_if_sprite_is_out
+.)
+
+move_left:
     jsr sprite_left
     jmp remove_if_sprite_is_out
 
 scout_fun:
     lda #4
     jsr sprite_left
+    lda sprites_x,x
+    lsr
+    lsr
+    and #%00011111
+    tay
+    lda scout_formation_y
+    clc
+    adc sinetab,y
+    clc
+    adc sinetab,y
+    sta sprites_y,x
     jmp remove_if_sprite_is_out
 
 laser_fun:
@@ -45,8 +115,11 @@ laser_fun:
 remove_if_sprite_is_out:
     jsr test_sprite_out
     bcc return
-remove_spritef:
 remove_sprite2:
+    jmp remove_sprite
+remove_spritef:
+    lda #0
+    sta is_firing
     jmp remove_sprite
 
 remove_sprite_xyf:
@@ -84,20 +157,52 @@ laser_down_fun:
     jmp remove_if_sprite_is_out:
 .)
 
-has_double_laser: .byte 0
-has_autofire:     .byte 0
+death_timer:    .byte 0
 
-is_firing: .byte 0
 player_fun:
 .(
     lda #cyan
     sta sprites_c,x
-    jsr find_hit
-jmp c1 ;    bcc c1
-    lda sprites_i,y
-    cmp #2
-    bne c1
+    lda death_timer
+    beq d1
+    lda #23*8
+    sta sprites_y,x
+    dec death_timer
+    bne return2
     jmp restart
+d1: jsr find_hit
+    bcc c1
+    lda sprites_i,y
+    cmp #4              ; Bonus.
+    bne c2
+    txa
+    pha
+    tya
+    tax
+    jsr remove_sprite
+    pla
+    tax
+    dec fire_interval
+    dec fire_interval
+    lda fire_interval
+    cmp #4
+    bcs c1
+    lda has_double_laser
+    bne c3
+    lda #8
+    sta fire_interval
+    lda #1
+    sta has_double_laser
+    jmp c1
+return2:
+    rts
+c3: lda #4
+    sta fire_interval
+c2: and #128
+    beq c1
+    lda #255
+    sta death_timer
+    rts
 c1: lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
@@ -122,7 +227,7 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     sta laser_up_init+1
     sta laser_down_init+1
     inc laser_init+1
-    lda #fire_interval
+    lda fire_interval
     sta is_firing
     lda #white
     sta sprites_c,x

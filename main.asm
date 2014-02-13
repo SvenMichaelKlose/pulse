@@ -26,6 +26,8 @@ l1: sta charset,x
     sta addedsprites
     sta is_firing
     sta has_double_laser
+    lda #8
+    sta fire_interval
     jsr init_foreground
 
     ldy #player_init-sprite_inits
@@ -72,9 +74,12 @@ add_scout:
     bne l1
     lda random
     and #%01111000
+    clc
+    adc #16
     sta scout_formation_y
     lda #8
     sta adding_scout
+    sta formation_left_unhit
     lda #3
     sta adding_scout_delay
 l1:
@@ -106,3 +111,4 @@ l2:
 adding_scout:       .byte 0
 adding_scout_delay: .byte 0
 scout_formation_y:  .byte 0
+formation_left_unhit:  .byte 0

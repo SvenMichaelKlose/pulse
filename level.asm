@@ -109,6 +109,7 @@ up: lda #4
     sec
     sbc #1
     beq n3
+    bcc n3
     pha
     lda #2
     jsr add_brick

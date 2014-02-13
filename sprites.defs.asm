@@ -10,7 +10,6 @@ framemask           = numchars / 2
 framechars          = numchars / 2
 
 first_sprite_char   = 1
-fire_interval       = 8
 
 foreground          = framechars / 2 + framechars / 4
 
