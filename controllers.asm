@@ -65,9 +65,33 @@ n2:
 return:
     rts
 
+energize_color:
+.(
+    lda framecounter
+    lsr
+    bcc n1
+    tya
+    and #%1000
+    ora #white
+    tay
+n1: sty sprites_c,x
+    rts
+.)
+
 bonus_fun:
+.(
+    ldy #green
+    lda framecounter
+    and #%10
+    beq n1
+    tya
+    and #%1000
+    ora #white
+    tay
+n1: sty sprites_c,x
     lda #1
     jmp move_left
+.)
 
 bullet_fun:
 .(
@@ -92,11 +116,15 @@ move_left:
     jmp remove_if_sprite_is_out
 
 scout_fun:
+    ldy #yellow+8
+    jsr energize_color
     lda #4
     jsr sprite_left
     lda sprites_x,x
     lsr
     lsr
+    clc
+    adc scrolled_chars
     and #%00011111
     tay
     lda scout_formation_y
@@ -133,6 +161,8 @@ remove_sprite_xy:
 
 laser_up_fun:
 .(
+    ldy #yellow
+    jsr energize_color
     jsr hit_enemy
     bcs remove_sprite_xy
     lda #8
@@ -146,6 +176,8 @@ laser_up_fun:
 
 laser_down_fun:
 .(
+    ldy #yellow
+    jsr energize_color
     jsr hit_enemy
     bcs remove_sprite_xy
     lda #8
@@ -161,8 +193,10 @@ death_timer:    .byte 0
 
 player_fun:
 .(
-    lda #cyan
-    sta sprites_c,x
+    ldy #cyan
+    jsr energize_color
+;    lda #cyan
+;    sta sprites_c,x
     lda death_timer
     beq d1
     lda #23*8
@@ -200,7 +234,7 @@ c3: lda #4
     sta fire_interval
 c2: and #128
     beq c1
-    lda #255
+    lda #120
     sta death_timer
     rts
 c1: lda #0              ; Fetch joystick status.
