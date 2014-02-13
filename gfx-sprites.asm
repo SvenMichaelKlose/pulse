@@ -1,3 +1,4 @@
+.dsb $20
 sprite_gfx:
 ship:
     .byte %10110000
@@ -61,6 +62,14 @@ bonus:
 
 scout:
     .byte %00111100
+    .byte %10010110
+    .byte %10101010
+    .byte %11000011
+    .byte %11000011
+    .byte %10101010
+    .byte %10010110
+    .byte %00111100
+
     .byte %01100110
     .byte %01011010
     .byte %10100101

@@ -42,9 +42,10 @@ l1: sta charset,x
 #endif
 
 mainloop:
-.(
 #ifndef STATIC
+#ifdef BULLETS
 background_stars:
+.(
     lda addedsprites
     cmp #13
     bcs l1
@@ -61,8 +62,39 @@ background_stars:
     ldy #bullet_init-sprite_inits
     jsr add_sprite
 l1:
+.)
 #endif
-skip:
+
+add_scout:
+.(
+    lda framecounter
+    and #%01111111
+    bne l1
+    lda random
+    and #%01111000
+    sta scout_formation_y
+    lda #8
+    sta adding_scout
+    lda #3
+    sta adding_scout_delay
+l1:
+
+    lda adding_scout
+    beq l2
+    dec adding_scout_delay
+    lda adding_scout_delay
+    bne l2
+    lda #3
+    sta adding_scout_delay
+    dec adding_scout
+    lda scout_formation_y
+    sta scout_init+1
+    ldy #scout_init-sprite_inits
+    jsr add_sprite
+l2:
+.)
+#endif
+#endif
 
     jsr frame
 #ifdef TIMING
@@ -70,4 +102,7 @@ skip:
     sta $900f
 #endif
     jmp mainloop
-.)
+
+adding_scout:       .byte 0
+adding_scout_delay: .byte 0
+scout_formation_y:  .byte 0

@@ -3,7 +3,7 @@ level_delay: .byte 0
 level_old_y: .byte 0
 
 level_data:
-    .byte 4, 15
+    .byte 16, 15
     .byte 2, 14
     .byte 2, 13
     .byte 2, 12
@@ -14,20 +14,20 @@ level_data:
     .byte 2, 7
     .byte 2, 6
     .byte 10, 5
-    .byte 4, 10
-    .byte 4, 9
+    .byte 16, 10
+    .byte 16, 9
     .byte 12, 20
-    .byte 4, 15
-    .byte 4, 20
-    .byte 4, 15
-    .byte 4, 20
-    .byte 4, 21
-    .byte 4, 22
-    .byte 10, 20
-    .byte 4, 5
-    .byte 4, 15
-    .byte 4, 5
-    .byte 4, 10
+    .byte 16, 15
+    .byte 16, 20
+    .byte 16, 15
+    .byte 16, 20
+    .byte 16, 21
+    .byte 16, 22
+    .byte 32, 20
+    .byte 16, 5
+    .byte 16, 15
+    .byte 16, 5
+    .byte 16, 10
     .byte $ff
 
 add_brick:

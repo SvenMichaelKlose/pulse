@@ -9,6 +9,8 @@ laser_down_init:
     .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun
 bullet_init:
     .byte 22*8, 89, 2, yellow+8, <bullet, <bullet_fun, >bullet_fun
+scout_init:
+    .byte 22*8, 89, 2, yellow+8, <scout, <scout_fun, >scout_fun
 
 hit_enemy:
 .(
@@ -20,21 +22,30 @@ hit_enemy:
     stc
     rts
 n1: clc
-n2: rts
+n2:
 .)
+return:
+    rts
+
+bullet_fun:
+    lda #8
+    jsr sprite_left
+    jmp remove_if_sprite_is_out
+
+scout_fun:
+    lda #4
+    jsr sprite_left
+    jmp remove_if_sprite_is_out
 
 laser_fun:
     jsr hit_enemy
     bcs remove_sprite_xyf
     lda #11
     jsr sprite_right
+remove_if_sprite_is_out:
     jsr test_sprite_out
-    bcs remove_sprite2f
-    rts
-
-remove_sprite2f:
-    lda #0
-    sta is_firing
+    bcc return
+remove_spritef:
 remove_sprite2:
     jmp remove_sprite
 
@@ -47,14 +58,6 @@ remove_sprite_xy:
     tax
     jmp remove_sprite
 
-bullet_fun:
-    lda #8
-    jsr sprite_left
-    lda sprites_x,x
-    jsr test_sprite_out
-    bcs remove_sprite2
-    rts
-
 laser_up_fun:
 .(
     jsr hit_enemy
@@ -65,9 +68,7 @@ laser_up_fun:
     bcs remove_sprite2
     lda #8
     jsr sprite_up
-    jsr test_sprite_out
-    bcs remove_sprite2
-    rts
+    jmp remove_if_sprite_is_out:
 .)
 
 laser_down_fun:
@@ -80,9 +81,7 @@ laser_down_fun:
     bcs remove_sprite2
     lda #8
     jsr sprite_down
-    jsr test_sprite_out
-    bcs remove_sprite2
-    rts
+    jmp remove_if_sprite_is_out:
 .)
 
 has_double_laser: .byte 0
