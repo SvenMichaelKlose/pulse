@@ -54,7 +54,7 @@ get_char:
     tax
     and #foreground
     cmp #foreground
-    beq cant_use_position
+    beq on_foreground
     txa
     and #framemask
     cmp spriteframe
@@ -64,6 +64,10 @@ l2: jsr alloc_char
     lda curcol
     sta (col),y
     rts
+
+on_foreground:
+    lda #1
+    sta foreground_collision
 
 cant_use_position:
     lda #0

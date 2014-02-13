@@ -8,9 +8,9 @@ laser_up_init:
 laser_down_init:
     .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun
 bullet_init:
-    .byte 22*8, 89, 128+2, yellow+8, <bullet, <bullet_fun, >bullet_fun
+    .byte 22*8, 89, 64+2, yellow+8, <bullet, <bullet_fun, >bullet_fun
 scout_init:
-    .byte 22*8, 89, 128+3, yellow+8, <scout, <scout_fun, >scout_fun
+    .byte 22*8, 89, 64+3, yellow+8, <scout, <scout_fun, >scout_fun
 bonus_init:
     .byte 22*8, 89, 4, green, <scout, <bonus_fun, >bonus_fun
 
@@ -52,7 +52,7 @@ hit_enemy:
     jsr find_hit
     bcc n2
     lda sprites_i,y
-    and #%01111111
+    and #%00111111
     cmp #3
     beq hit_formation
     cmp #2
@@ -63,6 +63,11 @@ n1: clc
 n2:
 .)
 return:
+    rts
+
+test_foreground_collision:
+    lda sprites_i,x
+    and #128
     rts
 
 energize_color:
@@ -138,17 +143,21 @@ scout_fun:
 laser_fun:
     jsr hit_enemy
     bcs remove_sprite_xyf
+    jsr test_foreground_collision
+    bne remove_spritef
     lda #11
     jsr sprite_right
 remove_if_sprite_is_out:
     jsr test_sprite_out
-    bcc return
+    bcc return3
 remove_sprite2:
     jmp remove_sprite
 remove_spritef:
     lda #0
     sta is_firing
     jmp remove_sprite
+return3:
+    rts
 
 remove_sprite_xyf:
     lda #0
@@ -158,6 +167,8 @@ remove_sprite_xy:
     tya
     tax
     jmp remove_sprite
+return2:
+    rts
 
 laser_up_fun:
 .(
@@ -165,6 +176,8 @@ laser_up_fun:
     jsr energize_color
     jsr hit_enemy
     bcs remove_sprite_xy
+    jsr test_foreground_collision
+    bne remove_sprite2
     lda #8
     jsr sprite_right
     jsr test_sprite_out
@@ -180,6 +193,8 @@ laser_down_fun:
     jsr energize_color
     jsr hit_enemy
     bcs remove_sprite_xy
+    jsr test_foreground_collision
+    bne remove_sprite2
     lda #8
     jsr sprite_right
     jsr test_sprite_out
@@ -207,6 +222,7 @@ player_fun:
 d1: jsr find_hit
     bcc c1
     lda sprites_i,y
+    and #%00111111
     cmp #4              ; Bonus.
     bne c2
     txa
@@ -228,11 +244,10 @@ d1: jsr find_hit
     lda #1
     sta has_double_laser
     jmp c1
-return2:
-    rts
 c3: lda #4
     sta fire_interval
-c2: and #128
+c2: lda sprites_i,y
+    and #64
     beq c1
     lda #120
     sta death_timer

@@ -139,6 +139,8 @@ l1: lda sprites_fh,x     ; Skip free slots.
     sta s+1
     lda sprites_l,x
     sta s
+    lda #0
+    sta foreground_collision
     txa
     pha
 #ifdef TIMING
@@ -149,6 +151,12 @@ l1: lda sprites_fh,x     ; Skip free slots.
     jsr draw_sprite
     pla
     tax
+    lda sprites_i,x
+    and #%01111111
+    ldy foreground_collision
+    beq n2
+    ora #128
+n2: sta sprites_i,x
 n1: inx
     cpx #numsprites
     bne l1

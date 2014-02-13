@@ -46,6 +46,8 @@ tmp3        = $1b
 counter     = $1c
 repetition  = $1d
 
+foreground_collision = $1e
+
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.
 sprites_i   = $50   ; Whatever the function needs.
