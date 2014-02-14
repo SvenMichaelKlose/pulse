@@ -14,7 +14,7 @@ scout_init:
 bonus_init:
     .byte 22*8, 89, 4, green, <scout, <bonus_fun, >bonus_fun
 star_init:
-    .byte 22*8, 89, 32, 0, <star, <star_fun, >star_fun
+    .byte 22*8, 89, 32, white, <star, <star_fun, >star_fun
 
 sinetab:
     .byte 0, 0, 1, 2, 3, 5, 7, 7
@@ -22,11 +22,11 @@ sinetab:
     .byte 0, 0, $ff, $fe, $fc, $fa, $f8, $f8
     .byte $f8, $f8, $fa, $fc, $fe, $ff, 0, 0
 
-fire_interval:    .byte 8
-has_double_laser: .byte 0
-has_autofire:     .byte 0
-is_firing: .byte 0
-is_invincible: .byte 0
+fire_interval:      .byte 0
+has_double_laser:   .byte 0
+has_autofire:       .byte 0
+is_firing:          .byte 0
+is_invincible:      .byte 0
 
 hit_formation:
 .(
@@ -103,8 +103,6 @@ n1: sty sprites_c,x
 
 bullet_fun:
 star_fun:
-    ldy #blue
-    jsr energize_color
     lda #2
 
 move_left:
