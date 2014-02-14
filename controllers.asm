@@ -214,7 +214,7 @@ player_fun:
     jmp restart
 d1: lda is_invincible
     beq d2
-    ldy #black
+    ldy #red
     jsr energize_color
     dec is_invincible
     jmp d3
@@ -239,7 +239,7 @@ d3: jsr find_hit
     dec fire_interval
     dec fire_interval
     lda fire_interval
-    cmp #2
+    cmp #4
     bcs c1
     lda has_double_laser
     bne c3
@@ -248,8 +248,10 @@ d3: jsr find_hit
     lda #1
     sta has_double_laser
     jmp c1
-c3: lda #2
+c3: lda #4
     sta fire_interval
+    lda #$ff
+    sta is_invincible
 c2: lda sprites_i,y
     and #64
     beq c1
