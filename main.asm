@@ -1,8 +1,8 @@
 restart:
     jsr clear_screen
 
-; Mark all sprites as dead.
 .(
+clear_sprites:
     ldx #numsprites-1
 l1: lda #0
     sta sprites_fh,x
@@ -23,6 +23,7 @@ l1: sta charset,x
 
     lda #0
     sta framecounter
+    sta framecounter_high
     sta addedsprites
     sta is_firing
     sta has_double_laser
@@ -32,98 +33,80 @@ l1: sta charset,x
 
     ldy #player_init-sprite_inits
     jsr add_sprite
-#ifdef foo
-#ifdef STATIC
-    lda player_init
-    clc
-    adc #11
-    sta player_init
-    ldy #player_init-sprite_inits
-    jsr add_sprite
-#endif
-#endif
 
 mainloop:
-#ifndef STATIC
-#ifdef BULLETS
-background_stars:
-.(
-    lda addedsprites
-    cmp #13
-    bcs l1
-    lda framecounter
-    and #%111
-    bne l1
-    lda random
-    and #%01111000
-    sta bullet_init+1
-    lda random
-    and #3
-    ora #8
-    sta bullet_init+3
-    ldy #bullet_init-sprite_inits
-    jsr add_sprite
-l1:
-.)
-#endif
-
-add_scout:
-.(
-    lda framecounter
-    and #%01111111
-    bne l1
-    lda random
-retry:
-    and #%01111000
-    clc
-    adc #16
-    sta scout_formation_y
-    sta scry
-    lda #21
-    sta scrx
-    jsr scraddr
-    ldy #0
-    lda (scr),y
-    and #foreground
-    cmp #foreground
-    bne n1
-    lda random
-    rol
-    eor $9004
-    sta random
-    jmp retry
-n1: lda #8
-    sta adding_scout
-    sta formation_left_unhit
-    lda #3
-    sta adding_scout_delay
-l1:
-
-    lda adding_scout
-    beq l2
-    dec adding_scout_delay
-    lda adding_scout_delay
-    bne l2
-    lda #3
-    sta adding_scout_delay
-    dec adding_scout
-    lda scout_formation_y
-    sta scout_init+1
-    ldy #scout_init-sprite_inits
-    jsr add_sprite
-l2:
-.)
-#endif
-#endif
-
-    jsr frame
 #ifdef TIMING
     lda #8+blue
     sta $900f
 #endif
-    jmp mainloop
 
-adding_scout:       .byte 0
-adding_scout_delay: .byte 0
-scout_formation_y:  .byte 0
-formation_left_unhit:  .byte 0
+update_framecounter:
+.(
+    inc framecounter
+    bne n
+    inc framecounter_high
+n:
+.)
+
+update_random:
+    lda $9004
+    cmp #$80
+    rol
+    rol
+    rol
+    rol
+    adc $9004
+    eor random
+    sta random
+
+wait_retrace:
+.(  
+l1: lda $9004
+    bne l1
+.)
+
+switch_frame:
+.(  
+    lda spriteframe
+    eor #framemask
+    sta spriteframe
+    ora #first_sprite_char
+    sta next_sprite_char
+.)
+
+#ifdef SHOW_CHARSET
+.(
+    ldx #numchars-1
+l2: txa
+    sta screen,x
+    lda #white
+    sta colors,x
+    dex
+    bpl l2
+.)
+#endif
+
+#ifndef STATIC
+call_controllers:
+.(
+    ldx #numsprites-1
+l1: lda sprites_fh,x
+    beq n1
+    sta m1+2
+    lda sprites_fl,x
+    sta m1+1
+    txa
+    pha
+m1: jsr $1234
+    pla
+    tax
+n1: dex
+    bpl l1
+.)
+#endif
+
+    jsr draw_foreground
+    jsr draw_sprites
+    jsr process_level
+    jsr add_scout
+    jmp mainloop

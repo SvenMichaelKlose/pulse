@@ -126,6 +126,10 @@ scout_fun:
     jsr energize_color
     lda #4
     jsr sprite_left
+    lda framecounter_high
+    lsr
+    lsr
+    beq l1
     lda sprites_x,x
     lsr
     lsr
@@ -139,7 +143,7 @@ scout_fun:
     clc
     adc sinetab,y
     sta sprites_y,x
-    jmp remove_if_sprite_is_out
+l1: jmp remove_if_sprite_is_out
 .)
 
 laser_fun:
@@ -238,16 +242,16 @@ d1: jsr test_foreground_collision
     dec fire_interval
     dec fire_interval
     lda fire_interval
-    cmp #4
+    cmp #2
     bcs c1
     lda has_double_laser
     bne c3
-    lda #8
+    lda #6
     sta fire_interval
     lda #1
     sta has_double_laser
     jmp c1
-c3: lda #4
+c3: lda #2
     sta fire_interval
 c2: lda sprites_i,y
     and #64

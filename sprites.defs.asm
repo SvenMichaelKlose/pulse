@@ -47,6 +47,7 @@ counter     = $1c
 repetition  = $1d
 
 foreground_collision = $1e
+framecounter_high = $1f
 
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.
