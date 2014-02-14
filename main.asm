@@ -125,13 +125,17 @@ n1: jsr add_stars
     jmp mainloop
 
 update_random:
-    lda $9004
-    cmp #$80
+    lda random
+    cmp #80
     rol
+    eor $9004
+    cmp #80
     rol
+    eor $fecd,x
+    cmp #80
     rol
-    rol
-    adc $9004
     eor random
+    cmp #80
+    rol
     sta random
     rts

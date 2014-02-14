@@ -41,7 +41,7 @@ remove_sprite:
     dec addedsprites
     lda #0
     sta sprites_fh,x
-    rts
+    jmp readd_star
 
 sprite_up:
 .(
