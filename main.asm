@@ -69,7 +69,7 @@ n:
 wait_retrace:
 .(  
 l1: lda $9004
-    bne l1
+    ;bne l1
 .)
 
 switch_frame:
