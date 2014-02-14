@@ -142,12 +142,26 @@ c1: pla
 draw_sprites:
 .(
     ldx #0
+l2: lda sprites_fh,x     ; Skip free slots.
+    beq n3
+    lda sprites_i,x
+    and #32
+    beq n3
+    txa
+    pha
+    jsr draw_sprite
+    pla
+    tax
+n3: inx
+    cpx #numsprites
+    bne l2
+
+    ldx #0
 l1: lda sprites_fh,x     ; Skip free slots.
     beq n1
-    lda #>sprite_gfx
-    sta s+1
-    lda sprites_l,x
-    sta s
+    lda sprites_i,x
+    and #32
+    bne n1
     lda #0
     sta foreground_collision
     txa
@@ -218,7 +232,10 @@ n1: dex
 ; Draw a single sprite.
 draw_sprite:
 .(
-    lda s
+    lda #>sprite_gfx
+    sta s+1
+    lda sprites_l,x
+    sta s
     sta sprite_data_top
 
     lda sprites_c,x

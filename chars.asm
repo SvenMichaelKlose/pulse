@@ -76,6 +76,8 @@ cant_use_position:
 .)
 
 reuse_char:
+    lda curcol
+    sta (col),y
     txa
 
 get_char_addr:
