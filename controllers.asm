@@ -225,8 +225,8 @@ d1: lda is_invincible
     dec is_invincible
     jmp d3
 
-d2: ldy #cyan
-    jsr energize_color
+d2: lda #cyan
+    sta sprites_c,x
     jsr test_foreground_collision
     bne die
 d3: jsr find_hit
