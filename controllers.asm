@@ -26,6 +26,7 @@ fire_interval:    .byte 8
 has_double_laser: .byte 0
 has_autofire:     .byte 0
 is_firing: .byte 0
+is_invincible: .byte 0
 
 hit_formation:
 .(
@@ -203,8 +204,6 @@ death_timer:    .byte 0
 
 player_fun:
 .(
-    ldy #cyan
-    jsr energize_color
     lda death_timer
     beq d1
     lda random
@@ -213,9 +212,18 @@ player_fun:
     dec death_timer
     bne return2
     jmp restart
-d1: jsr test_foreground_collision
+d1: lda is_invincible
+    beq d2
+    ldy #black
+    jsr energize_color
+    dec is_invincible
+    jmp d3
+
+d2: ldy #cyan
+    jsr energize_color
+    jsr test_foreground_collision
     bne die
-    jsr find_hit
+d3: jsr find_hit
     bcc c1
     lda sprites_i,y
     and #%00111111
@@ -245,10 +253,13 @@ c3: lda #2
 c2: lda sprites_i,y
     and #64
     beq c1
+    lda is_invincible
+    bne c1
 die:
     lda #120
     sta death_timer
     rts
+
 c1: lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111

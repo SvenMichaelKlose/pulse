@@ -38,6 +38,8 @@ l1: sta charset,x
     lda #8
     sta fire_interval
     jsr init_foreground
+    lda #150
+    sta is_invincible
 
     ldy #player_init-sprite_inits
     jsr add_sprite
