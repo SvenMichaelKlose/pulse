@@ -49,6 +49,7 @@ counter     = $1e
 repetition  = $1f
 
 foreground_collision = $20
+lifes       = $21
 
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.

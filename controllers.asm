@@ -211,7 +211,12 @@ player_fun:
     sta sprites_c,x
     dec death_timer
     bne return2
+    lda #<ship
+    sta sprites_l,x
+    dec lifes
+    bmi g1
     jmp restart
+g1: jmp game_over
 d1: lda is_invincible
     beq d2
     ldy #red

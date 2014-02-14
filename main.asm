@@ -1,4 +1,7 @@
-restart:
+game_over:
+    lda #3
+    sta lifes
+
 .(
     lda #0
     ldx #255
@@ -33,16 +36,19 @@ l1: sta charset,x
     sta framecounter_high
     sta spriteframe
     sta addedsprites
-    sta is_firing
-    sta has_double_laser
-    lda #8
-    sta fire_interval
     jsr init_foreground
-    lda #150
-    sta is_invincible
 
     ldy #player_init-sprite_inits
     jsr add_sprite
+
+restart:
+    lda #8
+    sta fire_interval
+    lda #150
+    sta is_invincible
+    lda #0
+    sta is_firing
+    sta has_double_laser
 
 mainloop:
 #ifdef TIMING
