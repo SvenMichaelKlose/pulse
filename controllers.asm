@@ -103,7 +103,10 @@ n1: sty sprites_c,x
 
 bullet_fun:
 star_fun:
-    lda #2
+    lda framecounter
+    lsr
+    bcc remove_if_sprite_is_out
+    lda #1
 
 move_left:
     jsr sprite_left

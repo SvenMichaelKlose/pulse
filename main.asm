@@ -50,6 +50,13 @@ restart:
     sta is_firing
     sta has_double_laser
 
+.(
+    ldx #16
+l1: jsr add_star
+    dex
+    bne l1
+.)
+
 mainloop:
 #ifdef TIMING
     lda #8+blue
@@ -118,8 +125,7 @@ n1: dex
     bcc n1
     jsr draw_foreground
     jsr process_level
-n1: jsr add_stars
-    jsr draw_sprites
+n1: jsr draw_sprites
     jsr add_scout
 .)
     jmp mainloop
