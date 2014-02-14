@@ -51,7 +51,7 @@ restart:
     sta has_double_laser
 
 .(
-    ldx #16
+    ldx #numsprites
 l1: jsr add_star
     dex
     bne l1
@@ -72,12 +72,6 @@ n:
 .)
 
     jsr update_random
-
-wait_retrace:
-.(  
-l1: lda $9004
-    ;bne l1
-.)
 
 switch_frame:
 .(  
@@ -121,20 +115,21 @@ n1: dex
 
 .(
     lda framecounter_high
-    cmp #5
-    bcc n1
+    cmp #4
+    bcc n
     jsr draw_foreground
     jsr process_level
-n1: jsr draw_sprites
+n:  jsr draw_sprites
     jsr add_scout
 .)
+
     jmp mainloop
 
 update_random:
     lda random
     cmp #80
     rol
-    eor $9004
+    eor $9005
     cmp #80
     rol
     eor $fecd,x
