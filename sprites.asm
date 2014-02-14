@@ -9,6 +9,12 @@ l1: lda sprites_fh,x
     beq l2
     dex
     bpl l1
+    ldx #numsprites-1
+l4: lda sprites_i,x
+    and #32
+    bne l2
+    dex
+    bpl l4
     pla
     tax
     rts
@@ -95,6 +101,9 @@ l1: cpy tmp
     beq n1
     lda sprites_fh,y
     beq n1
+    lda sprites_i,y
+    and #32
+    bne n1
 
     lda sprites_x,x     ; Get X distance.
     sec

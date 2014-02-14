@@ -1,4 +1,9 @@
-free_bricks: .byte 0
+test_on_foreground:
+    ldy #0                                                                                                                         
+    lda (scr),y
+    and #foreground
+    cmp #foreground
+    rts
 
 init_foreground:
     lda #0
@@ -10,6 +15,9 @@ init_foreground:
     sta level_pos
     lda #22
     sta level_old_y
+    lda #0
+    jsr add_brick
+    dec level_old_y
     rts
 
 fetch_foreground_char:

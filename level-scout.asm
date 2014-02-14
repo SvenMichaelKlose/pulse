@@ -21,10 +21,7 @@ retry:
     lda #21
     sta scrx
     jsr scraddr
-    ldy #0
-    lda (scr),y
-    and #foreground
-    cmp #foreground
+    jsr test_on_foreground
     bne n1
     lda random
     rol

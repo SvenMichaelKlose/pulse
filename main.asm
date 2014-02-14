@@ -1,4 +1,11 @@
 restart:
+.(
+    lda #0
+    ldx #255
+l1: sta 0,x
+    dex
+    bpl l1
+.)
     jsr clear_screen
 
 .(
@@ -24,6 +31,7 @@ l1: sta charset,x
     lda #0
     sta framecounter
     sta framecounter_high
+    sta spriteframe
     sta addedsprites
     sta is_firing
     sta has_double_laser
@@ -48,16 +56,7 @@ update_framecounter:
 n:
 .)
 
-update_random:
-    lda $9004
-    cmp #$80
-    rol
-    rol
-    rol
-    rol
-    adc $9004
-    eor random
-    sta random
+    jsr update_random
 
 wait_retrace:
 .(  
@@ -105,8 +104,26 @@ n1: dex
 .)
 #endif
 
+.(
+    lda framecounter_high
+    cmp #5
+    bcc n1
     jsr draw_foreground
-    jsr draw_sprites
     jsr process_level
+n1: jsr add_stars
+    jsr draw_sprites
     jsr add_scout
+.)
     jmp mainloop
+
+update_random:
+    lda $9004
+    cmp #$80
+    rol
+    rol
+    rol
+    rol
+    adc $9004
+    eor random
+    sta random
+    rts

@@ -13,6 +13,8 @@ scout_init:
     .byte 22*8, 89, 64+3, yellow+8, <scout, <scout_fun, >scout_fun
 bonus_init:
     .byte 22*8, 89, 4, green, <scout, <bonus_fun, >bonus_fun
+star_init:
+    .byte 22*8, 89, 32, 0, <star, <star_fun, >star_fun
 
 sinetab:
     .byte 0, 0, 1, 2, 3, 5, 7, 7
@@ -99,22 +101,10 @@ n1: sty sprites_c,x
 .)
 
 bullet_fun:
-.(
-    lda sprites_x+15
-    cmp sprites_x,x
-    bcs n1
+star_fun:
+    ldy #blue
+    jsr energize_color
     lda #2
-    jsr sprite_right
-    jmp n2
-n1: jsr sprite_left
-    lda sprites_y+15
-    cmp sprites_x,x
-    bcs n1
-    jsr sprite_down
-    jmp n2
-n3: jsr sprite_up
-n2: jmp remove_if_sprite_is_out
-.)
 
 move_left:
     jsr sprite_left
@@ -127,9 +117,8 @@ scout_fun:
     lda #4
     jsr sprite_left
     lda framecounter_high
-    lsr
-    lsr
-    beq l1
+    cmp #3
+    bcc l1
     lda sprites_x,x
     lsr
     lsr

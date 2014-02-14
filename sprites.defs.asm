@@ -26,28 +26,29 @@ blitter_shift_left  = $0b
 blitter_shift_right = $0c
 
 framecounter        = $0d
+framecounter_high   = $0e
 
-next_sprite_char    = $0e
-sprite_shift_y      = $0f
-sprite_data_top     = $10
-sprite_data_bottom  = $11
-sprite_height_top   = $12
-spriteframe         = $13
+next_sprite_char    = $0f
+sprite_shift_y      = $10
+sprite_data_top     = $11
+sprite_data_bottom  = $12
+sprite_height_top   = $13
+spriteframe         = $14
 
-scrolled_bits       = $14
-scrolled_chars      = $15
-leftmost_brick      = $16
-next_foreground_char = $17
+scrolled_bits       = $15
+scrolled_chars      = $16
+leftmost_brick      = $17
+free_bricks         = $18
+next_foreground_char = $19
 
-random      = $18
-tmp         = $19
-tmp2        = $1a
-tmp3        = $1b
-counter     = $1c
-repetition  = $1d
+random      = $1a
+tmp         = $1b
+tmp2        = $1c
+tmp3        = $1d
+counter     = $1e
+repetition  = $1f
 
-foreground_collision = $1e
-framecounter_high = $1f
+foreground_collision = $20
 
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.
