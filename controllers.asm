@@ -14,7 +14,7 @@ scout_init:
 sniper_init:
     .byte 22*8, 89, 64+3, white, <sniper, <sniper_fun, >sniper_fun, 0
 bonus_init:
-    .byte 22*8, 89, 4, green, <scout, <bonus_fun, >bonus_fun, 0
+    .byte 22*8, 89, 4, green, <bonus, <bonus_fun, >bonus_fun, 0
 star_init:
     .byte 22*8, 89, 32, white, <star, <star_fun, >star_fun, 0
 
@@ -354,15 +354,15 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     sta sprites_c,x
     tya
     pha
+    ldy #laser_init-sprite_inits
+    jsr add_sprite
     lda has_double_laser
     beq s1
     ldy #laser_up_init-sprite_inits
     jsr add_sprite
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
-s1: ldy #laser_init-sprite_inits
-    jsr add_sprite
-    pla
+s1: pla
     tay
 n1: lda is_firing
     beq i1
