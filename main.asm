@@ -35,7 +35,6 @@ l1: sta charset,x
     sta framecounter
     sta framecounter_high
     sta spriteframe
-    sta addedsprites
     jsr init_foreground
 
     ldy #player_init-sprite_inits

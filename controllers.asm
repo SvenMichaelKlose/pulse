@@ -22,12 +22,6 @@ sinetab:
     .byte 0, 0, $ff, $fe, $fc, $fa, $f8, $f8
     .byte $f8, $f8, $fa, $fc, $fe, $ff, 0, 0
 
-fire_interval:      .byte 0
-has_double_laser:   .byte 0
-has_autofire:       .byte 0
-is_firing:          .byte 0
-is_invincible:      .byte 0
-
 hit_formation:
 .(
     dec formation_left_unhit

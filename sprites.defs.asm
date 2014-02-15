@@ -56,6 +56,12 @@ adding_scout_delay      = $23
 scout_formation_y       = $24
 formation_left_unhit    = $25
 
+fire_interval           = $26
+has_double_laser        = $27
+has_autofire            = $28
+is_firing               = $29
+is_invincible           = $2a
+
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.
 sprites_i   = $50   ; Whatever the function needs.

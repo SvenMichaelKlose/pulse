@@ -1,5 +1,3 @@
-addedsprites: .byt 0
-
 add_sprite:
 .(
     txa
@@ -31,14 +29,12 @@ sm: sta sprites_x,x
     sta sm+1
     jmp l3
 done:
-    inc addedsprites
     pla
     tax
     rts
 .)
 
 remove_sprite:
-    dec addedsprites
     lda #0
     sta sprites_fh,x
     jmp add_star
