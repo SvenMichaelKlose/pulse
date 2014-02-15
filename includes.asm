@@ -5,9 +5,10 @@
 #define INVINCIBLE
 */
 
+#include "game.defs.asm"
+#include "zeropage.asm"
 #include "basic-loader.asm"
 #include "kernal.asm"
-#include "sprites.defs.asm"
 #include "init.asm"
 #include "lowmem-start.asm"
 #include "level-stars.asm"
