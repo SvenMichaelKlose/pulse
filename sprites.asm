@@ -22,7 +22,7 @@ l3: lda sprite_inits,y
 sm: sta sprites_x,x
     iny
     lda sm+1
-    cmp #sprites_fh
+    cmp #sprites_d
     beq done
     clc
     adc #$10

@@ -69,7 +69,7 @@ scout:
     .byte %10010110
     .byte %00111100
 
-fighter:
+sniper:
     .byte %01100110
     .byte %01011010
     .byte %10100101

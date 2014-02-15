@@ -1,20 +1,22 @@
 sprite_inits:
 player_init:
-    .byte 02, 81, 0, cyan,     <ship, <player_fun, >player_fun
+    .byte 02, 81, 0, cyan,     <ship, <player_fun, >player_fun, 0
 laser_init:
-    .byte 18, 80, 1, white+8,  <laser, <laser_fun,  >laser_fun
+    .byte 18, 80, 1, white+8,  <laser, <laser_fun,  >laser_fun, 0
 laser_up_init:
-    .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun
+    .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun, 0
 laser_down_init:
-    .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun
+    .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun, 0
 bullet_init:
-    .byte 22*8, 89, 64+2, yellow+8, <bullet, <bullet_fun, >bullet_fun
+    .byte 22*8, 89, 64+2, yellow+8, <bullet, <bullet_fun, >bullet_fun, 0
 scout_init:
-    .byte 22*8, 89, 64+3, yellow+8, <scout, <scout_fun, >scout_fun
+    .byte 22*8, 89, 64+3, yellow+8, <scout, <scout_fun, >scout_fun, 0
+sniper_init:
+    .byte 22*8, 89, 64+3, white, <sniper, <sniper_fun, >sniper_fun, 0
 bonus_init:
-    .byte 22*8, 89, 4, green, <scout, <bonus_fun, >bonus_fun
+    .byte 22*8, 89, 4, green, <scout, <bonus_fun, >bonus_fun, 0
 star_init:
-    .byte 22*8, 89, 32, white, <star, <star_fun, >star_fun
+    .byte 22*8, 89, 32, white, <star, <star_fun, >star_fun, 0
 
 sinetab:
     .byte 0, 0, 1, 2, 3, 5, 7, 7
@@ -95,20 +97,74 @@ n1: sty sprites_c,x
     jmp move_left
 .)
 
-bullet_fun:
 star_fun:
     lda framecounter
     lsr
-    bcc remove_if_sprite_is_out
+    bcc return
     lda #1
-
 move_left:
     jsr sprite_left
     jmp remove_if_sprite_is_out
 
+bullet_fun:
+.(
+    lda #sprites_x
+    sta si+1
+    lda #sprites_y
+    sta sw+1
+    lda #$f6
+    sta si
+    sta sw
+    lda sprites_i,x
+    and #step_y
+    beq n2
+    lda #sprites_y
+    sta si+1
+    lda #sprites_x
+    sta sw+1
+n2: lda sprites_i,x
+    and #dec_x
+    beq n3
+    lda #$d6
+    sta si
+n3: lda sprites_i,x
+    and #dec_y
+    beq n4
+    lda #$d6
+    sta sw
+n4:
+si: inc sprites_y,x
+    lda sprites_d,x
+    lsr
+    lsr
+    lsr
+    lsr
+    sta tmp
+    lda sprites_d,x
+    and #%1111
+    sec
+    sbc tmp
+    bcs n1
+sw: inc sprites_x,x
+n1: and #%1111
+    sta tmp
+    lda sprites_d,x
+    and #%11110000
+    ora tmp
+    sta sprites_d,x
+    jsr test_foreground_collision
+    bne remove_sprite2
+    jmp remove_if_sprite_is_out
+.)
+
 scout_fun:
 .(
-    ldy #yellow+8
+    lda random
+    and #%01111111
+    bne l2
+    jsr add_bullet
+    jsr update_random
+l2: ldy #yellow+8
     jsr energize_color
     lda #4
     jsr sprite_left
@@ -129,6 +185,16 @@ scout_fun:
     adc sinetab,y
     sta sprites_y,x
 l1: jmp remove_if_sprite_is_out
+.)
+
+sniper_fun:
+.(
+    lda framecounter
+    and #%11001111
+    bne n
+    jsr add_bullet
+n:  lda #1
+    jmp move_left
 .)
 
 laser_fun:

@@ -68,15 +68,16 @@ lifes                   = $2e
 
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.
-sprites_i   = $50   ; Whatever the function needs.
+sprites_i   = $50   ; Flags.
 sprites_c   = $60   ; Color.
 sprites_l   = $70   ; Low character address.
 sprites_fl  = $80   ; Function controlling the sprite.
 sprites_fh  = $90   ; Function controlling the sprite.
-sprites_ox  = $a0   ; Former X position for cleaning up.
-sprites_oy  = $b0   ; Former Y position for cleaning up.
+sprites_d   = $a0   ; Whatever the controller wants.
+sprites_ox  = $b0   ; Former X position for cleaning up.
+sprites_oy  = $c0   ; Former Y position for cleaning up.
 
-scrbricks_i = $c0
-scrbricks_x = $e0
-scrbricks_y = $100
-scrbricks_n = $120
+scrbricks_i = $100
+scrbricks_x = $120
+scrbricks_y = $140
+scrbricks_n = $160
