@@ -93,7 +93,6 @@ bonus_fun:
     ora #white
     tay
 n1: sty sprites_c,x
-    lda #1
     jmp move_left
 .)
 
@@ -101,8 +100,8 @@ star_fun:
     lda framecounter
     lsr
     bcc return
-    lda #1
 move_left:
+    lda #1
     jsr sprite_left
     jmp remove_if_sprite_is_out
 
@@ -163,8 +162,7 @@ sniper_fun:
     and #%01011111
     bne n
     jsr add_bullet
-n:  lda #1
-    jmp move_left
+n:  jmp move_left
 .)
 
 scout_fun:
@@ -210,11 +208,10 @@ laser_fun:
 remove_if_sprite_is_out:
     jsr test_sprite_out
     bcc return3
-remove_sprite2:
-    jmp remove_sprite
 remove_spritef:
     lda #0
     sta is_firing
+remove_sprite2:
     jmp remove_sprite
 return3:
     rts
@@ -361,8 +358,8 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     jsr add_sprite
     lda has_double_laser
     beq s1
-    ldy #laser_up_init-sprite_inits
-    jsr add_sprite
+;    ldy #laser_up_init-sprite_inits
+;    jsr add_sprite
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
 s1: pla
