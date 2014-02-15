@@ -51,6 +51,11 @@ repetition  = $1f
 foreground_collision = $20
 lifes       = $21
 
+adding_scout            = $22
+adding_scout_delay      = $23
+scout_formation_y       = $24
+formation_left_unhit    = $25
+
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.
 sprites_i   = $50   ; Whatever the function needs.

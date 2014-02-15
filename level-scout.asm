@@ -1,8 +1,3 @@
-adding_scout:           .byte 0
-adding_scout_delay:     .byte 0
-scout_formation_y:      .byte 0
-formation_left_unhit:   .byte 0
-
 add_scout:
 .(
     lda framecounter
