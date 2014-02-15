@@ -108,7 +108,7 @@ n1: dex
     jsr draw_foreground
     jsr process_level
     lda random
-    and #%00111111
+    and #%00011111
     bne n
     jsr add_sniper
 n:  jsr draw_sprites

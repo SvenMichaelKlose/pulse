@@ -190,7 +190,7 @@ l1: jmp remove_if_sprite_is_out
 sniper_fun:
 .(
     lda framecounter
-    and #%11001111
+    and #%01001111
     bne n
     jsr add_bullet
 n:  lda #1
@@ -317,6 +317,9 @@ c2: lda sprites_i,y
     lda is_invincible
     bne c1
 die:
+#ifdef INVINCIBLE
+jmp c1
+#endif
     lda #120
     sta death_timer
     rts
