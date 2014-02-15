@@ -35,35 +35,36 @@ sprite_data_bottom  = $12
 sprite_height_top   = $13
 spriteframe         = $14
 
-scrolled_bits       = $15
-scrolled_chars      = $16
-leftmost_brick      = $17
-free_bricks         = $18
-next_foreground_char = $19
+scrolled_bits           = $15
+scrolled_chars          = $16
+leftmost_brick          = $17
+free_bricks             = $18
+next_foreground_char    = $19
+foreground_collision    = $1a
 
-random      = $1a
-tmp         = $1b
-tmp2        = $1c
-tmp3        = $1d
-counter     = $1e
-repetition  = $1f
+random                  = $1b
+tmp                     = $1c
+tmp2                    = $1d
+tmp3                    = $1e
+counter                 = $1f
+repetition              = $20
 
-foreground_collision = $20
-lifes       = $21
+adding_scout            = $21
+adding_scout_delay      = $22
+scout_formation_y       = $23
+formation_left_unhit    = $24
 
-adding_scout            = $22
-adding_scout_delay      = $23
-scout_formation_y       = $24
-formation_left_unhit    = $25
+level_pos               = $25
+level_delay             = $26
+level_old_y             = $27
 
-fire_interval           = $26
-has_double_laser        = $27
-has_autofire            = $28
-is_firing               = $29
-is_invincible           = $2a
-level_pos               = $2b
-level_delay             = $2c
-level_old_y             = $2d
+fire_interval           = $28
+has_double_laser        = $29
+has_autofire            = $2a
+is_firing               = $2b
+is_invincible           = $2c
+death_timer             = $2d
+lifes                   = $2e
 
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.

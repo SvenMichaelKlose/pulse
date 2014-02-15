@@ -190,8 +190,6 @@ laser_down_fun:
     jmp laser_side
 .)
 
-death_timer:    .byte 0
-
 player_fun:
 .(
     lda death_timer
@@ -204,7 +202,7 @@ player_fun:
     lda #<ship
     sta sprites_l,x
     dec lifes
-    bmi g1
+    beq g1
     jmp restart
 g1: jmp game_over
 d1: lda is_invincible
