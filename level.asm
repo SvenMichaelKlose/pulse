@@ -1,7 +1,3 @@
-level_pos:  .byte 0
-level_delay: .byte 0
-level_old_y: .byte 0
-
 level_data:
     .byte 16, 15
     .byte 2, 14

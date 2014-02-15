@@ -61,6 +61,9 @@ has_double_laser        = $27
 has_autofire            = $28
 is_firing               = $29
 is_invincible           = $2a
+level_pos               = $2b
+level_delay             = $2c
+level_old_y             = $2d
 
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.

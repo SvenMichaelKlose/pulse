@@ -1,5 +1,5 @@
 test_on_foreground:
-    ldy #0                                                                                                                         
+    ldy #0
     lda (scr),y
     and #foreground
     cmp #foreground
