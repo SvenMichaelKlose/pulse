@@ -161,7 +161,7 @@ remove_sprite_xy:
 return2:
     rts
 
-laser_up_fun:
+laser_side:
 .(
     ldy #yellow
     jsr energize_color
@@ -173,26 +173,21 @@ laser_up_fun:
     jsr sprite_right
     jsr test_sprite_out
     bcs remove_sprite2
+    rts
+.)
+
+laser_up_fun:
+.(
     lda #8
     jsr sprite_up
-    jmp remove_if_sprite_is_out:
+    jmp laser_side
 .)
 
 laser_down_fun:
 .(
-    ldy #yellow
-    jsr energize_color
-    jsr hit_enemy
-    bcs remove_sprite_xy
-    jsr test_foreground_collision
-    bne remove_sprite2
-    lda #8
-    jsr sprite_right
-    jsr test_sprite_out
-    bcs remove_sprite2
     lda #8
     jsr sprite_down
-    jmp remove_if_sprite_is_out:
+    jmp laser_side
 .)
 
 death_timer:    .byte 0
