@@ -6,12 +6,6 @@ test_on_foreground:
     rts
 
 init_foreground:
-    lda #0
-    sta scrolled_bits
-    sta scrolled_chars
-    sta free_bricks
-    sta leftmost_brick
-    sta level_pos
     lda #22
     sta level_old_y
     lda #0

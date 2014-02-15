@@ -20,7 +20,7 @@
 #include "controllers.asm"
 #include "level.asm"
 #include "foreground.asm"
-#include "sprites.asm"
 #include "gfx-sprites.asm"
 #include "gfx-foreground.asm"
+#include "sprites.asm"
 #include "end.asm"

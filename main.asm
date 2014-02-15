@@ -1,42 +1,31 @@
 game_over:
-    lda #3
-    sta lifes
 
 .(
     lda #0
-    ldx #255
+    tax
 l1: sta 0,x
+    sta charset,x
     dex
-    bpl l1
+    bne l1
 .)
+
     jsr clear_screen
 
 .(
 clear_sprites:
     ldx #numsprites-1
-l1: lda #0
-    sta sprites_fh,x
-    lda #$ff
-    sta sprites_ox,x
+l1: ldy #0
+    sty sprites_fh,x
+    dey
+    sty sprites_ox,x
     dex
     bpl l1
 .)
 
-init_charset:
-.(
-    lda #0
-    ldx #7
-l1: sta charset,x
-    dex
-    bpl l1
-.)
-
-    lda #0
-    sta framecounter
-    sta framecounter_high
-    sta spriteframe
     jsr init_foreground
 
+    lda #3
+    sta lifes
     ldy #player_init-sprite_inits
     jsr add_sprite
 
