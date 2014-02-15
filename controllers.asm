@@ -157,8 +157,21 @@ n1: and #%1111
     jmp remove_if_sprite_is_out
 .)
 
+sniper_fun:
+.(
+    lda framecounter
+    and #%01011111
+    bne n
+    jsr add_bullet
+n:  lda #1
+    jmp move_left
+.)
+
 scout_fun:
 .(
+    lda framecounter_high
+    cmp #6
+    bcc l2
     lda random
     and #%01111111
     bne l2
@@ -185,16 +198,6 @@ l2: ldy #yellow+8
     adc sinetab,y
     sta sprites_y,x
 l1: jmp remove_if_sprite_is_out
-.)
-
-sniper_fun:
-.(
-    lda framecounter
-    and #%01001111
-    bne n
-    jsr add_bullet
-n:  lda #1
-    jmp move_left
 .)
 
 laser_fun:
