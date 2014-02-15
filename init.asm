@@ -13,5 +13,14 @@ main:
     lda #red*16     ; Auxiliary color.
     sta $900e
 
-init_end:
-    .dsb realstart-init_end, $ea
+.(
+    ldx #0
+l:  lda lowmem,x
+    sta $200,x
+    lda lowmem+$100,x
+    sta $300,x
+    dex
+    bne l
+.)
+
+    jmp start_main
