@@ -1,6 +1,6 @@
 sprite_inits:
 player_init:
-    .byte 02, 81, 0, cyan,     <ship, <player_fun, >player_fun, 0
+    .byte 02, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
 laser_init:
     .byte 18, 80, 1, white+8,  <laser, <laser_fun,  >laser_fun, 0
 laser_up_init:
@@ -291,21 +291,23 @@ d3: jsr find_hit
     jsr remove_sprite
     pla
     tax
-    dec fire_interval
-    dec fire_interval
     lda fire_interval
-    cmp #4
-    bcs c1
+    cmp #min_fire_interval
+    bne c4
     lda has_double_laser
     bne c3
-    lda #6
+    lda #max_fire_interval
     sta fire_interval
     lda #1
     sta has_double_laser
     jmp c1
-c3: lda #4
-    sta fire_interval
+c3: lda random
+    and #1
+    bne c5
     lda #$ff
+    sta has_autofire
+    jmp c2
+c5: lda #$ff
     sta is_invincible
 c2: lda sprites_i,y
     and #64
@@ -319,7 +321,8 @@ jmp c1
     lda #120
     sta death_timer
     rts
-
+c4: dec fire_interval
+    dec fire_interval
 c1: lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
@@ -330,7 +333,9 @@ c1: lda #0              ; Fetch joystick status.
     bne a1
     lda is_firing
     bne n1
-a1: lda framecounter    ; Little ramdomness to give the laser some action.
+    jmp a2
+a1: dec has_autofire
+a2: lda framecounter    ; Little ramdomness to give the laser some action.
     lsr
     lsr
     and #7
@@ -354,8 +359,8 @@ a1: lda framecounter    ; Little ramdomness to give the laser some action.
     jsr add_sprite
     lda has_double_laser
     beq s1
-;    ldy #laser_up_init-sprite_inits
-;    jsr add_sprite
+    ldy #laser_up_init-sprite_inits
+    jsr add_sprite
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
 s1: pla
