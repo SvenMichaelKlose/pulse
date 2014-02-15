@@ -70,10 +70,11 @@ test_foreground_collision:
     rts
 
 energize_color:
-.(
     lda framecounter
-    lsr
-    bcc n1
+    and #1
+toggle_color:
+.(
+    beq n1
     tya
     and #%1000
     ora #white
@@ -87,12 +88,7 @@ bonus_fun:
     ldy #green
     lda framecounter
     and #%10
-    beq n1
-    tya
-    and #%1000
-    ora #white
-    tay
-n1: sty sprites_c,x
+    jsr toggle_color
     jmp move_left
 .)
 
