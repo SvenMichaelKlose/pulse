@@ -31,16 +31,10 @@ l3: sta (d),y
 test_position:
 .(
     lda scrx
-    bmi i
     cmp #22
     bcs e
     lda scry
-    bmi i
     cmp #23
-    bcs e
-    clc
-    rts
-i:  stc
 e:  rts
 .)
 
