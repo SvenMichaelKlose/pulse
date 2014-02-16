@@ -30,7 +30,7 @@ l1: ldy #0
     jsr add_sprite
 
 restart:
-    lda #8
+    lda #max_fire_interval
     sta fire_interval
     lda #150
     sta is_invincible

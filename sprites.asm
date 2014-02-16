@@ -102,8 +102,8 @@ l1: cpy tmp
     bne n1
 
     lda sprites_x,x     ; Get X distance.
-    sec
-    sbc #8
+    clc
+    adc #8
     sec
     sbc sprites_x,y
     bpl l2
@@ -272,7 +272,6 @@ draw_sprite:
     clc
     adc sprite_shift_y
     sta d
-
     ldy sprite_height_top
     lda sprite_data_top
     jsr blit_left

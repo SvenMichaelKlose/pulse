@@ -167,17 +167,17 @@ scout_fun:
     cmp #6
     bcc l2
     lda random
-    and #%01111111
+    and #%00001111
     bne l2
     jsr add_bullet
     jsr update_random
-l2: ldy #yellow+8
-    jsr energize_color
-    lda #4
+l2: lda #4
     jsr sprite_left
     lda framecounter_high
     cmp #3
     bcc l1
+    ldy #yellow+8
+    jsr energize_color
     lda sprites_x,x
     lsr
     lsr
@@ -359,8 +359,8 @@ a2: lda framecounter    ; Little ramdomness to give the laser some action.
     jsr add_sprite
     lda has_double_laser
     beq s1
-    ldy #laser_up_init-sprite_inits
-    jsr add_sprite
+;    ldy #laser_up_init-sprite_inits
+;    jsr add_sprite
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
 s1: pla
