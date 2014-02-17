@@ -25,8 +25,10 @@ draw_foreground:
     jmp rotate_bricks
 no_more_bricks:
     rts
+
 n1: inc scrolled_chars
 
+reset_chars:
     lda #0
     ldx #bricks_col-bricks_c-1
 i1: sta bricks_c,x
@@ -34,6 +36,7 @@ i1: sta bricks_c,x
     bpl i1
     lda #framemask+foreground+2
     sta next_foreground_char
+
     lda #0
     sta active_bricks
     lda leftmost_brick
@@ -42,9 +45,9 @@ i1: sta bricks_c,x
 loop:
     lda counter
     and #numbricks-1
-    tax
-    cpx free_bricks
+    cmp free_bricks
     beq no_more_bricks
+    tax
     lda scrbricks_n,x
     sta repetition
     lda scrbricks_y,x
@@ -52,7 +55,7 @@ loop:
     lda scrbricks_x,x
     sec
     sbc scrolled_chars
-    sta tmp3
+    sta tmp3                ; Save X for repetition.
     sta scrx
     lda scrbricks_i,x
     sta tmp2
@@ -149,9 +152,19 @@ rotate_bricks:
     ldx active_bricks
 l1: dex
     bmi rotate_trails
-    lda bricklist_r,x
+
+    lda sl              ; Set pointer to middle char.
+    clc
+    adc #8
+    sta sm
+    lda sl+1
+    clc
+    adc #0
+    sta sm+1
+
+    lda bricklist_r,x   ; Set pointer to right char.
     beq n3
-n1: cmp #<background    ; Set pointer to right char.
+n1: cmp #<background
     bne n4
     lda #framemask+foreground
     jmp n3
@@ -163,15 +176,6 @@ n3: jsr get_char_addr
     sta sr
     lda d+1
     sta sr+1
-
-    lda sl              ; Set pointer to middle char.
-    clc
-    adc #8
-    sta sm
-    lda sl+1
-    clc
-    adc #0
-    sta sm+1
 
     ldy #7              ; Rotate.
 l:  lda (sr),y
@@ -220,21 +224,3 @@ l2: lda (s),y
     bpl l2
     rts
 .)
-
-#ifdef HIRES_SCROLLING
-rotate_brick:
-.(
-    ldy #7
-l:  lda (sr),y
-    rol
-    lda (sm),y
-    rol
-    sta (sm),y
-    lda (sl),y
-    rol
-    sta (sl),y
-    dey
-    bpl l
-    rts
-.)
-#endif
