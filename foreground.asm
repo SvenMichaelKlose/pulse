@@ -70,7 +70,7 @@ repeat_plotting_chars:
     beq remove_brick
     bcs n3
     cmp #22
-    bcs next_brick      ; Off-screen...
+    bcs no_more_bricks  ; Off-screen...
 n3: jsr scrcoladdr
     lda bricks_col,x    ; Set left char and color.
     sta (col),y
