@@ -149,11 +149,8 @@ rotate_bricks:
     lda #>tmpt2
     sta sl+1
 
-    ldx active_bricks
-l1: dex
-    bmi rotate_trails
-
-    lda sl              ; Set pointer to middle char.
+    ldx #0
+l1: lda sl              ; Set pointer to middle char.
     clc
     adc #8
     sta sm
@@ -164,7 +161,7 @@ l1: dex
 
     lda bricklist_r,x   ; Set pointer to right char.
     beq n3
-n1: cmp #<background
+    cmp #<background
     bne n4
     lda #framemask+foreground
     jmp n3
@@ -198,6 +195,10 @@ l:  lda (sr),y
     dey
     bpl l
 
+    inx
+    cpx active_bricks
+    beq rotate_trailing_chars
+
     lda sl          ; Step to next brick in charset.
     clc
     adc #16
@@ -208,7 +209,7 @@ l:  lda (sr),y
     sta sl+1
     jmp l1
 
-rotate_trails:
+rotate_trailing_chars:
     lda #<tmpt
     sta s
     lda #>tmpt

@@ -4,6 +4,7 @@
 #define SHOW_CHARSET
 #define INVINCIBLE
 */
+#define INVINCIBLE
 
 #include "game.defs.asm"
 #include "zeropage.asm"
@@ -23,8 +24,8 @@
 #include "level-bullet.asm"
 #include "level-sniper.asm"
 #include "sprites.asm"
-#include "level.asm"
 #include "gfx-sprites.asm"
 #include "gfx-foreground.asm"
+#include "level.asm"
 #include "foreground.asm"
 #include "end.asm"
