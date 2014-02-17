@@ -223,25 +223,19 @@ explosion_fun:
 
 laser_fun:
     jsr hit_enemy
-    bcs remove_sprite_xyf
+    bcs remove_sprite_xy
     jsr test_foreground_collision
-    bne remove_spritef
+    bne remove_sprite2
     lda #11
     jsr sprite_right
 remove_if_sprite_is_out:
     jsr test_sprite_out
     bcc return3
-remove_spritef:
-    lda #0
-    sta is_firing
 remove_sprite2:
     jmp remove_sprite
 return3:
     rts
 
-remove_sprite_xyf:
-    lda #0
-    sta is_firing
 remove_sprite_xy:
     jsr remove_sprite
     lda sprites_x,y
