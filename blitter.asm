@@ -49,3 +49,24 @@ s1: ora (d),y
     bpl l1
     rts
 .)
+
+blit_char:
+.(
+    ldy #7
+    sta s
+l1: lda (s),y
+    sta (d),y
+    dey
+    bpl l1
+    rts
+.)
+
+blit_clear_char:
+.(
+    ldy #7
+    lda #0
+l1: sta (d),y
+    dey
+    bpl l1
+    rts
+.)

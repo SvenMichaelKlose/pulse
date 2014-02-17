@@ -1,22 +1,28 @@
+multicolor  = 8
+decorative  = 32
+deadly      = 64
+
 sprite_inits:
 player_init:
     .byte 02, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
 laser_init:
-    .byte 18, 80, 1, white+8,  <laser, <laser_fun,  >laser_fun, 0
+    .byte 18, 80, 1, white+multicolor,  <laser, <laser_fun,  >laser_fun, 0
 laser_up_init:
     .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun, 0
 laser_down_init:
     .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun, 0
 bullet_init:
-    .byte 22*8, 89, 64+2, yellow+8, <bullet, <bullet_fun, >bullet_fun, 0
+    .byte 22*8, 89, deadly+2, yellow+multicolor, <bullet, <bullet_fun, >bullet_fun, 0
 scout_init:
-    .byte 22*8, 89, 64+3, yellow+8, <scout, <scout_fun, >scout_fun, 0
+    .byte 22*8, 89, deadly+3, yellow+multicolor, <scout, <scout_fun, >scout_fun, 0
 sniper_init:
-    .byte 22*8, 89, 64+3, white, <sniper, <sniper_fun, >sniper_fun, 0
+    .byte 22*8, 89, deadly+3, white, <sniper, <sniper_fun, >sniper_fun, 0
 bonus_init:
     .byte 22*8, 89, 4, green, <bonus, <bonus_fun, >bonus_fun, 0
 star_init:
-    .byte 22*8, 89, 32, white, <star, <star_fun, >star_fun, 0
+    .byte 22*8, 89, decorative, white, <star, <star_fun, >star_fun, 0
+explosion_init:
+    .byte 22*8, 89, decorative, yellow, 0, <explosion_fun, >explosion_fun, 15
 
 sinetab:
     .byte 0, 0, 1, 2, 3, 5, 7, 7
@@ -148,8 +154,9 @@ n1: and #%1111
     ora tmp
     sta sprites_d,x
     jsr test_foreground_collision
-    bne remove_sprite2
+    bne r
     jmp remove_if_sprite_is_out
+r:  jmp remove_sprite
 .)
 
 sniper_fun:
@@ -194,6 +201,26 @@ l2: lda #4
 l1: jmp remove_if_sprite_is_out
 .)
 
+explosion_colors:   .byte red, black+multicolor, yellow+multicolor, white+multicolor
+
+explosion_fun:
+.(
+    lda sprites_d,x
+    lsr
+    lsr
+    tay
+    lda explosion_colors,y
+    sta sprites_c,x
+    lda #1
+    jsr sprite_left
+    lda sprites_l,x
+    adc $9004
+    sta sprites_l,x
+    dec sprites_d,x
+    bmi remove_sprite2
+    rts
+.)
+
 laser_fun:
     jsr hit_enemy
     bcs remove_sprite_xyf
@@ -217,9 +244,15 @@ remove_sprite_xyf:
     sta is_firing
 remove_sprite_xy:
     jsr remove_sprite
+    lda sprites_x,y
+    sta explosion_init
+    lda sprites_y,y
+    sta explosion_init+1
     tya
     tax
-    jmp remove_sprite
+    jsr remove_sprite
+    ldy #explosion_init-sprite_inits
+    jmp add_sprite
 return2:
     rts
 
