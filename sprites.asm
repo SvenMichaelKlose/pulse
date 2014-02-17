@@ -17,16 +17,17 @@ l4: lda sprites_i,x
     tax
     rts
 l2: lda #sprites_x
-    sta sm+1
+    sta selfmod+1
 l3: lda sprite_inits,y
-sm: sta sprites_x,x
+selfmod:
+    sta sprites_x,x
     iny
-    lda sm+1
+    lda selfmod+1
     cmp #sprites_d
     beq done
     clc
     adc #$10
-    sta sm+1
+    sta selfmod+1
     jmp l3
 done:
     pla
