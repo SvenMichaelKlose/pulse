@@ -13,27 +13,27 @@ first_sprite_char   = 1
 
 foreground          = framechars / 2 + framechars / 4
 
-s                   = $00
-d                   = $02
-c                   = $04
-scr                 = $04
-col                 = $06
-scrx                = $08
-scry                = $09
-curcol              = $0a
+s                       = $00
+d                       = $02
+c                       = $04
+scr                     = $04
+col                     = $06
+scrx                    = $08
+scry                    = $09
+curcol                  = $0a
 
-blitter_shift_left  = $0b
-blitter_shift_right = $0c
+blitter_shift_left      = $0b
+blitter_shift_right     = $0c
 
-framecounter        = $0d
-framecounter_high   = $0e
+framecounter            = $0d
+framecounter_high       = $0e
 
-next_sprite_char    = $0f
-sprite_shift_y      = $10
-sprite_data_top     = $11
-sprite_data_bottom  = $12
-sprite_height_top   = $13
-spriteframe         = $14
+next_sprite_char        = $0f
+sprite_shift_y          = $10
+sprite_data_top         = $11
+sprite_data_bottom      = $12
+sprite_height_top       = $13
+spriteframe             = $14
 
 scrolled_bits           = $15
 scrolled_chars          = $16
