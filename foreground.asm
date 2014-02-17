@@ -8,15 +8,6 @@ test_on_foreground:
     cmp #foreground
     rts
 
-init_foreground:
-    lda #22
-    sta level_old_y
-    lda #0
-    jsr add_brick
-    lda #3
-    sta level_delay
-    rts
-
 fetch_foreground_char:
     lda next_foreground_char
     inc next_foreground_char
@@ -71,10 +62,13 @@ n1: inc scrolled_chars
     sta active_bricks
 
     lda leftmost_brick
+    and #numbricks-1
     sta counter
 
 loop:
-    ldx counter
+    lda counter
+    and #numbricks-1
+    tax
     cpx free_bricks
     beq no_more_bricks
     lda scrbricks_n,x
@@ -144,14 +138,8 @@ repeat:
     jmp repeat_plotting_chars
 remove_brick:
     inc leftmost_brick
-    lda leftmost_brick
-    and #numbricks-1
-    sta leftmost_brick
 next_brick:
     inc counter
-    lda counter
-    and #numbricks-1
-    sta counter
     jmp loop
 
 draw_chars:
@@ -179,16 +167,17 @@ tmpt2 = (foreground+framemask+2) * 8 + charset
 
 rotate_bricks:
 .(
-    lda #<tmpt2
+    lda #<tmpt2         ; Point to first brick in charset.
     sta sl
     lda #>tmpt2
     sta sl+1
+
     ldx active_bricks
 l1: dex
     bmi rotate_trails
     lda bricklist_r,x
     beq n3
-n1: cmp #<background
+n1: cmp #<background    ; Set pointer to right char.
     bne n4
     lda #framemask+foreground
     jmp n3
@@ -200,7 +189,8 @@ n3: jsr get_char_addr
     sta sr
     lda d+1
     sta sr+1
-    lda sl
+
+    lda sl              ; Set pointer to middle char.
     clc
     adc #8
     sta sm
@@ -208,7 +198,8 @@ n3: jsr get_char_addr
     clc
     adc #0
     sta sm+1
-    ldy #7
+
+    ldy #7              ; Rotate.
 l:  lda (sr),y
     rol
     sta tmp
@@ -228,7 +219,8 @@ l:  lda (sr),y
     sta (sl),y
     dey
     bpl l
-    lda sl
+
+    lda sl          ; Step to next brick in charset.
     clc
     adc #16
     sta sl
