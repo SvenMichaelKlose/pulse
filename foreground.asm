@@ -16,19 +16,12 @@ fetch_foreground_char:
 draw_trailchar:
 .(
     sta s
+    lda #>foreground_gfx
+    sta s+1
     jsr fetch_foreground_char
-    lda s
-    jsr blit_left_whole_char
-    lda s
-    jsr blit_right_whole_char
-    lda d+1
-    eor #framemask
-    sta scr+1
-    lda d
-    sta scr
     ldy #7
-l1: lda (d),y
-    sta (scr),y
+l1: lda (s),y
+    sta (d),y
     dey
     bpl l1
     rts
