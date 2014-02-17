@@ -6,24 +6,6 @@ l1: sta 0,x
     sta charset,x
     dex
     bne l1
-    jmp skip
-lda #%10101010
-sta $1000
-lda #%01010101
-sta $1001
-lda #%10101010
-sta $1002
-lda #%01010101
-sta $1003
-lda #%10101010
-sta $1004
-lda #%01010101
-sta $1005
-lda #%10101010
-sta $1006
-lda #%01010101
-sta $1007
-skip:
 .)
 
     jsr clear_screen
@@ -39,14 +21,15 @@ l1: ldy #0
     bpl l1
 .)
 
-    lda #framemask+foreground
-    sta next_foreground_char
+    lda #<tmpt
+    sta d
+    lda #>tmpt
+    sta d+1
     lda #>background
     sta s+1
     lda #<background                                                            
-    jsr draw_trailchar
-    lda #<bg_t
-    jsr draw_trailchar
+    ldy #15
+    jsr blit_copy
 
     lda #22
     sta level_old_y

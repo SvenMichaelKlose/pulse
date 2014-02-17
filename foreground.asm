@@ -13,20 +13,6 @@ fetch_foreground_char:
     inc next_foreground_char
     jmp fetch_char
 
-draw_trailchar:
-.(
-    sta s
-    lda #>foreground_gfx
-    sta s+1
-    jsr fetch_foreground_char
-    ldy #7
-l1: lda (s),y
-    sta (d),y
-    dey
-    bpl l1
-    rts
-.)
-
 draw_foreground:
 .(
     lda scrolled_bits
@@ -46,13 +32,11 @@ n1: inc scrolled_chars
 i1: sta bricks_c,x
     dex
     bpl i1
-    lda #foreground+2
-    ora spriteframe
+    lda #framemask+foreground+2
     sta next_foreground_char
     lda #0
     sta active_bricks
     lda leftmost_brick
-    and #numbricks-1
     sta counter
 
 loop:
