@@ -29,16 +29,6 @@ l1: lda (s),y
 
 draw_foreground:
 .(
-    lda #0
-    ldx #bricks_col-bricks_c-1
-i1: sta bricks_c,x
-    dex
-    bpl i1
-
-    lda #foreground+2
-    ora spriteframe
-    sta next_foreground_char
-
     lda scrolled_bits
     dec scrolled_bits
     and #%111
@@ -52,8 +42,15 @@ no_more_bricks:
 n1: inc scrolled_chars
 
     lda #0
+    ldx #bricks_col-bricks_c-1
+i1: sta bricks_c,x
+    dex
+    bpl i1
+    lda #foreground+2
+    ora spriteframe
+    sta next_foreground_char
+    lda #0
     sta active_bricks
-
     lda leftmost_brick
     and #numbricks-1
     sta counter
