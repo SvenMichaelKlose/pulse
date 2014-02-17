@@ -36,7 +36,7 @@ add_brick:
     adc #1
     and #numbricks-1
     sta free_bricks
-    lda #23
+    lda #22
     clc
     adc scrolled_chars
     sta scrbricks_x,x
