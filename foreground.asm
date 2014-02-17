@@ -68,10 +68,10 @@ restart_plotting_chars:
 repeat_plotting_chars:
     cmp #$fd
     beq remove_brick
-    bcs n3
+    bcs draw_right
     cmp #22
     bcs no_more_bricks  ; Off-screen...
-n3: jsr scrcoladdr
+    jsr scrcoladdr
     lda bricks_col,x    ; Set left char and color.
     sta (col),y
     lda bricks_c,x
