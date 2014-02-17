@@ -1,3 +1,6 @@
+active_bricks:  .byte 0
+bricklist_r:    .dsb 8
+
 test_on_foreground:
     ldy #0
     lda (scr),y
@@ -40,18 +43,7 @@ l1: lda (d),y
     rts
 .)
 
-no_more_bricks:
-#ifdef TIMING
-    lda #8+blue
-    sta $900f
-#endif
-    rts
-
 draw_foreground:
-#ifdef TIMING
-    lda #8+white
-    sta $900f
-#endif
 .(
     lda #0
     ldx #bricks_col-bricks_c-1
@@ -59,33 +51,24 @@ i1: sta bricks_c,x
     dex
     bpl i1
 
-    lda #>background
-    sta s+1
-
-    lda #foreground
+    lda #foreground+2
     ora spriteframe
     sta next_foreground_char
 
     lda scrolled_bits
+    dec scrolled_bits
     and #%111
-    bne n1
-    inc scrolled_chars
-n1: dec scrolled_bits
+    beq n1
+    lda framecounter
+    and #1
+    bne no_more_bricks
+    jmp rotate_bricks
+no_more_bricks:
+    rts
+n1: inc scrolled_chars
 
-    lda scrolled_bits
-    and #%110
-    and #7
-    sta blitter_shift_left
-    lda #8
-    sec
-    sbc blitter_shift_left
-    and #7
-    sta blitter_shift_right
-
-    lda #<background
-    jsr draw_trailchar
-    lda #<bg_t
-    jsr draw_trailchar
+    lda #0
+    sta active_bricks
 
     lda leftmost_brick
     sta counter
@@ -108,20 +91,16 @@ loop:
     tax
     lda bricks_c,x
     beq draw_chars
+
 restart_plotting_chars:
-#ifdef TIMING
-    lda #8+red
-    sta $900f
-#endif
     lda scrx
 repeat_plotting_chars:
-    cmp #$ff
-    beq draw_right      ; Draw only right char...
-    cmp #$fe
+    cmp #$fd
     beq remove_brick
+    bcs n3
     cmp #22
     bcs next_brick      ; Off-screen...
-    jsr scrcoladdr
+n3: jsr scrcoladdr
     lda bricks_col,x    ; Set left char and color.
     sta (col),y
     lda bricks_c,x
@@ -130,13 +109,29 @@ draw_right:
     inc scrx
     lda scrx
     cmp #22             ; Off-screen...
-    bcs repeat
+    bcs n2
     jsr scraddr
-    lda blitter_shift_left
-    beq plot_trail      ; No shift, plot trail.
     lda bricks_c,x      ; Plot regular right char.
     clc
     adc #1
+    sta (scr),y
+n2: inc scrx
+    lda scrx
+    cmp #22             ; Off-screen...
+    bcs repeat
+    jsr scraddr
+    lda bricks_r,x
+    beq plot
+    cmp #<background
+    bne try_foreground
+    lda spriteframe     ; Plot foreground char.
+    ora #foreground
+    jmp plot
+try_foreground:
+    cmp #<bg_t
+    bne repeat
+    lda spriteframe
+    ora #foreground+1
 plot:
     sta (scr),y
 repeat:
@@ -148,56 +143,132 @@ repeat:
     sta scrx
     jmp repeat_plotting_chars
 remove_brick:
-    jmp remove_brick2
+    inc leftmost_brick
+    lda leftmost_brick
+    and #numbricks-1
+    sta leftmost_brick
 next_brick:
     inc counter
     lda counter
     and #numbricks-1
     sta counter
     jmp loop
-plot_trail:
-    lda bricks_r,x
-    beq plot
-    cmp #<background
-    bne try_foreground
-    lda spriteframe     ; Plot foreground char.
-    ora #foreground
-    jmp plot
-try_foreground:
-    cmp #<bg_t
-    bne next_brick
-    lda spriteframe
-    ora #foreground+1
-    jmp plot
 
 draw_chars:
-#ifdef TIMING
-    lda #8+yellow
-    sta $900f
-#endif
     jsr fetch_foreground_char
     sta bricks_c,x
-    lda blitter_shift_left
-    beq s1
     lda bricks_l,x
-    beq s1
-    jsr blit_right_whole_char
-s1: lda bricks_m,x
-    jsr blit_left_whole_char
-    jsr fetch_foreground_char
-    lda blitter_shift_left
-    beq r1
+    beq n4
+    jsr blit_char
+    jmp n5
+n4: jsr blit_clear_char
+n5: jsr fetch_foreground_char
     lda bricks_m,x
-    jsr blit_right_whole_char
+    jsr blit_char
     lda bricks_r,x
-    beq r1
-    jsr blit_left_whole_char
-r1: ldx tmp2
+    ldy active_bricks
+    sta bricklist_r,y
+    inc active_bricks
+    ldx tmp2
     jmp restart_plotting_chars
-remove_brick2:
-    inc leftmost_brick
-    lda leftmost_brick
-    and #numbricks-1
-    sta leftmost_brick
-    jmp next_brick
 .)
+
+tmpt = (foreground+framemask) * 8 + charset
+tmpt1 = (foreground+framemask+1) * 8 + charset
+tmpt2 = (foreground+framemask+2) * 8 + charset
+
+rotate_bricks:
+.(
+    lda #<tmpt2
+    sta sl
+    lda #>tmpt2
+    sta sl+1
+    ldx active_bricks
+l1: dex
+    bmi rotate_trails
+    lda bricklist_r,x
+    beq n3
+n1: cmp #<background
+    bne n4
+    lda #framemask+foreground
+    jmp n3
+n4: cmp #<bg_t
+    bne n3
+    lda #framemask+foreground+1
+n3: jsr get_char_addr
+    lda d
+    sta sr
+    lda d+1
+    sta sr+1
+    lda sl
+    clc
+    adc #8
+    sta sm
+    lda sl+1
+    clc
+    adc #0
+    sta sm+1
+    ldy #7
+l:  lda (sr),y
+    rol
+    sta tmp
+    lda (sm),y
+    rol
+    sta tmp2
+    lda (sl),y
+    rol
+    sta tmp3
+    lda tmp
+    asl
+    lda tmp2
+    rol
+    sta (sm),y
+    lda tmp3
+    rol
+    sta (sl),y
+    dey
+    bpl l
+    lda sl
+    clc
+    adc #16
+    sta sl
+    lda sl+1
+    clc
+    adc #0
+    sta sl+1
+    jmp l1
+
+rotate_trails:
+    lda #<tmpt
+    sta s
+    lda #>tmpt
+    sta s+1
+    ldy #16
+l2: lda (s),y
+    asl
+    adc #0
+    asl
+    adc #0
+    sta (s),y
+    dey
+    bpl l2
+    rts
+.)
+
+#ifdef HIRES_SCROLLING
+rotate_brick:
+.(
+    ldy #7
+l:  lda (sr),y
+    rol
+    lda (sm),y
+    rol
+    sta (sm),y
+    lda (sl),y
+    rol
+    sta (sl),y
+    dey
+    bpl l
+    rts
+.)
+#endif

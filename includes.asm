@@ -24,7 +24,7 @@
 #include "level-sniper.asm"
 #include "sprites.asm"
 #include "level.asm"
-#include "foreground.asm"
 #include "gfx-sprites.asm"
 #include "gfx-foreground.asm"
+#include "foreground.asm"
 #include "end.asm"

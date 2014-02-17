@@ -1,5 +1,4 @@
 game_over:
-
 .(
     lda #0
     tax
@@ -7,12 +6,30 @@ l1: sta 0,x
     sta charset,x
     dex
     bne l1
+    jmp skip
+lda #%10101010
+sta $1000
+lda #%01010101
+sta $1001
+lda #%10101010
+sta $1002
+lda #%01010101
+sta $1003
+lda #%10101010
+sta $1004
+lda #%01010101
+sta $1005
+lda #%10101010
+sta $1006
+lda #%01010101
+sta $1007
+skip:
 .)
 
     jsr clear_screen
 
-.(
 clear_sprites:
+.(
     ldx #numsprites-1
 l1: ldy #0
     sty sprites_fh,x
@@ -22,7 +39,21 @@ l1: ldy #0
     bpl l1
 .)
 
-    jsr init_foreground
+    lda #framemask+foreground
+    sta next_foreground_char
+    lda #>background
+    sta s+1
+    lda #<background                                                            
+    jsr draw_trailchar
+    lda #<bg_t
+    jsr draw_trailchar
+
+    lda #22
+    sta level_old_y
+    lda #0
+    jsr add_brick
+    lda #3
+    sta level_delay
 
     lda #3
     sta lifes
@@ -50,6 +81,11 @@ mainloop:
     lda #8+blue
     sta $900f
 #endif
+
+.(
+l:  lda $9004
+    bne l
+.)
 
 update_framecounter:
 .(
@@ -104,7 +140,7 @@ n1: dex
 .(
     lda framecounter_high
     cmp #4
-    bcc n
+    ;bcc n
     jsr draw_foreground
     jsr process_level
     lda random

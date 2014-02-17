@@ -1,3 +1,4 @@
+foreground_gfx:
 background:
     .byte %01010101
     .byte %01010100

@@ -22,6 +22,10 @@ scrx                    = $08
 scry                    = $09
 curcol                  = $0a
 
+sl                      = $04
+sm                      = $06
+sr                      = $08
+
 blitter_shift_left      = $0b
 blitter_shift_right     = $0c
 

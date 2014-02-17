@@ -1,3 +1,3 @@
 #!/bin/sh
 
-xa -M includes.asm -o soft.prg -l labels.lst
+xa -M includes.asm -o pulse.prg -l labels.lst
