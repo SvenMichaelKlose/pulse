@@ -276,6 +276,7 @@ configure_blitter:
     sta d
     ldy sprite_height_top
     lda sprite_data_top
+    dey
     jsr blit_left
 
 n3: lda sprite_shift_y
@@ -310,6 +311,7 @@ n1: lda blitter_shift_left
     sta d
     ldy sprite_height_top
     lda sprite_data_top
+    dey
     jsr blit_right
 
 n4: lda sprite_shift_y
