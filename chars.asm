@@ -18,11 +18,7 @@ fetch_char:
     and #charsetmask
     pha
     jsr get_char_addr
-    lda #0
-    ldy #7
-l3: sta (d),y
-    dey
-    bpl l3
+    jsr blit_clear_char
     pla
     iny
     rts
