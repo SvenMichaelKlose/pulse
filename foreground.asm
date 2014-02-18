@@ -42,11 +42,11 @@ draw_foreground:
     beq n1
     lda framecounter
     and #1
-    bne no_more_bricks
-    lda scrolled_chars
+    bne r
     jmp rotate_bricks
+r:  rts
 no_more_bricks:
-    rts
+    jmp rotate_trailing_chars:
 
 n1: inc scrolled_chars
 
@@ -115,14 +115,12 @@ n2: inc scrx
     beq plot
     cmp #<background
     bne try_foreground
-    lda spriteframe     ; Plot foreground char.
-    ora #foreground
+    lda #framemask+foreground
     jmp plot
 try_foreground:
     cmp #<bg_t
     bne repeat
-    lda spriteframe
-    ora #foreground+1
+    lda #framemask+foreground+1
 plot:
     sta (scr),y
 repeat:
@@ -230,20 +228,22 @@ l:  lda (sr),y
     sta sl+1
     inx
     jmp l1
+.)
 
 rotate_trailing_chars:
+.(
     lda #<tmpt
-    sta s
+    sta sl
     lda #>tmpt
-    sta s+1
+    sta sl+1
     ldy #15
-l2: lda (s),y
+l:  lda (sl),y
     asl
     adc #0
     asl
     adc #0
-    sta (s),y
+    sta (sl),y
     dey
-    bpl l2
+    bpl l
     rts
 .)
