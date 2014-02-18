@@ -21,6 +21,7 @@ l1: ldy #0
     bpl l1
 .)
 
+init_trailing_foreground_chars:
     lda #<tmpt
     sta d
     lda #>tmpt
@@ -31,6 +32,7 @@ l1: ldy #0
     ldy #15
     jsr blit_copy
 
+init_level:
     lda #22
     sta level_old_y
     lda #0
@@ -38,6 +40,7 @@ l1: ldy #0
     lda #3
     sta level_delay
 
+init_player:
     lda #3
     sta lifes
     ldy #player_init-sprite_inits
@@ -52,22 +55,20 @@ restart:
     sta is_firing
     sta has_double_laser
 
-.(
-    ldx #numsprites
-l1: jsr add_star
-    dex
-    bne l1
-.)
-
 mainloop:
 #ifdef TIMING
     lda #8+blue
     sta $900f
 #endif
 
+wait_retrace:
 .(
 l:  lda $9004
+    cmp #130
+    beq ok
+    cmp #0
     bne l
+ok:
 .)
 
 update_framecounter:
@@ -122,8 +123,8 @@ n1: dex
 
 .(
     lda framecounter_high
-    cmp #4
-    ;bcc n
+    cmp #1
+    bcc n
     jsr draw_foreground
     jsr process_level
     lda random
