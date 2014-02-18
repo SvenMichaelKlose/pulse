@@ -2,9 +2,9 @@ level_data:
     .byte 16, 15
     .byte 2, 14
     .byte 2, 13
-    .byte 2, 12
-    .byte 2, 11
-    .byte 2, 10
+    .byte 4, 12
+    .byte 2, 13
+    .byte 2, 14
     .byte 2, 9
     .byte 2, 8
     .byte 2, 7
@@ -55,7 +55,7 @@ down:
     sbc level_old_y
     sec
     sbc #1
-    beq n4
+    bcc n4
     pha
     lda #3
     jsr add_brick
