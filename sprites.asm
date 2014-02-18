@@ -2,21 +2,22 @@ add_sprite:
 .(
     txa
     pha
-    ldx #numsprites-1
+    tya
+    pha
+    ldx #numsprites-1   ; Look for free slot.
 l1: lda sprites_fh,x
     beq l2
     dex
     bpl l1
-    ldx #numsprites-1
+    ldx #numsprites-1   ; None available. Look for decorative sprite.
 l4: lda sprites_i,x
     and #32
     bne l2
     dex
     bpl l4
-    pla
-    tax
-    rts
-l2: lda #sprites_x
+    jmp done            ; None available. Job remains undone.
+
+l2: lda #sprites_x      ; Copy descriptor to sprite table.
     sta selfmod+1
 l3: lda sprite_inits,y
 selfmod:
@@ -30,6 +31,8 @@ selfmod:
     sta selfmod+1
     jmp l3
 done:
+    pla
+    tay
     pla
     tax
     rts
@@ -45,10 +48,6 @@ sprite_up:
     eor #$ff
     clc
     adc #1
-    clc
-    adc sprites_y,x
-    sta sprites_y,x
-    rts
 .)
 
 sprite_down:
@@ -64,10 +63,6 @@ sprite_left:
     eor #$ff
     clc
     adc #1
-    clc
-    adc sprites_x,x
-    sta sprites_x,x
-    rts
 .)
 
 sprite_right:
@@ -138,11 +133,12 @@ c1: pla
 
 draw_sprites:
 .(
+draw_decorative_sprites:
     ldx #0
-l2: lda sprites_fh,x     ; Skip free slots.
+l2: lda sprites_fh,x
     beq n3
     lda sprites_i,x
-    and #32
+    and #decorative
     beq n3
     txa
     pha
@@ -153,15 +149,18 @@ n3: inx
     cpx #numsprites
     bne l2
 
+draw_other_sprites:
     ldx #0
-l1: lda sprites_fh,x     ; Skip free slots.
+l1: lda sprites_fh,x
     beq n1
     lda sprites_i,x
-    and #32
+    and #decorative
     bne n1
+
     lda #0
     sta foreground_collision
     txa
+
     pha
 #ifdef TIMING
     eor #%111
@@ -171,12 +170,15 @@ l1: lda sprites_fh,x     ; Skip free slots.
     jsr draw_sprite
     pla
     tax
+
+save_foreground_collision:
     lda sprites_i,x
     and #%01111111
     ldy foreground_collision
     beq n2
     ora #128
 n2: sta sprites_i,x
+
 n1: inx
     cpx #numsprites
     bne l1
@@ -238,6 +240,7 @@ draw_sprite:
     lda sprites_c,x
     sta curcol
 
+bitmap_to_text_position:
     lda sprites_x,x
     lsr
     lsr
@@ -249,6 +252,7 @@ draw_sprite:
     lsr
     sta scry
 
+configure_blitter:
     lda sprites_x,x
     and #%111
     sta blitter_shift_left
@@ -259,7 +263,6 @@ draw_sprite:
     lda sprites_y,x
     and #%111
     sta sprite_shift_y
-
     lda #8
     sec
     sbc sprite_shift_y
@@ -277,11 +280,11 @@ draw_sprite:
     lda sprite_data_top
     jsr blit_left
 
-n3: lda sprite_shift_y       ; No lower half to draw...
+n3: lda sprite_shift_y
     beq n1
 
     ; Draw lower left.
-    inc scry            ; Prepare next line.
+    inc scry
     jsr get_char
     lda s
     clc
@@ -295,11 +298,11 @@ n3: lda sprite_shift_y       ; No lower half to draw...
     jsr blit_left
 n6: dec scry
 
-n1: lda blitter_shift_left      ; No right halves to draw...
+n1: lda blitter_shift_left
     beq n2
 
     ; Draw upper right.
-    inc scrx            ; Prepare next line.
+    inc scrx
     jsr get_char
     lda d+1
     beq n4
@@ -311,7 +314,7 @@ n1: lda blitter_shift_left      ; No right halves to draw...
     lda sprite_data_top
     jsr blit_right
 
-n4: lda sprite_shift_y       ; No lower half to draw...
+n4: lda sprite_shift_y
     beq n2
 
     ; Draw lower right.
