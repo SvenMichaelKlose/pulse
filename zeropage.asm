@@ -69,6 +69,7 @@ is_firing               = $2b
 is_invincible           = $2c
 death_timer             = $2d
 lifes                   = $2e
+active_bricks           = $2f
 
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.

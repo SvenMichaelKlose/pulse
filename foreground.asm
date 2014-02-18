@@ -1,4 +1,3 @@
-active_bricks:  .byte 0
 bricklist_r:    .dsb 8
 
 test_on_foreground:
@@ -55,8 +54,8 @@ loop:
     lda scrbricks_x,x
     sec
     sbc scrolled_chars
-    sta tmp3                ; Save X for repetition.
     sta scrx
+    sta tmp3                ; Save X for repetition.
     lda scrbricks_i,x
     sta tmp2
     tax
@@ -150,7 +149,9 @@ rotate_bricks:
     sta sl+1
 
     ldx #0
-l1: lda sl              ; Set pointer to middle char.
+l1: cpx active_bricks
+    beq rotate_trailing_chars
+    lda sl              ; Set pointer to middle char.
     clc
     adc #8
     sta sm
@@ -195,10 +196,6 @@ l:  lda (sr),y
     dey
     bpl l
 
-    inx
-    cpx active_bricks
-    beq rotate_trailing_chars
-
     lda sl          ; Step to next brick in charset.
     clc
     adc #16
@@ -207,6 +204,7 @@ l:  lda (sr),y
     clc
     adc #0
     sta sl+1
+    inx
     jmp l1
 
 rotate_trailing_chars:
@@ -214,7 +212,7 @@ rotate_trailing_chars:
     sta s
     lda #>tmpt
     sta s+1
-    ldy #16
+    ldy #15
 l2: lda (s),y
     asl
     adc #0
