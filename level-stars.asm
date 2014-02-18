@@ -1,7 +1,5 @@
 add_star:
 .(
-    txa
-    pha
     tya
     pha
     lda random
@@ -15,7 +13,5 @@ add_star:
     jsr update_random
     pla
     tay
-    pla
-    tax
     rts
 .)
