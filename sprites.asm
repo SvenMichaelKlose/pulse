@@ -134,7 +134,7 @@ c1: pla
 draw_sprites:
 .(
 draw_decorative_sprites:
-    ldx #0
+    ldx #numsprites-1
 l2: lda sprites_fh,x
     beq n3
     lda sprites_i,x
@@ -145,12 +145,11 @@ l2: lda sprites_fh,x
     jsr draw_sprite
     pla
     tax
-n3: inx
-    cpx #numsprites
-    bne l2
+n3: dex
+    bpl l2
 
 draw_other_sprites:
-    ldx #0
+    ldx #numsprites-1
 l1: lda sprites_fh,x
     beq n1
     lda sprites_i,x
@@ -179,9 +178,8 @@ save_foreground_collision:
     ora #128
 n2: sta sprites_i,x
 
-n1: inx
-    cpx #numsprites
-    bne l1
+n1: dex
+    bpl l1
 .)
 
 clean_screen:
