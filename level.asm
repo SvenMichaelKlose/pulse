@@ -26,29 +26,6 @@ level_data:
     .byte 16, 10
     .byte $ff
 
-add_brick:
-.(
-    pha
-    lda free_bricks
-    and #numbricks-1
-    tax
-    clc
-    adc #1
-    and #numbricks-1
-    sta free_bricks
-    lda #22
-    clc
-    adc scrolled_chars
-    sta scrbricks_x,x
-    lda level_old_y
-    sta scrbricks_y,x
-    lda #0
-    sta scrbricks_n,x
-    pla
-    sta scrbricks_i,x
-    rts
-.)
-    
 process_level:
 .(
     lda scrolled_bits

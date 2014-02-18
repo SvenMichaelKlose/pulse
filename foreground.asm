@@ -7,6 +7,28 @@ test_on_foreground:
     cmp #foreground
     rts
 
+add_brick:
+.(
+    pha
+    lda free_bricks
+    tax
+    clc
+    adc #1
+    and #numbricks-1
+    sta free_bricks
+    lda #22
+    clc
+    adc scrolled_chars
+    sta scrbricks_x,x
+    lda level_old_y
+    sta scrbricks_y,x
+    lda #0
+    sta scrbricks_n,x
+    pla
+    sta scrbricks_i,x
+    rts
+.)
+
 fetch_foreground_char:
     lda next_foreground_char
     inc next_foreground_char
@@ -21,6 +43,7 @@ draw_foreground:
     lda framecounter
     and #1
     bne no_more_bricks
+    lda scrolled_chars
     jmp rotate_bricks
 no_more_bricks:
     rts
@@ -33,11 +56,9 @@ reset_chars:
 i1: sta bricks_c,x
     dex
     bpl i1
+    sta active_bricks
     lda #framemask+foreground+2
     sta next_foreground_char
-
-    lda #0
-    sta active_bricks
     lda leftmost_brick
     sta counter
 
@@ -114,6 +135,9 @@ repeat:
     jmp repeat_plotting_chars
 remove_brick:
     inc leftmost_brick
+    lda leftmost_brick
+    and #numbricks-1
+    sta leftmost_brick
 next_brick:
     inc counter
     jmp loop
