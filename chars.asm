@@ -1,17 +1,15 @@
 init_frame:
+.(
     lda spriteframe
     eor #framemask
     sta spriteframe
     ora #first_sprite_char
     sta next_sprite_char
-update_framecounter:
-.(
     inc framecounter
     bne n
     inc framecounter_high
-n:
+n:  rts
 .)
-    rts
 
 alloc_wrap:
     lda spriteframe
@@ -19,18 +17,18 @@ alloc_wrap:
     jmp fetch_char
 
 alloc_char:
-.(
     lda next_sprite_char
+foregroundmask:
     and #foreground
+foregroundtest:
     cmp #foreground
     beq alloc_wrap
     lda next_sprite_char
     inc next_sprite_char
-.)
 
 fetch_char:
 .(
-    and #charsetmask
+    and charsetmask
     pha
     jsr get_char_addr
     jsr blit_clear_char
@@ -69,13 +67,11 @@ l2: jsr alloc_char
     lda curcol
     sta (col),y
     rts
-
 on_foreground:
     lda #1
     sta foreground_collision
-
 cant_use_position:
-    lda #0
+    lda #$f0
     sta d+1
     rts
 .)
@@ -104,18 +100,18 @@ get_char_addr:
 clear_char:
 .(
     jsr test_position
-    bcs e1
+    bcs r
     jsr scraddr
     lda (scr),y
     and #foreground
     cmp #foreground
-    beq e1
+    beq r
     lda (scr),y
-    beq e1
+    beq r
     and #framemask
     cmp spriteframe
-    beq e1
+    beq r
     tya
     sta (scr),y
-e1: rts
+r:  rts
 .)

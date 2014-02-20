@@ -10,6 +10,12 @@ l1: sta 0,x
 
     jsr clear_screen
 
+    lda #numchars-1
+    sta charsetmask
+    lda #foreground
+    sta foregroundmask+1
+    sta foregroundtest+1
+
 clear_sprites:
 .(
     ldx #numsprites-1
@@ -102,7 +108,7 @@ n1: dex
 
 .(
     lda framecounter_high
-    cmp #1
+    cmp #4
     bcc n
     jsr draw_foreground
     jsr process_level

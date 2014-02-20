@@ -4,7 +4,6 @@ numbricks   = 32
 charset     = $1000
 
 charsetsize         = numchars * 8
-charsetmask         = numchars - 1
 framesize           = charsetsize / 2
 framemask           = numchars / 2
 framechars          = numchars / 2
@@ -46,7 +45,7 @@ free_bricks             = $18
 next_foreground_char    = $19
 foreground_collision    = $1a
 
-random                  = $1b
+charsetmask             = $1b
 tmp                     = $1c
 tmp2                    = $1d
 tmp3                    = $1e
@@ -86,3 +85,11 @@ scrbricks_i = $100
 scrbricks_x = $120
 scrbricks_y = $140
 scrbricks_n = $160
+
+x0      = $f0                                                                   
+y0      = $f1
+x1      = $f2
+y1      = $f3
+dx      = $f4
+dy      = $f5
+line_d  = $f9

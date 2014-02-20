@@ -102,8 +102,20 @@ star_fun:
     lda framecounter
     lsr
     bcc return
+    lda sprites_d,x
+    cmp #$80
+    rol
+    cmp #$80
+    rol
+    and #3
+    beq move_left_blue
+    jmp move_left_a
+move_left_blue:
+    lda #blue
+    sta sprites_c,x
 move_left:
     lda #1
+move_left_a:
     jsr sprite_left
     jmp remove_if_sprite_is_out
 
@@ -171,7 +183,7 @@ n:  jmp move_left
 scout_fun:
 .(
     lda framecounter_high
-    cmp #6
+    cmp #8
     bcc l2
     lda random
     and #%00001111

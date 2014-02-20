@@ -13,3 +13,5 @@ update_random:
     rol
     sta random
     rts
+
+random: .byte 5

@@ -2,15 +2,6 @@ step_y = 16
 dec_x  = 8
 dec_y  = 4
 
-abs:
-.(
-    bpl n3
-    eor #$ff
-    clc
-    adc #0
-n3: rts
-.)
-
 add_bullet:
 .(
     lda #64
