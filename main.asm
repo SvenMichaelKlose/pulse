@@ -60,15 +60,10 @@ mainloop:
     lda #8+blue
     sta $900f
 #endif
-
-wait_retrace:
 .(
+wait_retrace:
 l:  lda $9004
-    cmp #130
-    beq ok
-    cmp #0
     bne l
-ok:
 .)
 
 update_framecounter:
