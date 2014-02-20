@@ -1,3 +1,18 @@
+init_frame:
+    lda spriteframe
+    eor #framemask
+    sta spriteframe
+    ora #first_sprite_char
+    sta next_sprite_char
+update_framecounter:
+.(
+    inc framecounter
+    bne n
+    inc framecounter_high
+n:
+.)
+    rts
+
 alloc_wrap:
     lda spriteframe
     ora #first_sprite_char

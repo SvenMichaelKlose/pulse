@@ -59,31 +59,15 @@ mainloop:
 #ifdef TIMING
     lda #8+blue
     sta $900f
-#endif
 .(
 wait_retrace:
 l:  lda $9004
     bne l
 .)
-
-update_framecounter:
-.(
-    inc framecounter
-    bne n
-    inc framecounter_high
-n:
-.)
+#endif
 
     jsr update_random
-
-switch_frame:
-.(  
-    lda spriteframe
-    eor #framemask
-    sta spriteframe
-    ora #first_sprite_char
-    sta next_sprite_char
-.)
+    jsr init_frame
 
 #ifdef SHOW_CHARSET
 .(
