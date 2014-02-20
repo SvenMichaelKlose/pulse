@@ -4,12 +4,13 @@
 #define SHOW_CHARSET
 #define INVINCIBLE
 */
-#define INVINCIBLE
 
 #include "game.defs.asm"
 #include "zeropage.asm"
-#include "basic-loader.asm"
 #include "kernal.asm"
+
+#include "basic-loader.asm"
+
 #include "init.asm"
 #include "lowmem-start.asm"
 #include "level-stars.asm"
@@ -18,7 +19,11 @@
 #include "chars.asm"
 #include "bricks.asm"
 #include "screen.asm"
+#include "random.asm"
 #include "lowmem-end.asm"
+#include "intro.asm"
+#include "init-end.asm"
+
 #include "main.asm"
 #include "level.asm"
 #include "controllers.asm"

@@ -1,4 +1,8 @@
 screensize = 22*23
+charset_upcase = $8000
+charset_upcase_reversed = $8400
+charset_locase = $8800
+charset_locase_reversed = $8c00
 
 curx    = $00d3
 cury    = $00d6

@@ -98,13 +98,11 @@ l1: cpy tmp
     bne n1
 
     lda sprites_x,x     ; Get X distance.
-    clc
-    adc #8
     sec
     sbc sprites_x,y
     bpl l2
-    clc                 ; Make it positive.
     eor #$ff
+    clc
     adc #1
 l2: and #%11110000
     bne n1
@@ -114,8 +112,8 @@ l2: and #%11110000
     sec
     sbc sprites_y,y
     bpl l3
-    clc
     eor #$ff
+    clc
     adc #1
 l3: and #%11110000
     beq c1
