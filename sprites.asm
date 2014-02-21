@@ -266,8 +266,6 @@ configure_blitter:
 
     ; Draw upper left.
     jsr get_char
-    lda d+1
-    beq n3
     lda d
     clc
     adc sprite_shift_y
@@ -277,7 +275,7 @@ configure_blitter:
     dey
     jsr blit_left
 
-n3: lda sprite_shift_y
+    lda sprite_shift_y
     beq n1
 
     ; Draw lower left.
@@ -287,13 +285,11 @@ n3: lda sprite_shift_y
     clc
     adc sprite_height_top
     sta sprite_data_bottom
-    lda d+1
-    beq n6
     lda sprite_data_bottom
     ldy sprite_shift_y
     dey
     jsr blit_left
-n6: dec scry
+    dec scry
 
 n1: lda blitter_shift_left
     beq n2
@@ -301,8 +297,6 @@ n1: lda blitter_shift_left
     ; Draw upper right.
     inc scrx
     jsr get_char
-    lda d+1
-    beq n4
     lda d
     clc
     adc sprite_shift_y
@@ -312,14 +306,12 @@ n1: lda blitter_shift_left
     dey
     jsr blit_right
 
-n4: lda sprite_shift_y
+    lda sprite_shift_y
     beq n2
 
     ; Draw lower right.
     inc scry
     jsr get_char
-    lda d+1
-    beq n2
     ldy sprite_shift_y
     dey
     lda sprite_data_bottom
