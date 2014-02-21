@@ -11,20 +11,43 @@ init_frame:
 n:  rts
 .)
 
+reuse_char:
+    lda curcol
+    sta (col),y
+    txa
+
+get_char_addr:
+    sta tmp
+    asl
+    asl
+    asl
+    sta d
+    lda tmp
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+    ora #>charset
+    sta d+1
+    rts
+
 alloc_wrap:
     lda spriteframe
     ora #first_sprite_char
     jmp fetch_char
 
 alloc_char:
-#ifdef HAVE_FOREGROUND
     lda next_sprite_char
+#ifdef HAVE_FOREGROUND
 foregroundmask:
     and #foreground
 foregroundtest:
     cmp #foreground
-    beq alloc_wrap
+#else
+    and #framechars-1
 #endif
+    beq alloc_wrap
     lda next_sprite_char
     inc next_sprite_char
 
@@ -81,27 +104,6 @@ cant_use_position:
     sta d+1
     rts
 .)
-
-reuse_char:
-    lda curcol
-    sta (col),y
-    txa
-
-get_char_addr:
-    sta tmp
-    asl
-    asl
-    asl
-    sta d
-    lda tmp
-    lsr
-    lsr
-    lsr
-    lsr
-    lsr
-    ora #>charset
-    sta d+1
-    rts
 
 clear_char:
 .(
