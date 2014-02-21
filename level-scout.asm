@@ -33,7 +33,6 @@ l1:
     lda adding_scout
     beq l2
     dec adding_scout_delay
-    lda adding_scout_delay
     bne l2
     lda #3
     sta adding_scout_delay
