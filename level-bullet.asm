@@ -50,15 +50,10 @@ n5: lda tmp
     beq d1
     lda tmp2
     beq d1
-l1: lda tmp             ; Scale fraction up to byte.
-    asl                 ; (partial multiplication)
-    sta tmp
+l1: asl tmp             ; Scale fraction up to byte.
     bcs d1
-    lda tmp2
-    asl
-    bcs d1
-    sta tmp2
-    jmp l1
+    asl tmp2
+    bcc l1
 d1: lda tmp2
     and #%11110000      ; Save 4 bits fraction.
     sta bullet_init+7
