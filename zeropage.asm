@@ -25,50 +25,47 @@ sl                      = $04
 sm                      = $06
 sr                      = $08
 
-blitter_shift_left      = $0b
-blitter_shift_right     = $0c
+framecounter            = $0b
+framecounter_high       = $0c
 
-framecounter            = $0d
-framecounter_high       = $0e
+next_sprite_char        = $0d
+sprite_shift_y          = $0e
+sprite_data_top         = $0f
+sprite_data_bottom      = $10
+sprite_height_top       = $11
+spriteframe             = $12
 
-next_sprite_char        = $0f
-sprite_shift_y          = $10
-sprite_data_top         = $11
-sprite_data_bottom      = $12
-sprite_height_top       = $13
-spriteframe             = $14
+scrolled_bits           = $13
+scrolled_chars          = $14
+leftmost_brick          = $15
+free_bricks             = $16
+next_foreground_char    = $17
+foreground_collision    = $18
 
-scrolled_bits           = $15
-scrolled_chars          = $16
-leftmost_brick          = $17
-free_bricks             = $18
-next_foreground_char    = $19
-foreground_collision    = $1a
+charsetmask             = $19
+tmp                     = $1a
+tmp2                    = $1b
+tmp3                    = $1c
+counter                 = $1d
+repetition              = $1e
 
-charsetmask             = $1b
-tmp                     = $1c
-tmp2                    = $1d
-tmp3                    = $1e
-counter                 = $1f
-repetition              = $20
+adding_scout            = $1f
+adding_scout_delay      = $20
+scout_formation_y       = $21
+formation_left_unhit    = $22
 
-adding_scout            = $21
-adding_scout_delay      = $22
-scout_formation_y       = $23
-formation_left_unhit    = $24
+level_pos               = $23
+level_delay             = $24
+level_old_y             = $25
 
-level_pos               = $25
-level_delay             = $26
-level_old_y             = $27
-
-fire_interval           = $28
-has_double_laser        = $29
-has_autofire            = $2a
-is_firing               = $2b
-is_invincible           = $2c
-death_timer             = $2d
-lifes                   = $2e
-active_bricks           = $2f
+fire_interval           = $26
+has_double_laser        = $27
+has_autofire            = $28
+is_firing               = $29
+is_invincible           = $2a
+death_timer             = $2b
+lifes                   = $2c
+active_bricks           = $2d
 
 sprites_x   = $30   ; X position.
 sprites_y   = $40   ; Y position.

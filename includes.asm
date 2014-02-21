@@ -36,4 +36,5 @@
 #include "foreground.asm"
 #include "math.asm"
 #include "random.asm"
+#include "bits.asm"
 #include "end.asm"

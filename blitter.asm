@@ -1,15 +1,13 @@
 blit_left_whole_char:
     ldy #7
 blit_left:
-.(
     sta s
-    lda #8
+blit_left_loop:
+    lda (s),y
     clc
-    sbc blitter_shift_left
-    sta s3+1
-l1: lda (s),y
-    clc
-s3: bcc s1
+blit_left_addr:
+.(
+    bcc s1
     lsr
     lsr
     lsr
@@ -20,22 +18,21 @@ s3: bcc s1
 s1: ora (d),y
     sta (d),y
     dey
-    bpl l1
+    bpl blit_left_loop
     rts
 .)
 
 blit_right_whole_char:
     ldy #7
 blit_right:
-.(
     sta s
-    lda #8
+blit_right_loop:
+    lda (s),y
     clc
-    sbc blitter_shift_right
-    sta s3+1
-l1: lda (s),y
-    clc
-s3: bcc s1
+blit_right_addr:
+.(
+    bcc s1
+    asl
     asl
     asl
     asl
@@ -46,7 +43,7 @@ s3: bcc s1
 s1: ora (d),y
     sta (d),y
     dey
-    bpl l1
+    bpl blit_right_loop
     rts
 .)
 

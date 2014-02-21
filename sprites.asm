@@ -251,17 +251,16 @@ bitmap_to_text_position:
 configure_blitter:
     lda sprites_x,x
     and #%111
-    sta blitter_shift_left
-    lda #8
-    sec
-    sbc blitter_shift_left
-    sta blitter_shift_right
+    tay
+    sta blit_right_addr+1
+    lda negate7,y
+    sta blit_left_addr+1
+
     lda sprites_y,x
     and #%111
     sta sprite_shift_y
-    lda #8
-    sec
-    sbc sprite_shift_y
+    tay
+    lda negate7,y
     sta sprite_height_top
 
     ; Draw upper left.
@@ -270,9 +269,8 @@ configure_blitter:
     clc
     adc sprite_shift_y
     sta d
-    ldy sprite_height_top
     lda sprite_data_top
-    dey
+    ldy sprite_height_top
     jsr blit_left
 
     lda sprite_shift_y
@@ -282,7 +280,7 @@ configure_blitter:
     inc scry
     jsr get_char
     lda s
-    clc
+    sec
     adc sprite_height_top
     sta sprite_data_bottom
     ldy sprite_shift_y
@@ -290,7 +288,7 @@ configure_blitter:
     jsr blit_left
     dec scry
 
-n1: lda blitter_shift_left
+n1: lda blit_right_addr+1
     beq n2
 
     ; Draw upper right.
@@ -300,9 +298,8 @@ n1: lda blitter_shift_left
     clc
     adc sprite_shift_y
     sta d
-    ldy sprite_height_top
     lda sprite_data_top
-    dey
+    ldy sprite_height_top
     jsr blit_right
 
     lda sprite_shift_y
@@ -311,9 +308,9 @@ n1: lda blitter_shift_left
     ; Draw lower right.
     inc scry
     jsr get_char
+    lda sprite_data_bottom
     ldy sprite_shift_y
     dey
-    lda sprite_data_bottom
     jmp blit_right
 
 n2: rts
