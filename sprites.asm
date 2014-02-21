@@ -285,7 +285,6 @@ configure_blitter:
     clc
     adc sprite_height_top
     sta sprite_data_bottom
-    lda sprite_data_bottom
     ldy sprite_shift_y
     dey
     jsr blit_left
