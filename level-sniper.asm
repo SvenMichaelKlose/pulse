@@ -1,7 +1,7 @@
 add_sniper:
-    lda level_old_y
-    sec
-    sbc #1
+    ldy level_old_y
+    dey
+    tya
     asl
     asl
     asl
