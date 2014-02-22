@@ -3,26 +3,16 @@ decorative  = 32
 deadly      = 64
 
 sprite_inits:
-player_init:
-    .byte 02, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
-laser_init:
-    .byte 18, 80, 1, white+multicolor,  <laser, <laser_fun,  >laser_fun, 0
-laser_up_init:
-    .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun, 0
-laser_down_init:
-    .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun, 0
-bullet_init:
-    .byte 22*8, 89, deadly+2, yellow+multicolor, <bullet, <bullet_fun, >bullet_fun, 0
-scout_init:
-    .byte 22*8, 89, deadly+3, yellow+multicolor, <scout, <scout_fun, >scout_fun, 0
-sniper_init:
-    .byte 22*8, 89, deadly+3, white, <sniper, <sniper_fun, >sniper_fun, 0
-bonus_init:
-    .byte 22*8, 89, 4, green, <bonus, <bonus_fun, >bonus_fun, 0
-star_init:
-    .byte 22*8, 89, decorative, white, <star, <star_fun, >star_fun, 0
-explosion_init:
-    .byte 22*8, 89, decorative, yellow, 0, <explosion_fun, >explosion_fun, 15
+player_init:     .byte 02, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
+laser_init:      .byte 18, 80, 1, white+multicolor,  <laser, <laser_fun,  >laser_fun, 0
+laser_up_init:   .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun, 0
+laser_down_init: .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun, 0
+bullet_init:     .byte 22*8, 89, deadly+2, yellow+multicolor, <bullet, <bullet_fun, >bullet_fun, 0
+scout_init:      .byte 22*8, 89, deadly+3, yellow+multicolor, <scout, <scout_fun, >scout_fun, 0
+sniper_init:     .byte 22*8, 89, deadly+3, white, <sniper, <sniper_fun, >sniper_fun, 0
+bonus_init:      .byte 22*8, 89, 4, green, <bonus, <bonus_fun, >bonus_fun, 0
+star_init:       .byte 22*8, 89, decorative, white, <star, <star_fun, >star_fun, 0
+explosion_init:  .byte 22*8, 89, decorative, yellow, 0, <explosion_fun, >explosion_fun, 15
 
 sinetab:
     .byte 0, 0, 1, 2, 3, 5, 7, 7
@@ -31,48 +21,37 @@ sinetab:
     .byte $f8, $f8, $fa, $fc, $fe, $ff, 0, 0
 
 hit_formation:
-.(
     dec formation_left_unhit
-    bne e
+    bne sec_return
     lda sprites_x,y
     sta bonus_init
     lda sprites_y,y
     sta bonus_init+1
-    txa
-    pha
-    tya
-    pha
     ldy #bonus_init-sprite_inits
     jsr add_sprite
-    pla
-    tay
-    pla
-    tax
-e:  stc
+    sec
     rts
-.)
 
 hit_enemy:
-.(
     jsr find_hit
-    bcc n2
+    bcc return
     lda sprites_i,y
     and #%00111111
     cmp #3
     beq hit_formation
     cmp #2
-    bne n1
-    stc
+    bne clc_return
+sec_return:
+    sec
     rts
-n1: clc
-n2:
-.)
+clc_return:
+    clc
 return:
     rts
 
 test_foreground_collision:
     lda sprites_i,x
-    and #128
+    asl
     rts
 
 energize_color:
@@ -166,9 +145,8 @@ n1: and #%1111
     ora tmp
     sta sprites_d,x
     jsr test_foreground_collision
-    bne r
+    bcs remove_sprite2
     jmp remove_if_sprite_is_out
-r:  jmp remove_sprite
 .)
 
 sniper_fun:
@@ -204,11 +182,10 @@ l2: lda #4
     adc scrolled_chars
     and #%00011111
     tay
-    lda scout_formation_y
+    lda sinetab,y
+    asl
     clc
-    adc sinetab,y
-    clc
-    adc sinetab,y
+    adc scout_formation_y
     sta sprites_y,x
 l1: jmp remove_if_sprite_is_out
 .)
@@ -216,37 +193,31 @@ l1: jmp remove_if_sprite_is_out
 explosion_colors:   .byte red, black+multicolor, yellow+multicolor, white+multicolor
 
 explosion_fun:
-.(
     lda sprites_d,x
     lsr
     lsr
     tay
     lda explosion_colors,y
     sta sprites_c,x
-    lda #1
-    jsr sprite_left
     lda sprites_l,x
     adc $9004
     sta sprites_l,x
     dec sprites_d,x
     bmi remove_sprite2
-    rts
-.)
+    jmp move_left
 
 laser_fun:
     jsr hit_enemy
     bcs remove_sprite_xy
     jsr test_foreground_collision
-    bne remove_sprite2
+    bcs remove_sprite2
     lda #11
     jsr sprite_right
 remove_if_sprite_is_out:
     jsr test_sprite_out
-    bcc return3
+    bcc return2
 remove_sprite2:
     jmp remove_sprite
-return3:
-    rts
 
 remove_sprite_xy:
     jsr remove_sprite
@@ -262,34 +233,27 @@ remove_sprite_xy:
 return2:
     rts
 
+laser_up_fun:
+    lda #8
+    jsr sprite_up
+    jmp laser_side
+
+laser_down_fun:
+    lda #8
+    jsr sprite_down
+
 laser_side:
-.(
     ldy #yellow
     jsr energize_color
     jsr hit_enemy
     bcs remove_sprite_xy
     jsr test_foreground_collision
-    bne remove_sprite2
+    bcs remove_sprite2
     lda #8
     jsr sprite_right
     jsr test_sprite_out
     bcs remove_sprite2
     rts
-.)
-
-laser_up_fun:
-.(
-    lda #8
-    jsr sprite_up
-    jmp laser_side
-.)
-
-laser_down_fun:
-.(
-    lda #8
-    jsr sprite_down
-    jmp laser_side
-.)
 
 player_fun:
 .(
@@ -311,67 +275,68 @@ d1: lda is_invincible
     ldy #red
     jsr energize_color
     dec is_invincible
-    jmp d3
 
 d2: lda #cyan
     sta sprites_c,x
     jsr test_foreground_collision
-    bne die
+    bcs die
 d3: jsr find_hit
-    bcc c1
+    bcc no_hit
     lda sprites_i,y
     and #%00111111
     cmp #4              ; Bonus.
-    bne c2
-    txa
-    pha
-    tya
-    tax
-    jsr remove_sprite
-    pla
-    tax
+    bne no_bonus_hit
+    lda #0              ; Remove bonus sprite.
+    sta sprites_fh,y
+    jsr add_star
     lda fire_interval
     cmp #min_fire_interval
-    bne c4
+    bne faster_fire
     lda has_double_laser
-    bne c3
+    bne make_autofire_or_invincible
     lda #max_fire_interval
     sta fire_interval
     lda #1
     sta has_double_laser
-    jmp c1
-c3: lda random
+    bne no_hit
+make_autofire_or_invincible:
+    lda random
     and #1
-    bne c5
+    bne make_invincible
     lda #$ff
     sta has_autofire
-    jmp c2
-c5: lda #$ff
+    bne no_hit
+make_invincible:
+    lda #$ff
     sta is_invincible
-c2: lda sprites_i,y
-    and #64
-    beq c1
+    bne no_hit
+no_bonus_hit:
+    lda sprites_i,y
+    and #deadly
+    beq no_hit
     lda is_invincible
-    bne c1
+    bne no_hit
 die:
 #ifdef INVINCIBLE
-jmp c1
+    jmp no_hit
 #endif
     lda #120
     sta death_timer
     rts
-c4: dec fire_interval
+faster_fire:
     dec fire_interval
-c1: lda #0              ; Fetch joystick status.
+    dec fire_interval
+no_hit:
+    lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
     tay
     and #%00100000
-    bne n1
+    bne no_fire
     lda has_autofire
     bne a1
     lda is_firing
-    bne n1
+    bne no_fire
     jmp a2
 a1: dec has_autofire
 a2: lda framecounter    ; Little ramdomness to give the laser some action.
@@ -404,43 +369,47 @@ a2: lda framecounter    ; Little ramdomness to give the laser some action.
     jsr add_sprite
 s1: pla
     tay
-n1: lda is_firing
+no_fire:
+    lda is_firing
     beq i1
     dec is_firing
 i1: tya
     and #%00000100
-    bne n2
+    bne no_joy_up
     lda sprites_y,x
-    cmp #$100-8
-    bcs n2
+    beq no_joy_down
     lda #4
     jsr sprite_up
-n2: tya
+no_joy_up:
+    tya
     and #%00001000
-    bne n3
+    bne no_joy_down
     lda sprites_y,x
     cmp #$100-8
     bcs n6
     cmp #22*8
-    bcs n3
+    bcs no_joy_down
 n6: lda #4
     jsr sprite_down
-n3: tya
+no_joy_down:
+    tya
     and #%00010000
-    bne n4
+    bne no_joy_left
     lda sprites_x,x
-    beq n4
+    beq no_joy_right
     lda #2
-    jsr sprite_left
-n4: lda #0              ;Fetch rest of joystick status.
+    jmp sprite_left
+no_joy_left:
+    lda #0              ;Fetch rest of joystick status.
     sta $9122
     lda $9120
     and #%10000000
-    bne n5
+    bne no_joy_right
     lda sprites_x,x
     cmp #21*8
-    bcs n5
+    bcs no_joy_right
     lda #2
     jmp sprite_right
-n5: rts
+no_joy_right:
+    rts
 .)
