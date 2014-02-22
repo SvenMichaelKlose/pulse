@@ -27,7 +27,7 @@ selfmod:
     cmp #sprites_d
     beq done
     clc
-    adc #$10
+    adc #numsprites
     sta selfmod+1
     jmp l3
 done:
@@ -44,34 +44,22 @@ remove_sprite:
     jmp add_star
 
 sprite_up:
-.(
-    eor #$ff
-    clc
-    adc #1
-.)
+    jsr neg
 
 sprite_down:
-.(
     clc
     adc sprites_y,x
     sta sprites_y,x
     rts
-.)
 
 sprite_left:
-.(
-    eor #$ff
-    clc
-    adc #1
-.)
+    jsr neg
 
 sprite_right:
-.(
     clc
     adc sprites_x,x
     sta sprites_x,x
     rts
-.)
 
 test_sprite_out:
 .(
@@ -100,22 +88,16 @@ l1: cpy tmp
     lda sprites_x,x     ; Get X distance.
     sec
     sbc sprites_x,y
-    bpl l2
-    eor #$ff
-    clc
-    adc #1
-l2: and #%11110000
+    jsr abs
+    and #%11110000
     bne n1
     lda sprites_y,x
     clc
     adc #8
     sec
     sbc sprites_y,y
-    bpl l3
-    eor #$ff
-    clc
-    adc #1
-l3: and #%11110000
+    jsr abs
+    and #%11110000
     beq c1
 n1: dey
     bpl l1
@@ -159,11 +141,6 @@ l1: lda sprites_fh,x
     txa
 
     pha
-#ifdef TIMING
-    eor #%111
-    ora #8
-    sta $900f
-#endif
     jsr draw_sprite
     pla
     tax
@@ -182,10 +159,6 @@ n1: dex
 
 clean_screen:
 .(
-#ifdef TIMING
-    lda #8+white
-    sta $900f
-#endif
     ldx #numsprites-1
 l1: lda sprites_ox,x
     cmp #$ff
@@ -218,10 +191,6 @@ n2: lda sprites_fh,x
 n1: dex
     bpl l1
 .)
-#ifdef TIMING
-    lda #8+blue
-    sta $900f
-#endif
     rts
 
 ; Draw a single sprite.
