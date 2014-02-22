@@ -20,6 +20,9 @@ sinetab:
     .byte 0, 0, $ff, $fe, $fc, $fa, $f8, $f8
     .byte $f8, $f8, $fa, $fc, $fe, $ff, 0, 0
 
+explosion_colors:
+    .byte red, black+multicolor, yellow+multicolor, white+multicolor
+
 hit_formation:
     dec formation_left_unhit
     bne sec_return
@@ -88,7 +91,7 @@ star_fun:
     rol
     and #3
     beq move_left_blue
-    jmp move_left_a
+    bne move_left_a
 move_left_blue:
     lda #blue
     sta sprites_c,x
@@ -97,6 +100,27 @@ move_left:
 move_left_a:
     jsr sprite_left
     jmp remove_if_sprite_is_out
+
+explosion_fun:
+    lda sprites_d,x
+    lsr
+    lsr
+    tay
+    lda explosion_colors,y
+    sta sprites_c,x
+    lda sprites_l,x
+    adc $9004
+    sta sprites_l,x
+    dec sprites_d,x
+    bpl move_left
+    jmp remove_sprite
+
+sniper_fun:
+    lda framecounter
+    and #%01011111
+    bne move_left
+    jsr add_bullet
+    jmp move_left
 
 bullet_fun:
 .(
@@ -146,16 +170,7 @@ n1: and #%1111
     sta sprites_d,x
     jsr test_foreground_collision
     bcs remove_sprite2
-    jmp remove_if_sprite_is_out
-.)
-
-sniper_fun:
-.(
-    lda framecounter
-    and #%01011111
-    bne n
-    jsr add_bullet
-n:  jmp move_left
+    bcc remove_if_sprite_is_out
 .)
 
 scout_fun:
@@ -189,22 +204,6 @@ l2: lda #4
     sta sprites_y,x
 l1: jmp remove_if_sprite_is_out
 .)
-
-explosion_colors:   .byte red, black+multicolor, yellow+multicolor, white+multicolor
-
-explosion_fun:
-    lda sprites_d,x
-    lsr
-    lsr
-    tay
-    lda explosion_colors,y
-    sta sprites_c,x
-    lda sprites_l,x
-    adc $9004
-    sta sprites_l,x
-    dec sprites_d,x
-    bmi remove_sprite2
-    jmp move_left
 
 laser_fun:
     jsr hit_enemy
@@ -337,7 +336,7 @@ no_hit:
     bne a1
     lda is_firing
     bne no_fire
-    jmp a2
+    beq a2
 a1: dec has_autofire
 a2: lda framecounter    ; Little ramdomness to give the laser some action.
     lsr
@@ -403,8 +402,7 @@ no_joy_left:
     lda #0              ;Fetch rest of joystick status.
     sta $9122
     lda $9120
-    and #%10000000
-    bne no_joy_right
+    bmi no_joy_right
     lda sprites_x,x
     cmp #21*8
     bcs no_joy_right
