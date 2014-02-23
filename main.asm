@@ -52,6 +52,14 @@ init_player:
     ldy #player_init-sprite_inits
     jsr add_sprite
 
+make_stars:
+.(
+    ldx #numsprites
+l:  jsr add_star
+    dex
+    bne l
+.)
+
 restart:
     lda #max_fire_interval
     sta fire_interval
