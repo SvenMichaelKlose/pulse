@@ -1,9 +1,11 @@
+controllers_start:
+
 multicolor  = 8
 decorative  = 32
 deadly      = 64
 
 sprite_inits:
-player_init:     .byte 02, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
+player_init:     .byte 0, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
 laser_init:      .byte 18, 80, 1, white+multicolor,  <laser, <laser_fun,  >laser_fun, 0
 laser_up_init:   .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun, 0
 laser_down_init: .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun, 0
@@ -30,8 +32,12 @@ hit_formation:
     sta bonus_init
     lda sprites_y,y
     sta bonus_init+1
+    tya
+    pha
     ldy #bonus_init-sprite_inits
     jsr add_sprite
+    pla
+    tay
     sec
     rts
 
@@ -274,6 +280,7 @@ d1: lda is_invincible
     ldy #red
     jsr energize_color
     dec is_invincible
+    jmp d3
 
 d2: lda #cyan
     sta sprites_c,x
@@ -313,9 +320,9 @@ no_bonus_hit:
     lda sprites_i,y
     and #deadly
     beq no_hit
+die:
     lda is_invincible
     bne no_hit
-die:
 #ifdef INVINCIBLE
     jmp no_hit
 #endif
@@ -395,8 +402,9 @@ no_joy_down:
     and #%00010000
     bne no_joy_left
     lda sprites_x,x
-    beq no_joy_right
-    lda #2
+    cmp #3
+    bcc no_joy_right
+    lda #3
     jmp sprite_left
 no_joy_left:
     lda #0              ;Fetch rest of joystick status.
@@ -406,8 +414,10 @@ no_joy_left:
     lda sprites_x,x
     cmp #21*8
     bcs no_joy_right
-    lda #2
+    lda #3
     jmp sprite_right
 no_joy_right:
     rts
 .)
+
+controllers_end:
