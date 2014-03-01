@@ -82,10 +82,12 @@ l1: cpy tmp
     lda sprites_fh,y
     beq n1
     lda sprites_i,y
-    and #32
+    and #decorative
     bne n1
 
     lda sprites_x,x     ; Get X distance.
+    sec
+    sbc #8
     sec
     sbc sprites_x,y
     jsr abs
