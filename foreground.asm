@@ -1,5 +1,3 @@
-bricklist_r:    .dsb 8
-
 test_on_foreground:
     ldy #0
     lda (scr),y

@@ -66,17 +66,19 @@ is_invincible           = $2a
 death_timer             = $2b
 lifes                   = $2c
 active_bricks           = $2d
+bricklist_r             = $2e ; 8 bytes.
 
-sprites_x   = $30   ; X position.
-sprites_y   = $40   ; Y position.
-sprites_i   = $50   ; Flags.
-sprites_c   = $60   ; Color.
-sprites_l   = $70   ; Low character address.
-sprites_fl  = $80   ; Function controlling the sprite.
-sprites_fh  = $90   ; Function controlling the sprite.
-sprites_d   = $a0   ; Whatever the controller wants.
-sprites_ox  = $b0   ; Former X position for cleaning up.
-sprites_oy  = $c0   ; Former Y position for cleaning up.
+
+sprites_x   = $60   ; X position.
+sprites_y   = $70   ; Y position.
+sprites_i   = $80   ; Flags.
+sprites_c   = $90   ; Color.
+sprites_l   = $a0   ; Low character address.
+sprites_fl  = $b0   ; Function controlling the sprite.
+sprites_fh  = $c0   ; Function controlling the sprite.
+sprites_d   = $d0   ; Whatever the controller wants.
+sprites_ox  = $e0   ; Former X position for cleaning up.
+sprites_oy  = $f0   ; Former Y position for cleaning up.
 
 scrbricks_i = $100
 scrbricks_x = $120
