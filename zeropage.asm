@@ -69,16 +69,18 @@ active_bricks           = $2d
 bricklist_r             = $2e ; 8 bytes.
 
 
-sprites_x   = $60   ; X position.
-sprites_y   = $70   ; Y position.
-sprites_i   = $80   ; Flags.
-sprites_c   = $90   ; Color.
-sprites_l   = $a0   ; Low character address.
-sprites_fl  = $b0   ; Function controlling the sprite.
-sprites_fh  = $c0   ; Function controlling the sprite.
-sprites_d   = $d0   ; Whatever the controller wants.
-sprites_ox  = $e0   ; Former X position for cleaning up.
-sprites_oy  = $f0   ; Former Y position for cleaning up.
+sprites_x   = $50   ; X position.
+sprites_y   = $60   ; Y position.
+sprites_i   = $70   ; Flags.
+sprites_c   = $80   ; Color.
+sprites_l   = $90   ; Low character address.
+sprites_fl  = $a0   ; Function controlling the sprite.
+sprites_fh  = $b0   ; Function controlling the sprite.
+sprites_d   = $c0   ; Whatever the controller wants.
+sprites_ox  = $d0   ; Former X position for cleaning up.
+sprites_oy  = $e0   ; Former Y position for cleaning up.
+
+hiscore     = $f0
 
 scrbricks_i = $100
 scrbricks_x = $120

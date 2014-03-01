@@ -225,6 +225,7 @@ remove_sprite2:
     jmp remove_sprite
 
 remove_sprite_xy:
+    jsr increment_score
     jsr remove_sprite
     lda sprites_x,y
     sta explosion_init
@@ -274,7 +275,7 @@ player_fun:
     dec lifes
     beq g1
     jmp restart
-g1: jmp game_over
+g1: jmp game_over2
 d1: lda is_invincible
     beq d2
     ldy #red
@@ -383,7 +384,8 @@ i1: tya
     and #%00000100
     bne no_joy_up
     lda sprites_y,x
-    beq no_joy_down
+    cmp #12
+    bcc no_joy_down
     lda #4
     jsr sprite_up
 no_joy_up:
@@ -418,6 +420,16 @@ no_joy_left:
     jmp sprite_right
 no_joy_right:
     rts
+.)
+
+game_over2:
+.(
+    ldx #7
+l:  lda hiscore_addr,x
+    sta hiscore,x
+    dex
+    bpl l
+    jmp game_over
 .)
 
 controllers_end:

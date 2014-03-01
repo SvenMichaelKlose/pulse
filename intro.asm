@@ -47,6 +47,13 @@ l:  lda counter
     bne l
 .)
 
+.(
+    ldx #7
+    lda #48
+l:  sta hiscore,x
+    dex
+    bpl l
+.)
     jmp start_main
 
 #ifdef DRAW_PIXEL

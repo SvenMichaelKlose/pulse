@@ -4,7 +4,6 @@
 #define SHOW_CHARSET
 #define INVINCIBLE
 */
-#define INVINCIBLE
 
 #include "game.defs.asm"
 #include "zeropage.asm"
@@ -36,5 +35,6 @@
 #include "foreground.asm"
 #include "math.asm"
 #include "random.asm"
+#include "score.asm"
 #include "bits.asm"
 #include "end.asm"

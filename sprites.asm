@@ -64,11 +64,15 @@ sprite_right:
 test_sprite_out:
 .(
     lda sprites_x,x
+    cmp #$f9
+    bcs c2
     cmp #22*8
     bcs c1
     lda sprites_y,x
     cmp #23*8
 c1: rts
+c2: clc
+    rts
 .)
 
 find_hit:

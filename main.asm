@@ -1,9 +1,15 @@
 game_over:
 .(
     lda #0
-    tax
+    ldx #hiscore-1
 l1: sta 0,x
-    sta charset,x
+    dex
+    bne l1
+.)
+
+.(
+    tax
+l1: sta charset,x
     dex
     bne l1
 .)
@@ -38,6 +44,52 @@ init_trailing_foreground_chars:
     ldy #15
     jsr blit_copy
 
+lifes_addr = screen+1
+score_addr = screen+4
+hiscore_addr = screen+12+1
+
+init_score_digits:
+.(
+    ldx #10*8
+l:  lda charset_locase+$30*8,x
+    sta charset+48*8,x
+    dex
+    bpl l
+
+    ldx #7
+l2: lda #48
+    sta score_addr,x
+    lda ship,x
+    sta charset+58*8,x
+;    lda charset_locase+$58*8,x
+;    sta charset+50*8,x
+    dex
+    bpl l2
+
+    ldx #58
+    stx lifes_addr
+    inx
+    stx lifes_addr+1
+
+    ldx #22
+    lda #cyan
+l3: sta colors,x
+    dex
+    bpl l3
+
+    lda #yellow
+    sta lifes_addr-screen+colors+1
+.)
+
+init_hiscore:
+.(
+    ldx #7
+l2: lda hiscore,x
+    sta hiscore_addr,x
+    dex
+    bpl l2
+.)
+
 init_level:
     lda #22
     sta level_old_y
@@ -61,6 +113,10 @@ l:  jsr add_star
 .)
 
 restart:
+    lda lifes
+    clc
+    adc #48
+    sta lifes_addr+1
     lda #max_fire_interval
     sta fire_interval
     lda #150
