@@ -175,7 +175,7 @@ n1: and #%1111
     ora tmp
     sta sprites_d,x
     jsr test_foreground_collision
-    bcs remove_sprite2
+    bcs remove_sprite_hit_fg
     bcc remove_if_sprite_is_out
 .)
 
@@ -215,7 +215,7 @@ laser_fun:
     jsr hit_enemy
     bcs remove_sprite_xy
     jsr test_foreground_collision
-    bcs remove_sprite2
+    bcs remove_sprite_hit_fg
     lda #11
     jsr sprite_right
 remove_if_sprite_is_out:
@@ -223,10 +223,15 @@ remove_if_sprite_is_out:
     bcc return2
 remove_sprite2:
     jmp remove_sprite
+remove_sprite_hit_fg:
+    inc sound_foreground
+    jmp remove_sprite
 
 remove_sprite_xy:
     jsr increment_score
     jsr remove_sprite
+    lda #7
+    sta sound_explosion
     lda sprites_x,y
     sta explosion_init
     lda sprites_y,y
@@ -254,7 +259,7 @@ laser_side:
     jsr hit_enemy
     bcs remove_sprite_xy
     jsr test_foreground_collision
-    bcs remove_sprite2
+    bcs remove_sprite_hit_fg
     lda #8
     jsr sprite_right
     jsr test_sprite_out
@@ -293,6 +298,8 @@ d3: jsr find_hit
     and #%00111111
     cmp #4              ; Bonus.
     bne no_bonus_hit
+    lda #15
+    sta sound_bonus
     lda #0              ; Remove bonus sprite.
     sta sprites_fh,y
     jsr add_star
@@ -329,6 +336,8 @@ die:
 #endif
     lda #120
     sta death_timer
+    lda #15
+    sta sound_dead
     rts
 faster_fire:
     dec fire_interval
@@ -360,6 +369,10 @@ a2: lda framecounter    ; Little ramdomness to give the laser some action.
     sta laser_up_init+1
     sta laser_down_init+1
     inc laser_init+1
+    lda sound_laser
+    lda sound_laser
+    lda #7
+    sta sound_laser
     lda fire_interval
     sta is_firing
     lda #white
@@ -370,9 +383,9 @@ a2: lda framecounter    ; Little ramdomness to give the laser some action.
     jsr add_sprite
     lda has_double_laser
     beq s1
-    ldy #laser_up_init-sprite_inits
-    jsr add_sprite
     ldy #laser_down_init-sprite_inits
+    jsr add_sprite
+    ldy #laser_up_init-sprite_inits
     jsr add_sprite
 s1: pla
     tay

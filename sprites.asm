@@ -69,6 +69,8 @@ test_sprite_out:
     cmp #22*8
     bcs c1
     lda sprites_y,x
+    cmp #$f9
+    bcs c2
     cmp #23*8
 c1: rts
 c2: clc

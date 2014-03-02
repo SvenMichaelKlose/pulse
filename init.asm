@@ -3,9 +3,9 @@ realstart   = $1000 + charsetsize
 main:
     cli
     lda #$7f
-    sta $912e       ; disable and acknowledge interrupts
+    sta $912e       ; Disable and acknowledge interrupts.
     sta $912d
-    sta $911e       ; disable NMIs (Restore key)
+    sta $911e       ; Disable restore key NMIs.
 
 .(
     ldx #0
@@ -15,6 +15,14 @@ l:  lda lowmem,x
     sta $300,x
     dex
     bne l
+.)
+
+.(
+    ldx #$60
+l:  lda stackmem,x
+    sta $180,x
+    dex
+    bpl l
 .)
 
     jmp intro

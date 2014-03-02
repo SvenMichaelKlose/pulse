@@ -68,6 +68,13 @@ lifes                   = $2c
 active_bricks           = $2d
 bricklist_r             = $2e ; 8 bytes.
 
+sound_start             = $36
+sound_explosion         = $36
+sound_laser             = $37
+sound_bonus             = $38
+sound_foreground        = $39
+sound_dead              = $41
+sound_end               = $41
 
 sprites_x   = $50   ; X position.
 sprites_y   = $60   ; Y position.

@@ -7,11 +7,20 @@ l1: sta 0,x
     bne l1
 .)
 
+clear_charset:
 .(
     tax
 l1: sta charset,x
     dex
     bne l1
+.)
+
+clear_screen_bricks:
+.(
+    ldx #$7f
+l:  sta $100,x
+    dex
+    bpl l
 .)
 
     jsr clear_screen
@@ -126,15 +135,82 @@ restart:
     sta has_double_laser
 
 mainloop:
-#ifdef TIMING
-    lda #8+blue
-    sta $900f
+
+play_sound_dead:
 .(
-wait_retrace:
-l:  lda $9004
-    bne l
+    lda sound_dead
+    beq n
+    ora #red*16
+    sta $900e
+    ora #128
+    jmp play_sound_bonus3
+n:
 .)
-#endif
+
+play_sound_bonus:
+    lda sound_bonus
+    beq play_sound_bonus2
+    ora #red*16
+    sta $900e
+    lda $9005
+    ora #128
+play_sound_bonus3:
+    sta $900a
+    sta $900b
+    sta $900c
+    jmp sound_done
+play_sound_bonus2:
+    sta $900a
+    sta $900b
+    sta $900c
+
+play_sound_explosion:
+.(
+    lda sound_explosion
+    beq n
+    asl
+    ora #red*16
+    sta $900e
+    lda #196
+    sta $900d
+    jmp sound_done
+n:
+    sta $900d
+.)
+
+play_sound_laser:
+    lda sound_laser
+    beq play_sound_laser2
+    asl
+    asl
+    ora #128
+    sta $900c
+sound_done_full_volume:
+    lda #red*16+15
+    sta $900e
+    jmp sound_done
+play_sound_laser2:
+
+play_sound_foreground:
+.(
+    lda sound_foreground
+    beq n
+    lda #128
+    sta $900d
+    jmp sound_done_full_volume
+n:  sta $900d
+    sta $900c
+.)
+
+sound_done:
+.(
+    ldx #sound_end-sound_start
+l:  lda sound_start,x
+    beq n
+    dec sound_start,x
+n:  dex
+    bpl l
+.)
 
     jsr update_random
     jsr init_frame
