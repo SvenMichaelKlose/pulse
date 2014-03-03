@@ -3,24 +3,9 @@ game_over:
     lda #0
     ldx #hiscore-1
 l1: sta 0,x
+    sta charset,x
     dex
     bne l1
-.)
-
-clear_charset:
-.(
-    tax
-l1: sta charset,x
-    dex
-    bne l1
-.)
-
-clear_screen_bricks:
-.(
-    ldx #$7f
-l:  sta $100,x
-    dex
-    bpl l
 .)
 
     jsr clear_screen
@@ -122,6 +107,8 @@ l:  jsr add_star
 .)
 
 restart:
+    ldx #$ff
+    txs
     lda lifes
     clc
     adc #48
@@ -133,8 +120,25 @@ restart:
     lda #0
     sta is_firing
     sta has_double_laser
+    sta has_autofire
 
 mainloop:
+
+play_sound_foreground:
+.(
+    lda sound_foreground
+    beq n
+    lda #128
+    sta $900d
+    lda #red*16+15
+    sta $900e
+    bne n2
+n:  lda sound_explosion
+    bne n2
+    sta $900d
+    sta $900c
+n2:
+.)
 
 play_sound_dead:
 .(
@@ -173,9 +177,12 @@ play_sound_explosion:
     sta $900e
     lda #196
     sta $900d
-    jmp sound_done
+    jmp play_sound_laser
 n:
+    lda sound_foreground
+    bne n2
     sta $900d
+n2:
 .)
 
 play_sound_laser:
@@ -183,24 +190,13 @@ play_sound_laser:
     beq play_sound_laser2
     asl
     asl
-    ora #128
-    sta $900c
+    ora #128+64
+    sta $900b
 sound_done_full_volume:
     lda #red*16+15
     sta $900e
     jmp sound_done
 play_sound_laser2:
-
-play_sound_foreground:
-.(
-    lda sound_foreground
-    beq n
-    lda #128
-    sta $900d
-    jmp sound_done_full_volume
-n:  sta $900d
-    sta $900c
-.)
 
 sound_done:
 .(

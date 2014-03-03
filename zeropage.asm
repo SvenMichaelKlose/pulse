@@ -76,23 +76,23 @@ sound_foreground        = $39
 sound_dead              = $41
 sound_end               = $41
 
-sprites_x   = $50   ; X position.
-sprites_y   = $60   ; Y position.
+sprites_x   = $50   ; X positions.
+sprites_y   = $60   ; Y positions.
 sprites_i   = $70   ; Flags.
-sprites_c   = $80   ; Color.
-sprites_l   = $90   ; Low character address.
-sprites_fl  = $a0   ; Function controlling the sprite.
-sprites_fh  = $b0   ; Function controlling the sprite.
-sprites_d   = $c0   ; Whatever the controller wants.
-sprites_ox  = $d0   ; Former X position for cleaning up.
-sprites_oy  = $e0   ; Former Y position for cleaning up.
+sprites_c   = $80   ; Colors.
+sprites_l   = $90   ; Low character addresses.
+sprites_fl  = $a0   ; Function controlling the sprite (low).
+sprites_fh  = $b0   ; Function controlling the sprite (high).
+sprites_d   = $c0   ; Whatever the controllers want.
+sprites_ox  = $d0   ; Former X positions for cleaning up.
+sprites_oy  = $e0   ; Former Y positions for cleaning up.
 
 hiscore     = $f0
 
-scrbricks_i = $100
-scrbricks_x = $120
-scrbricks_y = $140
-scrbricks_n = $160
+scrbricks_i = $100  ; Index into brick info.
+scrbricks_x = $120  ; X positions.
+scrbricks_y = $140  ; Y positions.
+scrbricks_n = $160  ; Times duplicated along the Y axis.
 
 x0      = $f0                                                                   
 y0      = $f1

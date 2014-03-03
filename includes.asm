@@ -12,26 +12,32 @@
 #include "basic-loader.asm"
 
 #include "init.asm"
+
 #include "stackmem-start.asm"
 #include "random.asm"
 #include "score.asm"
 #include "stackmem-end.asm"
+
 #include "lowmem-start.asm"
+#include "bricks.asm"
 #include "level-stars.asm"
 #include "level-scout.asm"
 #include "blitter.asm"
 #include "chars.asm"
 #include "screen.asm"
-#include "bricks.asm"
 #include "math.asm"
 #include "lowmem-end.asm"
+
 #include "intro.asm"
+#ifdef ARCADE_ROMANDE
 #include "bresenham.asm"
+#endif
+
 #include "init-end.asm"
 
+#include "controllers.asm"
 #include "main.asm"
 #include "level.asm"
-#include "controllers.asm"
 #include "level-bullet.asm"
 #include "level-sniper.asm"
 #include "sprites.asm"
@@ -39,4 +45,5 @@
 #include "gfx-sprites.asm"
 #include "gfx-foreground.asm"
 #include "bits.asm"
-#include "end.asm"
+
+realend:

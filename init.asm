@@ -7,6 +7,7 @@ main:
     sta $912d
     sta $911e       ; Disable restore key NMIs.
 
+init_lowmem:
 .(
     ldx #0
 l:  lda lowmem,x
@@ -17,6 +18,7 @@ l:  lda lowmem,x
     bne l
 .)
 
+init_stackmem:
 .(
     ldx #$60
 l:  lda stackmem,x

@@ -1,9 +1,7 @@
 add_sprite:
 .(
-    txa
-    pha
-    tya
-    pha
+    stx tmp
+    sty tmp2
     ldx #numsprites-1   ; Look for free slot.
 l1: lda sprites_fh,x
     beq l2
@@ -31,10 +29,8 @@ selfmod:
     sta selfmod+1
     jmp l3
 done:
-    pla
-    tay
-    pla
-    tax
+    ldx tmp
+    ldy tmp2
     rts
 .)
 

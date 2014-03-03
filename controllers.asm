@@ -125,6 +125,7 @@ sniper_fun:
     lda framecounter
     and #%01011111
     bne move_left
+    inc sound_foreground
     jsr add_bullet
     jmp move_left
 
@@ -187,6 +188,7 @@ scout_fun:
     lda random
     and #%00001111
     bne l2
+    inc sound_foreground
     jsr add_bullet
     jsr update_random
 l2: lda #4
@@ -281,16 +283,20 @@ player_fun:
     beq g1
     jmp restart
 g1: jmp game_over2
-d1: lda is_invincible
+d1: lda #cyan
+    sta sprites_c,x
+    lda has_autofire
+    beq d4
+    ldy #yellow
+    jsr energize_color
+d4: lda is_invincible
     beq d2
     ldy #red
     jsr energize_color
     dec is_invincible
     jmp d3
 
-d2: lda #cyan
-    sta sprites_c,x
-    jsr test_foreground_collision
+d2: jsr test_foreground_collision
     bcs die
 d3: jsr find_hit
     bcc no_hit
@@ -303,6 +309,10 @@ d3: jsr find_hit
     lda #0              ; Remove bonus sprite.
     sta sprites_fh,y
     jsr add_star
+    ldy #10
+l8: jsr increment_score
+    dey
+    bne l8
     lda fire_interval
     cmp #min_fire_interval
     bne faster_fire
@@ -312,18 +322,18 @@ d3: jsr find_hit
     sta fire_interval
     lda #1
     sta has_double_laser
-    bne no_hit
+    jmp no_hit
 make_autofire_or_invincible:
     lda random
     and #1
     bne make_invincible
     lda #$ff
     sta has_autofire
-    bne no_hit
+    jmp no_hit
 make_invincible:
     lda #$ff
     sta is_invincible
-    bne no_hit
+    jmp no_hit
 no_bonus_hit:
     lda sprites_i,y
     and #deadly
@@ -338,6 +348,8 @@ die:
     sta death_timer
     lda #15
     sta sound_dead
+    lda #7
+    sta sound_explosion
     rts
 faster_fire:
     dec fire_interval
@@ -357,7 +369,6 @@ no_hit:
 a1: dec has_autofire
 a2: lda framecounter    ; Little ramdomness to give the laser some action.
     lsr
-    lsr
     and #7
     adc sprites_x,x
     sta laser_init
@@ -369,8 +380,6 @@ a2: lda framecounter    ; Little ramdomness to give the laser some action.
     sta laser_up_init+1
     sta laser_down_init+1
     inc laser_init+1
-    lda sound_laser
-    lda sound_laser
     lda #7
     sta sound_laser
     lda fire_interval
@@ -436,6 +445,7 @@ no_joy_right:
 .)
 
 game_over2:
+save_hiscore_to_zeropage:
 .(
     ldx #7
 l:  lda hiscore_addr,x

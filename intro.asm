@@ -7,6 +7,7 @@ intro:
     lda #%11111100  ; Our charset.                                              
     sta $9005
 
+#ifdef ARCADE_ROMANCE
 .(
     lda #0
     tax
@@ -54,7 +55,9 @@ l:  sta hiscore,x
     dex
     bpl l
 .)
-    jmp start_main
+#endif
+
+    jmp game_over
 
 #ifdef DRAW_PIXEL
 draw_pixel:
