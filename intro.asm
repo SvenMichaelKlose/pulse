@@ -47,6 +47,7 @@ l:  lda counter
     dec counter
     bne l
 .)
+#endif
 
 .(
     ldx #7
@@ -55,7 +56,6 @@ l:  sta hiscore,x
     dex
     bpl l
 .)
-#endif
 
     jmp game_over
 

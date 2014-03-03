@@ -4,6 +4,7 @@ numbricks   = 32
 charset     = $1000
 
 charsetsize         = numchars * 8
+charsetmask         = numchars-1
 framesize           = charsetsize / 2
 framemask           = numchars / 2
 framechars          = numchars / 2
@@ -42,7 +43,7 @@ free_bricks             = $16
 next_foreground_char    = $17
 foreground_collision    = $18
 
-charsetmask             = $19
+;charsetmask             = $19
 tmp                     = $1a
 tmp2                    = $1b
 tmp3                    = $1c

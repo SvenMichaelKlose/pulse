@@ -17,10 +17,10 @@ level_data:
 ;    .byte 16, 20
 ;    .byte 16, 15
 
-;    .byte 16, 20
-;    .byte 16, 21
-;    .byte 16, 22
-;    .byte 32, 20
+    .byte 16, 20
+    .byte 16, 21
+    .byte 16, 22
+    .byte 32, 20
     .byte 16, 5
     .byte 16, 22
     .byte 16, 5

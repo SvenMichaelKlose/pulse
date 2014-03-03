@@ -10,11 +10,13 @@ l1: sta 0,x
 
     jsr clear_screen
 
+#ifdef ARCADE_ROMANCE
     lda #numchars-1
     sta charsetmask
     lda #foreground
     sta foregroundmask+1
     sta foregroundtest+1
+#endif
 
 clear_sprites:
 .(

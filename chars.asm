@@ -53,7 +53,7 @@ foregroundtest:
 
 fetch_char:
 .(
-    and charsetmask
+    and #charsetmask
     pha
     jsr get_char_addr
     jsr blit_clear_char
