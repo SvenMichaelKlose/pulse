@@ -122,12 +122,16 @@ explosion_fun:
     jmp remove_sprite
 
 sniper_fun:
+.(
+    lda framecounter_high
+    beq move_left
     lda framecounter
     and #%01011111
     bne move_left
     inc sound_foreground
     jsr add_bullet
     jmp move_left
+.)
 
 bullet_fun:
 .(
@@ -384,9 +388,11 @@ a2: lda framecounter    ; Little ramdomness to give the laser some action.
     sta sound_laser
     lda fire_interval
     sta is_firing
+    lda is_invincible
+    bne i2
     lda #white
     sta sprites_c,x
-    tya
+i2: tya
     pha
     ldy #laser_init-sprite_inits
     jsr add_sprite
