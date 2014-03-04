@@ -89,11 +89,9 @@ l1: cpy tmp
 
     lda sprites_x,x     ; Get X distance.
     sec
-    sbc #8
-    sec
     sbc sprites_x,y
     jsr abs
-    and #%11110000
+    and #%11111000
     bne n1
     lda sprites_y,x
     clc
