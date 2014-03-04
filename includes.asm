@@ -29,7 +29,7 @@
 #include "lowmem-end.asm"
 
 #include "intro.asm"
-#ifdef ARCADE_ROMANDE
+#ifdef ARCADE_ROMANCE
 #include "bresenham.asm"
 #endif
 

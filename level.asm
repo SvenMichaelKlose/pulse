@@ -69,8 +69,7 @@ down:
     sta scrbricks_y,x
     inc level_old_y
 n4: lda #5
-    jsr add_brick
-    jmp exit
+    bne n5
 done:
     rts
 
@@ -95,7 +94,7 @@ up: lda #4
     sta level_old_y
     dec level_old_y
 n3: lda #0
-    jsr add_brick
+n5: jsr add_brick
 
 exit:
     iny

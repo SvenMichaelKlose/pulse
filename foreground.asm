@@ -84,7 +84,7 @@ loop:
 restart_plotting_chars:
     lda scrx
 repeat_plotting_chars:
-    cmp #$fd
+    cmp #$fd            ; Off-screen...
     beq remove_brick
     bcs draw_right
     cmp #22
