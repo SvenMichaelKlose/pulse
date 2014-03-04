@@ -77,6 +77,8 @@ sound_foreground        = $39
 sound_dead              = $41
 sound_end               = $41
 
+random                  = $42
+
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
 sprites_i   = $70   ; Flags.

@@ -26,5 +26,3 @@ l:  lda stackmem,x
     dex
     bpl l
 .)
-
-    jmp intro

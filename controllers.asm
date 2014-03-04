@@ -234,7 +234,6 @@ remove_sprite_hit_fg:
     jmp remove_sprite
 
 remove_sprite_xy:
-    jsr increment_score
     jsr remove_sprite
     lda #7
     sta sound_explosion
@@ -245,6 +244,7 @@ remove_sprite_xy:
     tya
     tax
     jsr remove_sprite
+    jsr increment_score
     ldy #explosion_init-sprite_inits
     jmp add_sprite
 return2:
@@ -326,18 +326,18 @@ l8: jsr increment_score
     sta fire_interval
     lda #1
     sta has_double_laser
-    jmp no_hit
+    bne no_hit
 make_autofire_or_invincible:
     lda random
     and #1
     bne make_invincible
     lda #$ff
     sta has_autofire
-    jmp no_hit
+    bne no_hit
 make_invincible:
     lda #$ff
     sta is_invincible
-    jmp no_hit
+    bne no_hit
 no_bonus_hit:
     lda sprites_i,y
     and #deadly

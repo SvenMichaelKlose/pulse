@@ -63,14 +63,11 @@ ascii2petscii:
 .(
     cmp #"X"+2
     bcc done
-;    cmp #"x"+1
-;    bcc done
     sec
     sbc #"a"-1
 done:
     rts
 .)
-
 
 #ifdef ARCADE_ROMANCE
 .(

@@ -12,6 +12,7 @@
 #include "basic-loader.asm"
 
 #include "init.asm"
+#include "intro.asm"
 
 #include "stackmem-start.asm"
 #include "random.asm"
@@ -27,11 +28,6 @@
 #include "screen.asm"
 #include "math.asm"
 #include "lowmem-end.asm"
-
-#include "intro.asm"
-#ifdef ARCADE_ROMANCE
-#include "bresenham.asm"
-#endif
 
 #include "init-end.asm"
 
