@@ -91,16 +91,14 @@ l1: cpy tmp
     sec
     sbc sprites_x,y
     jsr abs
-    and #%11111000
-    bne n1
-    lda sprites_y,x
-    clc
-    adc #8
+    cmp #8
+    bcs n1
+    lda sprites_y,x     ; Get Y distance.
     sec
     sbc sprites_y,y
     jsr abs
-    and #%11110000
-    beq c1
+    cmp #8
+    bcc c1
 n1: dey
     bpl l1
     pla
@@ -109,7 +107,7 @@ n1: dey
     rts
 c1: pla
     tax
-    stc
+    sec
     rts
 .)
 
