@@ -10,14 +10,6 @@ l1: sta 0,x
 
     jsr clear_screen
 
-#ifdef ARCADE_ROMANCE
-    lda #numchars-1
-    sta charsetmask
-    lda #foreground
-    sta foregroundmask+1
-    sta foregroundtest+1
-#endif
-
 clear_sprites:
 .(
     ldx #numsprites-1
@@ -57,8 +49,6 @@ l2: lda #48
     sta score_addr,x
     lda ship,x
     sta charset+58*8,x
-;    lda charset_locase+$58*8,x
-;    sta charset+50*8,x
     dex
     bpl l2
 

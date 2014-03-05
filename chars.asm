@@ -40,9 +40,7 @@ alloc_wrap:
 alloc_char:
     lda next_sprite_char
 #ifdef HAVE_FOREGROUND
-foregroundmask:
     and #foreground
-foregroundtest:
     cmp #foreground
 #else
     and #framechars-1
