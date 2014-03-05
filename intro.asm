@@ -1,15 +1,6 @@
 intro:
-.(
-    ldx #203
-l:  lda #" "
-    sta screen-1,x
-    sta screen+202,x
-    lda #white
-    sta colors-1,x
-    sta colors+202,x
-    dex
-    bne l
-.)
+    ldy #white
+    jsr clear_screen_and_colors
 
     lda #8+blue     ; Screen and border color.
     sta $900f
@@ -46,7 +37,11 @@ l:  lda #0              ; Fetch joystick status.
     bne l
 .)
 
-    lda #%11111100  ; Our charset.                                              
+avoid_screen_trash:
+    ldy #black
+    jsr clear_screen_and_colors
+
+    lda #%11111100      ; Our charset.
     sta $9005
 
 .(
@@ -66,6 +61,20 @@ ascii2petscii:
     sec
     sbc #"a"-1
 done:
+    rts
+.)
+
+clear_screen_and_colors:
+.(
+    ldx #203
+l:  lda #" "
+    sta screen-1,x
+    sta screen+202,x
+    tya
+    sta colors-1,x
+    sta colors+202,x
+    dex
+    bne l
     rts
 .)
 
