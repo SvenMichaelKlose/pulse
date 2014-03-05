@@ -93,11 +93,18 @@ l1: cpy tmp
     jsr abs
     cmp #8
     bcs n1
-    lda sprites_y,x     ; Get Y distance.
+    lda #8
+    sta collision_y_distance
+    lda sprites_i,y
+    cmp #deadly+2
+    bne b1
+    dec collision_y_distance
+    dec collision_y_distance
+b1: lda sprites_y,x     ; Get Y distance.
     sec
     sbc sprites_y,y
     jsr abs
-    cmp #8
+    cmp collision_y_distance
     bcc c1
 n1: dey
     bpl l1

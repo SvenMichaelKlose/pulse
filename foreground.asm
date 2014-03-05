@@ -114,7 +114,7 @@ n2: inc scrx
     cmp #<background
     bne try_foreground
     lda #framemask+foreground
-    jmp plot
+    bne plot
 try_foreground:
     cmp #<bg_t
     bne repeat
