@@ -43,7 +43,7 @@ hit_formation:
 
 hit_enemy:
     jsr find_hit
-    bcc return
+    bcs clc_return
     lda sprites_i,y
     and #%00111111
     cmp #3
@@ -303,7 +303,7 @@ d4: lda is_invincible
 d2: jsr test_foreground_collision
     bcs die
 d3: jsr find_hit
-    bcc no_hit
+    bcs no_hit
     lda sprites_i,y
     and #%00111111
     cmp #4              ; Bonus.

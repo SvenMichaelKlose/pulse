@@ -101,13 +101,9 @@ l1: cpy tmp
     bcc c1
 n1: dey
     bpl l1
-    pla
-    tax
-    clc
-    rts
+    sec
 c1: pla
     tax
-    sec
     rts
 .)
 
