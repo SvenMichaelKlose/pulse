@@ -101,10 +101,6 @@ l:  jsr add_star
 restart:
     ldx #$ff
     txs
-    lda lifes
-    clc
-    adc #48
-    sta lifes_addr+1
     lda #max_fire_interval
     sta fire_interval
     lda #150
@@ -199,6 +195,11 @@ l:  lda sound_start,x
 n:  dex
     bpl l
 .)
+
+    lda lifes
+    clc
+    adc #48
+    sta lifes_addr+1
 
     jsr update_random
     jsr init_frame

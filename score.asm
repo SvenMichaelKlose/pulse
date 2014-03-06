@@ -9,7 +9,10 @@ l:  lda score_addr,x
     adc #0
     cmp #58
     bcc l2
-    lda #48
+    cpx #5              ; +1 life every 1000 points.
+    bne l6
+    inc lifes
+l6: lda #48
     sec
 l2: sta score_addr,x
     dex
