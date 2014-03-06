@@ -289,11 +289,7 @@ player_fun:
 g1: jmp game_over2
 d1: lda #cyan
     sta sprites_c,x
-    lda has_autofire
-    beq d4
-    ldy #yellow
-    jsr energize_color
-d4: lda is_invincible
+    lda is_invincible
     beq d2
     ldy #red
     jsr energize_color
@@ -331,8 +327,8 @@ make_autofire_or_invincible:
     lda random
     and #1
     bne make_invincible
-    lda #$ff
-    sta has_autofire
+    lda #2
+    sta has_double_laser
     bne no_hit
 make_invincible:
     lda #$ff
@@ -365,13 +361,9 @@ no_hit:
     tay
     and #%00100000
     bne no_fire
-    lda has_autofire
-    bne a1
     lda is_firing
     bne no_fire
-    beq a2
-a1: dec has_autofire
-a2: lda framecounter    ; Little ramdomness to give the laser some action.
+    lda framecounter    ; Little ramdomness to give the laser some action.
     lsr
     and #7
     adc sprites_x,x
@@ -400,6 +392,9 @@ i2: tya
     beq s1
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
+    lda has_double_laser
+    cmp #2
+    bne s1
     ldy #laser_up_init-sprite_inits
     jsr add_sprite
 s1: pla
