@@ -5,8 +5,8 @@ dec_y  = 4
 add_bullet:
 .(
     lda #64
-    sta bullet_init+2   ; Increment or decrement X?
-    lda sprites_x+15
+    sta bullet_init+2
+    lda sprites_x+15    ; Increment or decrement X?
     cmp sprites_x,x
     bcs n1
     lda bullet_init+2
@@ -18,19 +18,19 @@ n1: lda sprites_y+15    ; Increment or decrement Y?
     lda bullet_init+2
     ora #dec_y
     sta bullet_init+2
-n2: lda sprites_x+15    ; Get X distance.
+n2: lda sprites_x+15    ; Get X distance to player.
     sec
     sbc sprites_x,x
     jsr abs
     sta tmp
-    lda sprites_y+15    ; Get Y distance.
+    lda sprites_y+15    ; Get Y distance to player.
     sec
     sbc sprites_y,x
     jsr abs
     sta tmp2
     cmp tmp             ; Get incremented axis.
     bcc n5
-    lda bullet_init+2
+    lda bullet_init+2   ; Swap axis.
     and #dec_x
     lsl
     tay
