@@ -59,7 +59,7 @@ clc_return:
 return:
     rts
 
-test_foreground_collision:
+test_foreground_collision_fine:
     lda sprites_x,x
     and #6
     sta tmp
@@ -67,6 +67,7 @@ test_foreground_collision:
     and #6
     cmp tmp
     bne clc_return
+test_foreground_collision_raw:
     lda sprites_i,x
     asl
     rts
@@ -188,7 +189,7 @@ n1: and #%1111
     and #%11110000
     ora tmp
     sta sprites_d,x
-    jsr test_foreground_collision
+    jsr test_foreground_collision_raw
     bcs remove_sprite_hit_fg
     bcc remove_if_sprite_is_out
 .)
@@ -229,7 +230,7 @@ l1: jmp remove_if_sprite_is_out
 laser_fun:
     jsr hit_enemy
     bcs remove_sprite_xy
-    jsr test_foreground_collision
+    jsr test_foreground_collision_raw
     bcs remove_sprite_hit_fg
     lda #11
     jsr sprite_right
@@ -275,7 +276,7 @@ laser_side:
     jsr energize_color
     jsr hit_enemy
     bcs remove_sprite_xy
-    jsr test_foreground_collision
+    jsr test_foreground_collision_raw
     bcs remove_sprite_hit_fg
     lda #8
     jsr sprite_right
@@ -309,7 +310,7 @@ d1: lda #cyan
     dec is_invincible
     jmp d3
 
-d2: jsr test_foreground_collision
+d2: jsr test_foreground_collision_fine
     bcs die
 d3: jsr find_hit
     bcs operate_joystick
