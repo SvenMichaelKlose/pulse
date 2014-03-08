@@ -27,6 +27,7 @@
 #include "chars.asm"
 #include "screen.asm"
 #include "math.asm"
+#include "bits.asm"
 #include "lowmem-end.asm"
 
 #include "init-end.asm"
@@ -40,6 +41,5 @@
 #include "foreground.asm"
 #include "gfx-sprites.asm"
 #include "gfx-foreground.asm"
-#include "bits.asm"
 
 realend:

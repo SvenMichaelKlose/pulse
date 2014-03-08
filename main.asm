@@ -197,7 +197,18 @@ n:  dex
     sta lifes_on_screen+1
 
     jsr update_random
-    jsr init_frame
+init_frame:
+.(
+    lda spriteframe
+    eor #framemask
+    sta spriteframe
+    ora #first_sprite_char
+    sta next_sprite_char
+    inc framecounter
+    bne n
+    inc framecounter_high
+n:
+.)
 
 #ifdef SHOW_CHARSET
 .(

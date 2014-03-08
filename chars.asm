@@ -1,16 +1,3 @@
-init_frame:
-.(
-    lda spriteframe
-    eor #framemask
-    sta spriteframe
-    ora #first_sprite_char
-    sta next_sprite_char
-    inc framecounter
-    bne n
-    inc framecounter_high
-n:  rts
-.)
-
 reuse_char:
     lda curcol
     sta (col),y
