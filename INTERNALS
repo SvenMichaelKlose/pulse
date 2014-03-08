@@ -1,0 +1,53 @@
+# Graphics overview
+
+The screen is rendered with a charset of 128 8x8 pixel chars.  The charset
+is split in two frames for double buffering.  Each frame takes up to 48
+chars for sprites and 16 for the scrolling foreground or the score display.
+The foreground is NOT double-buffered.
+
+            0123456789ABCDEF
+            ----------------
+Frame A:    BSSSSSSSSSSSSSSS
+            SSSSSSSSSSSSSSSS
+            SSSSSSSSSSSSSSSS
+            PPPPPPPPPPPPPPPP
+
+Frame B:    SSSSSSSSSSSSSSSS
+            SSSSSSSSSSSSSSSS
+            SSSSSSSSSSSSSSSS
+            SSSSSSSSSSSSSSSS
+            TTEEEEEEEEEEEEEE
+
+            B = Plain nothing
+            S = Sprites
+            P = Score display
+            T = Trailing foreground char
+            E = Foreground edge
+
+Sprite chars are dynamically allocated and shared by overlapping sprites.
+When all sprites have been drawn, characters of the other frame are
+removed from the screen.  The former positions of all sprites are saved to
+do that.
+
+The vertical edges of the foreground are drawn every 8 pixels and then
+rotated in the charset for the remaining 7 pixels.  The edges leave trails
+of rotating chars to fill large areas of the foreground.
+
+The game doesn't wait for the retrace.  To keep the speed stable, sprites
+aren't removed but replaced with a background star.
+
+
+## Sprites
+
+Up to 16 sprites can be drawn in the same frame.  Sprites are character
+sized and may use up to four entries in the charset because they can be
+positioned pixel-wise.  32 different sprite graphics can be used (the page
+size limit).  Sprites may cross the border.
+
+
+## Foreground
+
+The foreground edges are three-character sequences, called "bricks" of
+which up to 16 can be used at the same time with up 32 different chars.
+The rightmost char of a bricks is a trailing char.  All chars of a brick
+share the same color.
