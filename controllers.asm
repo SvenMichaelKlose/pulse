@@ -59,6 +59,13 @@ return:
     rts
 
 test_foreground_collision:
+    lda sprites_x,x
+    and #6
+    sta tmp
+    lda scrolled_bits
+    and #6
+    cmp tmp
+    bne clc_return
     lda sprites_i,x
     asl
     rts
