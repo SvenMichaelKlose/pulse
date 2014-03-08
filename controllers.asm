@@ -327,15 +327,13 @@ l8: jsr increment_score
     bne make_autofire_or_invincible
     lda #max_fire_interval
     sta fire_interval
-    lda #1
-    sta has_double_laser
+    inc has_double_laser
     bne no_hit
 make_autofire_or_invincible:
     lda random
     and #1
     bne make_invincible
-    lda #2
-    sta has_double_laser
+    inc has_double_laser
     bne no_hit
 make_invincible:
     lda #$ff
