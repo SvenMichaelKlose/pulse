@@ -22,19 +22,15 @@ l1: ldy #0
 .)
 
 init_trailing_foreground_chars:
-    lda #<tmpt
+    lda #<first_trailing_char
     sta d
-    lda #>tmpt
+    lda #>first_trailing_char
     sta d+1
     lda #>background
     sta s+1
     lda #<background                                                            
     ldy #15
     jsr blit_copy
-
-lifes_addr = screen+1
-score_addr = screen+4
-hiscore_addr = screen+12+1
 
 init_score_digits:
 .(
@@ -46,14 +42,14 @@ l:  lda charset_locase+$30*8,x
 
     ldx #7
 l2: lda #48
-    sta score_addr,x
+    sta score_on_screen,x
     lda ship,x
     sta charset+58*8,x
     dex
     bpl l2
 
     ldx #58
-    stx lifes_addr
+    stx lifes_on_screen
 
     ldx #22
     lda #cyan
@@ -62,14 +58,14 @@ l3: sta colors,x
     bpl l3
 
     lda #yellow
-    sta lifes_addr-screen+colors+1
+    sta lifes_on_screen-screen+colors+1
 .)
 
 init_hiscore:
 .(
     ldx #7
 l2: lda hiscore,x
-    sta hiscore_addr,x
+    sta hiscore_on_screen,x
     dex
     bpl l2
 .)
@@ -198,7 +194,7 @@ n:  dex
     lda lifes
     clc
     adc #48
-    sta lifes_addr+1
+    sta lifes_on_screen+1
 
     jsr update_random
     jsr init_frame

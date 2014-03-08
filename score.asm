@@ -5,7 +5,7 @@ increment_score:
 
     ldx #7
     sec
-l:  lda score_addr,x
+l:  lda score_on_screen,x
     adc #0
     cmp #58
     bcc l2
@@ -14,23 +14,23 @@ l:  lda score_addr,x
     inc lifes
 l6: lda #48
     sec
-l2: sta score_addr,x
+l2: sta score_on_screen,x
     dex
     bpl l
 
     ldx #0
     ldy #7
-l3: lda score_addr,x
-    cmp hiscore_addr,x
+l3: lda score_on_screen,x
+    cmp hiscore_on_screen,x
     beq l4
     bcc done
 
 new_hiscore:
     ldx #8
-l5: lda score_addr,x
-    sta hiscore_addr,x
+l5: lda score_on_screen,x
+    sta hiscore_on_screen,x
     lda #green
-    sta hiscore_addr-screen+colors,x
+    sta hiscore_on_screen-screen+colors,x
     dex
     bpl l5
     bmi done

@@ -39,12 +39,8 @@ alloc_wrap:
 
 alloc_char:
     lda next_sprite_char
-#ifdef HAVE_FOREGROUND
     and #foreground
     cmp #foreground
-#else
-    and #framechars-1
-#endif
     beq alloc_wrap
     lda next_sprite_char
     inc next_sprite_char
@@ -77,13 +73,11 @@ get_char:
     jsr scrcoladdr
     lda (scr),y
     beq l2
-#ifdef HAVE_FOREGROUND
     tax
     and #foreground
     cmp #foreground
     beq on_foreground
     txa
-#endif
     and #framemask
     cmp spriteframe
     beq reuse_char
@@ -92,11 +86,9 @@ l2: jsr alloc_char
     lda curcol
     sta (col),y
     rts
-#ifdef HAVE_FOREGROUND
 on_foreground:
     lda #1
     sta foreground_collision
-#endif
 cant_use_position:
     lda #$f0
     sta d+1
@@ -108,12 +100,10 @@ clear_char:
     jsr test_position
     bcs r
     jsr scraddr
-#ifdef HAVE_FOREGROUND
     lda (scr),y
     and #foreground
     cmp #foreground
     beq r
-#endif
     lda (scr),y
     beq r
     and #framemask

@@ -1,3 +1,7 @@
+first_trailing_char  = (foreground+framemask) * 8 + charset
+second_trailing_char = (foreground+framemask+1) * 8 + charset
+first_brick          = (foreground+framemask+2) * 8 + charset
+
 test_on_foreground:
     ldy #0
     lda (scr),y
@@ -42,7 +46,9 @@ draw_foreground:
     and #1
     bne r
     jmp rotate_bricks
+
 r:  rts
+
 no_more_bricks:
     jmp rotate_trailing_chars:
 
@@ -129,6 +135,7 @@ repeat:
     lda tmp3
     sta scrx
     jmp repeat_plotting_chars
+
 remove_brick:
     inc leftmost_brick
     lda leftmost_brick
@@ -157,20 +164,17 @@ n5: jsr fetch_foreground_char
     jmp restart_plotting_chars
 .)
 
-tmpt = (foreground+framemask) * 8 + charset
-tmpt1 = (foreground+framemask+1) * 8 + charset
-tmpt2 = (foreground+framemask+2) * 8 + charset
-
 rotate_bricks:
 .(
-    lda #<tmpt2         ; Point to first brick in charset.
+    lda #<first_brick
     sta sl
-    lda #>tmpt2
+    lda #>first_brick
     sta sl+1
 
     ldx #0
 l1: cpx active_bricks
     beq rotate_trailing_chars
+
     lda sl              ; Set pointer to middle char.
     clc
     adc #8
@@ -230,9 +234,9 @@ l:  lda (sr),y
 
 rotate_trailing_chars:
 .(
-    lda #<tmpt
+    lda #<first_trailing_char
     sta sl
-    lda #>tmpt
+    lda #>first_trailing_char
     sta sl+1
     ldy #15
 l:  lda (sl),y

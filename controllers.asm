@@ -467,7 +467,7 @@ game_over2:
 save_hiscore_to_zeropage:
 .(
     ldx #7
-l:  lda hiscore_addr,x
+l:  lda hiscore_on_screen,x
     sta hiscore,x
     dex
     bpl l
