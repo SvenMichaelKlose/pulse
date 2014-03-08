@@ -411,7 +411,7 @@ i2: tya
     jsr add_sprite
     lda has_double_laser
     cmp #2
-    bne s1
+    bcc s1
     ldy #laser_up_init-sprite_inits
     jsr add_sprite
 s1: pla
