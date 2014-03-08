@@ -26,7 +26,7 @@ l3: lda score_on_screen,x
     bcc done
 
 new_hiscore:
-    ldx #8
+    ldx #7
 l5: lda score_on_screen,x
     sta hiscore_on_screen,x
     lda #green
