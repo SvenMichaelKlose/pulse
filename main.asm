@@ -54,8 +54,6 @@ l2: lda #48
 
     ldx #58
     stx lifes_addr
-    inx
-    stx lifes_addr+1
 
     ldx #22
     lda #cyan
@@ -144,7 +142,7 @@ play_sound_bonus:
     beq play_sound_bonus2
     ora #red*16
     sta $900e
-    lda $9005
+    lda $9005           ; Häh?
     ora #128
 play_sound_bonus3:
     sta $900a
