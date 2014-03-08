@@ -115,14 +115,14 @@ play_sound_foreground:
     lda sound_foreground
     beq n
     lda #128
-    sta $900d
+    sta vicreg_noise
     lda #red*16+15
-    sta $900e
+    sta vicreg_auxcol_volume
     bne n2
 n:  lda sound_explosion
     bne n2
-    sta $900d
-    sta $900c
+    sta vicreg_noise
+    sta vicreg_soprano
 n2:
 .)
 
@@ -131,9 +131,10 @@ play_sound_dead:
     lda sound_dead
     beq n
     ora #red*16
-    sta $900e
+    sta vicreg_auxcol_volume
     ora #128
     jmp play_sound_bonus3
+
 n:
 .)
 
@@ -141,18 +142,19 @@ play_sound_bonus:
     lda sound_bonus
     beq play_sound_bonus2
     ora #red*16
-    sta $900e
+    sta vicreg_auxcol_volume
     lda $9005           ; Häh?
     ora #128
 play_sound_bonus3:
-    sta $900a
-    sta $900b
-    sta $900c
-    jmp sound_done
+    sta vicreg_bass
+    sta vicreg_alto
+    sta vicreg_soprano
+    jmp decrement_sound_counters
+
 play_sound_bonus2:
-    sta $900a
-    sta $900b
-    sta $900c
+    sta vicreg_bass
+    sta vicreg_alto
+    sta vicreg_soprano
 
 play_sound_explosion:
 .(
@@ -160,31 +162,30 @@ play_sound_explosion:
     beq n
     asl
     ora #red*16
-    sta $900e
+    sta vicreg_auxcol_volume
     lda #196
-    sta $900d
+    sta vicreg_noise
     jmp play_sound_laser
-n:
-    lda sound_foreground
+
+n:  lda sound_foreground
     bne n2
-    sta $900d
+    sta vicreg_noise
 n2:
 .)
 
 play_sound_laser:
     lda sound_laser
-    beq play_sound_laser2
+    beq decrement_sound_counters
     asl
     asl
     ora #128+64
-    sta $900b
-sound_done_full_volume:
+    sta vicreg_alto
+full_volume:
     lda #red*16+15
-    sta $900e
-    jmp sound_done
-play_sound_laser2:
+    sta vicreg_auxcol_volume
+    jmp decrement_sound_counters
 
-sound_done:
+decrement_sound_counters:
 .(
     ldx #sound_end-sound_start
 l:  lda sound_start,x

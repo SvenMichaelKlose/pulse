@@ -53,6 +53,7 @@ hit_enemy:
 sec_return:
     sec
     rts
+
 clc_return:
     clc
 return:
@@ -105,6 +106,7 @@ star_fun:
     and #3
     beq move_left_blue
     bne move_left_a
+
 move_left_blue:
     lda #blue
     sta sprites_c,x
@@ -236,6 +238,7 @@ remove_if_sprite_is_out:
     bcc return2
 remove_sprite2:
     jmp remove_sprite
+
 remove_sprite_hit_fg:
     inc sound_foreground
     jmp remove_sprite
@@ -254,6 +257,7 @@ remove_sprite_xy:
     jsr increment_score
     ldy #explosion_init-sprite_inits
     jmp add_sprite
+
 return2:
     rts
 
@@ -293,7 +297,9 @@ player_fun:
     dec lifes
     beq g1
     jmp restart
+
 g1: jmp game_over2
+
 d1: lda #cyan
     sta sprites_c,x
     lda is_invincible
@@ -306,7 +312,7 @@ d1: lda #cyan
 d2: jsr test_foreground_collision
     bcs die
 d3: jsr find_hit
-    bcs no_hit
+    bcs operate_joystick
     lda sprites_i,y
     and #%00111111
     cmp #4              ; Bonus.
@@ -328,26 +334,30 @@ l8: jsr increment_score
     lda #max_fire_interval
     sta fire_interval
     inc has_double_laser
-    bne no_hit
+    bne operate_joystick
+
 make_autofire_or_invincible:
     lda random
     and #1
     bne make_invincible
     inc has_double_laser
-    bne no_hit
+    bne operate_joystick
+
 make_invincible:
     lda #$ff
     sta is_invincible
-    bne no_hit
+    bne operate_joystick
+
 no_bonus_hit:
     lda sprites_i,y
     and #deadly
-    beq no_hit
+    beq operate_joystick
 die:
-    lda is_invincible
-    bne no_hit
 #ifdef INVINCIBLE
-    jmp no_hit
+    jmp operate_joystick
+#else
+    lda is_invincible
+    bne operate_joystick
 #endif
     lda #120
     sta death_timer
@@ -356,15 +366,16 @@ die:
     lda #7
     sta sound_explosion
     rts
+
 faster_fire:
     dec fire_interval
     dec fire_interval
-no_hit:
+operate_joystick:
     lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
     tay
-    and #%00100000
+    and #joy_fire
     bne no_fire
     lda is_firing
     bne no_fire
@@ -409,7 +420,7 @@ no_fire:
     beq i1
     dec is_firing
 i1: tya
-    and #%00000100
+    and #joy_up
     bne no_joy_up
     lda sprites_y,x
     cmp #12
@@ -418,7 +429,7 @@ i1: tya
     jsr sprite_up
 no_joy_up:
     tya
-    and #%00001000
+    and #joy_down
     bne no_joy_down
     lda sprites_y,x
     cmp #$100-8
@@ -429,13 +440,14 @@ n6: lda #4
     jsr sprite_down
 no_joy_down:
     tya
-    and #%00010000
+    and #joy_left
     bne no_joy_left
     lda sprites_x,x
     cmp #3
     bcc no_joy_right
     lda #3
     jmp sprite_left
+
 no_joy_left:
     lda #0              ;Fetch rest of joystick status.
     sta $9122
@@ -446,6 +458,7 @@ no_joy_left:
     bcs no_joy_right
     lda #3
     jmp sprite_right
+
 no_joy_right:
     rts
 .)
@@ -460,5 +473,3 @@ l:  lda hiscore_addr,x
     bpl l
     jmp game_over
 .)
-
-controllers_end:
