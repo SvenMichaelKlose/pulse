@@ -49,7 +49,7 @@ n1: sta level_delay
 
 down:
     lda #1
-    jsr add_brick
+    jsr add_tile
     inc level_old_y
     lda level_data,y
     sec
@@ -59,14 +59,14 @@ down:
     bcc n4
     pha
     lda #3
-    jsr add_brick
+    jsr add_tile
     pla
-    sta scrbricks_n,x
+    sta screen_tiles_n,x
     lda level_old_y
     clc
-    adc scrbricks_n,x
+    adc screen_tiles_n,x
     sta level_old_y
-    sta scrbricks_y,x
+    sta screen_tiles_y,x
     inc level_old_y
 n4: lda #5
     bne n5
@@ -74,7 +74,7 @@ done:
     rts
 
 up: lda #4
-    jsr add_brick
+    jsr add_tile
     dec level_old_y
     lda level_old_y
     sec
@@ -85,16 +85,16 @@ up: lda #4
     bcc n3
     pha
     lda #2
-    jsr add_brick
+    jsr add_tile
     pla
-    sta scrbricks_n,x
+    sta screen_tiles_n,x
     lda level_old_y
     sec
-    sbc scrbricks_n,x
+    sbc screen_tiles_n,x
     sta level_old_y
     dec level_old_y
 n3: lda #0
-n5: jsr add_brick
+n5: jsr add_tile
 
 exit:
     iny

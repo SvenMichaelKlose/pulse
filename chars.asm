@@ -74,8 +74,7 @@ l2: jsr alloc_char
     sta (col),y
     rts
 on_foreground:
-    lda #1
-    sta foreground_collision
+    inc foreground_collision
 cant_use_position:
     lda #$f0
     sta d+1

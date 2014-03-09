@@ -1,0 +1,38 @@
+pulse.prg           The hot and fresh program file.
+
+includes.asm        Loads all the files into the assembler.
+make.sh             Linux shell script to assemble this game with the xa assembler.
+
+basic-loader.asm    BASIC program to start 'init.asm'
+init.asm            Starts the initalization part which will be overwritten by the charset.
+init-end.asm
+stackmem-end.asm    Starting the area that is copied into the stack.
+stackmem-start.asm
+lowmem-end.asm      Starting the area that is copied after the stack.
+lowmem-start.asm
+
+intro.asm           Tells the story.
+main.asm            The grand main loop.
+
+blitter.asm         Draws shifted character halves.
+chars.asm           Dynamic character allocation.
+controllers.asm     Sprite controlling functions.
+foreground.asm      Smooth foreground scrolling.
+tiles.asm           Foreground tile definitions.
+gfx-foreground.asm  Foreground tile graphics.
+gfx-sprites.asm     Sprite graphics.
+level.asm           Moves the foreground tiles in a FIFO buffer.
+level-bullet.asm    Adds riserbombs.
+level-scout.asm     Adds flying scouts.
+level-sniper.asm    Adds static snipers.
+level-stars.asm     Adds background stars.
+math.asm            Simple integer math.
+random.asm          Turns cosmic radiation into random numbers.
+score.asm           Score increment/hisccore update
+screen.asm          Plotting chars and colors.
+sprites.asm         Sprite drawing and common operations.
+
+game.defs.asm       Game parameters to mess with.
+zeropage.asm        Everything placed in the zero page.
+vic.defs.asm        Our beloved VIC's registers and values.
+bits.asm            Tiny lookup tables to get around expensive shifts and rotates.

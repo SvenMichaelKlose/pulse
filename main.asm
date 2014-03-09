@@ -74,7 +74,7 @@ init_level:
     lda #22
     sta level_old_y
     lda #0
-    jsr add_brick
+    jsr add_tile
     lda #3
     sta level_delay
 

@@ -5,9 +5,9 @@
 #define INVINCIBLE
 */
 
+#include "vic.defs.asm"
 #include "game.defs.asm"
 #include "zeropage.asm"
-#include "kernal.asm"
 
 #include "basic-loader.asm"
 
@@ -20,7 +20,7 @@
 #include "stackmem-end.asm"
 
 #include "lowmem-start.asm"
-#include "bricks.asm"
+#include "tiles.asm"
 #include "level-stars.asm"
 #include "level-scout.asm"
 #include "blitter.asm"
@@ -40,6 +40,6 @@
 #include "sprites.asm"
 #include "foreground.asm"
 #include "gfx-sprites.asm"
-#include "gfx-foreground.asm"
+#include "gfx-tiles.asm"
 
 realend:

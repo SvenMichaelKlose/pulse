@@ -1,6 +1,6 @@
 numchars    = 128
 numsprites  = 16
-numbricks   = 32
+numtiles   = 32
 charset     = $1000
 
 charsetsize         = numchars * 8
@@ -38,8 +38,8 @@ spriteframe             = $12
 
 scrolled_bits           = $13
 scrolled_chars          = $14
-leftmost_brick          = $15
-free_bricks             = $16
+leftmost_tile           = $15
+free_tiles              = $16
 next_foreground_char    = $17
 foreground_collision    = $18
 
@@ -66,8 +66,8 @@ is_firing               = $29
 is_invincible           = $2a
 death_timer             = $2b
 lifes                   = $2c
-active_bricks           = $2d
-bricklist_r             = $2e ; 8 bytes.
+active_tiles            = $2d
+tilelist_r              = $2e ; 8 bytes.
 
 sound_start             = $36
 sound_explosion         = $36
@@ -93,10 +93,10 @@ sprites_oy  = $e0   ; Former Y positions for cleaning up.
 
 hiscore     = $f0
 
-scrbricks_i = $100  ; Index into brick info.
-scrbricks_x = $120  ; X positions.
-scrbricks_y = $140  ; Y positions.
-scrbricks_n = $160  ; Times duplicated along the Y axis.
+screen_tiles_i = $100  ; Index into tile info.
+screen_tiles_x = $120  ; X positions.
+screen_tiles_y = $140  ; Y positions.
+screen_tiles_n = $160  ; Times duplicated along the Y axis.
 
 x0      = $f0                                                                   
 y0      = $f1

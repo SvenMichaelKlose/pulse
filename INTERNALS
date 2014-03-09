@@ -1,7 +1,7 @@
 # Graphics overview
 
 The screen is rendered with a charset of 128 8x8 pixel chars.  The charset
-is split in two frames for double buffering.  Each frame takes up to 48
+is split into two frames for double buffering.  Each frame takes up to 48
 chars for sprites and 16 for the scrolling foreground or the score display.
 The foreground is NOT double-buffered.
 
@@ -13,7 +13,6 @@ Frame A:    BSSSSSSSSSSSSSSS
             PPPPPPPPPPPPPPPP
 
 Frame B:    SSSSSSSSSSSSSSSS
-            SSSSSSSSSSSSSSSS
             SSSSSSSSSSSSSSSS
             SSSSSSSSSSSSSSSS
             TTEEEEEEEEEEEEEE
@@ -47,7 +46,6 @@ size limit).  Sprites may cross the border.
 
 ## Foreground
 
-The foreground edges are three-character sequences, called "bricks" of
-which up to 16 can be used at the same time with up 32 different chars.
-The rightmost char of a bricks is a trailing char.  All chars of a brick
-share the same color.
+The foreground edges are three-character tiles of which up to 16 can be
+used at the same time with up 32 different chars.  The rightmost char of
+a tile is the trailing char.  All chars of a tile share the same color.
