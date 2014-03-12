@@ -136,7 +136,7 @@ sniper_fun:
     lda framecounter_high
     beq move_left
     lda framecounter
-    and #%01011111
+    and #sniper_bullet_probability
     bne move_left
     inc sound_foreground
     jsr add_bullet
@@ -200,7 +200,7 @@ scout_fun:
     cmp #8
     bcc l2
     jsr random
-    and #%00001111
+    and #scout_bullet_probability
     bne l2
     inc sound_foreground
     jsr add_bullet
