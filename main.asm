@@ -179,7 +179,6 @@ play_sound_laser:
 full_volume:
     lda #red*16+15
     sta vicreg_auxcol_volume
-    jmp decrement_sound_counters
 
 decrement_sound_counters:
 .(
@@ -196,7 +195,6 @@ n:  dex
     adc #48
     sta lifes_on_screen+1
 
-    jsr update_random
 init_frame:
 .(
     lda spriteframe
@@ -204,10 +202,6 @@ init_frame:
     sta spriteframe
     ora #first_sprite_char
     sta next_sprite_char
-    inc framecounter
-    bne n
-    inc framecounter_high
-n:
 .)
 
 #ifdef SHOW_CHARSET
@@ -247,12 +241,20 @@ n1: dex
     bcc n
     jsr draw_foreground
     jsr process_level
-    lda random
-    and #%00011111
+    jsr random
+    and #sniper_probability
     bne n
     jsr add_sniper
 n:  jsr draw_sprites
     jsr add_scout
+.)
+
+increment_framecounter:
+.(
+    inc framecounter
+    bne n
+    inc framecounter_high
+n:
 .)
 
     jmp mainloop

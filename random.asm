@@ -1,15 +1,12 @@
-update_random:
-    lda random
+random:
+    lda last_random_value
     cmp #80
     rol
-    eor $9005
+    eor vicreg_rasterlo
     cmp #80
     rol
     eor $fecd,x
     cmp #80
     rol
-    eor random
-    cmp #80
-    rol
-    sta random
+    sta last_random_value
     rts

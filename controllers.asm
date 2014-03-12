@@ -199,12 +199,11 @@ scout_fun:
     lda framecounter_high
     cmp #8
     bcc l2
-    lda random
+    jsr random
     and #%00001111
     bne l2
     inc sound_foreground
     jsr add_bullet
-    jsr update_random
 l2: lda #4
     jsr sprite_left
     lda framecounter_high
@@ -288,7 +287,7 @@ player_fun:
 .(
     lda death_timer
     beq d1
-    lda random
+    jsr random
     sta sprites_l,x
     sta sprites_c,x
     dec death_timer
@@ -338,7 +337,7 @@ l8: jsr increment_score
     bne operate_joystick
 
 make_autofire_or_invincible:
-    lda random
+    jsr random
     and #1
     bne make_invincible
     inc has_double_laser

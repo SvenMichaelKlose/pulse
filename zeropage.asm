@@ -77,7 +77,7 @@ sound_foreground        = $39
 sound_dead              = $41
 sound_end               = $41
 
-random                  = $42
+last_random_value       = $42
 collision_y_distance    = $43
 
 sprites_x   = $50   ; X positions.

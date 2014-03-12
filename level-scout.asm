@@ -3,7 +3,7 @@ add_scout:
     lda framecounter
     and #%01111111
     bne l1
-    lda random
+    jsr random
 retry:
     and #%01111000
     clc
@@ -18,10 +18,7 @@ retry:
     jsr scraddr
     jsr test_on_foreground
     bne n1
-    lda random
-    rol
-    eor $9004
-    sta random
+    jsr random
     jmp retry
 n1: lda #8
     sta adding_scout
