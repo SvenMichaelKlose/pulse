@@ -135,7 +135,7 @@ sniper_fun:
 .(
     lda framecounter_high
     beq move_left
-    lda framecounter
+    jsr random
     and #sniper_bullet_probability
     bne move_left
     inc sound_foreground
