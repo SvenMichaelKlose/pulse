@@ -22,13 +22,6 @@ scrcoladdr:
     ldy scrx
     rts
 
-inc_scry:
-    lda scrx
-    clc
-    adc #22
-    sta scrx
-    rts
-
 clear_screen:
 .(
     ldx #253
