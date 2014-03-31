@@ -169,12 +169,12 @@ l1: lda sprites_ox,x
     sta scrx
     lda sprites_oy,x
     sta scry
-    jsr clear_char
+    jsr scraddr_clear_char
     inc scrx
     jsr clear_char
     dec scrx
     inc scry
-    jsr clear_char
+    jsr scraddr_clear_char
     inc scrx
     jsr clear_char
     lda #$ff

@@ -1,5 +1,6 @@
 reuse_char:
     lda curcol
+    ldy scrx
     sta (col),y
     txa
 
@@ -69,6 +70,7 @@ get_char:
     cmp spriteframe
     beq reuse_char
 l2: jsr alloc_char
+    ldy scrx
     sta (scr),y
     lda curcol
     sta (col),y
@@ -81,11 +83,14 @@ cant_use_position:
     rts
 .)
 
+scraddr_clear_char:
+    jsr scraddr
+
 clear_char:
 .(
     jsr test_position
     bcs r
-    jsr scraddr
+    ldy scrx
     lda (scr),y
     and #foreground
     cmp #foreground
@@ -95,7 +100,7 @@ clear_char:
     and #framemask
     cmp spriteframe
     beq r
-    tya
+    lda #0
     sta (scr),y
 r:  rts
 .)

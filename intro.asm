@@ -5,10 +5,8 @@ intro:
     lda #8+blue     ; Screen and border color.
     sta $900f
     lda #red*16     ; Auxiliary color.
-
     sta $900e
     lda #%11110010  ; Up/locase chars.
-
     sta $9005
     lda #<story
     sta d

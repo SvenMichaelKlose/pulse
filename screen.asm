@@ -1,31 +1,32 @@
 scraddr:
     ldy scry
     lda line_offsets_l,y
-    clc
-    adc scrx
     sta scr
     lda #>screen
-    adc line_offsets_h,y
+    ora line_offsets_h,y
     sta scr+1
-    ldy #0
+    ldy scrx
     rts
 
 scrcoladdr:
     ldy scry
     lda line_offsets_l,y
-    clc
-    adc scrx
     sta scr
     sta col
-    php
     lda #>screen
-    adc line_offsets_h,y
+    ora line_offsets_h,y
     sta scr+1
-    plp
     lda #>colors
-    adc line_offsets_h,y
+    ora line_offsets_h,y
     sta col+1
-    ldy #0
+    ldy scrx
+    rts
+
+inc_scry:
+    lda scrx
+    clc
+    adc #22
+    sta scrx
     rts
 
 clear_screen:
