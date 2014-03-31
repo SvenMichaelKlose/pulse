@@ -236,7 +236,7 @@ configure_blitter:
     sta sprite_height_top
 
     ; Draw upper left.
-    jsr get_char
+    jsr scraddr_get_char
     lda d
     clc
     adc sprite_shift_y
@@ -245,22 +245,7 @@ configure_blitter:
     ldy sprite_height_top
     jsr blit_left
 
-    lda sprite_shift_y
-    beq n1
-
-    ; Draw lower left.
-    inc scry
-    jsr get_char
-    lda s
-    sec
-    adc sprite_height_top
-    sta sprite_data_bottom
-    ldy sprite_shift_y
-    dey
-    jsr blit_left
-    dec scry
-
-n1: lda blit_right_addr+1
+    lda blit_right_addr+1
     beq n2
 
     ; Draw upper right.
@@ -273,17 +258,33 @@ n1: lda blit_right_addr+1
     lda sprite_data_top
     ldy sprite_height_top
     jsr blit_right
+    dec scrx
+
+n2: lda sprite_shift_y
+    beq n1
+
+    ; Draw lower left.
+    inc scry
+    jsr scraddr_get_char
+    lda s
+    sec
+    adc sprite_height_top
+    sta sprite_data_bottom
+    ldy sprite_shift_y
+    dey
+    jsr blit_left
 
     lda sprite_shift_y
-    beq n2
+    beq n1
 
     ; Draw lower right.
-    inc scry
+    inc scrx
     jsr get_char
     lda sprite_data_bottom
     ldy sprite_shift_y
     dey
     jmp blit_right
 
-n2: rts
+n1:
+    rts
 .)

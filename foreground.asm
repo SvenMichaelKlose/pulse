@@ -3,7 +3,7 @@ second_trailing_char = (foreground+framemask+1) * 8 + charset
 first_tile           = (foreground+framemask+2) * 8 + charset
 
 test_on_foreground:
-    ldy #0
+    ldy scrx
     lda (scr),y
     and #foreground
     cmp #foreground

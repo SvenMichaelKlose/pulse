@@ -54,11 +54,14 @@ test_position:
 e:  rts
 .)
 
+scraddr_get_char:
+    jsr scrcoladdr
+
 get_char:
 .(
     jsr test_position
     bcs cant_use_position
-    jsr scrcoladdr
+    ldy scrx
     lda (scr),y
     beq l2
     tax
