@@ -1,7 +1,7 @@
 realstart   = $1000 + charsetsize
 
 main:
-    cli
+    sei
     lda #$7f
     sta $912e       ; Disable and acknowledge interrupts.
     sta $912d
