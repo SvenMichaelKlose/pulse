@@ -1,10 +1,3 @@
-/*
-#define STATIC
-#define TIMING
-#define SHOW_CHARSET
-#define INVINCIBLE
-*/
-
 #include "vic.defs.asm"
 #include "game.defs.asm"
 #include "zeropage.asm"
