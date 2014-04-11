@@ -7,12 +7,12 @@ increment_score:
     sec
 l:  lda score_on_screen,x
     adc #0
-    cmp #58
+    cmp #score_char0+10
     bcc l2
     cpx #5              ; +1 life every 1000 points.
     bne l6
     inc lifes
-l6: lda #48
+l6: lda #score_char0
     sec
 l2: sta score_on_screen,x
     dex

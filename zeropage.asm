@@ -1,6 +1,11 @@
+#ifdef M3K
+numchars    = 256
+#else
 numchars    = 128
+#endif
+
 numsprites  = 16
-numtiles   = 32
+numtiles    = 32
 charset     = $1000
 
 charsetsize         = numchars * 8
@@ -12,6 +17,8 @@ framechars          = numchars / 2
 first_sprite_char   = 1
 
 foreground          = framechars / 2 + framechars / 4
+
+score_char0         = foreground
 
 s                       = $00
 d                       = $02

@@ -45,7 +45,7 @@ avoid_screen_trash:
 reset_hiscore:
 .(
     ldx #7
-    lda #48
+    lda #score_char0
 l:  sta hiscore,x
     dex
     bpl l

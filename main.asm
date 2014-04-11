@@ -36,19 +36,19 @@ init_score_digits:
 .(
     ldx #10*8
 l:  lda charset_locase+$30*8,x
-    sta charset+48*8,x
+    sta charset+score_char0*8,x
     dex
     bpl l
 
     ldx #7
-l2: lda #48
+l2: lda #score_char0
     sta score_on_screen,x
     lda ship,x
-    sta charset+58*8,x
+    sta charset+(score_char0+10)*8,x
     dex
     bpl l2
 
-    ldx #58
+    ldx #score_char0+10
     stx lifes_on_screen
 
     ldx #22
@@ -192,7 +192,7 @@ n:  dex
 
     lda lifes
     clc
-    adc #48
+    adc #score_char0
     sta lifes_on_screen+1
 
 init_frame:
@@ -212,7 +212,8 @@ l2: txa
     lda #white
     sta colors,x
     dex
-    bpl l2
+    cpx #$ff
+    bne l2
 .)
 #endif
 

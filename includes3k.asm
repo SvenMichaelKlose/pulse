@@ -9,6 +9,10 @@
 #include "init.asm"
 #include "intro.asm"
 
+#include "main.asm"
+#include "sprites.asm"
+#include "controllers.asm"
+
 #include "stackmem-start.asm"
 #include "random.asm"
 #include "score.asm"
@@ -27,14 +31,11 @@
 
 #include "init-end.asm"
 
-#include "sprites.asm"
-#include "controllers.asm"
-#include "main.asm"
+#include "gfx-sprites.asm"
+#include "gfx-tiles.asm"
 #include "level.asm"
 #include "level-bullet.asm"
 #include "level-sniper.asm"
 #include "foreground.asm"
-#include "gfx-sprites.asm"
-#include "gfx-tiles.asm"
 
 realend:
