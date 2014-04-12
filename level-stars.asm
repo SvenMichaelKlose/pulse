@@ -5,9 +5,7 @@ add_star:
     jsr random
     sta star_init
     jsr random
-#ifndef M3K
     and #%11111000
-#endif
     sta star_init+1
     jsr random
     sta star_init+7
