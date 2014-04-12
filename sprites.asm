@@ -123,11 +123,7 @@ l2: lda sprites_fh,x
     lda sprites_i,x
     and #decorative
     beq n3
-    txa
-    pha
     jsr draw_sprite
-    pla
-    tax
 n3: dex
     bpl l2
 
@@ -141,12 +137,7 @@ l1: lda sprites_fh,x
 
     lda #0
     sta foreground_collision
-    txa
-
-    pha
     jsr draw_sprite
-    pla
-    tax
 
 save_foreground_collision:
     lda sprites_i,x
@@ -199,6 +190,8 @@ n1: dex
 ; Draw a single sprite.
 draw_sprite:
 .(
+    txa
+    pha
     lda #>sprite_gfx
     sta s+1
     lda sprites_l,x
@@ -283,8 +276,9 @@ n2: lda sprite_shift_y
     lda sprite_data_bottom
     ldy sprite_shift_y
     dey
-    jmp blit_right
+    jsr blit_right
 
-n1:
+n1: pla
+    tax
     rts
 .)
