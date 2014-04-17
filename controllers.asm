@@ -99,13 +99,8 @@ bonus_fun:
 star_fun:
     lda framecounter
     lsr
-    bcc return
+    bcc return          ; Only move star every second frame.
     lda sprites_d,x
-    cmp #$80
-    rol
-    cmp #$80
-    rol
-    and #3
     beq move_left_blue  ; Slow, blue star.
     bne move_left_a     ; Faster, white star.
 
