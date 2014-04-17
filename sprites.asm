@@ -9,7 +9,7 @@ l1: lda sprites_fh,x
     bpl l1
     ldx #numsprites-1   ; None available. Look for decorative sprite.
 l4: lda sprites_i,x
-    and #32
+    and #decorative
     bne l2
     dex
     bpl l4
@@ -114,9 +114,10 @@ c1: pla
     rts
 .)
 
+; Draw all sprites.
 draw_sprites:
 .(
-draw_decorative_sprites:
+    ; Draw decorative sprites.
     ldx #numsprites-1
 l2: lda sprites_fh,x
     beq n3
@@ -127,7 +128,7 @@ l2: lda sprites_fh,x
 n3: dex
     bpl l2
 
-draw_other_sprites:
+    ; Draw other sprites.
     ldx #numsprites-1
 l1: lda sprites_fh,x
     beq n1
@@ -139,7 +140,7 @@ l1: lda sprites_fh,x
     sta foreground_collision
     jsr draw_sprite
 
-save_foreground_collision:
+    ; Save foreground collision.
     lda sprites_i,x
     and #%01111111
     ldy foreground_collision
@@ -151,6 +152,7 @@ n1: dex
     bpl l1
 .)
 
+; Remove remaining chars of sprites in old frame.
 clean_screen:
 .(
     ldx #numsprites-1
@@ -201,7 +203,7 @@ draw_sprite:
     lda sprites_c,x
     sta curcol
 
-bitmap_to_text_position:
+    ; Calculate text position.
     lda sprites_x,x
     lsr
     lsr
@@ -213,7 +215,7 @@ bitmap_to_text_position:
     lsr
     sta scry
 
-configure_blitter:
+    ; Configure the blitter.
     lda sprites_x,x
     and #%111
     tay

@@ -1,8 +1,9 @@
 controllers_start:
 
-multicolor  = 8
-decorative  = 32
-deadly      = 64
+multicolor           = 8
+
+decorative           = 32
+deadly               = 64
 
 sprite_inits:
 player_init:     .byte 0, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
@@ -105,8 +106,8 @@ star_fun:
     cmp #$80
     rol
     and #3
-    beq move_left_blue
-    bne move_left_a
+    beq move_left_blue  ; Slow, blue star.
+    bne move_left_a     ; Faster, white star.
 
 move_left_blue:
     lda #blue
@@ -125,7 +126,7 @@ explosion_fun:
     lda explosion_colors,y
     sta sprites_c,x
     lda sprites_l,x
-    adc $9004
+    adc vicreg_rasterlo
     sta sprites_l,x
     dec sprites_d,x
     bpl move_left
@@ -464,7 +465,7 @@ no_joy_right:
 .)
 
 game_over2:
-save_hiscore_to_zeropage:
+    ; Save highscore to zeropage.
 .(
     ldx #7
 l:  lda hiscore_on_screen,x

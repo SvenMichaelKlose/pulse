@@ -35,14 +35,14 @@ l:  lda #0              ; Fetch joystick status.
     bne l
 .)
 
-avoid_screen_trash:
+    ; Avoid screen trash.
     ldy #black
     jsr clear_screen_and_colors
 
     lda #%11111100      ; Our charset.
     sta $9005
 
-reset_hiscore:
+    ; Reset highscore.
 .(
     ldx #7
     lda #score_char0
