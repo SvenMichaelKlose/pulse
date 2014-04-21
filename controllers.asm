@@ -1,7 +1,5 @@
 controllers_start:
 
-multicolor           = 8
-
 decorative           = 32
 deadly               = 64
 
