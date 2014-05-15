@@ -65,13 +65,13 @@ done:
 
 clear_screen_and_colors:
 .(
-    ldx #203
+    ldx #253
 l:  lda #" "
     sta screen-1,x
-    sta screen+202,x
+    sta screen+252,x
     tya
     sta colors-1,x
-    sta colors+202,x
+    sta colors+252,x
     dex
     bne l
     rts
