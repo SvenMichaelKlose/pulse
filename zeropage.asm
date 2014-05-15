@@ -104,11 +104,3 @@ screen_tiles_i = $100  ; Index into tile info.
 screen_tiles_x = $120  ; X positions.
 screen_tiles_y = $140  ; Y positions.
 screen_tiles_n = $160  ; Times duplicated along the Y axis.
-
-x0      = $f0                                                                   
-y0      = $f1
-x1      = $f2
-y1      = $f3
-dx      = $f4
-dy      = $f5
-line_d  = $f9
