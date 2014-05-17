@@ -98,7 +98,7 @@ sprites_d   = $c0   ; Whatever the controllers want.
 sprites_ox  = $d0   ; Former X positions for cleaning up.
 sprites_oy  = $e0   ; Former Y positions for cleaning up.
 
-hiscore     = $f0
+hiscore     = $f8
 
 screen_tiles_i = $100  ; Index into tile info.
 screen_tiles_x = $120  ; X positions.

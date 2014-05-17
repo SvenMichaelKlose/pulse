@@ -2,13 +2,14 @@ game_over:
 .(
     lda #0
     ldx #hiscore-1
-l1: sta 0,x
-    sta charset,x
+l1: sta 0,x                     ; Clear zero page.
+    sta charset,x               ; Clear first character.
+    sta screen,x                ; Clear screen.
+    sta screen+hiscore-1,x
+    sta screen+((hiscore-1)*2),x
     dex
     bne l1
 .)
-
-    jsr clear_screen
 
 clear_sprites:
 .(
@@ -206,7 +207,6 @@ l2: txa
 .)
 #endif
 
-#ifndef STATIC
 call_controllers:
 .(
     ldx #numsprites-1
@@ -223,7 +223,6 @@ m1: jsr $1234
 n1: dex
     bpl l1
 .)
-#endif
 
 .(
     lda framecounter_high
