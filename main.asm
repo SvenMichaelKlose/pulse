@@ -47,6 +47,8 @@ l2: lda #score_char0
     sta score_on_screen,x
     lda ship,x
     sta charset+(score_char0+10)*8,x
+    lda hiscore,x
+    sta hiscore_on_screen,x
     dex
     bpl l2
 
@@ -55,15 +57,6 @@ l2: lda #score_char0
 
     lda #yellow
     sta lifes_on_screen-screen+colors+1
-.)
-
-init_hiscore:
-.(
-    ldx #7
-l2: lda hiscore,x
-    sta hiscore_on_screen,x
-    dex
-    bpl l2
 .)
 
 init_level:
