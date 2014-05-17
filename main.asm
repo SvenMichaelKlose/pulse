@@ -37,6 +37,8 @@ init_score_digits:
     ldx #10*8
 l:  lda charset_locase+$30*8,x
     sta charset+score_char0*8,x
+    lda #cyan
+    sta colors,x
     dex
     bpl l
 
@@ -50,12 +52,6 @@ l2: lda #score_char0
 
     ldx #score_char0+10
     stx lifes_on_screen
-
-    ldx #22
-    lda #cyan
-l3: sta colors,x
-    dex
-    bpl l3
 
     lda #yellow
     sta lifes_on_screen-screen+colors+1
