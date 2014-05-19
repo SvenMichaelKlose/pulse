@@ -2,7 +2,7 @@ intro:
     ldy #white
     jsr clear_screen_and_colors
 
-    lda #8+blue     ; Screen and border color.
+    lda #8+black    ; Screen and border color.
     sta $900f
     lda #red*16     ; Auxiliary color.
     sta $900e
@@ -41,6 +41,8 @@ l:  lda #0              ; Fetch joystick status.
 
     lda #%11111100      ; Our charset.
     sta $9005
+    lda #8+blue    ; Screen and border color.
+    sta $900f
 
     ; Reset highscore.
 .(
