@@ -3,10 +3,10 @@ game_over:
     lda #0
     ldx #hiscore-1
 l1: sta 0,x                     ; Clear zero page.
-    sta charset,x               ; Clear first character.
-    sta screen,x                ; Clear screen.
-    sta screen+hiscore-1,x
-    sta screen+((hiscore-1)*2),x
+    sta charset-1,x               ; Clear first character.
+    sta screen-1,x                ; Clear screen.
+    sta screen+hiscore-2,x
+    sta screen+hiscore+hiscore-3,x
     dex
     bne l1
 .)
