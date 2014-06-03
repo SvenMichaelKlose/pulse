@@ -7,4 +7,4 @@ hiscore_on_screen = screen+12+1
 
 sniper_probability        = %00111111
 sniper_bullet_probability = %01111111
-scout_bullet_probability  = %00111111
+scout_bullet_probability  = %01111111
