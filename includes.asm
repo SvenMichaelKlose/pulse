@@ -2,7 +2,11 @@
 #include "game.defs.asm"
 #include "zeropage.asm"
 
+#ifdef TAPE_RELEASE
+    * = $1000
+#else
 #include "basic-loader.asm"
+#endif
 
 #include "init.asm"
 #include "intro.asm"
