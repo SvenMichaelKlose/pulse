@@ -81,11 +81,11 @@ sound_explosion         = $36
 sound_laser             = $37
 sound_bonus             = $38
 sound_foreground        = $39
-sound_dead              = $41
-sound_end               = $41
+sound_dead              = $3a
+sound_end               = sound_dead
 
-last_random_value       = $42
-collision_y_distance    = $43
+last_random_value       = $3b
+collision_y_distance    = $3c
 
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
