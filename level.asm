@@ -38,8 +38,6 @@ down:
     inc level_old_y
 n4: lda #5
     bne n5
-done:
-    rts
 
 up: lda #4
     jsr add_tile
@@ -63,5 +61,6 @@ n3: lda #0
 n5: jsr add_tile
     iny
     sty level_pos
+done:
     rts
 .)

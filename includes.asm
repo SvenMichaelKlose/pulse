@@ -1,3 +1,5 @@
+#define INVINCIBLE
+
 #include "vic.defs.asm"
 #include "game.defs.asm"
 #include "zeropage.asm"

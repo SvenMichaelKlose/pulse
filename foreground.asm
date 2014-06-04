@@ -151,7 +151,7 @@ draw_chars:
     lda tiles_l,x
     beq n4
     jsr blit_char
-    jmp n5
+    bmi n5
 n4: jsr blit_clear_char
 n5: jsr fetch_foreground_char
     lda tiles_m,x
@@ -224,10 +224,6 @@ l:  lda (sr),y
     clc
     adc #16
     sta sl
-    lda sl+1
-    clc
-    adc #0
-    sta sl+1
     inx
     jmp l1
 .)
