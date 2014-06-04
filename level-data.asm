@@ -18,5 +18,14 @@ level_data:
     .byte 16, 5
     .byte 16, 22
     .byte 16, 5
-    .byte 16, 22
+    .byte 32, 15
+
+    .byte 32, 5
+    .byte 32, 10
+    .byte 32, 5
+    .byte 2, 7
+    .byte 32, 8
+    .byte 32, 3
+    .byte 1, 12
+    .byte 64, 22
     .byte $ff
