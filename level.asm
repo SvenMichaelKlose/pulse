@@ -1,32 +1,3 @@
-level_data:
-    .byte 16, 20
-    .byte 2, 19
-    .byte 2, 18
-    .byte 4, 17
-    .byte 2, 16
-    .byte 2, 15
-    .byte 2, 14
-    .byte 2, 13
-    .byte 2, 12
-    .byte 2, 11
-    .byte 16, 10
-    .byte 16, 9
-
-;    .byte 12, 20
-;    .byte 16, 15
-;    .byte 16, 20
-;    .byte 16, 15
-
-    .byte 16, 20
-    .byte 16, 21
-    .byte 16, 22
-    .byte 32, 20
-    .byte 16, 5
-    .byte 16, 22
-    .byte 16, 5
-    .byte 16, 22
-    .byte $ff
-
 process_level:
 .(
     lda scrolled_bits
@@ -39,12 +10,11 @@ n2: lda level_data,y
     cmp #$ff
     bne n1
     ldy #0
-    jmp n2
+    beq n2
 n1: sta level_delay
     iny
     lda level_old_y
     cmp level_data,y
-    beq exit
     bcs up
 
 down:
@@ -52,10 +22,8 @@ down:
     jsr add_tile
     inc level_old_y
     lda level_data,y
-    sec
+    clc
     sbc level_old_y
-    sec
-    sbc #1
     bcc n4
     pha
     lda #3
@@ -77,10 +45,8 @@ up: lda #4
     jsr add_tile
     dec level_old_y
     lda level_old_y
-    sec
+    clc
     sbc level_data,y
-    sec
-    sbc #1
     beq n3
     bcc n3
     pha
@@ -95,8 +61,6 @@ up: lda #4
     dec level_old_y
 n3: lda #0
 n5: jsr add_tile
-
-exit:
     iny
     sty level_pos
     rts

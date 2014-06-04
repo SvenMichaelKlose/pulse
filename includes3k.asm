@@ -27,6 +27,7 @@
 #include "level-scout.asm"
 #include "tiles.asm"
 #include "bits.asm"
+#include "level-data.asm"
 #include "lowmem-end.asm"
 
 #include "init-end.asm"

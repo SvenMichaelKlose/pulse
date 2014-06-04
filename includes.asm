@@ -1,3 +1,5 @@
+#define INVINCIBLE
+
 #include "vic.defs.asm"
 #include "game.defs.asm"
 #include "zeropage.asm"
@@ -25,6 +27,7 @@
 #include "level-scout.asm"
 #include "tiles.asm"
 #include "bits.asm"
+#include "level-data.asm"
 #include "lowmem-end.asm"
 
 #include "init-end.asm"
