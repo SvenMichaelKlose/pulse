@@ -22,6 +22,7 @@ tiles.asm           Foreground tile definitions.
 gfx-foreground.asm  Foreground tile graphics.
 gfx-sprites.asm     Sprite graphics.
 level.asm           Moves the foreground tiles in a FIFO buffer.
+level-data.asm      Terrain data.
 level-bullet.asm    Adds riserbombs.
 level-scout.asm     Adds flying scouts.
 level-sniper.asm    Adds static snipers.
