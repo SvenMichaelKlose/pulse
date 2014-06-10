@@ -108,7 +108,6 @@ play_sound_foreground:
 n:  lda sound_explosion
     bne n2
     sta vicreg_noise
-    sta vicreg_soprano
 n2:
 .)
 
