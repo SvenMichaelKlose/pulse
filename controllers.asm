@@ -16,10 +16,10 @@ star_init:       .byte 22*8, 89, decorative, white, <star, <star_fun, >star_fun,
 explosion_init:  .byte 22*8, 89, decorative, yellow, 0, <explosion_fun, >explosion_fun, 15
 
 sinetab:
-    .byte 0, 0, 1, 2, 3, 5, 7, 7
-    .byte 7, 7, 5, 3, 2, 1, 0, 0
-    .byte 0, 0, $ff, $fe, $fc, $fa, $f8, $f8
-    .byte $f8, $f8, $fa, $fc, $fe, $ff, 0, 0
+    .byte 0, 0, 2, 4, 6, 10, 14, 14
+    .byte 14, 14, 10, 6, 4, 2, 0, 0
+    .byte 0, 0, 254, 252, 248, 244, 240, 240
+    .byte 240, 240, 244, 248, 252, 254, 0, 0
 
 explosion_colors:
     .byte red, black+multicolor, yellow+multicolor, white+multicolor
@@ -213,7 +213,6 @@ l2: lda #4
     and #%00011111
     tay
     lda sinetab,y
-    asl
     clc
     adc scout_formation_y
     sta sprites_y,x
@@ -222,7 +221,7 @@ l1: jmp remove_if_sprite_is_out
 
 laser_fun:
     jsr hit_enemy
-    bcs remove_sprite_xy
+    bcs remove_sprites
     jsr test_foreground_collision_raw
     bcs remove_sprite_hit_fg
     lda #11
@@ -235,21 +234,21 @@ remove_sprite2:
 
 remove_sprite_hit_fg:
     inc sound_foreground
-    jmp remove_sprite
+    bpl remove_sprite2
 
-remove_sprite_xy:
-    jsr remove_sprite
-    lda #7
+remove_sprites:
+    jsr remove_sprite       ; Remove sprite in slot X.
+    lda #7                  ; Start explosion sound.
     sta sound_explosion
-    lda sprites_x,y
+    lda sprites_x,y         ; Initialize explosion sprite.
     sta explosion_init
     lda sprites_y,y
     sta explosion_init+1
-    tya
+    tya                     ; Remove sprite in slot Y.
     tax
     jsr remove_sprite
-    jsr increment_score
-    ldy #explosion_init-sprite_inits
+    jsr increment_score     ; Increment score by 1.
+    ldy #explosion_init-sprite_inits ; Add explosion sprite.
     jmp add_sprite
 
 return2:
@@ -268,14 +267,12 @@ laser_side:
     ldy #yellow
     jsr energize_color
     jsr hit_enemy
-    bcs remove_sprite_xy
+    bcs remove_sprites
     jsr test_foreground_collision_raw
     bcs remove_sprite_hit_fg
     lda #8
     jsr sprite_right
-    jsr test_sprite_out
-    bcs remove_sprite2
-    rts
+    jmp remove_if_sprite_is_out
 
 player_fun:
 .(
@@ -306,7 +303,7 @@ d1: lda #cyan
 d2: jsr test_foreground_collision_fine
     bcs die
 d3: jsr find_hit
-    bcs operate_joystick
+    bcs operate_joystick ; Nothing hit...
     lda sprites_i,y
     and #%00111111
     cmp #4              ; Bonus.
@@ -322,7 +319,7 @@ l8: jsr increment_score
     bne l8
     lda fire_interval
     cmp #min_fire_interval
-    bne faster_fire
+    bne faster_fire         ; Increase fire speed...
     lda has_double_laser
     bne make_autofire_or_invincible
     lda #max_fire_interval
@@ -364,6 +361,7 @@ die:
 faster_fire:
     dec fire_interval
     dec fire_interval
+
 operate_joystick:
     lda #0              ; Fetch joystick status.
     sta $9113
@@ -409,10 +407,12 @@ i2: tya
     jsr add_sprite
 s1: pla
     tay
+
 no_fire:
     lda is_firing
     beq i1
     dec is_firing
+
 i1: tya
     and #joy_up
     bne no_joy_up
@@ -421,6 +421,7 @@ i1: tya
     bcc no_joy_down
     lda #4
     jsr sprite_up
+
 no_joy_up:
     tya
     and #joy_down
@@ -432,6 +433,7 @@ no_joy_up:
     bcs no_joy_down
 n6: lda #4
     jsr sprite_down
+
 no_joy_down:
     tya
     and #joy_left
