@@ -13,7 +13,10 @@ l4: lda sprites_i,x
     bne l2
     dex
     bpl l4
-    jmp done            ; None available. Job remains undone.
+done:
+    ldx tmp
+    ldy tmp2
+    rts
 
 l2: lda #sprites_x      ; Copy descriptor to sprite table.
     sta selfmod+1
@@ -24,14 +27,9 @@ selfmod:
     lda selfmod+1
     cmp #sprites_d
     beq done
-    clc
     adc #numsprites
     sta selfmod+1
     jmp l3
-done:
-    ldx tmp
-    ldy tmp2
-    rts
 .)
 
 remove_sprite:
