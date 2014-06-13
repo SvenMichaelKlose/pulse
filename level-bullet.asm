@@ -32,7 +32,7 @@ n2: lda sprites_x+15    ; Get X distance to player.
     bcc n5
     lda bullet_init+2   ; Swap axis.
     and #dec_x
-    lsl
+    asl
     tay
     lda bullet_init+2
     and #dec_y
