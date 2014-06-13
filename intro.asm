@@ -59,7 +59,6 @@ ascii2petscii:
 .(
     cmp #"X"+2
     bcc done
-    sec
     sbc #"a"-1
 done:
     rts
