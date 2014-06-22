@@ -139,52 +139,53 @@ sniper_fun:
 
 bullet_fun:
 .(
-    lda #sprites_x
-    sta si+1
-    lda #sprites_y
-    sta sw+1
-    lda #$f6
+    lda #$f6        ; inc zeropage,x
     sta si
     sta sw
+    lda #sprites_x
+    sta si+1
+    ldy #sprites_y
+    sty sw+1
     lda sprites_i,x
     and #step_y
     beq n2
-    lda #sprites_y
-    sta si+1
+    sty si+1        ; Swap X and Y axis.
     lda #sprites_x
     sta sw+1
-n2: lda sprites_i,x
+n2: ldy #$d6        ; dec zeropage,x
+    lda sprites_i,x
     and #dec_x
     beq n3
-    lda #$d6
-    sta si
+    sty si
 n3: lda sprites_i,x
     and #dec_y
     beq n4
-    lda #$d6
-    sta sw
+    sty sw
 n4:
 si: inc sprites_y,x
-    lda sprites_d,x
+
+    lda sprites_d,x ; Subtract high nibble from low nibble.
+    tay
     lsr
     lsr
     lsr
     lsr
     sta tmp
-    lda sprites_d,x
+    tya
     and #%1111
     sec
     sbc tmp
     bcs n1
-sw: inc sprites_x,x
-n1: and #%1111
+sw: inc sprites_x,x ; Step along slow axis on underflow.
+n1: and #%1111      ; Put low nibble back into sprite info.
     sta tmp
-    lda sprites_d,x
+    tya
     and #%11110000
     ora tmp
     sta sprites_d,x
+
     jsr test_foreground_collision_raw
-    bcs remove_sprite_hit_fg
+    bcs remove_if_on_foreground
     bcc remove_if_sprite_is_out
 .)
 
@@ -223,7 +224,7 @@ laser_fun:
     jsr hit_enemy
     bcs remove_sprites
     jsr test_foreground_collision_raw
-    bcs remove_sprite_hit_fg
+    bcs remove_if_on_foreground
     lda #11
     jsr sprite_right
 remove_if_sprite_is_out:
@@ -232,7 +233,7 @@ remove_if_sprite_is_out:
 remove_sprite2:
     jmp remove_sprite
 
-remove_sprite_hit_fg:
+remove_if_on_foreground:
     inc sound_foreground
     bpl remove_sprite2
 
@@ -269,7 +270,7 @@ laser_side:
     jsr hit_enemy
     bcs remove_sprites
     jsr test_foreground_collision_raw
-    bcs remove_sprite_hit_fg
+    bcs remove_if_on_foreground
     lda #8
     jsr sprite_right
     jmp remove_if_sprite_is_out
@@ -329,8 +330,8 @@ l8: jsr increment_score
 
 make_autofire_or_invincible:
     jsr random
-    and #1
-    bne make_invincible
+    lsr
+    bcc make_invincible
     inc has_double_laser
     bne operate_joystick
 
@@ -400,11 +401,13 @@ i2: tya
     beq s1
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
+#ifdef HAVE_DOUBLE_LASER
     lda has_double_laser
     cmp #2
     bcc s1
     ldy #laser_up_init-sprite_inits
     jsr add_sprite
+#endif
 s1: pla
     tay
 
