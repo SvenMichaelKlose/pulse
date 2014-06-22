@@ -60,10 +60,10 @@ return:
 
 test_foreground_collision_fine:
     lda sprites_x,x
-    and #6
+    and #7
     sta tmp
     lda scrolled_bits
-    and #6
+    and #7
     cmp tmp
     bne clc_return
 test_foreground_collision_raw:
