@@ -4,6 +4,7 @@ dec_y  = 4
 
 add_bullet:
 .(
+    inc sound_foreground
     lda #64
     sta bullet_init+2
     lda sprites_x+15    ; Increment or decrement X?

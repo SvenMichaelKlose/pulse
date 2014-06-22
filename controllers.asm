@@ -132,7 +132,6 @@ sniper_fun:
     jsr random
     and #sniper_bullet_probability
     bne move_left
-    inc sound_foreground
     jsr add_bullet
     jmp move_left
 .)
@@ -197,7 +196,6 @@ scout_fun:
     jsr random
     and #scout_bullet_probability
     bne l2
-    inc sound_foreground
     jsr add_bullet
 l2: lda #4
     jsr sprite_left
