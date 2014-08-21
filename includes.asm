@@ -39,5 +39,6 @@
 #include "foreground.asm"
 #include "gfx-sprites.asm"
 #include "gfx-tiles.asm"
+#include "level-patterns.asm"
 
 realend:

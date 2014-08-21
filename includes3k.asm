@@ -37,6 +37,7 @@
 #include "level.asm"
 #include "level-bullet.asm"
 #include "level-sniper.asm"
+#include "level-patterns.asm"
 #include "foreground.asm"
 
 realend:

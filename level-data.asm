@@ -1,14 +1,12 @@
 level_data:
     .byte 16, 20
-    .byte 2, 19
-    .byte 2, 18
+    .byte 0
+
+level_data2:
     .byte 4, 17
-    .byte 2, 16
-    .byte 2, 15
-    .byte 2, 14
-    .byte 2, 13
-    .byte 2, 12
-    .byte 2, 11
+    .byte 0
+
+level_data3:
     .byte 16, 10
     .byte 16, 9
     .byte 16, 20
@@ -19,13 +17,30 @@ level_data:
     .byte 16, 22
     .byte 16, 5
     .byte 32, 15
-
-    .byte 32, 5
-    .byte 32, 10
-    .byte 32, 5
+    .byte 16, 5
+    .byte 16, 10
+    .byte 16, 5
     .byte 2, 7
-    .byte 32, 8
-    .byte 32, 3
+    .byte 16, 8
+    .byte 16, 3
     .byte 1, 12
-    .byte 64, 22
-    .byte $ff
+    .byte 16, 22
+    .byte 0
+
+t_tower:
+    .byte 1, 14
+    .byte 1, 0
+    .byte 1, 6
+    .byte 4, 13
+    .byte 0
+
+level_data_rest:
+    .byte 16, 22
+    .byte 1, 19
+    .byte 1, 3
+    .byte 0
+
+t_two_up:
+    .byte 2, 1
+    .byte 2, 0
+    .byte 0
