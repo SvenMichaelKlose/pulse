@@ -5,24 +5,6 @@ is split into two frames for double buffering.  Each frame takes up to 48
 chars for sprites and 16 for the scrolling foreground or the score display.
 The foreground is NOT double-buffered.
 
-            0123456789ABCDEF
-            ----------------
-Frame A:    BSSSSSSSSSSSSSSS
-            SSSSSSSSSSSSSSSS
-            SSSSSSSSSSSSSSSS
-            PPPPPPPPPPPPPPPP
-
-Frame B:    SSSSSSSSSSSSSSSS
-            SSSSSSSSSSSSSSSS
-            SSSSSSSSSSSSSSSS
-            TTEEEEEEEEEEEEEE
-
-            B = Plain nothing
-            S = Sprites
-            P = Score display
-            T = Trailing foreground char
-            E = Foreground edge
-
 Sprite chars are dynamically allocated and shared by overlapping sprites.
 When all sprites have been drawn, characters of the other frame are
 removed from the screen.  The former positions of all sprites are saved to
@@ -34,6 +16,29 @@ of rotating chars to fill large areas of the foreground.
 
 The game doesn't wait for the retrace.  To keep the speed stable, sprites
 aren't removed but replaced with a background star.
+
+
+# Character map
+
+128 chars are used as follows:
+
+            0123456789ABCDEF
+            ----------------
+Frame A: 0| BSSSSSSSSSSSSSSS
+(0-63)   1| SSSSSSSSSSSSSSSS
+         2| SSSSSSSSSSSSSSSS
+         3| PPPPPPPPPPPPPPPP
+
+Frame B: 4| SSSSSSSSSSSSSSSS
+(64-127) 5| SSSSSSSSSSSSSSSS
+         6| SSSSSSSSSSSSSSSS
+         7| TTEEEEEEEEEEEEEE
+
+         B = Plain nothing
+         S = Sprites
+         P = Score display
+         T = Trailing foreground char
+         E = Foreground edge
 
 
 ## Sprites
