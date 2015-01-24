@@ -217,9 +217,9 @@ draw_sprite:
     lda sprites_x,x
     and #%111
     tay
-    sta blit_right_addr+1
-    lda negate7,y
     sta blit_left_addr+1
+    lda negate7,y
+    sta blit_right_addr+1
 
     lda sprites_y,x
     and #%111
@@ -236,9 +236,9 @@ draw_sprite:
     sta d
     lda sprite_data_top
     ldy sprite_height_top
-    jsr blit_left
+    jsr blit_right
 
-    lda blit_right_addr+1
+    lda blit_left_addr+1
     beq n2
 
     ; Draw upper right.
@@ -250,7 +250,7 @@ draw_sprite:
     sta d
     lda sprite_data_top
     ldy sprite_height_top
-    jsr blit_right
+    jsr blit_left
     dec scrx
 
 n2: lda sprite_shift_y
@@ -265,7 +265,7 @@ n2: lda sprite_shift_y
     sta sprite_data_bottom
     ldy sprite_shift_y
     dey
-    jsr blit_left
+    jsr blit_right
 
     lda sprite_shift_y
     beq n1
@@ -276,7 +276,7 @@ n2: lda sprite_shift_y
     lda sprite_data_bottom
     ldy sprite_shift_y
     dey
-    jsr blit_right
+    jsr blit_left
 
 n1: pla
     tax

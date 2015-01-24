@@ -1,37 +1,51 @@
-blit_left_whole_char:
-    ldy #7
-blit_left:
-    sta s
-blit_left_loop:
-    lda (s),y
-    clc
-blit_left_addr:
-.(
-    bcc s1
-    lsr
-    lsr
-    lsr
-    lsr
-    lsr
-    lsr
-    lsr
-s1: ora (d),y
-    sta (d),y
-    dey
-    bpl blit_left_loop
-    rts
-.)
-
+; Blit bytes from s to d, shifting them to the right.
+;
+; Ins:
+; Y: character height
+; s: source address
+; s: destination address
+; blit_right_addr + 1: 7 - bits_to_shift
 blit_right_whole_char:
     ldy #7
 blit_right:
     sta s
-blit_right_loop:
+_blit_right_loop:
     lda (s),y
     clc
 blit_right_addr:
 .(
     bcc s1
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+s1: ora (d),y
+    sta (d),y
+    dey
+    bpl _blit_right_loop
+    rts
+.)
+
+; Blit bytes from s to d, shifting them to the left.
+;
+; Ins:
+; Y: character height
+; s: source address
+; s: destination address
+; blit_right_addr + 1: 7 - bits_to_shift
+blit_left_whole_char:
+    ldy #7
+blit_left:
+    sta s
+_blit_left_loop:
+    lda (s),y
+    clc
+blit_left_addr:
+.(
+    bcc s1
     asl
     asl
     asl
@@ -43,7 +57,7 @@ blit_right_addr:
 s1: ora (d),y
     sta (d),y
     dey
-    bpl blit_right_loop
+    bpl _blit_left_loop
     rts
 .)
 
