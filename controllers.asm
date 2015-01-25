@@ -24,6 +24,7 @@ sinetab:
 explosion_colors:
     .byte red, black+multicolor, yellow+multicolor, white+multicolor
 
+    ; Make bonus item if a scout formation has been killed.
 hit_formation:
     dec formation_left_unhit
     bne sec_return
@@ -45,9 +46,9 @@ hit_enemy:
     bcs clc_return
     lda sprites_i,y
     and #%00111111
-    cmp #3
+    cmp #3              ; Scout?
     beq hit_formation
-    cmp #2
+    cmp #2              ; Sniper?
     bne clc_return
 sec_return:
     sec
@@ -73,10 +74,10 @@ test_foreground_collision_raw:
 
 energize_color:
     lda framecounter
-    and #1
+    lsr
 toggle_color:
 .(
-    beq n1
+    bcc n1
     tya
     and #%1000
     ora #white
@@ -86,13 +87,12 @@ n1: sty sprites_c,x
 .)
 
 bonus_fun:
-.(
     ldy #green
     lda framecounter
-    and #%10
+    lsr
+    lsr
     jsr toggle_color
     jmp move_left
-.)
 
 star_fun:
     lda framecounter
@@ -126,7 +126,6 @@ explosion_fun:
     jmp remove_sprite
 
 sniper_fun:
-.(
     lda framecounter_high
     beq move_left
     jsr random
@@ -134,7 +133,6 @@ sniper_fun:
     bne move_left
     jsr add_bullet
     jmp move_left
-.)
 
 bullet_fun:
 .(
@@ -368,37 +366,49 @@ operate_joystick:
     tay
     and #joy_fire
     bne no_fire
+
     lda is_firing
     bne no_fire
+
     lda framecounter    ; Little ramdomness to give the laser some action.
     lsr
     and #7
     adc sprites_x,x
     sta laser_init
+
     lda sprites_x,x
     sta laser_up_init
     sta laser_down_init
+
     lda sprites_y,x
     sta laser_init+1
     sta laser_up_init+1
     sta laser_down_init+1
     inc laser_init+1
+
     lda #7
     sta sound_laser
+
     lda fire_interval
     sta is_firing
+
     lda is_invincible
     bne i2
     lda #white
     sta sprites_c,x
-i2: tya
+
+i2: tya                 ;Save joystick status.
     pha
+
+    ; Shoot downwards.
     ldy #laser_init-sprite_inits
     jsr add_sprite
     lda has_double_laser
     beq s1
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
+
+    ; Shoot upwards.
 #ifdef HAVE_DOUBLE_LASER
     lda has_double_laser
     cmp #2
@@ -406,6 +416,7 @@ i2: tya
     ldy #laser_up_init-sprite_inits
     jsr add_sprite
 #endif
+
 s1: pla
     tay
 
@@ -414,54 +425,56 @@ no_fire:
     beq i1
     dec is_firing
 
+    ; Joystick up.
 i1: tya
     and #joy_up
-    bne no_joy_up
+    bne not_up
     lda sprites_y,x
     cmp #12
-    bcc no_joy_down
+    bcc not_down        ; Don't bump into hiscore. ;)
     lda #4
     jsr sprite_up
+not_up:
 
-no_joy_up:
+    ; Joystick down.
     tya
     and #joy_down
-    bne no_joy_down
+    bne not_down
     lda sprites_y,x
-    cmp #$100-8
-    bcs n6
-    cmp #22*8
-    bcs no_joy_down
-n6: lda #4
+    cmp #22*8-1
+    bcs not_down
+    lda #4
     jsr sprite_down
+not_down:
 
-no_joy_down:
+    ; Joystick left.
     tya
     and #joy_left
-    bne no_joy_left
+    bne not_left
     lda sprites_x,x
     cmp #3
-    bcc no_joy_right
+    bcc not_right
     lda #3
     jmp sprite_left
+not_left:
 
-no_joy_left:
+    ; Joystick right.
     lda #0              ;Fetch rest of joystick status.
     sta $9122
     lda $9120
-    bmi no_joy_right
+    bmi not_right
     lda sprites_x,x
     cmp #21*8
-    bcs no_joy_right
+    bcs not_right
     lda #3
     jmp sprite_right
+not_right:
 
-no_joy_right:
     rts
 .)
 
 game_over2:
-    ; Save highscore to zeropage.
+    ; Save hiscore to zeropage.
 .(
     ldx #7
 l:  lda hiscore_on_screen,x
