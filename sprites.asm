@@ -265,7 +265,7 @@ n2: lda sprite_shift_y
     dey
     jsr blit_right
 
-    lda sprite_shift_y
+    lda blit_left_addr+1
     beq n1
 
     ; Draw lower right.
