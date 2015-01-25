@@ -1,5 +1,5 @@
 level_data:
-    .byte 16, 20
+    .byte 16, 20    ; width/inverted height
     .byte 0
 
 level_data2:

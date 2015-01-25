@@ -1,34 +1,41 @@
 process_level:
 .(
+    ; Only do every 8th frame.
     lda scrolled_bits
     and #%111
     bne done
+
+    ; Delay next decode depending on width of rightmost vertical edge.
     dec level_delay
     bpl done
 
 n2: ldy level_pos       ; Get position in current pattern.
-    lda level_data,y    ; Get length.
-    bne n1
-    inc level_pattern   ; Get next pattern.
+    lda level_data,y    ; Get width of bar.
+    bne decode_pattern
+
+    ; End of pattern. Get next.
+    inc level_pattern
     ldy level_pattern
     lda level_patterns-1,y
     sta level_pos
-    beq n7              ; End of pattern list...
-    lda level_patterns,y; Get pattern height.
+    beq restart_level
+    lda level_patterns,y; Copy vertical pattern offset.
     sta level_offset
     inc level_pattern
     jmp n2              ; Try again with new pattern...
 
-n7: sta level_pattern   ; ...restart from first pattern.
+restart_level:
+    sta level_pattern
     sta level_pos
     beq n2
 
 done:
     rts
 
-n1: sta level_delay
+decode_pattern:
+    sta level_delay
     iny
-    lda level_data,y    ; Get height.
+    lda level_data,y    ; Get height of vertical edge.
     iny
     sty level_pos
     clc                 ; Add pattern height.
@@ -81,6 +88,5 @@ up: lda #4
     sta level_old_y
     dec level_old_y
 n3: lda #0
-n5: jsr add_tile
-    rts
+n5: jmp add_tile
 .)
