@@ -1,15 +1,22 @@
 ;; Zero out various areas.
 game_over:
 .(
-    lda #0
     ldx #hiscore-1
-l1: sta 0,x                         ; Clear zero page.
+l1: lda #0
+    sta 0,x                         ; Clear zero page.
     sta charset-1,x                 ; Clear first character.
     sta screen-1,x                  ; Clear screen.
     sta screen+hiscore-2,x
     sta screen+hiscore+hiscore-3,x
-    sta sprites_fh,x                ; Disable sprites.
-    dex
+    cpx #9
+    bcs l3
+    lda #score_char0
+    sta score_on_screen-1,x
+    lda ship-1,x
+    sta charset+((score_char0+10)*8)-1,x
+    lda hiscore-1,x
+    sta hiscore_on_screen-1,x
+l3: dex
     bne l1
 .)
 
@@ -33,16 +40,6 @@ l:  lda charset_locase+$30*8,x
     sta colors,x
     dex
     bpl l
-
-    ldx #7
-l2: lda #score_char0
-    sta score_on_screen,x
-    lda ship,x
-    sta charset+(score_char0+10)*8,x
-    lda hiscore,x
-    sta hiscore_on_screen,x
-    dex
-    bpl l2
 
     ldx #score_char0+10
     stx lifes_on_screen
@@ -73,6 +70,7 @@ l:  jsr add_star
     bne l
 .)
 
+; Re-entry point after lost life.
 restart:
     ldx #$ff
     txs
@@ -87,6 +85,7 @@ restart:
 
 mainloop:
 
+; Something hit the terrain.
 play_sound_foreground:
 .(
     lda sound_foreground
@@ -102,6 +101,7 @@ n:  lda sound_explosion
 n2:
 .)
 
+; "Ow!" sound if you die.
 play_sound_dead:
 .(
     lda sound_dead
@@ -114,6 +114,7 @@ play_sound_dead:
 n:
 .)
 
+; Bonus "ping!".
 play_sound_bonus:
     lda sound_bonus
     beq play_sound_bonus2
@@ -132,6 +133,7 @@ play_sound_bonus2:
     sta vicreg_alto
     sta vicreg_soprano
 
+; An enemy is toast.
 play_sound_explosion:
 .(
     lda sound_explosion
@@ -149,6 +151,7 @@ n:  lda sound_foreground
 n2:
 .)
 
+; Classic sound of a laser on its way.
 play_sound_laser:
     lda sound_laser
     beq decrement_sound_counters
@@ -175,6 +178,7 @@ n:  dex
     adc #score_char0
     sta lifes_on_screen+1
 
+; Initialize our "double buffering" for sprites.
 init_frame:
 .(
     lda spriteframe
@@ -197,6 +201,7 @@ l2: txa
 .)
 #endif
 
+; Call the functions that control sprite behaviour.
 call_controllers:
 .(
     ldx #numsprites-1
@@ -216,17 +221,21 @@ n1: dex
 
 .(
     lda framecounter_high
-    cmp #4
+    cmp #4                  ; No terrain before frame 1024 (4 * 256).
     bcc n
-    jsr draw_foreground
-    jsr process_level
+    jsr draw_foreground     ; Scroll/redraw terrain.
+    jsr process_level       ; Feed in terrain that enters the screen.
+
+    ; Add a sniper on occasion.
     jsr random
     and #sniper_probability
     bne n
     jsr add_sniper
-n:  jsr draw_sprites
-    jsr add_scout
+n: 
 .)
+
+    jsr draw_sprites
+    jsr add_scout
 
 increment_framecounter:
 .(
