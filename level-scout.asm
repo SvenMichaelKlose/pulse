@@ -3,8 +3,8 @@ add_scout:
     lda framecounter
     and #%01111111
     bne l1
-    jsr random
 retry:
+    jsr random
     and #%01111000
     clc
     adc #16
@@ -17,17 +17,13 @@ retry:
     sta scrx
     jsr scraddr
     jsr test_on_foreground
-    bne n1
-    jsr random
-    jmp retry
-n1: lda #8
+    beq retry
+    lda #8
     sta adding_scout
     sta formation_left_unhit
     lda #3
     sta adding_scout_delay
-l1:
-
-    lda adding_scout
+l1: lda adding_scout
     beq l2
     dec adding_scout_delay
     bne l2
