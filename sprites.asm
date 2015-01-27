@@ -153,7 +153,7 @@ clean_screen:
 .(
     ldx #numsprites-1
 l1: lda sprites_ox,x
-    cmp #$ff
+    cmp #$fe
     beq n2
     sta scrx
     lda sprites_oy,x
@@ -166,24 +166,33 @@ l1: lda sprites_ox,x
     jsr scraddr_clear_char
     inc scrx
     jsr clear_char
-    lda #$ff
+    lda #$fe
     sta sprites_ox,x
 n2: lda sprites_fh,x
     beq n1
-    lda sprites_x,x
-    lsr
-    lsr
-    lsr
+    jsr xpixel_to_char
     sta sprites_ox,x
     lda sprites_y,x
-    lsr
-    lsr
-    lsr
+    jsr pixel_to_char
     sta sprites_oy,x
 n1: dex
     bpl l1
 .)
     rts
+
+xpixel_to_char:
+    lda sprites_x,x
+pixel_to_char:
+.(
+    cmp #28*8
+    bcs n
+    lsr
+    lsr
+    lsr
+    rts
+n:  lda #$ff
+    rts
+.)
 
 ; Draw a single sprite.
 draw_sprite:
@@ -200,15 +209,10 @@ draw_sprite:
     sta curcol
 
     ; Calculate text position.
-    lda sprites_x,x
-    lsr
-    lsr
-    lsr
+    jsr xpixel_to_char
     sta scrx
     lda sprites_y,x
-    lsr
-    lsr
-    lsr
+    jsr pixel_to_char
     sta scry
 
     ; Configure the blitter.
