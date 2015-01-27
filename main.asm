@@ -1,25 +1,16 @@
+;; Zero out various areas.
 game_over:
 .(
     lda #0
     ldx #hiscore-1
-l1: sta 0,x                     ; Clear zero page.
-    sta charset-1,x               ; Clear first character.
-    sta screen-1,x                ; Clear screen.
+l1: sta 0,x                         ; Clear zero page.
+    sta charset-1,x                 ; Clear first character.
+    sta screen-1,x                  ; Clear screen.
     sta screen+hiscore-2,x
     sta screen+hiscore+hiscore-3,x
+    sta sprites_fh,x                ; Disable sprites.
     dex
     bne l1
-.)
-
-clear_sprites:
-.(
-    ldx #numsprites-1
-l1: ldy #0
-    sty sprites_fh,x
-    dey
-    sty sprites_ox,x
-    dex
-    bpl l1
 .)
 
 init_trailing_foreground_chars:
