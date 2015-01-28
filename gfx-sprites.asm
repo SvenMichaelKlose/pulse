@@ -19,6 +19,7 @@ laser:
     .byte %00000000
     .byte %00000000
 
+#ifdef HAVE_DOUBLE_LASER
 laser_up:
     .byte %00000111
     .byte %00001111
@@ -28,6 +29,7 @@ laser_up:
     .byte %11111000
     .byte %01110000
     .byte %10100000
+#endif
 
 laser_down:
     .byte %10100000

@@ -6,7 +6,9 @@ deadly               = 64
 sprite_inits:
 player_init:     .byte 0, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
 laser_init:      .byte 18, 80, 1, white+multicolor,  <laser, <laser_fun,  >laser_fun, 0
+#ifdef HAVE_DOUBLE_LASER
 laser_up_init:   .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun, 0
+#endif
 laser_down_init: .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun, 0
 bullet_init:     .byte 22*8, 89, deadly+2, yellow+multicolor, <bullet, <bullet_fun, >bullet_fun, 0
 scout_init:      .byte 22*8, 89, deadly+3, yellow+multicolor, <scout, <scout_fun, >scout_fun, 0
@@ -251,10 +253,12 @@ remove_sprites:
 return2:
     rts
 
+#ifdef HAVE_DOUBLE_LASER
 laser_up_fun:
     lda #8
     jsr sprite_up
     jmp laser_side
+#endif
 
 laser_down_fun:
     lda #8
@@ -301,6 +305,7 @@ d2: jsr test_foreground_collision_fine
     bcs die
 d3: jsr find_hit
     bcs operate_joystick ; Nothing hit...
+
     lda sprites_i,y
     and #%00111111
     cmp #4              ; Bonus.
@@ -318,13 +323,13 @@ l8: jsr increment_score
     cmp #min_fire_interval
     bne faster_fire         ; Increase fire speed...
     lda has_double_laser
-    bne make_autofire_or_invincible
+    bne make_double_laser_or_invincible
     lda #max_fire_interval
     sta fire_interval
     inc has_double_laser
     bne operate_joystick
 
-make_autofire_or_invincible:
+make_double_laser_or_invincible:
     jsr random
     lsr
     bcc make_invincible
@@ -340,6 +345,7 @@ no_bonus_hit:
     lda sprites_i,y
     and #deadly
     beq operate_joystick
+
 die:
 #ifdef INVINCIBLE
     jmp operate_joystick
@@ -377,12 +383,16 @@ operate_joystick:
     sta laser_init
 
     lda sprites_x,x
+#ifdef HAVE_DOUBLE_LASER
     sta laser_up_init
+#endif
     sta laser_down_init
 
     lda sprites_y,x
     sta laser_init+1
+#ifdef HAVE_DOUBLE_LASER
     sta laser_up_init+1
+#endif
     sta laser_down_init+1
     inc laser_init+1
 

@@ -30,6 +30,8 @@
 
 #include "init-end.asm"
 
+#include "gfx-sprites.asm"
+#include "gfx-tiles.asm"
 #include "sprites.asm"
 #include "controllers.asm"
 #include "main.asm"
@@ -37,8 +39,6 @@
 #include "level-bullet.asm"
 #include "level-sniper.asm"
 #include "foreground.asm"
-#include "gfx-sprites.asm"
-#include "gfx-tiles.asm"
 #include "level-patterns.asm"
 
 realend:
