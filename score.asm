@@ -18,7 +18,8 @@ l2: sta score_on_screen,x
     dex
     bpl l
 
-    ldx #0
+    ; Compare score with hiscore.
+    inx
     ldy #7
 l3: lda score_on_screen,x
     cmp hiscore_on_screen,x
