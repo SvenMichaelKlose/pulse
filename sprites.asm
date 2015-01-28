@@ -69,17 +69,25 @@ test_sprite_out:
 c1: rts
 .)
 
+; Find collision with other sprite.
+;
+; X: sprite index
+;
+; Returns:
+; C: Clear when a hit was found.
+; Y: sprite index
 find_hit:
 .(
     txa
     pha
     stx tmp
     ldy #numsprites-1
-l1: cpy tmp
+
+l1: cpy tmp             ; Skip same sprite.
     beq n1
-    lda sprites_fh,y
+    lda sprites_fh,y    ; Skip unused sprite.
     beq n1
-    lda sprites_i,y
+    lda sprites_i,y     ; Skip decorative sprite.
     and #decorative
     bne n1
 
@@ -88,23 +96,29 @@ l1: cpy tmp
     sbc sprites_x,y
     jsr abs
     cmp #8
-    bcs n1
+    bcs n1              ; To far off horizontally...
+
+    ; Vertically narrow down collision box of horizontal laser.
     lda #8
     sta collision_y_distance
     lda sprites_i,y
     cmp #deadly+2
-    bne b1
+    bne not_a_hoizontal_laser
     dec collision_y_distance
     dec collision_y_distance
-b1: lda sprites_y,x     ; Get Y distance.
+
+not_a_hoizontal_laser:
+    lda sprites_y,x     ; Get Y distance.
     sec
     sbc sprites_y,y
     jsr abs
     cmp collision_y_distance
-    bcc c1
+    bcc c1              ; Got one!
+
 n1: dey
     bpl l1
     sec
+
 c1: pla
     tax
     rts
