@@ -1,24 +1,33 @@
+remove_sprite:
+    lda #0
+    sta sprites_fh,x
+    jmp add_star
+
 add_sprite:
 .(
     stx tmp
     sty tmp2
     ldx #numsprites-1   ; Look for free slot.
 l1: lda sprites_fh,x
-    beq l2
+    beq add_sprite_at_x
     dex
     bpl l1
     ldx #numsprites-1   ; None available. Look for decorative sprite.
 l4: lda sprites_i,x
     and #decorative
-    bne l2
+    bne add_sprite_at_x
     dex
     bpl l4
-done:
+.)
+
+sprite_added:
     ldx tmp
     ldy tmp2
     rts
 
-l2: lda #sprites_x      ; Copy descriptor to sprite table.
+add_sprite_at_x:
+.(
+    lda #sprites_x      ; Copy descriptor to sprite table.
     sta selfmod+1
 l3: lda sprite_inits,y
 selfmod:
@@ -26,16 +35,11 @@ selfmod:
     iny
     lda selfmod+1
     cmp #sprites_d
-    beq done
+    beq sprite_added
     adc #numsprites
     sta selfmod+1
     jmp l3
 .)
-
-remove_sprite:
-    lda #0
-    sta sprites_fh,x
-    jmp add_star
 
 sprite_up:
     jsr neg
