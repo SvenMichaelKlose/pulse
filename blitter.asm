@@ -26,6 +26,7 @@ s1: ora (d),y
     sta (d),y
     dey
     bpl _blit_right_loop
+    lda blit_left_addr+1
     rts
 .)
 

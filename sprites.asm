@@ -263,27 +263,15 @@ draw_sprite:
     sta sprite_height_top
 
     ; Draw upper left.
-    jsr scraddr_get_char
-    lda d
-    clc
-    adc sprite_shift_y
-    sta d
-    lda sprite_data_top
-    ldy sprite_height_top
+    jsr scrcoladdr
+    jsr prepare_upper_blit
     jsr blit_right
 
-    lda blit_left_addr+1
     beq n2
 
     ; Draw upper right.
     inc scrx
-    jsr get_char
-    lda d
-    clc
-    adc sprite_shift_y
-    sta d
-    lda sprite_data_top
-    ldy sprite_height_top
+    jsr prepare_upper_blit
     jsr blit_left
     dec scrx
 
@@ -301,7 +289,6 @@ n2: lda sprite_shift_y
     dey
     jsr blit_right
 
-    lda blit_left_addr+1
     beq n1
 
     ; Draw lower right.
@@ -316,3 +303,13 @@ n1: pla
     tax
     rts
 .)
+
+prepare_upper_blit:
+    jsr get_char
+    lda d
+    clc
+    adc sprite_shift_y
+    sta d
+    lda sprite_data_top
+    ldy sprite_height_top
+    rts
