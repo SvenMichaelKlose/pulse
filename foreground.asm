@@ -165,10 +165,11 @@ n5: jsr fetch_foreground_char
 
 rotate_tiles:
 .(
-    lda #<first_tile
+    lda #<first_tile    ; Set pointer to left char.
     sta sl
     lda #>first_tile
     sta sl+1
+    sta sm+1
 
     ldx #0
 next_tile:
@@ -179,10 +180,6 @@ next_tile:
     clc
     adc #8
     sta sm
-    lda sl+1
-    clc
-    adc #0
-    sta sm+1
 
     lda tilelist_r,x    ; Set pointer to right char.
     beq n3
