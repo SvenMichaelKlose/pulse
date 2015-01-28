@@ -47,7 +47,7 @@ decode_pattern:
     bcs up
 
 down:
-    lda #1
+    ldy #1
     jsr add_tile
     inc level_old_y
     lda tmp
@@ -55,10 +55,8 @@ down:
     sbc level_old_y
     beq n4
     bcc n4
-    pha
-    lda #3
+    ldy #3
     jsr add_tile
-    pla
     sta screen_tiles_n,x
     lda level_old_y
     clc
@@ -66,10 +64,10 @@ down:
     sta level_old_y
     sta screen_tiles_y,x
     inc level_old_y
-n4: lda #5
+n4: ldy #5
     bne n5
 
-up: lda #4
+up: ldy #4
     jsr add_tile
     dec level_old_y
     lda level_old_y
@@ -77,15 +75,13 @@ up: lda #4
     sbc tmp
     beq n3
     bcc n3
-    pha
-    lda #2
+    ldy #2
     jsr add_tile
-    pla
     sta screen_tiles_n,x
     lda level_old_y
     clc
     sbc screen_tiles_n,x
     sta level_old_y
-n3: lda #0
+n3: ldy #0
 n5: jmp add_tile
 .)

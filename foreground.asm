@@ -26,8 +26,9 @@ add_tile:
     sta screen_tiles_y,x
     lda #0
     sta screen_tiles_n,x
-    pla
+    tya
     sta screen_tiles_i,x
+    pla
     rts
 .)
 

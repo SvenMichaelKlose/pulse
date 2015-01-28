@@ -51,7 +51,7 @@ l:  lda charset_locase+$30*8,x
 init_level:
     lda #22
     sta level_old_y
-    lda #0
+    ldy #0
     jsr add_tile
     lda #3
     sta level_delay
