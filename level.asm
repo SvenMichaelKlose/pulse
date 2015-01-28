@@ -56,10 +56,7 @@ down:
     beq n4
     bcc n4
     ldy #3
-    jsr add_tile
-    sta screen_tiles_n,x
-    lda level_old_y
-    clc
+    jsr level_add_repeated_tile
     adc screen_tiles_n,x
     sta level_old_y
     sta screen_tiles_y,x
@@ -76,12 +73,16 @@ up: ldy #4
     beq n3
     bcc n3
     ldy #2
-    jsr add_tile
-    sta screen_tiles_n,x
-    lda level_old_y
-    clc
+    jsr level_add_repeated_tile
     sbc screen_tiles_n,x
     sta level_old_y
 n3: ldy #0
 n5: jmp add_tile
 .)
+
+level_add_repeated_tile:
+    jsr add_tile
+    sta screen_tiles_n,x
+    lda level_old_y
+    clc
+    rts
