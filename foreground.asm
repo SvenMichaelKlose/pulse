@@ -43,10 +43,9 @@ draw_foreground:
     and #%111
     beq n1
     lda framecounter
-    and #1
-    bne r
+    lsr
+    bcs r
     jmp rotate_tiles
-
 r:  rts
 
 no_more_tiles:
@@ -54,13 +53,13 @@ no_more_tiles:
 
 n1: inc scrolled_chars
 
-reset_chars:
+    ; Reset character allocations.
     lda #0
+    sta active_tiles
     ldx #tiles_col-tiles_c-1
 i1: sta tiles_c,x
     dex
     bpl i1
-    sta active_tiles
     lda #framemask+foreground+2
     sta next_foreground_char
     lda leftmost_tile
@@ -71,18 +70,18 @@ loop:
     and #numtiles-1
     cmp free_tiles
     beq no_more_tiles
+
     tax
-    lda screen_tiles_n,x
+    lda screen_tiles_n,x    ; Get height of tile.
     sta repetition
-    lda screen_tiles_y,x
+    lda screen_tiles_y,x    ; Get Y position.
     sta scry
-    lda screen_tiles_x,x
+    lda screen_tiles_x,x    ; Get X position.
     sec
-    sbc scrolled_chars
+    sbc scrolled_chars      ; Apply character-wise scrolling.
     sta scrx
-    sta tmp3                ; Save X for repetition.
+    sta tmp3                ; Save X position for repetitions.
     lda screen_tiles_i,x
-    sta tmp2
     tax
     lda tiles_c,x
     beq draw_chars
@@ -160,7 +159,6 @@ n5: jsr fetch_foreground_char
     ldy active_tiles
     sta tilelist_r,y
     inc active_tiles
-    ldx tmp2
     jmp restart_plotting_chars
 .)
 
@@ -172,7 +170,8 @@ rotate_tiles:
     sta sl+1
 
     ldx #0
-l1: cpx active_tiles
+next_tile:
+    cpx active_tiles
     beq rotate_trailing_chars
 
     lda sl              ; Set pointer to middle char.
@@ -184,7 +183,7 @@ l1: cpx active_tiles
     adc #0
     sta sm+1
 
-    lda tilelist_r,x   ; Set pointer to right char.
+    lda tilelist_r,x    ; Set pointer to right char.
     beq n3
     cmp #<background
     bne n4
@@ -225,7 +224,7 @@ l:  lda (sr),y
     adc #16
     sta sl
     inx
-    jmp l1
+    jmp next_tile
 .)
 
 rotate_trailing_chars:
