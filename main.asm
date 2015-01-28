@@ -48,16 +48,12 @@ l:  lda charset_locase+$30*8,x
     sta lifes_on_screen-screen+colors+1
 .)
 
-init_level:
     lda #22
     sta level_old_y
     ldy #0
     jsr add_tile
     lda #3
     sta level_delay
-
-init_player:
-    lda #3
     sta lifes
     ldx #numsprites-1
     ldy #player_init-sprite_inits
