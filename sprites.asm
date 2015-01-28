@@ -1,9 +1,12 @@
+; Replace decorative sprite by new one.
+;
+; Y: descriptor of new sprite in sprite_inits
 add_sprite:
 .(
     stx tmp
     sty tmp2
 
-    ldx #numsprites-1   ; None available. Look for decorative sprite.
+    ldx #numsprites-1
 l4: lda sprites_i,x
     and #decorative
     bne add_sprite_at_x
@@ -16,6 +19,9 @@ sprite_added:
     ldy tmp2
     rts
 
+; Replace sprite by decorative background star.
+;
+; X: sprite index
 remove_sprite:
     stx tmp
     sty tmp2
@@ -31,6 +37,10 @@ remove_sprite:
     sta star_init+7     ; Set speed.
     ldy #star_init-sprite_inits
 
+; Replace decorative sprite by new one.
+;
+; X: sprite index
+; Y: descriptor of new sprite in sprite_inits
 add_sprite_at_x:
 .(
     lda #sprites_x      ; Copy descriptor to sprite table.
@@ -47,24 +57,30 @@ selfmod:
     jmp l3
 .)
 
+; Move sprite X up A pixels.
 sprite_up:
     jsr neg
 
+; Move sprite X down A pixels.
 sprite_down:
     clc
     adc sprites_y,x
     sta sprites_y,x
     rts
 
+; Move sprite X left A pixels.
 sprite_left:
     jsr neg
 
+; Move sprite X right A pixels.
 sprite_right:
     clc
     adc sprites_x,x
     sta sprites_x,x
     rts
 
+; Test if sprite is outside the screen.
+; Return carry flag set when true.
 test_sprite_out:
 .(
     lda sprites_x,x
@@ -150,8 +166,8 @@ l1: lda sprites_i,x
     and #decorative
     bne n1
 
-    lda #0
     sta foreground_collision
+
     jsr draw_sprite
 
     ; Save foreground collision.
@@ -170,31 +186,31 @@ n1: dex
 clean_screen:
 .(
     ldx #numsprites-1
-l1: lda sprites_ox,x
-    cmp #$fe
-    beq n2
-    sta scrx
+l1: ; Remove old chars.
+    lda sprites_ox,x
+    sta scrx                ; (upper left)
     lda sprites_oy,x
     sta scry
     jsr scraddr_clear_char
-    inc scrx
+    inc scrx                ; (upper right)
     jsr clear_char
-    dec scrx
+    dec scrx                ; (bottom left)
     inc scry
     jsr scraddr_clear_char
-    inc scrx
+    inc scrx                ; (bottom right)
     jsr clear_char
-    lda #$fe
-    sta sprites_ox,x
-n2: jsr xpixel_to_char
+
+    ; Save current position as old one.
+    jsr xpixel_to_char
     sta sprites_ox,x
     lda sprites_y,x
     jsr pixel_to_char
     sta sprites_oy,x
+
 n1: dex
     bpl l1
-.)
     rts
+.)
 
 xpixel_to_char:
     lda sprites_x,x
