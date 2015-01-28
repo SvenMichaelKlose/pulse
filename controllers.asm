@@ -423,8 +423,8 @@ i2: tya                 ;Save joystick status.
     ldy #laser_down_init-sprite_inits
     jsr add_sprite
 
-    ; Shoot upwards.
 #ifdef HAVE_DOUBLE_LASER
+    ; Shoot upwards.
     lda has_double_laser
     cmp #2
     bcc s1
