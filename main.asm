@@ -59,13 +59,14 @@ init_level:
 init_player:
     lda #3
     sta lifes
+    ldx #numsprites-1
     ldy #player_init-sprite_inits
-    jsr add_sprite
+    jsr add_sprite_at_x
 
 make_stars:
 .(
-    ldx #numsprites
-l:  jsr add_star
+    ldx #numsprites-2
+l:  jsr remove_sprite
     dex
     bne l
 .)

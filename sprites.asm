@@ -1,17 +1,8 @@
-remove_sprite:
-    lda #0
-    sta sprites_fh,x
-    jmp add_star
-
 add_sprite:
 .(
     stx tmp
     sty tmp2
-    ldx #numsprites-1   ; Look for free slot.
-l1: lda sprites_fh,x
-    beq add_sprite_at_x
-    dex
-    bpl l1
+
     ldx #numsprites-1   ; None available. Look for decorative sprite.
 l4: lda sprites_i,x
     and #decorative
@@ -24,6 +15,21 @@ sprite_added:
     ldx tmp
     ldy tmp2
     rts
+
+remove_sprite:
+    stx tmp
+    sty tmp2
+
+    ; Add background star.
+    jsr random
+    sta star_init       ; Set X position.
+    jsr random
+    and #%11111000
+    sta star_init+1     ; Set Y position.
+    jsr random
+    and #3
+    sta star_init+7     ; Set speed.
+    ldy #star_init-sprite_inits
 
 add_sprite_at_x:
 .(
@@ -89,8 +95,6 @@ find_hit:
 
 l1: cpy tmp             ; Skip same sprite.
     beq n1
-    lda sprites_fh,y    ; Skip unused sprite.
-    beq n1
     lda sprites_i,y     ; Skip decorative sprite.
     and #decorative
     bne n1
@@ -133,9 +137,7 @@ draw_sprites:
 .(
     ; Draw decorative sprites.
     ldx #numsprites-1
-l2: lda sprites_fh,x
-    beq n3
-    lda sprites_i,x
+l2: lda sprites_i,x
     and #decorative
     beq n3
     jsr draw_sprite
@@ -144,9 +146,7 @@ n3: dex
 
     ; Draw other sprites.
     ldx #numsprites-1
-l1: lda sprites_fh,x
-    beq n1
-    lda sprites_i,x
+l1: lda sprites_i,x
     and #decorative
     bne n1
 
@@ -186,9 +186,7 @@ l1: lda sprites_ox,x
     jsr clear_char
     lda #$fe
     sta sprites_ox,x
-n2: lda sprites_fh,x
-    beq n1
-    jsr xpixel_to_char
+n2: jsr xpixel_to_char
     sta sprites_ox,x
     lda sprites_y,x
     jsr pixel_to_char

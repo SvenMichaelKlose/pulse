@@ -310,15 +310,20 @@ d3: jsr find_hit
     and #%00111111
     cmp #4              ; Bonus.
     bne no_bonus_hit
-    lda #15
+
+    lda #15             ; Play the "Ping!" sound.
     sta sound_bonus
-    lda #0              ; Remove bonus sprite.
-    sta sprites_fh,y
-    jsr add_star
-    ldy #10
+
+    sty tmp2            ; Remove bonus sprite.
+    tya
+    tax
+    jsr remove_sprite
+
+    ldy #10             ; Add ten points.
 l8: jsr increment_score
     dey
     bne l8
+
     lda fire_interval
     cmp #min_fire_interval
     bne faster_fire         ; Increase fire speed...

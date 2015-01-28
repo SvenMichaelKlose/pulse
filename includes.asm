@@ -21,7 +21,6 @@
 #include "chars.asm"
 #include "screen.asm"
 #include "math.asm"
-#include "level-stars.asm"
 #include "level-scout.asm"
 #include "tiles.asm"
 #include "bits.asm"
