@@ -83,10 +83,9 @@ up: lda #4
     pla
     sta screen_tiles_n,x
     lda level_old_y
-    sec
+    clc
     sbc screen_tiles_n,x
     sta level_old_y
-    dec level_old_y
 n3: lda #0
 n5: jmp add_tile
 .)
