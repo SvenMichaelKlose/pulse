@@ -8,11 +8,8 @@ intro:
     sta $900e
     lda #%11110010  ; Up/locase chars.
     sta $9005
-    lda #<story
-    sta d
-    lda #>story
-    sta d+1
 
+    ; Copy story to screen.
 .(
     ldx #0
 l:  lda story,x
@@ -27,8 +24,9 @@ l2: sta screen+5*22,x
 e:
 .)
 
+    ; Wait until joystick button is pressed.
 .(
-l:  lda #0              ; Fetch joystick status.
+l:  lda #0
     sta $9113
     lda $9111
     and #%00100000
