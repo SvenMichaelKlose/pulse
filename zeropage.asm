@@ -20,18 +20,18 @@ foreground          = framechars / 2 + framechars / 4
 
 score_char0         = foreground
 
-s                       = $00
-d                       = $02
-c                       = $04
-scr                     = $04
-col                     = $06
-scrx                    = $08
-scry                    = $09
-curcol                  = $0a
+s                       = $00   ; source pointer
+d                       = $02   ; destination pointer
+c                       = $04   ; character pointer
+scr                     = $04   ; screen pointer
+col                     = $06   ; colour RAM pointer
+scrx                    = $08   ; X position
+scry                    = $09   ; Y position
+curcol                  = $0a   ; character colour
 
-sl                      = $04
-sm                      = $06
-sr                      = $08
+sl                      = $04   ; scrolling tile left
+sm                      = $06   ; scrolling tile middle
+sr                      = $08   ; scrolling tile right
 
 framecounter            = $0b
 framecounter_high       = $0c
@@ -93,6 +93,10 @@ level_offset            = $3e
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
 sprites_i   = $70   ; Flags.
+                    ; 7 = foreground collision
+                    ; 6 = decorative
+                    ; 5 = deadly
+                    ; 4-0 = sprite type
 sprites_c   = $80   ; Colors.
 sprites_l   = $90   ; Low character addresses.
 sprites_fl  = $a0   ; Function controlling the sprite (low).
