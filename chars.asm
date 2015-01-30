@@ -1,5 +1,6 @@
 reuse_char:
     lda curcol
+    sta no_stars
     ldy scrx
     sta (col),y
     txa

@@ -92,7 +92,8 @@ play_sound_foreground:
     lda #red*16+15
     sta vicreg_auxcol_volume
     bne n2
-n:  lda sound_explosion
+n:  sta no_stars
+    lda sound_explosion
     bne n2
     sta vicreg_noise
 n2:

@@ -90,6 +90,8 @@ collision_y_distance    = $3c
 level_pattern           = $3d
 level_offset            = $3e
 
+no_stars                = $3f
+
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
 sprites_i   = $70   ; Flags.

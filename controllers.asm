@@ -97,12 +97,18 @@ bonus_fun:
     jmp move_left
 
 star_fun:
-    lda framecounter
+.(
+    lda no_stars
+    beq l1
+    lda #black
+    sta sprites_c,x
+l1: lda framecounter
     lsr
     bcc return          ; Only move star every second frame.
     lda sprites_d,x
     beq move_left_blue  ; Slow, blue star.
     bne move_left_a     ; Faster, white star.
+.)
 
 move_left_blue:
     lda #blue
