@@ -15,7 +15,7 @@ retry:
     sta scry
     lda #21
     sta scrx
-    jsr scraddr
+    jsr scrcoladdr
     jsr test_on_foreground
     beq retry
     lda #8

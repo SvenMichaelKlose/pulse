@@ -105,7 +105,7 @@ draw_right:
     lda scrx
     cmp #22             ; Off-screen...
     bcs n2
-    jsr scraddr
+    jsr scrcoladdr
     lda tiles_c,x      ; Plot regular right char.
     clc
     adc #1
@@ -114,7 +114,7 @@ n2: inc scrx
     lda scrx
     cmp #22             ; Off-screen...
     bcs repeat
-    jsr scraddr
+    jsr scrcoladdr
     lda tiles_r,x
     beq plot
     cmp #<background

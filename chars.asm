@@ -87,7 +87,7 @@ cant_use_position:
 .)
 
 scraddr_clear_char:
-    jsr scraddr
+    jsr scrcoladdr
 
 clear_char:
 .(
