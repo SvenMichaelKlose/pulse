@@ -12,6 +12,7 @@ l:  lda score_on_screen,x
     cpx #5              ; +1 life every 1000 points.
     bne l6
     inc lifes
+    inc sound_bonus
 l6: lda #score_char0
     sec
 l2: sta score_on_screen,x
