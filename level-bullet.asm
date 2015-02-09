@@ -23,13 +23,13 @@ n2: lda sprites_x+15    ; Get X distance to player.
     sec
     sbc sprites_x,x
     jsr abs
-    sta tmp
+    sta distance_x
     lda sprites_y+15    ; Get Y distance to player.
     sec
     sbc sprites_y,x
     jsr abs
-    sta tmp2
-    cmp tmp             ; Get incremented axis.
+    sta distance_y
+    cmp distance_x             ; Get incremented axis.
     bcc n5
     lda bullet_init+2   ; Swap axis.
     and #dec_x
@@ -43,19 +43,19 @@ n2: lda sprites_x+15    ; Get X distance to player.
     ora bullet_init+2
     ora #64+step_y
     sta bullet_init+2
-    ldy tmp
-    lda tmp2
-    sta tmp
-    sty tmp2
-n5: lda tmp
+    ldy distance_x
+    lda distance_y
+    sta distance_x
+    sty distance_y
+n5: lda distance_x
     beq d1
-    lda tmp2
+    lda distance_y
     beq d1
-l1: asl tmp             ; Scale fraction up to byte.
+l1: asl distance_x             ; Scale fraction up to byte.
     bcs d1
-    asl tmp2
+    asl distance_y
     bcc l1
-d1: lda tmp2
+d1: lda distance_y
     and #%11110000      ; Save 4 bits fraction.
     sta bullet_init+7
     lda sprites_x,x

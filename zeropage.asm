@@ -52,7 +52,9 @@ foreground_collision    = $18
 
 ;charsetmask             = $19
 tmp                     = $1a
+distance_x              = tmp
 tmp2                    = $1b
+distance_y              = tmp2
 tmp3                    = $1c
 counter                 = $1d
 repetition              = $1e
