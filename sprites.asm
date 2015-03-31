@@ -231,6 +231,7 @@ draw_sprite:
 .(
     txa
     pha
+
     lda #>sprite_gfx
     sta s+1
     lda sprites_l,x
@@ -250,8 +251,8 @@ draw_sprite:
     ; Configure the blitter.
     lda sprites_x,x
     and #%111
-    tay
     sta blit_left_addr+1
+    tay
     lda negate7,y
     sta blit_right_addr+1
 

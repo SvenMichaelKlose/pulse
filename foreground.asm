@@ -50,7 +50,7 @@ draw_foreground:
 r:  rts
 
 no_more_tiles:
-    jmp rotate_trailing_chars:
+    jmp rotate_trailing_chars
 
 n1: inc scrolled_chars
 
@@ -151,7 +151,7 @@ draw_chars:
     lda tiles_l,x
     beq n4
     jsr blit_char
-    bmi n5
+    bmi n5          ; jmp n5
 n4: jsr blit_clear_char
 n5: jsr fetch_foreground_char
     lda tiles_m,x
