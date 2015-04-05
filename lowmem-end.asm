@@ -1,2 +1,2 @@
 lowmem_end:
-* = lowmem+lowmem_end-$200
+    org @(- (+ lowmem lowmem_end) #x200)

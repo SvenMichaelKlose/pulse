@@ -5,8 +5,8 @@ add_sniper:
     asl
     asl
     asl
-    sta sniper_init+1
-    lda #22*8
+    sta @(++ sniper_init)
+    lda #@(* 22 8)
     sta sniper_init
-    ldy #sniper_init-sprite_inits
+    ldy #@(- sniper_init sprite_inits)
     jmp add_sprite

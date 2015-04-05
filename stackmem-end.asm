@@ -1,2 +1,2 @@
 stackmem_end:
-* = stackmem+stackmem_end-$180
+    org @(- (+ stackmem stackmem_end) #x180)

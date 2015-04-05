@@ -1,30 +1,54 @@
 controllers_start:
 
-decorative           = 32
-deadly               = 64
+decorative  = 32
+deadly      = 64
 
+; TODO: Set all positions to 0.
 sprite_inits:
-player_init:     .byte 0, 80, 0, cyan,     <ship, <player_fun, >player_fun, 0
-laser_init:      .byte 18, 80, 1, white+multicolor,  <laser, <laser_fun,  >laser_fun, 0
-#ifdef HAVE_DOUBLE_LASER
-laser_up_init:   .byte 18, 80, 1, yellow,  <laser_up, <laser_up_fun,  >laser_up_fun, 0
-#endif
-laser_down_init: .byte 18, 80, 1, yellow,  <laser_down, <laser_down_fun,  >laser_down_fun, 0
-bullet_init:     .byte 22*8, 89, deadly+2, yellow+multicolor, <bullet, <bullet_fun, >bullet_fun, 0
-scout_init:      .byte 22*8, 89, deadly+3, yellow+multicolor, <scout, <scout_fun, >scout_fun, 0
-sniper_init:     .byte 22*8, 89, deadly+3, white, <sniper, <sniper_fun, >sniper_fun, 0
-bonus_init:      .byte 22*8, 89, 4, green, <bonus, <bonus_fun, >bonus_fun, 0
-star_init:       .byte 22*8, 89, decorative, white, <star, <star_fun, >star_fun, 0
-explosion_init:  .byte 22*8, 89, decorative, yellow, 0, <explosion_fun, >explosion_fun, 15
+player_init:
+    0 80 0 cyan <ship
+    <player_fun >player_fun 0
+laser_init:
+    18 80 1 @(+ white multicolor) <laser
+    <laser_fun >laser_fun 0
+;#ifdef HAVE_DOUBLE_LASER
+laser_up_init:
+    18 80 1 yellow <laser_up
+    <laser_up_fun >laser_up_fun 0
+;#endif
+laser_down_init:
+    18 80 1 yellow <laser_down
+    <laser_down_fun >laser_down_fun 0
+bullet_init:
+    176 89 @(+ deadly 2) @(+ yellow multicolor) <bullet
+    <bullet_fun >bullet_fun 0
+scout_init:
+    176 89 @(+ deadly 3) @(+ yellow multicolor) <scout
+    <scout_fun >scout_fun 0
+sniper_init:
+    176 89 @(+ deadly 3) white <sniper
+    <sniper_fun >sniper_fun 0
+bonus_init:
+    176 89 4 green <bonus
+    <bonus_fun >bonus_fun 0
+star_init:
+    176 89 decorative white <star
+    <star_fun >star_fun 0
+explosion_init:
+    176 89 decorative yellow 0
+    <explosion_fun >explosion_fun 15
 
 sinetab:
-    .byte 0, 0, 2, 4, 6, 10, 14, 14
-    .byte 14, 14, 10, 6, 4, 2, 0, 0
-    .byte 0, 0, 254, 252, 248, 244, 240, 240
-    .byte 240, 240, 244, 248, 252, 254, 0, 0
+    0 0 2 4 6 10 14 14
+    14 14 10 6 4 2 0 0
+    0 0 254 252 248 244 240 240
+    240 240 244 248 252 254 0 0
 
 explosion_colors:
-    .byte red, black+multicolor, yellow+multicolor, white+multicolor
+    red
+    @(+ black multicolor)
+    @(+ yellow multicolor)
+    @(+ white multicolor)
 
     ; Make bonus item if a scout formation has been killed.
 hit_formation:
@@ -33,10 +57,10 @@ hit_formation:
     lda sprites_x,y
     sta bonus_init
     lda sprites_y,y
-    sta bonus_init+1
+    sta @(++ bonus_init)
     tya
     pha
-    ldy #bonus_init-sprite_inits
+    ldy #@(- bonus_init sprite_inits)
     jsr add_sprite
     pla
     tay
@@ -78,15 +102,13 @@ energize_color:
     lda framecounter
     lsr
 toggle_color:
-.(
-    bcc n1
+    bcc +l
     tya
     and #%1000
     ora #white
     tay
-n1: sty sprites_c,x
+l:  sty sprites_c,x
     rts
-.)
 
 bonus_fun:
     ldy #green
@@ -97,18 +119,16 @@ bonus_fun:
     jmp move_left
 
 star_fun:
-.(
     lda no_stars
-    beq l1
+    beq +l
     lda #black
     sta sprites_c,x
-l1: lda framecounter
+l:  lda framecounter
     lsr
     bcc return          ; Only move star every second frame.
     lda sprites_d,x
     beq move_left_blue  ; Slow, blue star.
     bne move_left_a     ; Faster, white star.
-.)
 
 move_left_blue:
     lda #blue
@@ -143,29 +163,28 @@ sniper_fun:
     jmp move_left
 
 bullet_fun:
-.(
     lda #$f6        ; inc zeropage,x
-    sta si
-    sta sw
+    sta +si
+    sta +sw
     lda #sprites_x
-    sta si+1
+    sta @(++ +si)
     ldy #sprites_y
-    sty sw+1
+    sty @(++ +sw)
     lda sprites_i,x
     and #step_y
-    beq n2
-    sty si+1        ; Swap X and Y axis.
+    beq +n2
+    sty @(++ +si)   ; Swap X and Y axis.
     lda #sprites_x
-    sta sw+1
+    sta @(++ +sw)
 n2: ldy #$d6        ; dec zeropage,x
     lda sprites_i,x
     and #dec_x
-    beq n3
-    sty si
+    beq +n3
+    sty +si
 n3: lda sprites_i,x
     and #dec_y
-    beq n4
-    sty sw
+    beq +n4
+    sty +sw
 n4:
 si: inc sprites_y,x
 
@@ -180,7 +199,7 @@ si: inc sprites_y,x
     and #%1111
     sec
     sbc tmp
-    bcs n1
+    bcs +n1
 sw: inc sprites_x,x ; Step along slow axis on underflow.
 n1: and #%1111      ; Put low nibble back into sprite info.
     sta tmp
@@ -192,23 +211,21 @@ n1: and #%1111      ; Put low nibble back into sprite info.
     jsr test_foreground_collision_raw
     bcs remove_if_on_foreground
     bcc remove_if_sprite_is_out
-.)
 
 scout_fun:
-.(
     lda framecounter_high
     cmp #8
-    bcc l2
+    bcc +l2
     jsr random
     and #scout_bullet_probability
-    bne l2
+    bne +l2
     jsr add_bullet
 l2: lda #4
     jsr sprite_left
     lda framecounter_high
     cmp #3
-    bcc l1
-    ldy #yellow+8
+    bcc +l1
+    ldy #@(+ yellow 8)
     jsr energize_color
     lda sprites_x,x
     lsr
@@ -222,7 +239,6 @@ l2: lda #4
     adc scout_formation_y
     sta sprites_y,x
 l1: jmp remove_if_sprite_is_out
-.)
 
 laser_fun:
     jsr hit_enemy
@@ -248,23 +264,23 @@ remove_sprites:
     lda sprites_x,y         ; Initialize explosion sprite.
     sta explosion_init
     lda sprites_y,y
-    sta explosion_init+1
+    sta @(++ explosion_init)
     tya                     ; Remove sprite in slot Y.
     tax
     jsr remove_sprite
     jsr increment_score     ; Increment score by 1.
-    ldy #explosion_init-sprite_inits ; Add explosion sprite.
+    ldy #@(- explosion_init sprite_inits) ; Add explosion sprite.
     jmp add_sprite
 
 return2:
     rts
 
-#ifdef HAVE_DOUBLE_LASER
+;#ifdef HAVE_DOUBLE_LASER
 laser_up_fun:
     lda #8
     jsr sprite_up
     jmp laser_side
-#endif
+;#endif
 
 laser_down_fun:
     lda #8
@@ -282,9 +298,8 @@ laser_side:
     jmp remove_if_sprite_is_out
 
 player_fun:
-.(
     lda death_timer
-    beq d1
+    beq +d1
     jsr random
     sta sprites_l,x
     sta sprites_c,x
@@ -293,7 +308,7 @@ player_fun:
     lda #<ship
     sta sprites_l,x
     dec lifes
-    beq g1
+    beq +g1
     jmp restart
 
 g1: jmp game_over2
@@ -301,11 +316,11 @@ g1: jmp game_over2
 d1: lda #cyan
     sta sprites_c,x
     lda is_invincible
-    beq d2
+    beq +d2
     ldy #red
     jsr energize_color
     dec is_invincible
-    jmp d3
+    jmp +d3
 
 d2: jsr test_foreground_collision_fine
     bcs die
@@ -328,7 +343,7 @@ d3: jsr find_hit
     ldy #10             ; Add ten points.
 l8: jsr increment_score
     dey
-    bne l8
+    bne -l8
 
     lda fire_interval
     cmp #min_fire_interval
@@ -358,12 +373,12 @@ no_bonus_hit:
     beq operate_joystick
 
 die:
-#ifdef INVINCIBLE
-    jmp operate_joystick
-#else
+;#ifdef INVINCIBLE
+;    jmp operate_joystick
+;#else
     lda is_invincible
     bne operate_joystick
-#endif
+;#endif
     lda #120
     sta death_timer
     lda #15
@@ -394,18 +409,18 @@ operate_joystick:
     sta laser_init
 
     lda sprites_x,x
-#ifdef HAVE_DOUBLE_LASER
+;#ifdef HAVE_DOUBLE_LASER
     sta laser_up_init
-#endif
+;#endif
     sta laser_down_init
 
     lda sprites_y,x
-    sta laser_init+1
-#ifdef HAVE_DOUBLE_LASER
-    sta laser_up_init+1
-#endif
-    sta laser_down_init+1
-    inc laser_init+1
+    sta @(++ laser_init)
+;#ifdef HAVE_DOUBLE_LASER
+    sta @(++ laser_up_init)
+;#endif
+    sta @(++ laser_down_init)
+    inc @(++ laser_init)
 
     lda #7
     sta sound_laser
@@ -414,7 +429,7 @@ operate_joystick:
     sta is_firing
 
     lda is_invincible
-    bne i2
+    bne +i2
     lda #white
     sta sprites_c,x
 
@@ -422,28 +437,28 @@ i2: tya                 ;Save joystick status.
     pha
 
     ; Shoot downwards.
-    ldy #laser_init-sprite_inits
+    ldy #@(- laser_init sprite_inits)
     jsr add_sprite
     lda has_double_laser
-    beq s1
-    ldy #laser_down_init-sprite_inits
+    beq +s1
+    ldy #@(- laser_down_init sprite_inits)
     jsr add_sprite
 
-#ifdef HAVE_DOUBLE_LASER
+;#ifdef HAVE_DOUBLE_LASER
     ; Shoot upwards.
     lda has_double_laser
     cmp #2
-    bcc s1
-    ldy #laser_up_init-sprite_inits
+    bcc +s1
+    ldy #@(- laser_up_init sprite_inits)
     jsr add_sprite
-#endif
+;#endif
 
 s1: pla
     tay
 
 no_fire:
     lda is_firing
-    beq i1
+    beq +i1
     dec is_firing
 
     ; Joystick up.
@@ -462,7 +477,7 @@ not_up:
     and #joy_down
     bne not_down
     lda sprites_y,x
-    cmp #22*8-1
+    cmp #@(-- (* 22 8))
     bcs not_down
     lda #4
     jsr sprite_down
@@ -485,22 +500,19 @@ not_left:
     lda $9120
     bmi not_right
     lda sprites_x,x
-    cmp #21*8
+    cmp #@(* 21 8)
     bcs not_right
     lda #3
     jmp sprite_right
 not_right:
 
     rts
-.)
 
 game_over2:
     ; Save hiscore to zeropage.
-.(
     ldx #7
 l:  lda hiscore_on_screen,x
     sta hiscore,x
     dex
-    bpl l
+    bpl -l
     jmp game_over
-.)

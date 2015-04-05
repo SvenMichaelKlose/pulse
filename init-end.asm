@@ -1,7 +1,7 @@
 init_end:
-    .dsb realstart-init_end, 0
+    fill @(- realstart init_end)
 
-#ifndef M3K
-* = realstart
+;#ifndef M3K
+org realstart
 start_main:
-#endif
+;#endif

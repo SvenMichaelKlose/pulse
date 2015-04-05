@@ -1,4 +1,4 @@
-realstart   = $1000 + charsetsize
+realstart = @(+ #x1000 charsetsize)
 
 main:
     sei
@@ -8,21 +8,17 @@ main:
     sta $911e       ; Disable restore key NMIs.
 
     ; Copy code from charset to $200-3ff.
-.(
     ldx #0
 l:  lda lowmem,x
     sta $200,x
-    lda lowmem+$100,x
+    lda @(+ lowmem #x100),x
     sta $300,x
     dex
-    bne l
-.)
+    bne -l
 
     ; Copy code from charset to $180-1df.
-.(
     ldx #$5f
 l:  lda stackmem,x
     sta $180,x
     dex
-    bpl l
-.)
+    bpl -l

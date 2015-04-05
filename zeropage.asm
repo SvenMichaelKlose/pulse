@@ -1,22 +1,22 @@
-#ifdef M3K
-numchars    = 256
-#else
+;#ifdef M3K
+;numchars    = 256
+;#else
 numchars    = 128
-#endif
+;#endif
 
 numsprites  = 16
 numtiles    = 32
 charset     = $1000
 
-charsetsize         = numchars * 8
-charsetmask         = numchars-1
-framesize           = charsetsize / 2
-framemask           = numchars / 2
-framechars          = numchars / 2
+charsetsize         = @(* numchars 8)
+charsetmask         = @(-- numchars)
+framesize           = @(half charsetsize)
+framemask           = @(half numchars)
+framechars          = @(half numchars)
 
 first_sprite_char   = 1
 
-foreground          = framechars / 2 + framechars / 4
+foreground          = @(+ (half framechars) (quarter framechars))
 
 score_char0         = foreground
 

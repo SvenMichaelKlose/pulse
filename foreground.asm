@@ -1,6 +1,6 @@
-first_trailing_char  = (foreground+framemask) * 8 + charset
-second_trailing_char = (foreground+framemask+1) * 8 + charset
-first_tile           = (foreground+framemask+2) * 8 + charset
+first_trailing_char  = @(+ charset (* 8 (+ foreground framemask)))
+second_trailing_char = @(+ charset (* 8 (+ foreground framemask 1)))
+first_tile           = @(+ charset (* 8 (+ foreground framemask 2)))
 
 test_on_foreground:
     ldy scrx
@@ -10,13 +10,12 @@ test_on_foreground:
     rts
 
 add_tile:
-.(
     pha
     lda free_tiles
     tax
     clc
     adc #1
-    and #numtiles-1
+    and #@(-- numtiles)
     sta free_tiles
     lda #22
     clc
@@ -30,7 +29,6 @@ add_tile:
     sta screen_tiles_i,x
     pla
     rts
-.)
 
 fetch_foreground_char:
     lda next_foreground_char
@@ -38,14 +36,13 @@ fetch_foreground_char:
     jmp fetch_char
 
 draw_foreground:
-.(
     lda scrolled_bits
     dec scrolled_bits
     and #%111
-    beq n1
+    beq +n1
     lda framecounter
     lsr
-    bcs r
+    bcs +r
     jmp rotate_tiles
 r:  rts
 
@@ -57,18 +54,18 @@ n1: inc scrolled_chars
     ; Reset character allocations.
     lda #0
     sta active_tiles
-    ldx #tiles_col-tiles_c-1
+    ldx #@(- tiles_col tiles_c 1)
 i1: sta tiles_c,x
     dex
-    bpl i1
-    lda #framemask+foreground+2
+    bpl -i1
+    lda #@(+ framemask foreground 2)
     sta next_foreground_char
     lda leftmost_tile
     sta counter
 
 loop:
     lda counter
-    and #numtiles-1
+    and #@(-- numtiles)
     cmp free_tiles
     beq no_more_tiles
 
@@ -104,7 +101,7 @@ draw_right:
     inc scrx
     lda scrx
     cmp #22             ; Off-screen...
-    bcs n2
+    bcs +n2
     jsr scrcoladdr
     lda tiles_c,x      ; Plot regular right char.
     clc
@@ -119,12 +116,12 @@ n2: inc scrx
     beq plot
     cmp #<background
     bne try_foreground
-    lda #framemask+foreground
+    lda #@(+ framemask foreground)
     bne plot
 try_foreground:
     cmp #<bg_t
     bne repeat
-    lda #framemask+foreground+1
+    lda #@(+ framemask foreground 1)
 plot:
     sta (scr),y
 repeat:
@@ -139,19 +136,19 @@ repeat:
 remove_tile:
     inc leftmost_tile
     lda leftmost_tile
-    and #numtiles-1
+    and #@(-- numtiles)
     sta leftmost_tile
 next_tile:
     inc counter
-    jmp loop
+    jmp -loop
 
 draw_chars:
     jsr fetch_foreground_char
     sta tiles_c,x
     lda tiles_l,x
-    beq n4
+    beq +n4
     jsr blit_char
-    bmi n5          ; jmp n5
+    bmi +n5          ; jmp n5
 n4: jsr blit_clear_char
 n5: jsr fetch_foreground_char
     lda tiles_m,x
@@ -161,40 +158,38 @@ n5: jsr fetch_foreground_char
     sta tilelist_r,y
     inc active_tiles
     jmp restart_plotting_chars
-.)
 
 rotate_tiles:
-.(
     lda #<first_tile    ; Set pointer to left char.
     sta sl
     lda #>first_tile
-    sta sl+1
-    sta sm+1
+    sta @(++ sl)
+    sta @(++ sm)
 
     ldx #0
 next_tile:
     cpx active_tiles
     beq rotate_trailing_chars
 
-    lda sl              ; Set pointer to middle char.
+    lda sl             ; Set pointer to middle char.
     clc
     adc #8
     sta sm
 
     lda tilelist_r,x    ; Set pointer to right char.
-    beq n3
+    beq +n3
     cmp #<background
-    bne n4
-    lda #framemask+foreground
-    jmp n3
+    bne +n4
+    lda #@(+ framemask foreground)
+    jmp +n3
 n4: cmp #<bg_t
-    bne n3
-    lda #framemask+foreground+1
+    bne +n3
+    lda #@(+ framemask foreground 1)
 n3: jsr get_char_addr
     lda d
     sta sr
-    lda d+1
-    sta sr+1
+    lda @(++ d)
+    sta @(++ sr)
 
     ldy #7              ; Rotate.
 l:  lda (sr),y
@@ -215,7 +210,7 @@ l:  lda (sr),y
     rol
     sta (sl),y
     dey
-    bpl l
+    bpl -l
 
     lda sl          ; Step to next tile in charset.
     clc
@@ -223,14 +218,12 @@ l:  lda (sr),y
     sta sl
     inx
     jmp next_tile
-.)
 
 rotate_trailing_chars:
-.(
     lda #<first_trailing_char
     sta sl
     lda #>first_trailing_char
-    sta sl+1
+    sta @(++ sl)
     ldy #15
 l:  lda (sl),y
     asl
@@ -239,6 +232,5 @@ l:  lda (sl),y
     adc #0
     sta (sl),y
     dey
-    bpl l
+    bpl -l
     rts
-.)

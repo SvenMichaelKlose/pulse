@@ -2,17 +2,15 @@
 ;
 ; Y: descriptor of new sprite in sprite_inits
 add_sprite:
-.(
     stx tmp
     sty tmp2
 
-    ldx #numsprites-1
+    ldx #@(-- numsprites)
 l4: lda sprites_i,x
     and #decorative
     bne add_sprite_at_x
     dex
-    bpl l4
-.)
+    bpl -l4
 
 sprite_added:
     ldx tmp
@@ -28,34 +26,32 @@ remove_sprite:
 
     ; Add background star.
     jsr random
-    sta star_init       ; Set X position.
+    sta star_init           ; Set X position.
     jsr random
     and #%11111000
-    sta star_init+1     ; Set Y position.
+    sta @(++ star_init)     ; Set Y position.
     jsr random
     and #3
-    sta star_init+7     ; Set speed.
-    ldy #star_init-sprite_inits
+    sta @(+ star_init 7)    ; Set speed.
+    ldy #@(- star_init sprite_inits)
 
 ; Replace decorative sprite by new one.
 ;
 ; X: sprite index
 ; Y: descriptor of new sprite in sprite_inits
 add_sprite_at_x:
-.(
     lda #sprites_x      ; Copy descriptor to sprite table.
-    sta selfmod+1
+    sta @(++ +selfmod)
 l3: lda sprite_inits,y
 selfmod:
     sta sprites_x,x
     iny
-    lda selfmod+1
+    lda @(++ -selfmod)
     cmp #sprites_d
     beq sprite_added
     adc #numsprites
-    sta selfmod+1
-    jmp l3
-.)
+    sta @(++ -selfmod)
+    jmp -l3
 
 ; Move sprite X up A pixels.
 sprite_up:
@@ -82,18 +78,16 @@ sprite_right:
 ; Test if sprite is outside the screen.
 ; Return carry flag set when true.
 test_sprite_out:
-.(
     lda sprites_x,x
     clc
     adc #8
-    cmp #23*8
-    bcs c1
+    cmp #@(* 23 8)
+    bcs +c1
     lda sprites_y,x
     clc
     adc #8
-    cmp #24*8
+    cmp #@(* 24 8)
 c1: rts
-.)
 
 ; Find collision with other sprite.
 ;
@@ -103,30 +97,29 @@ c1: rts
 ; C: Clear when a hit was found.
 ; Y: sprite index
 find_hit:
-.(
     txa
     pha
     stx tmp
-    ldy #numsprites-1
+    ldy #@(-- numsprites)
 
 l1: cpy tmp             ; Skip same sprite.
-    beq n1
+    beq +n1
     lda sprites_i,y     ; Skip decorative sprite.
     and #decorative
-    bne n1
+    bne +n1
 
     lda sprites_x,x     ; Get X distance.
     sec
     sbc sprites_x,y
     jsr abs
     cmp #8
-    bcs n1              ; To far off horizontally...
+    bcs +n1             ; To far off horizontally...
 
     ; Vertically narrow down collision box of horizontal laser.
     lda #8
     sta collision_y_distance
     lda sprites_i,y
-    cmp #deadly+2
+    cmp #@(+ deadly 2)
     bne not_a_hoizontal_laser
     dec collision_y_distance
     dec collision_y_distance
@@ -137,34 +130,32 @@ not_a_hoizontal_laser:
     sbc sprites_y,y
     jsr abs
     cmp collision_y_distance
-    bcc c1              ; Got one!
+    bcc +c1             ; Got one!
 
 n1: dey
-    bpl l1
+    bpl -l1
     sec
 
 c1: pla
     tax
     rts
-.)
 
 ; Draw all sprites.
 draw_sprites:
-.(
     ; Draw decorative sprites.
-    ldx #numsprites-1
+    ldx #@(-- numsprites)
 l2: lda sprites_i,x
     and #decorative
-    beq n3
+    beq +n3
     jsr draw_sprite
 n3: dex
-    bpl l2
+    bpl -l2
 
     ; Draw other sprites.
-    ldx #numsprites-1
+    ldx #@(-- numsprites)
 l1: lda sprites_i,x
     and #decorative
-    bne n1
+    bne +n1
 
     sta foreground_collision
 
@@ -174,18 +165,16 @@ l1: lda sprites_i,x
     lda sprites_i,x
     and #%01111111
     ldy foreground_collision
-    beq n2
+    beq +n2
     ora #128
 n2: sta sprites_i,x
 
 n1: dex
-    bpl l1
-.)
+    bpl -l1
 
 ; Remove remaining chars of sprites in old frame.
 clean_screen:
-.(
-    ldx #numsprites-1
+    ldx #@(-- numsprites)
 l1: ; Remove old chars.
     lda sprites_ox,x
     sta scrx                ; (upper left)
@@ -207,33 +196,29 @@ l1: ; Remove old chars.
     jsr pixel_to_char
     sta sprites_oy,x
 
-n1: dex
-    bpl l1
+    dex
+    bpl -l1
     rts
-.)
 
 xpixel_to_char:
     lda sprites_x,x
 pixel_to_char:
-.(
-    cmp #28*8
-    bcs n
+    cmp #@(* 28 8)
+    bcs +n
     lsr
     lsr
     lsr
     rts
 n:  lda #$ff
     rts
-.)
 
 ; Draw a single sprite.
 draw_sprite:
-.(
     txa
     pha
 
     lda #>sprite_gfx
-    sta s+1
+    sta @(++ s)
     lda sprites_l,x
     sta s
     sta sprite_data_top
@@ -251,10 +236,10 @@ draw_sprite:
     ; Configure the blitter.
     lda sprites_x,x
     and #%111
-    sta blit_left_addr+1
+    sta @(++ blit_left_addr)
     tay
     lda negate7,y
-    sta blit_right_addr+1
+    sta @(++ blit_right_addr)
 
     lda sprites_y,x
     and #%111
@@ -268,7 +253,7 @@ draw_sprite:
     jsr prepare_upper_blit
     jsr blit_right
 
-    beq n2
+    beq +n2
 
     ; Draw upper right.
     inc scrx
@@ -277,7 +262,7 @@ draw_sprite:
     dec scrx
 
 n2: lda sprite_shift_y
-    beq n1
+    beq +n1
 
     ; Draw lower left.
     inc scry
@@ -290,7 +275,7 @@ n2: lda sprite_shift_y
     dey
     jsr blit_right
 
-    beq n1
+    beq +n1
 
     ; Draw lower right.
     inc scrx
@@ -303,7 +288,6 @@ n2: lda sprite_shift_y
 n1: pla
     tax
     rts
-.)
 
 prepare_upper_blit:
     jsr get_char

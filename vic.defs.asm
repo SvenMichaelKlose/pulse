@@ -1,4 +1,4 @@
-screensize = 22*23
+screensize = @(* 22 23)
 charset_upcase = $8000
 charset_upcase_reversed = $8400
 charset_locase = $8800

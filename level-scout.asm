@@ -1,8 +1,7 @@
 add_scout:
-.(
     lda framecounter
     and #%01111111
-    bne l1
+    bne +l1
 retry:
     jsr random
     and #%01111000
@@ -24,15 +23,14 @@ retry:
     lda #3
     sta adding_scout_delay
 l1: lda adding_scout
-    beq l2
+    beq +l2
     dec adding_scout_delay
-    bne l2
+    bne +l2
     lda #3
     sta adding_scout_delay
     dec adding_scout
     lda scout_formation_y
-    sta scout_init+1
-    ldy #scout_init-sprite_inits
+    sta @(++ scout_init)
+    ldy #@(- scout_init sprite_inits)
     jmp add_sprite
 l2: rts
-.)

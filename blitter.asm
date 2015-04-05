@@ -13,8 +13,7 @@ _blit_right_loop:
     lda (s),y
     clc
 blit_right_addr:
-.(
-    bcc s1
+    bcc +s1
     lsr
     lsr
     lsr
@@ -26,9 +25,8 @@ s1: ora (d),y
     sta (d),y
     dey
     bpl _blit_right_loop
-    lda blit_left_addr+1
+    lda @(++ blit_left_addr)
     rts
-.)
 
 ; Blit bytes from s to d, shifting them to the left.
 ;
@@ -45,8 +43,7 @@ _blit_left_loop:
     lda (s),y
     clc
 blit_left_addr:
-.(
-    bcc s1
+    bcc +s1
     asl
     asl
     asl
@@ -60,26 +57,21 @@ s1: ora (d),y
     dey
     bpl _blit_left_loop
     rts
-.)
 
 blit_char:
     ldy #7
 blit_copy:
-.(
     sta s
 l1: lda (s),y
     sta (d),y
     dey
-    bpl l1
+    bpl -l1
     rts
-.)
 
 blit_clear_char:
-.(
     ldy #7
     lda #0
 l1: sta (d),y
     dey
-    bpl l1
+    bpl -l1
     rts
-.)

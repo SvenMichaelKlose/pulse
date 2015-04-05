@@ -7,11 +7,11 @@ scrcoladdr:
     sta scr
     sta col
     cpy #12
-    lda #screen_h/2
+    lda #@(half screen_h)
     rol
-    sta scr+1
+    sta @(++ scr)
     and #1
     ora #>colors
-    sta col+1
+    sta @(++ col)
     ldy scrx
     rts
