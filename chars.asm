@@ -47,11 +47,11 @@ fetch_char:
     rts
 
 test_position:
-    lda scrx
-    cmp #22
-    bcs +e
     lda scry
     cmp #23
+    bcs +e
+    lda scrx
+    cmp #22
 e:  rts
 
 scraddr_get_char:
@@ -60,7 +60,7 @@ scraddr_get_char:
 get_char:
     jsr test_position
     bcs cant_use_position
-    ldy scrx
+    tay
     lda (scr),y
     beq +l2             ; Screen char isn't used, yet…
     tax
@@ -91,7 +91,7 @@ scraddr_clear_char:
 clear_char:
     jsr test_position
     bcs +r
-    ldy scrx
+    tay
     lda (scr),y
     beq +r              ; Nothing to clear…
     and #foreground
