@@ -27,15 +27,16 @@
         "init-end.asm"
 
         "bits.asm"
-        "sprites.asm"
-        "controllers.asm"
-        "main.asm"
-        "foreground.asm"
-        "level.asm"
         "gfx-sprites.asm"
         "gfx-tiles.asm"
         "tiles.asm"
         "level-data.asm"
-        "level-patterns.asm"))
+        "level-patterns.asm"
+        "sprites.asm"
+        "controllers.asm"
+        "grenade.asm"
+        "main.asm"
+        "foreground.asm"
+        "level.asm"))
 (make-vice-commands "vice.txt")
 (quit)

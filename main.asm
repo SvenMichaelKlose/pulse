@@ -219,4 +219,5 @@ increment_framecounter:
     inc framecounter_high
 n:
 
+    jsr grenade
     jmp mainloop

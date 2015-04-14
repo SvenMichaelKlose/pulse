@@ -259,6 +259,7 @@ remove_if_on_foreground:
 
 remove_sprites:
     jsr remove_sprite       ; Remove sprite in slot X.
+explode:
     lda #7                  ; Start explosion sound.
     sta sound_explosion
     lda sprites_x,y         ; Initialize explosion sprite.
@@ -359,6 +360,7 @@ make_double_laser_or_invincible:
     jsr random
     lsr
     bcc make_invincible
+    jsr start_grenade
     inc has_double_laser
     bne operate_joystick
 
@@ -409,16 +411,12 @@ operate_joystick:
     sta laser_init
 
     lda sprites_x,x
-;#ifdef HAVE_DOUBLE_LASER
     sta laser_up_init
-;#endif
     sta laser_down_init
 
     lda sprites_y,x
     sta @(++ laser_init)
-;#ifdef HAVE_DOUBLE_LASER
     sta @(++ laser_up_init)
-;#endif
     sta @(++ laser_down_init)
     inc @(++ laser_init)
 
@@ -444,14 +442,12 @@ i2: tya                 ;Save joystick status.
     ldy #@(- laser_down_init sprite_inits)
     jsr add_sprite
 
-;#ifdef HAVE_DOUBLE_LASER
     ; Shoot upwards.
     lda has_double_laser
     cmp #2
     bcc +s1
     ldy #@(- laser_up_init sprite_inits)
     jsr add_sprite
-;#endif
 
 s1: pla
     tay

@@ -28,7 +28,7 @@ n2: lda @(+ sprites_x 15)    ; Get X distance to player.
     sbc sprites_y,x
     jsr abs
     sta distance_y
-    cmp distance_x             ; Get incremented axis.
+    cmp distance_x           ; Get incremented axis.
     bcc +n5
     lda @(+ bullet_init 2)   ; Swap axis.
     and #dec_x

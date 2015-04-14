@@ -50,7 +50,7 @@ free_tiles              = $16
 next_foreground_char    = $17
 foreground_collision    = $18
 
-;charsetmask             = $19
+grenade_counter         = $19
 tmp                     = $1a
 distance_x              = tmp
 tmp2                    = $1b
