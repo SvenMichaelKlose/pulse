@@ -1,58 +1,52 @@
-grenade_center:
-    0
+grenade_left: 0
+grenade_right: 0
 
 start_grenade:
-
     lda @(+ sprites_x 15)
     lsr
     lsr
     lsr
-    sta grenade_center
-    jmp draw_grenade
-
-end_grenade:
-    lda #0
-    sta grenade_counter                                           
+    sta grenade_left
+    sta grenade_right
+    lda #22
+    sta grenade_counter
     rts
 
 grenade:
     lda grenade_counter
     beq +done
-    cmp #22
-    bcs end_grenade
+    dec grenade_counter
 
 draw_grenade:
     ldy #14
 l:  tya
     pha
     lda sprites_i,y
-    and #decorative
-    bne +n
+    and #deadly
+    beq +n
     jsr explode
 n:  pla
     tay
     dey
     bpl -l
-    inc grenade_counter
 
-    lda grenade_center
-    clc
-    adc grenade_counter
-    sta scrx
-    lda #0
-    jsr grenade_bar
-    inc scrx
-    lda #128
-    jsr grenade_bar
+    dec grenade_left
+    inc grenade_right
 
-    lda grenade_center
-    sec
-    sbc grenade_counter
+    lda grenade_left
     sta scrx
     lda #128
     jsr grenade_bar
     inc scrx
     lda #0
+    jsr grenade_bar
+
+    lda grenade_right
+    sta scrx
+    lda #0
+    jsr grenade_bar
+    inc scrx
+    lda #128
 
 grenade_bar:
     sta @(++ grenade_bar_color)
