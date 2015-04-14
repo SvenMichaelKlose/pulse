@@ -113,7 +113,7 @@ l1: cpy tmp             ; Skip same sprite.
     sbc sprites_x,y
     jsr abs
     cmp #8
-    bcs +n1             ; To far off horizontally...
+    bcs +n1             ; Too far off horizontally...
 
     ; Vertically narrow down collision box of horizontal laser.
     lda #8
