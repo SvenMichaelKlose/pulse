@@ -27,7 +27,7 @@ l:  lda #0
     sta $9113
     lda $9111
     and #%00100000
-;    bne -l
+    bne -l
 
     ; Avoid screen trash.
     ldy #black
