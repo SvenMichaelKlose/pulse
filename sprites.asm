@@ -8,7 +8,7 @@ add_sprite:
     ldx #@(-- numsprites)
 l4: lda sprites_i,x
     and #decorative
-    bne add_sprite_at_x
+    bne replace_sprite
     dex
     bpl -l4
 
@@ -39,7 +39,7 @@ remove_sprite:
 ;
 ; X: sprite index
 ; Y: descriptor of new sprite in sprite_inits
-add_sprite_at_x:
+replace_sprite:
     lda #sprites_x      ; Copy descriptor to sprite table.
     sta @(++ +selfmod)
 l3: lda sprite_inits,y

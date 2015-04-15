@@ -1,18 +1,18 @@
 step_y = 16
-dec_x  = 8
-dec_y  = 4
+inc_x  = 8
+inc_y  = 4
 
 add_bullet:
     inc sound_foreground
 add_bullet_no_sound:
-    lda #@(/ deadly dec_x)
+    lda #@(/ deadly step_y)
     sta tmp
     lda @(+ sprites_x 15)    ; Increment or decrement X?
     cmp sprites_x,x
-    rol tmp
+    rol tmp                  ; (inc_x)
     lda @(+ sprites_y 15)    ; Increment or decrement Y?
     cmp sprites_y,x
-    rol tmp
+    rol tmp                  ; (inc_y)
     rol tmp
     rol tmp
 
@@ -32,11 +32,11 @@ add_bullet_no_sound:
 
     lda tmp                  ; Swap axis.
     tay
-    and #dec_x
+    and #inc_x
     asl
     sta tmp
     tya
-    and #dec_y
+    and #inc_y
     lsr
     ora tmp
     ora #@(+ deadly step_y)
@@ -50,10 +50,12 @@ n5: lda distance_x
     beq +d1
     lda distance_y
     beq +d1
+
 l1: asl distance_x             ; Scale fraction up to byte.
     bcs +d1
     asl distance_y
     bcc -l1
+
 d1: lda distance_y
     and #%11110000      ; Save 4 bits fraction.
     sta @(+ bullet_init 7)

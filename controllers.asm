@@ -177,11 +177,11 @@ bullet_fun:
     sta @(++ +sw)
 n2: ldy #$d6        ; dec zeropage,x
     lda sprites_i,x
-    and #dec_x
+    and #inc_x
     bne +n3
     sty +si
 n3: lda sprites_i,x
-    and #dec_y
+    and #inc_y
     bne +n4
     sty +sw
 n4:
@@ -372,10 +372,10 @@ no_bonus_hit:
 
 die:
 ;#ifdef INVINCIBLE
-;    jmp operate_joystick
+    jmp operate_joystick
 ;#else
-    lda is_invincible
-    bne operate_joystick
+;    lda is_invincible
+;    bne operate_joystick
 ;#endif
     lda #120
     sta death_timer

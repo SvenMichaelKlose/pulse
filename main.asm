@@ -55,7 +55,7 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     sta lifes
     ldx #@(-- numsprites)
     ldy #@(- player_init sprite_inits)
-    jsr add_sprite_at_x
+    jsr replace_sprite
 
 make_stars:
     ldx #@(- numsprites 2)
