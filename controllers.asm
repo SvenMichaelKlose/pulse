@@ -171,7 +171,7 @@ bullet_fun:
     sty @(++ +sw)
     lda sprites_i,x
     and #step_y
-    bne +n2
+    beq +n2
     sty @(++ +si)   ; Swap X and Y axis.
     lda #sprites_x
     sta @(++ +sw)
