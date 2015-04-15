@@ -4,21 +4,23 @@ dec_y  = 4
 
 add_bullet:
     inc sound_foreground
+add_bullet_no_sound:
     lda #64
-    sta @(+ bullet_init 2)
+    tay
     lda @(+ sprites_x 15)    ; Increment or decrement X?
     cmp sprites_x,x
     bcs +n1
-    lda @(+ bullet_init 2)
+    tya
     ora #dec_x
-    sta @(+ bullet_init 2)
+    tay
 n1: lda @(+ sprites_y 15)    ; Increment or decrement Y?
     cmp sprites_y,x
     bcs +n2
-    lda @(+ bullet_init 2)
+    tya
     ora #dec_y
-    sta @(+ bullet_init 2)
-n2: lda @(+ sprites_x 15)    ; Get X distance to player.
+    tay
+n2: sty @(+ bullet_init 2)   ; Swap axis.
+    lda @(+ sprites_x 15)    ; Get X distance to player.
     sec
     sbc sprites_x,x
     jsr abs
