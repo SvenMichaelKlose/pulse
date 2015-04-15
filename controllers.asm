@@ -151,15 +151,19 @@ explosion_fun:
     jmp remove_sprite
 
 sniper_fun:
-    lda framecounter_high
-    beq move_left
     jsr random
     and #sniper_bullet_probability
     bne move_left
     jsr add_bullet
     jmp move_left
 
+;a:  jsr add_bullet_no_sound
+;    jmp remove_sprite
+
 bullet_fun:
+;    jsr random
+;    and #%00000111
+;    beq -a
     lda #$f6        ; inc zeropage,x
     sta +si
     sta +sw
@@ -169,18 +173,18 @@ bullet_fun:
     sty @(++ +sw)
     lda sprites_i,x
     and #step_y
-    beq +n2
+    bne +n2
     sty @(++ +si)   ; Swap X and Y axis.
     lda #sprites_x
     sta @(++ +sw)
 n2: ldy #$d6        ; dec zeropage,x
     lda sprites_i,x
     and #dec_x
-    beq +n3
+    bne +n3
     sty +si
 n3: lda sprites_i,x
     and #dec_y
-    beq +n4
+    bne +n4
     sty +sw
 n4:
 si: inc sprites_y,x
@@ -273,12 +277,10 @@ explode:
 return2:
     rts
 
-;#ifdef HAVE_DOUBLE_LASER
 laser_up_fun:
     lda #8
     jsr sprite_up
     jmp laser_side
-;#endif
 
 laser_down_fun:
     lda #8
