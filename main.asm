@@ -15,6 +15,8 @@ l1: lda #0
     sta @(-- (+ charset (* 8 (+ score_char0 10)))),x
     lda @(-- hiscore),x             ; Copy hiscore to screen.
     sta @(-- hiscore_on_screen),x
+    lda #$ff
+    sta @(+ charset (* 64 8))
 l3: dex
     bne -l1
 

@@ -35,9 +35,8 @@ n:  pla
 
     lda grenade_left
     sta scrx
-    lda #128
+    lda #64
     jsr grenade_bar
-    inc scrx
     lda #0
     jsr grenade_bar
 
@@ -45,8 +44,7 @@ n:  pla
     sta scrx
     lda #0
     jsr grenade_bar
-    inc scrx
-    lda #128
+    lda #64
 
 grenade_bar:
     sta @(++ grenade_bar_color)
@@ -67,4 +65,5 @@ grenade_bar_color:
 n:  dec scry
     bpl -l
 done:
+    inc scrx
     rts
