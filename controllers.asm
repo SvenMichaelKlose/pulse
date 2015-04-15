@@ -3,7 +3,6 @@ controllers_start:
 decorative  = 32
 deadly      = 64
 
-; TODO: Set all positions to 0.
 sprite_inits:
 player_init:
     0 80 0 cyan <ship
@@ -11,11 +10,9 @@ player_init:
 laser_init:
     18 80 1 @(+ white multicolor) <laser
     <laser_fun >laser_fun 0
-;#ifdef HAVE_DOUBLE_LASER
 laser_up_init:
     18 80 1 yellow <laser_up
     <laser_up_fun >laser_up_fun 0
-;#endif
 laser_down_init:
     18 80 1 yellow <laser_down
     <laser_down_fun >laser_down_fun 0
