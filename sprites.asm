@@ -163,10 +163,9 @@ l1: lda sprites_i,x
 
     ; Save foreground collision.
     lda sprites_i,x
-    and #%01111111
-    ldy foreground_collision
-    beq +n2
-    ora #128
+    asl
+    lsr foreground_collision
+    ror
 n2: sta sprites_i,x
 
 n1: dex

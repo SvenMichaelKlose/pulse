@@ -1,29 +1,30 @@
 controllers_start:
 
-decorative  = 32
-deadly      = 64
+decorative   = 32
+deadly       = 64
+fg_collision = 128
 
 sprite_inits:
 player_init:
     0 80 0 cyan <ship
     <player_fun >player_fun 0
 laser_init:
-    18 80 1 @(+ white multicolor) <laser
+    18 80 0 @(+ white multicolor) <laser
     <laser_fun >laser_fun 0
 laser_up_init:
-    18 80 1 yellow <laser_up
+    18 80 0 yellow <laser_up
     <laser_up_fun >laser_up_fun 0
 laser_down_init:
-    18 80 1 yellow <laser_down
+    18 80 0 yellow <laser_down
     <laser_down_fun >laser_down_fun 0
 bullet_init:
-    176 89 @(+ deadly 2) @(+ yellow multicolor) <bullet
+    176 89 @(+ deadly 0) @(+ yellow multicolor) <bullet
     <bullet_fun >bullet_fun 0
 scout_init:
-    176 89 @(+ deadly 3) @(+ yellow multicolor) <scout
+    176 89 @(+ deadly 1) @(+ yellow multicolor) <scout
     <scout_fun >scout_fun 0
 sniper_init:
-    176 89 @(+ deadly 3) white <sniper
+    176 89 @(+ deadly 2) white <sniper
     <sniper_fun >sniper_fun 0
 bonus_init:
     176 89 4 green <bonus
@@ -61,6 +62,7 @@ hit_formation:
     jsr add_sprite
     pla
     tay
+sec_return:
     sec
     rts
 
@@ -68,13 +70,9 @@ hit_enemy:
     jsr find_hit
     bcs clc_return
     lda sprites_i,y
-    and #%00111111
-    cmp #3              ; Scout?
-    beq hit_formation
-    cmp #2              ; Sniper?
-    bne clc_return
-sec_return:
-    sec
+    lsr                 ; Scout?
+    bcs hit_formation
+    lsr                 ; Sniper?
     rts
 
 clc_return:
@@ -327,9 +325,8 @@ d2: jsr test_foreground_collision_fine
 d3: jsr find_hit
     bcs operate_joystick ; Nothing hit...
 
-    lda sprites_i,y
-    and #%00111111
-    cmp #4              ; Bonus.
+    lda sprites_fl,y
+    cmp #<bonus_fun      ; Bonus.
     bne no_bonus_hit
 
     lda #15             ; Play the "Ping!" sound.
