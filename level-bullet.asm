@@ -2,30 +2,30 @@ step_y = 16
 inc_x  = 8
 inc_y  = 4
 
+absolute_difference:
+    sta tmp2
+    sty tmp
+    cmp tmp
+    bcc +n
+    sbc tmp
+    jmp +l
+n:  lda tmp
+    sec
+    sbc tmp2
+l:  rts
+
 add_bullet:
     inc sound_foreground
 add_bullet_no_sound:
-    ; Get distances to player.
-
+    ; Get distance to player.
     lda @(+ sprites_x 15)
-    cmp sprites_x,x
-    bcc +n
-    sbc sprites_x,x
-    jmp +l
-n:  lda sprites_x,x
-    sec
-    sbc @(+ sprites_x 15)
-l:  sta distance_x
-
+    ldy sprites_x,x
+    jsr absolute_difference
+    sta distance_x
     lda @(+ sprites_y 15)
-    cmp sprites_y,x
-    bcc +n
-    sbc sprites_y,x
-    jmp +l
-n:  lda sprites_y,x
-    sec
-    sbc @(+ sprites_y 15)
-l:  sta distance_y
+    ldy sprites_y,x
+    jsr absolute_difference
+    sta distance_y
 
     lda #@(/ deadly decorative)
     sta tmp
