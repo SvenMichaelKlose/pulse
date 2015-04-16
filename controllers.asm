@@ -162,29 +162,39 @@ bullet_fun:
 ;    jsr random
 ;    and #%00000111
 ;    beq -a
+    ; Initialize increment/decrement instructions.
     lda #$f6        ; inc zeropage,x
     sta +si
     sta +sw
-    lda #sprites_x
-    sta @(++ +si)
+    ldy #$d6        ; dec zeropage,x
+    lda sprites_i,x
+    lsr
+    lsr
+    lsr             ; (inc_y to carry)
+    bcs +n
+    sty +sw
+n:
+    lsr             ; (inc_x to carry)
+    bcs +n
+    sty +si
+n:
+
+    ldy #sprites_x
+    sty @(++ +si)
     ldy #sprites_y
     sty @(++ +sw)
-    lda sprites_i,x
-    and #step_y
-    beq +n2
-    sty @(++ +si)   ; Swap X and Y axis.
+
+    lsr             ; (step_y to carry)
+    bcs +n
+    sty @(++ +si)
     lda #sprites_x
     sta @(++ +sw)
-n2: ldy #$d6        ; dec zeropage,x
-    lda sprites_i,x
-    and #inc_x
-    bne +n3
+    lda +si
+    ldy +sw
     sty +si
-n3: lda sprites_i,x
-    and #inc_y
-    bne +n4
-    sty +sw
-n4:
+    sta +sw
+n:
+
 si: inc sprites_y,x
 
     lda sprites_d,x ; Subtract high nibble from low nibble.
@@ -196,9 +206,10 @@ si: inc sprites_y,x
     sta tmp
     tya
     and #%1111
-    sec
-    sbc tmp
-    bcs +n1
+    clc
+    adc tmp
+    cmp #%10000
+    bcc +n1
 sw: inc sprites_x,x ; Step along slow axis on underflow.
 n1: and #%1111      ; Put low nibble back into sprite info.
     sta tmp
