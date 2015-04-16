@@ -28,7 +28,7 @@ add_tile:
     tya
     sta screen_tiles_i,x
     pla
-    rts
+r:  rts
 
 fetch_foreground_char:
     lda next_foreground_char
@@ -42,9 +42,8 @@ draw_foreground:
     beq +n1
     lda framecounter
     lsr
-    bcs +r
+    bcs -r
     jmp rotate_tiles
-r:  rts
 
 no_more_tiles:
     jmp rotate_trailing_chars
