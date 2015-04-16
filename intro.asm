@@ -48,7 +48,7 @@ l:  sta hiscore,x
     jmp game_over
 
 ascii2petscii:
-    cmp #@(+ #\X 2)
+    cmp #@(++ #\Z)
     bcc +done
     sbc #@(-- #\a)
 done:
