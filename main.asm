@@ -209,6 +209,9 @@ n1: dex
     jsr random
     and #sniper_probability
     bne +n
+    lda level_delay
+    cmp #2              ; Avoid flickering snipers in right corners.
+    bcc +n
     jsr add_sniper
 n: 
 
