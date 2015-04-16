@@ -162,11 +162,9 @@ l1: lda sprites_i,x
     jsr draw_sprite
 
     ; Save foreground collision.
-    lda sprites_i,x
-    asl
+    asl sprites_i,x
     lsr foreground_collision
-    ror
-n2: sta sprites_i,x
+    ror sprites_i,x
 
 n1: dex
     bpl -l1
