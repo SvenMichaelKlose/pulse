@@ -44,7 +44,7 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     stx lifes_on_screen
 
     lda #yellow
-    sta @(- lifes_on_screen (+ screen colors 1))
+    sta @(+ (- (++ lifes_on_screen) screen) colors)
 
     lda #22
     sta level_old_y
@@ -213,10 +213,9 @@ n1: dex
     cmp #2              ; Avoid flickering snipers in right corners.
     bcc +n
     jsr add_sniper
-n: 
-
-    jsr draw_sprites
+n:
     jsr add_scout
+    jsr draw_sprites
 
 increment_framecounter:
     inc framecounter
