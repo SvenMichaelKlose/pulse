@@ -3,12 +3,12 @@ game_over:
     ldx #@(-- hiscore)
 l1: lda #0
     sta 0,x                         ; Clear zero page.
-    sta @(-- charset),x                 ; Clear first character.
-    sta @(-- screen),x                  ; Clear screen.
+    sta @(-- screen),x              ; Clear screen.
     sta @(- (+ screen hiscore) 2),x
     sta @(- (+ screen hiscore hiscore) 3),x
     cpx #9
     bcs +l3
+    sta @(-- charset),x             ; Clear first character.
     lda #score_char0                ; Set score digits to 0.
     sta @(-- score_on_screen),x
     lda @(-- ship),x                ; Copy ship to score charset.
