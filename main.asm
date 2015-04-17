@@ -20,6 +20,9 @@ l1: lda #0
 l3: dex
     bne -l1
 
+    lda #sniper_probability_slow
+    sta @(++ mod_sniper_probability)
+
 init_trailing_foreground_chars:
     lda #<first_trailing_char
     sta d
@@ -207,7 +210,8 @@ n1: dex
 
     ; Add a sniper on occasion.
     jsr random
-    and #sniper_probability
+mod_sniper_probability:
+    and #sniper_probability_slow
     bne +n
     lda level_delay
     cmp #2              ; Avoid flickering snipers in right corners.

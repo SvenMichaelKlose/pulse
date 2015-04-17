@@ -1,6 +1,6 @@
 add_scout:
     lda framecounter
-    and #%01111111
+    and #scout_interval_slow
     bne +l1
 retry:
     jsr random
@@ -17,6 +17,7 @@ retry:
     jsr scrcoladdr
     jsr test_on_foreground
     beq retry
+
     lda #8
     sta adding_scout
     sta formation_left_unhit
