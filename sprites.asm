@@ -190,7 +190,9 @@ l:  ; Remove old chars.
     jsr xpixel_to_char
     sta sprites_ox,x
     lda sprites_y,x
-    jsr pixel_to_char
+    lsr
+    lsr
+    lsr
     sta sprites_oy,x
 
     dex
@@ -199,14 +201,9 @@ l:  ; Remove old chars.
 
 xpixel_to_char:
     lda sprites_x,x
-pixel_to_char:
-    cmp #@(* 28 8)
-    bcs +n
     lsr
     lsr
     lsr
-    rts
-n:  lda #$ff
     rts
 
 ; Draw a single sprite.
@@ -227,7 +224,9 @@ draw_sprite:
     jsr xpixel_to_char
     sta scrx
     lda sprites_y,x
-    jsr pixel_to_char
+    lsr
+    lsr
+    lsr
     sta scry
 
     ; Configure the blitter.
