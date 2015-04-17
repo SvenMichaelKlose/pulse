@@ -7,40 +7,42 @@ increment_score:
 l:  lda score_on_screen,x   ; Add carry to digit.
     adc #0
     cmp #@(+ score_char0 10)
-    bcc +l2
+    bcc +n
     cpx #5              ; Another 1000 points complete?
-    bne +l6
+    bne no_1up
     inc lifes           ; +1 life
     lda #15
     sta sound_bonus
-l6: lda #score_char0
+no_1up:
+    lda #score_char0
     sec
-l2: sta score_on_screen,x
+n:  sta score_on_screen,x
     dex
     bpl -l
 
     ; Compare score with hiscore.
     inx
     ldy #@(-- num_score_digits)
-l3: lda score_on_screen,x
+loop:
+    lda score_on_screen,x
     cmp hiscore_on_screen,x
-    beq +l4
+    beq +next
     bcc +done
 
     ; Copy score to highscore.
 new_hiscore:
     ldx #@(-- num_score_digits)
-l5: lda score_on_screen,x
+l:  lda score_on_screen,x
     sta hiscore_on_screen,x
     lda #green
     sta @(+ (- hiscore_on_screen screen) colors),x
     dex
-    bpl -l5
-    bmi +done
+    bpl -l
 
-l4: inx
+next:
+    inx
     dey
-    bpl -l3
+    bpl -loop
 
 done:
     ldx tmp
