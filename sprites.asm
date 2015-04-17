@@ -6,11 +6,11 @@ add_sprite:
     sty tmp2
 
     ldx #@(-- numsprites)
-l4: lda sprites_i,x
+l:  lda sprites_i,x
     and #decorative
     bne replace_sprite
     dex
-    bpl -l4
+    bpl -l
 
 sprite_added:
     ldx tmp
@@ -42,7 +42,7 @@ remove_sprite:
 replace_sprite:
     lda #sprites_x      ; Copy descriptor to sprite table.
     sta @(++ +selfmod)
-l3: lda sprite_inits,y
+l:  lda sprite_inits,y
 selfmod:
     sta sprites_x,x
     iny
@@ -51,7 +51,7 @@ selfmod:
     beq sprite_added
     adc #numsprites
     sta @(++ -selfmod)
-    jmp -l3
+    jmp -l
 
 ; Move sprite X up A pixels.
 sprite_up:
@@ -82,12 +82,12 @@ test_sprite_out:
     clc
     adc #8
     cmp #@(* 23 8)
-    bcs +c1
+    bcs +out
     lda sprites_y,x
     clc
     adc #8
     cmp #@(* 24 8)
-c1: rts
+out:rts
 
 ; Find collision with other sprite.
 ;
@@ -102,18 +102,18 @@ find_hit:
     stx tmp
     ldy #@(-- numsprites)
 
-l1: cpy tmp             ; Skip same sprite.
-    beq +n1
+l:  cpy tmp             ; Skip same sprite.
+    beq +n
     lda sprites_i,y     ; Skip decorative sprite.
     and #decorative
-    bne +n1
+    bne +n
 
     lda sprites_x,x     ; Get X distance.
     sec
     sbc sprites_x,y
     jsr abs
     cmp #8
-    bcs +n1             ; Too far off horizontally...
+    bcs +n             ; Too far off horizontally...
 
     ; Vertically narrow down collision box of horizontal laser.
     lda #8
@@ -130,13 +130,13 @@ not_a_hoizontal_laser:
     sbc sprites_y,y
     jsr abs
     cmp collision_y_distance
-    bcc +c1             ; Got one!
+    bcc +ok             ; Got one!
 
-n1: dey
-    bpl -l1
+n:  dey
+    bpl -l
     sec
 
-c1: pla
+ok: pla
     tax
     rts
 
@@ -144,18 +144,18 @@ c1: pla
 draw_sprites:
     ; Draw decorative sprites.
     ldx #@(-- numsprites)
-l2: lda sprites_i,x
+l:  lda sprites_i,x
     and #decorative
-    beq +n3
+    beq +n
     jsr draw_sprite
-n3: dex
-    bpl -l2
+n:  dex
+    bpl -l
 
     ; Draw other sprites.
     ldx #@(-- numsprites)
-l1: lda sprites_i,x
+l:  lda sprites_i,x
     and #decorative
-    bne +n1
+    bne +n
 
     sta foreground_collision
 
@@ -166,13 +166,13 @@ l1: lda sprites_i,x
     lsr foreground_collision
     ror sprites_i,x
 
-n1: dex
-    bpl -l1
+n:  dex
+    bpl -l
 
 ; Remove remaining chars of sprites in old frame.
 clean_screen:
     ldx #@(-- numsprites)
-l1: ; Remove old chars.
+l:  ; Remove old chars.
     lda sprites_ox,x
     sta scrx                ; (upper left)
     lda sprites_oy,x
@@ -194,7 +194,7 @@ l1: ; Remove old chars.
     sta sprites_oy,x
 
     dex
-    bpl -l1
+    bpl -l
     rts
 
 xpixel_to_char:
@@ -250,7 +250,7 @@ draw_sprite:
     jsr prepare_upper_blit
     jsr blit_right
 
-    beq +n2
+    beq +n
 
     ; Draw upper right.
     inc scrx
@@ -258,8 +258,8 @@ draw_sprite:
     jsr blit_left
     dec scrx
 
-n2: lda sprite_shift_y
-    beq +n1
+n:  lda sprite_shift_y
+    beq +n
 
     ; Draw lower left.
     inc scry
@@ -272,7 +272,7 @@ n2: lda sprite_shift_y
     dey
     jsr blit_right
 
-    beq +n1
+    beq +n
 
     ; Draw lower right.
     inc scrx
@@ -282,7 +282,7 @@ n2: lda sprite_shift_y
     dey
     jsr blit_left
 
-n1: pla
+n:  pla
     tax
     rts
 

@@ -7,7 +7,7 @@ main:
     sta $912d
     sta $911e       ; Disable restore key NMIs.
 
-    ; Copy code from charset to $200-3ff.
+    ; Copy code to $200-3ff.
     ldx #0
 l:  lda lowmem,x
     sta $200,x
@@ -16,7 +16,7 @@ l:  lda lowmem,x
     dex
     bne -l
 
-    ; Copy code from charset to $180-1df.
+    ; Copy code to stack.
     ldx #$5f
 l:  lda stackmem,x
     sta $180,x

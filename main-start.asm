@@ -1,13 +1,13 @@
 ;; Zero out various areas.
 game_over:
     ldx #@(-- hiscore)
-l1: lda #0
+l:  lda #0
     sta 0,x                         ; Clear zero page.
     sta @(-- screen),x              ; Clear screen.
     sta @(- (+ screen hiscore) 2),x
     sta @(- (+ screen hiscore hiscore) 3),x
     cpx #9
-    bcs +l3
+    bcs +n
     sta @(-- charset),x             ; Clear first character.
     lda #score_char0                ; Set score digits to 0.
     sta @(-- score_on_screen),x
@@ -17,8 +17,8 @@ l1: lda #0
     sta @(-- hiscore_on_screen),x
     lda #$ff
     sta @(+ charset (* 64 8))
-l3: dex
-    bne -l1
+n:  dex
+    bne -l
 
     lda #sniper_probability_slow
     sta @(++ mod_sniper_probability)
@@ -103,13 +103,11 @@ n2:
 ; "Ow!" sound if you die.
 play_sound_dead:
     lda sound_dead
-    beq +n
+    beq play_sound_bonus
     ora #@(* red 16)
     sta vicreg_auxcol_volume
     ora #128
     jmp play_sound_bonus3
-
-n:
 
 ; Bonus "ping!".
 play_sound_bonus:
@@ -117,8 +115,7 @@ play_sound_bonus:
     beq play_sound_bonus2
     ora #@(* red 16)
     sta vicreg_auxcol_volume
-    lda $9005           ; Häh?
-    ora #128
+    lda #$fc
 play_sound_bonus3:
     sta vicreg_bass
     sta vicreg_alto

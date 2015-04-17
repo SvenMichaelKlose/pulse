@@ -50,14 +50,14 @@ n:  rol tmp                 ; (step_y)
     rol tmp
 
     lda distance_x
-l1: asl                     ; Scale fraction up to byte.
-    beq +d1
-    bcs +d1
+l:  asl                     ; Scale fraction up to byte.
+    beq +l
+    bcs +l
     asl distance_y
-    beq +d1
-    bcc -l1
+    beq +l
+    bcc -l
 
-d1: and #%11110000          ; Save 4 bits fraction.
+l:  and #%11110000          ; Save 4 bits fraction.
     sta @(+ bullet_init 7)
     lda sprites_x,x
     sta bullet_init

@@ -28,7 +28,8 @@ add_tile:
     tya
     sta screen_tiles_i,x
     pla
-r:  rts
+done:
+    rts
 
 fetch_foreground_char:
     lda next_foreground_char
@@ -39,24 +40,24 @@ draw_foreground:
     lda scrolled_bits
     dec scrolled_bits
     and #%111
-    beq +n1
+    beq +n
     lda framecounter
     lsr
-    bcs -r
+    bcs -done
     jmp rotate_tiles
 
 no_more_tiles:
     jmp rotate_trailing_chars
 
-n1: inc scrolled_chars
+n:  inc scrolled_chars
 
     ; Reset character allocations.
     lda #0
     sta active_tiles
     ldx #@(- tiles_col tiles_c 1)
-i1: sta tiles_c,x
+l:  sta tiles_c,x
     dex
-    bpl -i1
+    bpl -l
     lda #@(+ framemask foreground 2)
     sta next_foreground_char
     lda leftmost_tile
@@ -100,16 +101,16 @@ draw_right:
     inc scrx
     lda scrx
     cmp #22             ; Off-screen...
-    bcs +n2
+    bcs +n
     jsr scrcoladdr
     lda tiles_c,x      ; Plot regular right char.
     clc
     adc #1
     sta (scr),y
-n2: inc scrx
+n:  inc scrx
     lda scrx
     cmp #22             ; Off-screen...
-    bcs repeat
+    bcs +repeat
     jsr scrcoladdr
     lda tiles_r,x
     beq plot
@@ -145,11 +146,11 @@ draw_chars:
     jsr fetch_foreground_char
     sta tiles_c,x
     lda tiles_l,x
-    beq +n4
+    beq +n
     jsr blit_char
-    bmi +n5          ; jmp n5
-n4: jsr blit_clear_char
-n5: jsr fetch_foreground_char
+    bmi +l           ; jmp n5
+n:  jsr blit_clear_char
+l:  jsr fetch_foreground_char
     lda tiles_m,x
     jsr blit_char
     lda tiles_r,x
@@ -176,15 +177,15 @@ next_tile:
     sta sm
 
     lda tilelist_r,x    ; Set pointer to right char.
-    beq +n3
+    beq +n1
     cmp #<background
-    bne +n4
+    bne +n2
     lda #@(+ framemask foreground)
-    jmp +n3
-n4: cmp #<bg_t
-    bne +n3
+    jmp +n1
+n2: cmp #<bg_t
+    bne +n1
     lda #@(+ framemask foreground 1)
-n3: jsr get_char_addr
+n1: jsr get_char_addr
     lda d
     sta sr
     lda @(++ d)

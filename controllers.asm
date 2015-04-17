@@ -105,14 +105,15 @@ sniper_fun:
     jsr add_bullet
     jmp move_left
 
-a:  jsr add_bullet_no_sound
+update_trajectory:
+    jsr add_bullet_no_sound
     jmp remove_sprite
 
 bullet_fun:
     jsr random
     and #%00000111
 mod_follow:
-    beq -a
+    beq update_trajectory
     ; Initialize increment/decrement instructions.
     lda #$f6        ; inc zeropage,x
     sta +si
@@ -160,9 +161,9 @@ si: inc sprites_y,x
     clc
     adc tmp
     cmp #%10000
-    bcc +n1
+    bcc +n
 sw: inc sprites_x,x ; Step along slow axis on underflow.
-n1: and #%1111      ; Put low nibble back into sprite info.
+n:  and #%1111      ; Put low nibble back into sprite info.
     sta tmp
     tya
     and #%11110000
@@ -176,16 +177,16 @@ n1: and #%1111      ; Put low nibble back into sprite info.
 scout_fun:
     lda framecounter_high
     cmp #8
-    bcc +l2
+    bcc +l
     jsr random
     and #scout_bullet_probability
-    bne +l2
+    bne +l
     jsr add_bullet
-l2: lda #4
+l:  lda #4
     jsr sprite_left
     lda framecounter_high
     cmp #3
-    bcc +l1
+    bcc +l
     ldy #@(+ yellow 8)
     jsr energize_color
     lda sprites_x,x
@@ -199,7 +200,7 @@ l2: lda #4
     clc
     adc scout_formation_y
     sta sprites_y,x
-l1: jmp remove_if_sprite_is_out
+l:  jmp remove_if_sprite_is_out
 
 laser_fun:
     jsr hit_enemy
@@ -259,7 +260,7 @@ laser_side:
 
 player_fun:
     lda death_timer
-    beq +d1
+    beq +n
     jsr random
     sta sprites_l,x
     sta sprites_c,x
@@ -268,23 +269,23 @@ player_fun:
     lda #<ship
     sta sprites_l,x
     dec lifes
-    beq +g1
+    beq +g
     jmp restart
 
-g1: jmp game_over2
+g:  jmp game_over2
 
-d1: lda #cyan
+n:  lda #cyan
     sta sprites_c,x
     lda is_invincible
-    beq +d2
+    beq +n
     ldy #red
     jsr energize_color
     dec is_invincible
-    jmp +d3
+    jmp +l
 
-d2: jsr test_foreground_collision_fine
+n:  jsr test_foreground_collision_fine
     bcs die
-d3: jsr find_hit
+l:  jsr find_hit
     bcs operate_joystick ; Nothing hit...
 
     lda sprites_fl,y
@@ -300,9 +301,9 @@ d3: jsr find_hit
     jsr remove_sprite
 
     ldy #10             ; Add ten points.
-l8: jsr increment_score
+l:  jsr increment_score
     dey
-    bne -l8
+    bne -l
 
     lda fire_interval
     cmp #min_fire_interval
@@ -342,12 +343,8 @@ no_bonus_hit:
     beq operate_joystick
 
 die:
-;#ifdef INVINCIBLE
-;    jmp operate_joystick
-;#else
     lda is_invincible
     bne operate_joystick
-;#endif
     lda #120
     sta death_timer
     lda #15
@@ -389,16 +386,12 @@ operate_joystick:
 
     lda #7
     sta sound_laser
-
     lda fire_interval
     sta is_firing
-
-    lda is_invincible
-    bne +i2
     lda #white
     sta sprites_c,x
 
-i2: tya                 ;Save joystick status.
+    tya                 ;Save joystick status.
     pha
 
     ; Shoot forward.
@@ -407,71 +400,67 @@ i2: tya                 ;Save joystick status.
 
     ; Shoot downwards.
     lda has_double_laser
-    beq +s1
+    beq +n
     ldy #@(- laser_down_init sprite_inits)
     jsr add_sprite
 
     ; Shoot upwards.
     lda has_double_laser
     cmp #2
-    bcc +s1
+    bcc +n
     ldy #@(- laser_up_init sprite_inits)
     jsr add_sprite
 
-s1: pla
+n:  pla
     tay
 
 no_fire:
     lda is_firing
-    beq +i1
+    beq +n
     dec is_firing
 
     ; Joystick up.
-i1: tya
+n:  tya
     and #joy_up
-    bne not_up
+    bne +n
     lda sprites_y,x
     cmp #12
-    bcc not_down        ; Don't bump into hiscore. ;)
+    bcc +n          ; Don't bump into hiscore. ;)
     lda #4
     jsr sprite_up
 
-not_up:
     ; Joystick down.
-    tya
+n:  tya
     and #joy_down
-    bne not_down
+    bne +n
     lda sprites_y,x
     cmp #@(-- (* 22 8))
-    bcs not_down
+    bcs +n
     lda #4
     jsr sprite_down
 
-not_down:
     ; Joystick left.
-    tya
+n:  tya
     and #joy_left
-    bne not_left
+    bne +n
     lda sprites_x,x
     cmp #3
-    bcc not_right
+    bcc +n
     lda #3
     jmp sprite_left
 
-not_left:
     ; Joystick right.
-    lda #0              ;Fetch rest of joystick status.
+n:  lda #0              ;Fetch rest of joystick status.
     sta $9122
     lda $9120
-    bmi not_right
+    bmi +n
     lda sprites_x,x
     cmp #@(* 21 8)
-    bcs not_right
+    bcs +n
     lda #3
     jmp sprite_right
 
-not_right:
-    rts
+n:  rts
 
 game_over2:
     ; Save hiscore to zeropage.

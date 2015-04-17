@@ -8,7 +8,8 @@ process_level:
     dec level_delay
     bpl +done
 
-n2: ldy level_pos       ; Get position in current pattern.
+decode_position:
+    ldy level_pos       ; Get position in current pattern.
     lda level_data,y    ; Get width of bar.
     bne decode_pattern
 
@@ -22,7 +23,7 @@ n2: ldy level_pos       ; Get position in current pattern.
     lda level_patterns,y; Copy vertical pattern offset.
     sta level_offset
     inc level_pattern
-    jmp -n2             ; Try again with new pattern...
+    jmp decode_position ; Try again with new pattern...
 
 level_add_repeated_tile:
     jsr add_tile
@@ -39,7 +40,7 @@ tune_screws:
     ldy #$ff
 l:  sta @(++ mod_sniper_probability)
     sty @(++ mod_scout_interval)
-    bne -n2
+    bne decode_position
 n:  lsr
     bcc +n
     lda #sniper_probability_slow
@@ -47,12 +48,12 @@ n:  lsr
     bne -l
 n:  lda #$f0 ; beq
     sta mod_follow
-    bne -n2
+    bne decode_position
 
 restart_level:
     sta level_pattern
     sta level_pos
-    beq -n2
+    beq decode_position
 
 decode_pattern:
     sta level_delay

@@ -49,10 +49,10 @@ fetch_char:
 test_position:
     lda scry
     cmp #23
-    bcs +e
+    bcs +l
     lda scrx
     cmp #22
-e:  rts
+l:  rts
 
 scraddr_get_char:
     jsr scrcoladdr
@@ -62,7 +62,7 @@ get_char:
     bcs cant_use_position
     tay
     lda (scr),y
-    beq +l2             ; Screen char isn't used, yet…
+    beq +l              ; Screen char isn't used, yet…
     tax
     and #foreground
     cmp #foreground
@@ -71,7 +71,7 @@ get_char:
     and #framemask
     cmp spriteframe
     beq reuse_char      ; Already used by a sprite in current frame…
-l2: jsr alloc_char
+l:  jsr alloc_char
     ldy scrx
     sta (scr),y
     lda curcol
@@ -91,17 +91,17 @@ scraddr_clear_char:
 
 clear_char:
     jsr test_position
-    bcs +r
+    bcs +l
     tay
     lda (scr),y
-    beq +r              ; Nothing to clear…
+    beq +l              ; Nothing to clear…
     and #foreground
     cmp #foreground
-    beq +r              ; On scrolling foreground…
+    beq +l              ; On scrolling foreground…
     lda (scr),y
     and #framemask
     cmp spriteframe
-    beq +r              ; Current frame…
+    beq +l              ; Current frame…
     lda #0
     sta (scr),y
-r:  rts
+l:  rts
