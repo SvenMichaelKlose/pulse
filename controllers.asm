@@ -116,38 +116,39 @@ mod_follow:
     beq update_trajectory
     ; Initialize increment/decrement instructions.
     lda #$f6        ; inc zeropage,x
-    sta +si
-    sta +sw
+    sta +increment
+    sta +step
     ldy #$d6        ; dec zeropage,x
     lda sprites_i,x
     lsr
     lsr
     lsr             ; (inc_y to carry)
     bcs +n
-    sty +sw
+    sty +step
 n:
     lsr             ; (inc_x to carry)
     bcs +n
-    sty +si
+    sty +increment
 n:
 
     ldy #sprites_x
-    sty @(++ +si)
+    sty @(++ +increment)
     ldy #sprites_y
-    sty @(++ +sw)
+    sty @(++ +step)
 
     lsr             ; (step_y to carry)
     bcs +n
-    sty @(++ +si)
+    sty @(++ +increment)
     lda #sprites_x
-    sta @(++ +sw)
-    lda +si
-    ldy +sw
-    sty +si
-    sta +sw
+    sta @(++ +step)
+    lda +increment
+    ldy +step
+    sty +increment
+    sta +step
 n:
 
-si: inc sprites_y,x
+increment:
+    inc sprites_y,x
 
     lda sprites_d,x ; Subtract high nibble from low nibble.
     tay
@@ -162,7 +163,8 @@ si: inc sprites_y,x
     adc tmp
     cmp #%10000
     bcc +n
-sw: inc sprites_x,x ; Step along slow axis on underflow.
+step:
+    inc sprites_x,x ; Step along slow axis on overflow.
 n:  and #%1111      ; Put low nibble back into sprite info.
     sta tmp
     tya
@@ -317,8 +319,7 @@ l:  jsr increment_score
 
 make_double_laser_or_invincible:
     jsr random
-    lsr
-    bcc make_invincible
+    bmi make_invincible
 start_grenade:
     lda @(+ sprites_x 15)
     lsr
