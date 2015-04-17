@@ -155,13 +155,13 @@ sniper_fun:
     jsr add_bullet
     jmp move_left
 
-;a:  jsr add_bullet_no_sound
-;    jmp remove_sprite
+a:  jsr add_bullet_no_sound
+    jmp remove_sprite
 
 bullet_fun:
-;    jsr random
-;    and #%00000111
-;    beq -a
+    jsr random
+    and #%00000111
+    beq -a
     ; Initialize increment/decrement instructions.
     lda #$f6        ; inc zeropage,x
     sta +si
@@ -383,10 +383,10 @@ no_bonus_hit:
 
 die:
 ;#ifdef INVINCIBLE
-    jmp operate_joystick
+;    jmp operate_joystick
 ;#else
-;    lda is_invincible
-;    bne operate_joystick
+    lda is_invincible
+    bne operate_joystick
 ;#endif
     lda #120
     sta death_timer
@@ -441,9 +441,11 @@ operate_joystick:
 i2: tya                 ;Save joystick status.
     pha
 
-    ; Shoot downwards.
+    ; Shoot forward.
     ldy #@(- laser_init sprite_inits)
     jsr add_sprite
+
+    ; Shoot downwards.
     lda has_double_laser
     beq +s1
     ldy #@(- laser_down_init sprite_inits)
@@ -473,8 +475,8 @@ i1: tya
     bcc not_down        ; Don't bump into hiscore. ;)
     lda #4
     jsr sprite_up
-not_up:
 
+not_up:
     ; Joystick down.
     tya
     and #joy_down
@@ -484,8 +486,8 @@ not_up:
     bcs not_down
     lda #4
     jsr sprite_down
-not_down:
 
+not_down:
     ; Joystick left.
     tya
     and #joy_left
@@ -495,8 +497,8 @@ not_down:
     bcc not_right
     lda #3
     jmp sprite_left
-not_left:
 
+not_left:
     ; Joystick right.
     lda #0              ;Fetch rest of joystick status.
     sta $9122
@@ -507,8 +509,8 @@ not_left:
     bcs not_right
     lda #3
     jmp sprite_right
-not_right:
 
+not_right:
     rts
 
 game_over2:
