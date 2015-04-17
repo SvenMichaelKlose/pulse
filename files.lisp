@@ -9,6 +9,7 @@
           "stackmem-start.asm"
             "random.asm"
             "score.asm"
+            "explosion-colors.asm"
           "stackmem-end.asm"
 
           "lowmem-start.asm"
@@ -20,7 +21,6 @@
             "bits.asm"
             "gfx-sprites.asm"
             "level-patterns.asm"
-            "explosion-colors.asm"
           "lowmem-end.asm"
         "init-end.asm"
 
