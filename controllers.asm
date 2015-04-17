@@ -1,53 +1,3 @@
-controllers_start:
-
-decorative   = 32
-deadly       = 64
-fg_collision = 128
-
-sprite_inits:
-player_init:
-    0 80 0 cyan <ship
-    <player_fun >player_fun 0
-laser_init:
-    18 80 0 @(+ white multicolor) <laser
-    <laser_fun >laser_fun 0
-laser_up_init:
-    18 80 0 yellow <laser_up
-    <laser_up_fun >laser_up_fun 0
-laser_down_init:
-    18 80 0 yellow <laser_down
-    <laser_down_fun >laser_down_fun 0
-bullet_init:
-    176 89 @(+ deadly 0) @(+ yellow multicolor) <bullet
-    <bullet_fun >bullet_fun 0
-scout_init:
-    176 89 @(+ deadly 1) @(+ yellow multicolor) <scout
-    <scout_fun >scout_fun 0
-sniper_init:
-    176 89 @(+ deadly 2) white <sniper
-    <sniper_fun >sniper_fun 0
-bonus_init:
-    176 89 4 green <bonus
-    <bonus_fun >bonus_fun 0
-star_init:
-    176 89 decorative white <star
-    <star_fun >star_fun 0
-explosion_init:
-    176 89 decorative yellow 0
-    <explosion_fun >explosion_fun 15
-
-sinetab:
-    0 0 2 4 6 10 14 14
-    14 14 10 6 4 2 0 0
-    0 0 254 252 248 244 240 240
-    240 240 244 248 252 254 0 0
-
-explosion_colors:
-    red
-    @(+ black multicolor)
-    @(+ yellow multicolor)
-    @(+ white multicolor)
-
     ; Make bonus item if a scout formation has been killed.
 hit_formation:
     dec formation_left_unhit
@@ -161,6 +111,7 @@ a:  jsr add_bullet_no_sound
 bullet_fun:
     jsr random
     and #%00000111
+mod_follow:
     beq -a
     ; Initialize increment/decrement instructions.
     lda #$f6        ; inc zeropage,x
@@ -367,7 +318,16 @@ make_double_laser_or_invincible:
     jsr random
     lsr
     bcc make_invincible
-    jsr start_grenade
+start_grenade:
+    lda @(+ sprites_x 15)
+    lsr
+    lsr
+    lsr
+    sta grenade_left
+    sta grenade_right
+    lda #22
+    sta grenade_counter
+
     inc has_double_laser
     bne operate_joystick
 

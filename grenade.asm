@@ -1,17 +1,6 @@
 grenade_left: 0
 grenade_right: 0
 
-start_grenade:
-    lda @(+ sprites_x 15)
-    lsr
-    lsr
-    lsr
-    sta grenade_left
-    sta grenade_right
-    lda #22
-    sta grenade_counter
-    rts
-
 grenade:
     lda grenade_counter
     beq +done

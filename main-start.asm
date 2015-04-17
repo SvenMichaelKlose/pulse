@@ -22,6 +22,10 @@ l3: dex
 
     lda #sniper_probability_slow
     sta @(++ mod_sniper_probability)
+    lda #scout_interval_slow
+    sta @(++ mod_scout_interval)
+    lda #$09 ; ora #…
+    sta mod_follow
 
 init_trailing_foreground_chars:
     lda #<first_trailing_char
@@ -204,28 +208,6 @@ n1: dex
 
     lda framecounter_high
     cmp #4                  ; No terrain before frame 1024 (4 * 256).
-    bcc +n
+    bcc +in_intro
     jsr draw_foreground     ; Scroll/redraw terrain.
     jsr process_level       ; Feed in terrain that enters the screen.
-
-    ; Add a sniper on occasion.
-    jsr random
-mod_sniper_probability:
-    and #sniper_probability_slow
-    bne +n
-    lda level_delay
-    cmp #2              ; Avoid flickering snipers in right corners.
-    bcc +n
-    jsr add_sniper
-n:
-    jsr add_scout
-    jsr draw_sprites
-
-increment_framecounter:
-    inc framecounter
-    bne +n
-    inc framecounter_high
-n:
-
-    jsr grenade
-    jmp mainloop

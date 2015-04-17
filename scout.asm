@@ -1,5 +1,7 @@
+in_intro:
 add_scout:
     lda framecounter
+mod_scout_interval:
     and #scout_interval_slow
     bne +l1
 retry:
@@ -33,5 +35,5 @@ l1: lda adding_scout
     lda scout_formation_y
     sta @(++ scout_init)
     ldy #@(- scout_init sprite_inits)
-    jmp add_sprite
-l2: rts
+    jsr add_sprite
+l2:

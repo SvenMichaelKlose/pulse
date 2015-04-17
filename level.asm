@@ -18,18 +18,41 @@ n2: ldy level_pos       ; Get position in current pattern.
     lda @(-- level_patterns),y
     sta level_pos
     beq restart_level
+    bmi tune_screws
     lda level_patterns,y; Copy vertical pattern offset.
     sta level_offset
     inc level_pattern
     jmp -n2             ; Try again with new pattern...
 
+level_add_repeated_tile:
+    jsr add_tile
+    sta screen_tiles_n,x
+    lda level_old_y
+    clc
+done:
+    rts
+
+tune_screws:
+    lsr
+    bcc +n
+    lda #sniper_probability_fast
+    ldy #$ff
+l:  sta @(++ mod_sniper_probability)
+    sty @(++ mod_scout_interval)
+    bne -n2
+n:  lsr
+    bcc +n
+    lda #sniper_probability_slow
+    ldy #scout_interval_fast
+    bne -l
+n:  lda #$f0 ; beq
+    sta mod_follow
+    bne -n2
+
 restart_level:
     sta level_pattern
     sta level_pos
     beq -n2
-
-done:
-    rts
 
 decode_pattern:
     sta level_delay
@@ -77,10 +100,3 @@ up: ldy #4
     sta level_old_y
 n3: ldy #0
 n5: jmp add_tile
-
-level_add_repeated_tile:
-    jsr add_tile
-    sta screen_tiles_n,x
-    lda level_old_y
-    clc
-    rts

@@ -1,4 +1,8 @@
-add_sniper:
+    ; Add a sniper on occasion.
+    jsr random
+mod_sniper_probability:
+    and #sniper_probability_slow
+    bne +n
     ldy level_old_y
     dey
     tya
@@ -9,4 +13,5 @@ add_sniper:
     lda #@(* 22 8)
     sta sniper_init
     ldy #@(- sniper_init sprite_inits)
-    jmp add_sprite
+    jsr add_sprite
+n:
