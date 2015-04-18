@@ -3,6 +3,8 @@ add_scout:
     lda framecounter
 mod_scout_interval:
     and #scout_interval_slow
+mod_scout:
+    ora #0
     bne +l1
 retry:
     jsr random

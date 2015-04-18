@@ -20,12 +20,16 @@ l:  lda #0
 n:  dex
     bne -l
 
-    lda #sniper_probability_slow
+    lda #sniper_probability
     sta @(++ mod_sniper_probability)
+    lda #sniper_bullet_probability
+    sta @(++ mod_sniper_bullet_probability)
     lda #scout_interval_slow
     sta @(++ mod_scout_interval)
     lda #$09 ; ora #…
     sta mod_follow
+    lda #$0 ; ora #…
+    sta @(++ mod_scout)
 
 init_trailing_foreground_chars:
     lda #<first_trailing_char

@@ -1,7 +1,7 @@
     ; Add a sniper on occasion.
     jsr random
 mod_sniper_probability:
-    and #sniper_probability_slow
+    and #sniper_probability
     bne +n
     ldy level_old_y
     dey

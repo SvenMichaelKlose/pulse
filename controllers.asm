@@ -100,6 +100,7 @@ explosion_fun:
 
 sniper_fun:
     jsr random
+mod_sniper_bullet_probability:
     and #sniper_bullet_probability
     bne move_left
     jsr add_bullet

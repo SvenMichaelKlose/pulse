@@ -35,22 +35,35 @@ done:
     rts
 
 tune_screws:
-    lsr
-    bcc +n
-    lda #sniper_probability_fast
-    ldy #$ff
-l:  sta @(++ mod_sniper_probability)
-    sty @(++ mod_scout_interval)
-    bne decode_position
-n:  lsr
-    bcc +n
-    lda #sniper_probability_slow
-    ldy #scout_interval_fast
-    bne -l
-n:  lda #$f0 ; beq
+    and #%111
+    tax
+    lda screws_sniper,x
+    sta @(++ mod_sniper_probability)
+    lda screws_sniper_bullet,x
+    sta @(++ mod_sniper_bullet_probability)
+    lda screws_scout,x
+    sta @(++ mod_scout)
+    lda screws_follow,x
     sta mod_follow
     bne decode_position
 
+screws_sniper:
+    sniper_probability_high
+    sniper_probability
+    sniper_probability
+screws_sniper_bullet:
+    sniper_bullet_probability_high
+    sniper_bullet_probability
+    sniper_bullet_probability
+screws_scout:
+    1
+    0
+    0
+screws_follow:
+    $09
+    $09
+    $f0
+    
 restart_level:
     sta level_pattern
     beq decode_position
