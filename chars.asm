@@ -52,7 +52,8 @@ test_position:
     bcs +l
     lda scrx
     cmp #22
-l:  rts
+l:  tay
+    rts
 
 scraddr_get_char:
     jsr scrcoladdr
@@ -60,7 +61,6 @@ scraddr_get_char:
 get_char:
     jsr test_position
     bcs cant_use_position
-    tay
     lda (scr),y
     beq +l              ; Screen char isn't used, yet…
     tax
@@ -92,7 +92,6 @@ scraddr_clear_char:
 clear_char:
     jsr test_position
     bcs +l
-    tay
     lda (scr),y
     beq +l              ; Nothing to clear…
     and #foreground
