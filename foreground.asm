@@ -162,7 +162,8 @@ l:  jsr fetch_foreground_char
     jmp restart_plotting_chars
 
 rotate_tiles:
-    lda #<first_tile    ; Set pointer to left char.
+    ; Set pointer to left char.
+    lda #<first_tile
     sta sl
     lda #>first_tile
     sta @(++ sl)
@@ -190,10 +191,9 @@ n2: cmp #<bg_t
     bne +n1
     lda #@(+ framemask foreground 1)
 n1: jsr get_char_addr
+    sta @(++ sr)
     lda d
     sta sr
-    lda @(++ d)
-    sta @(++ sr)
 
     ; Rotate.
     ldy #7
@@ -217,7 +217,8 @@ l:  lda (sr),y
     dey
     bpl -l
 
-    lda sl          ; Step to next tile in charset.
+    ; Step to next tile in charset.
+    lda sl
     clc
     adc #16
     sta sl
