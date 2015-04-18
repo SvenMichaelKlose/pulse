@@ -94,6 +94,9 @@ level_offset            = $3d
 
 no_stars                = $3e
 
+grenade_left            = $3f
+grenade_right           = $40
+
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
 sprites_i   = $70   ; Flags.

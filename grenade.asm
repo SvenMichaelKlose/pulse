@@ -1,6 +1,3 @@
-grenade_left: 0
-grenade_right: 0
-
 grenade:
     lda grenade_counter
     beq +done
