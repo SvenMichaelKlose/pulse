@@ -56,6 +56,7 @@ distance_x              = tmp
 tmp2                    = $1b
 distance_y              = tmp2
 tmp3                    = $1c
+collision_y_distance    = tmp3
 counter                 = $1d
 repetition              = $1e
 
@@ -87,12 +88,11 @@ sound_dead              = $3a
 sound_end               = sound_dead
 
 last_random_value       = $3b
-collision_y_distance    = $3c
 
-level_pattern           = $3d
-level_offset            = $3e
+level_pattern           = $3c
+level_offset            = $3d
 
-no_stars                = $3f
+no_stars                = $3e
 
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
