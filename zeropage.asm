@@ -96,7 +96,8 @@ no_stars                = $3e
 
 grenade_left            = $3f
 grenade_right           = $40
-tiles_c                 = $41 ; 6 bytes
+sprite_rr               = $41
+tiles_c                 = $42 ; 6 bytes
 
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.

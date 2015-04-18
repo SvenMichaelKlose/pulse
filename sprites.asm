@@ -5,17 +5,25 @@ add_sprite:
     stx tmp
     sty tmp2
 
-    ldx #@(-- numsprites)
-l:  lda sprites_i,x
+    ldy #@(-- numsprites)
+l:  lda sprite_rr
+    and #@(-- numsprites)
+    tax
+    inc sprite_rr
+    lda sprites_i,x
     and #decorative
-    bne replace_sprite
-    dex
+    bne replace_sprite2
+    dey
     bpl -l
 
 sprite_added:
     ldx tmp
     ldy tmp2
     rts
+
+replace_sprite2:
+    ldy tmp2
+    jmp replace_sprite
 
 ; Replace sprite by decorative background star.
 ;
