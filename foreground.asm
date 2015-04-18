@@ -54,7 +54,7 @@ n:  inc scrolled_chars
     ; Reset character allocations.
     lda #0
     sta active_tiles
-    ldx #@(- tiles_col tiles_c 1)
+    ldx #@(- tiles_l tiles_c 1)
 l:  sta tiles_c,x
     dex
     bpl -l
@@ -93,7 +93,7 @@ repeat_plotting_chars:
     cmp #22
     bcs no_more_tiles  ; Off-screen...
     jsr scrcoladdr
-    lda tiles_col,x    ; Set left char and color.
+    lda #@(+ yellow multicolor) ; Set left char and color.
     sta (col),y
     lda tiles_c,x
     sta (scr),y
