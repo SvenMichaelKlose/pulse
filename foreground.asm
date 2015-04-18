@@ -56,7 +56,7 @@ n:  inc scrolled_chars
     ; Reset character allocations.
     lda #0
     sta active_tiles
-    ldx #@(- tiles_l tiles_c 1)
+    ldx #@(- tiles_m tiles_l 1)
 l:  sta tiles_c,x
     dex
     bpl -l

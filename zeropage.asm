@@ -77,7 +77,7 @@ is_invincible           = $2a
 death_timer             = $2b
 lifes                   = $2c
 active_tiles            = $2d
-tilelist_r              = $2e ; 8 bytes.
+tilelist_r              = $2e ; 8 bytes
 
 sound_start             = $36
 sound_explosion         = $36
@@ -96,6 +96,7 @@ no_stars                = $3e
 
 grenade_left            = $3f
 grenade_right           = $40
+tiles_c                 = $41 ; 6 bytes
 
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
