@@ -275,7 +275,13 @@ player_fun:
     beq +g
     jmp restart
 
-g:  jmp game_over2
+    ; Save hiscore to zeropage.
+g:  ldx #7
+l:  lda hiscore_on_screen,x
+    sta hiscore,x
+    dex
+    bpl -l
+    jmp game_over
 
 n:  lda #cyan
     sta sprites_c,x
@@ -308,17 +314,13 @@ l:  jsr increment_score
     dey
     bne -l
 
-    lda fire_interval
-    cmp #min_fire_interval
-    bne faster_fire         ; Increase fire speed...
-    lda has_double_laser
-    bne make_double_laser_or_invincible
-    lda #max_fire_interval
-    sta fire_interval
-    inc has_double_laser
+    lda weapon
+    cmp #5
+    beq full_weapon
+    inc weapon
     bne operate_joystick
 
-make_double_laser_or_invincible:
+full_weapon:
     jsr random
     bmi make_invincible
 start_grenade:
@@ -330,8 +332,6 @@ start_grenade:
     sta grenade_right
     lda #22
     sta grenade_counter
-
-    inc has_double_laser
     bne operate_joystick
 
 make_invincible:
@@ -354,10 +354,6 @@ die:
     lda #7
     sta sound_explosion
     rts
-
-faster_fire:
-    dec fire_interval
-    dec fire_interval
 
 operate_joystick:
     lda #0              ; Fetch joystick status.
@@ -400,16 +396,27 @@ operate_joystick:
     ldy #@(- laser_init sprite_inits)
     jsr add_sprite
 
-    ; Shoot downwards.
-    lda has_double_laser
+    lda weapon
+    ldy #max_fire_interval
+    lsr
+    bcc +n
+    ldy #min_fire_interval
+n:  sty fire_interval
+
+    lda weapon
+    lsr
     beq +n
+
+    ; Shoot downwards.
     ldy #@(- laser_down_init sprite_inits)
     jsr add_sprite
 
+    lda weapon
+    lsr
+    lsr
+    beq +n
+
     ; Shoot upwards.
-    lda has_double_laser
-    cmp #2
-    bcc +n
     ldy #@(- laser_up_init sprite_inits)
     jsr add_sprite
 
@@ -463,12 +470,3 @@ n:  lda #0              ;Fetch rest of joystick status.
     jmp sprite_right
 
 n:  rts
-
-game_over2:
-    ; Save hiscore to zeropage.
-    ldx #7
-l:  lda hiscore_on_screen,x
-    sta hiscore,x
-    dex
-    bpl -l
-    jmp game_over

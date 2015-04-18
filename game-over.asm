@@ -20,16 +20,7 @@ l:  lda #0
 n:  dex
     bne -l
 
-    lda #sniper_probability
-    sta @(++ mod_sniper_probability)
-    lda #sniper_bullet_probability
-    sta @(++ mod_sniper_bullet_probability)
-    lda #scout_interval_slow
-    sta @(++ mod_scout_interval)
-    lda #$09 ; ora #…
-    sta mod_follow
-    lda #$0 ; ora #…
-    sta @(++ mod_scout)
+    jsr set_screws
 
 init_trailing_foreground_chars:
     lda #<first_trailing_char
@@ -84,5 +75,4 @@ restart:
     sta is_invincible
     lda #0
     sta is_firing
-    sta has_double_laser
-    sta has_autofire
+    sta weapon

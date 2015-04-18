@@ -177,8 +177,7 @@ l:  lda sprites_i,x
 n:  dex
     bpl -l
 
-; Remove remaining chars of sprites in old frame.
-clean_screen:
+    ; Remove remaining chars of sprites in old frame.
     ldx #@(-- numsprites)
 l:  ; Remove old chars.
     lda sprites_ox,x

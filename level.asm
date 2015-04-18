@@ -37,6 +37,10 @@ done:
 tune_screws:
     and #%111
     tax
+    jsr set_screws
+    bne decode_position
+
+set_screws:
     lda screws_sniper,x
     sta @(++ mod_sniper_probability)
     lda screws_sniper_bullet,x
@@ -45,21 +49,25 @@ tune_screws:
     sta @(++ mod_scout)
     lda screws_follow,x
     sta mod_follow
-    bne decode_position
+    rts
 
 screws_sniper:
+    sniper_probability
     sniper_probability_high
     sniper_probability
     sniper_probability
 screws_sniper_bullet:
+    sniper_bullet_probability
     sniper_bullet_probability_high
     sniper_bullet_probability
     sniper_bullet_probability
 screws_scout:
+    0
     1
     0
     0
 screws_follow:
+    $09
     $09
     $09
     $f0

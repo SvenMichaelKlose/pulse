@@ -1,56 +1,30 @@
-# Graphics overview
-
-The screen is rendered with a charset of 128 8x8 pixel chars.  The charset
-is split into two frames for double buffering.  Each frame takes up to 48
-chars for sprites and 16 for the scrolling foreground or the score display.
-The foreground is NOT double-buffered.
-
-Sprite chars are dynamically allocated and shared by overlapping sprites.
-When all sprites have been drawn, characters of the other frame are
-removed from the screen.  The former positions of all sprites are saved to
-do that.
-
-The vertical edges of the foreground are drawn every 8 pixels and then
-rotated in the charset for the remaining 7 pixels.  The edges leave trails
-of rotating chars to fill large areas of the foreground.
-
-The game doesn't wait for the retrace.  To keep the speed stable, sprites
-aren't removed but replaced with a background star.
-
-
 # Character map
 
-128 chars are used as follows:
+First the character map to give you an idea.  128 chars of 8x8
+pixels are laid out as follows:
 
             0123456789ABCDEF
             ----------------
 Frame A: 0| BSSSSSSSSSSSSSSS
 (0-63)   1| SSSSSSSSSSSSSSSS
          2| SSSSSSSSSSSSSSSS
-         3| PPPPPPPPPPPPPPPP
+         3| P0123456789uuuuu
 
-Frame B: 4| SSSSSSSSSSSSSSSS
+Frame B: 4| GSSSSSSSSSSSSSSS
 (64-127) 5| SSSSSSSSSSSSSSSS
          6| SSSSSSSSSSSSSSSS
-         7| TTEEEEEEEEEEEEEE
+         7| TTF0F1F2F3F4F5uu
 
-         B = Plain nothing
-         S = Sprites
-         P = Score display
-         T = Trailing foreground char
-         E = Foreground edge
+         B   = Plain nothing
+         G   = Grenade bar
+         S   = Sprites
+         P   = Player next to number of lifes
+         0-9 = Status digits
+         T   = Trailing foreground char
+         Fx  = Foreground tiles
+         u   = unused
 
+# Sprites
 
-## Sprites
+# Foreground
 
-Up to 16 sprites can be drawn in the same frame.  Sprites are character
-sized and may use up to four entries in the charset because they can be
-positioned pixel-wise.  32 different sprite graphics can be used (the page
-size limit).  Sprites may cross the border.
-
-
-## Foreground
-
-The foreground edges are three-character tiles of which up to 16 can be
-used at the same time with up 32 different chars.  The rightmost char of
-a tile is the trailing char.  All chars of a tile share the same color.

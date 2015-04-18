@@ -6,14 +6,14 @@ level_patterns:
     @(- t_two_up level_data) 14
     @(- t_two_up level_data) 12
     @(- level_data3 level_data) 0
-    @(+ 128 0) ; Mostly snipers, less scouts.
+    @(+ 128 1) ; Mostly snipers, less scouts.
     @(- t_tower level_data) 4
     @(- t_tower level_data) 6
     @(- t_tower level_data) 8
     @(- t_tower level_data) 7
     @(- t_tower level_data) 4
     @(- t_tower level_data) 3
-    @(+ 128 1) ; Normal snipers, double scouts.
+    @(+ 128 2) ; Normal snipers, double scouts.
     @(- level_data_rest level_data) 0
-    @(+ 128 2) ; Bullets follow player.
+    @(+ 128 3) ; Bullets follow player.
     0

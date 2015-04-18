@@ -70,8 +70,8 @@ level_delay             = $24
 level_old_y             = $25
 
 fire_interval           = $26
-has_double_laser        = $27
-has_autofire            = $28
+;has_double_laser        = $27
+;has_autofire            = $28
 is_firing               = $29
 is_invincible           = $2a
 death_timer             = $2b
@@ -97,7 +97,8 @@ no_stars                = $3e
 grenade_left            = $3f
 grenade_right           = $40
 sprite_rr               = $41
-tiles_c                 = $42 ; 6 bytes
+weapon                  = $42
+tiles_c                 = $43 ; 6 bytes
 
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
