@@ -63,6 +63,7 @@ l:  sta tiles_c,x
     lda #@(+ framemask foreground 2)
     sta next_foreground_char
     lda leftmost_tile
+    and #@(-- numtiles)
     sta counter
 
 loop:
@@ -137,9 +138,6 @@ repeat:
 
 remove_tile:
     inc leftmost_tile
-    lda leftmost_tile
-    and #@(-- numtiles)
-    sta leftmost_tile
 next_tile:
     inc counter
     jmp -loop
