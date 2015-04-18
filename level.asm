@@ -14,15 +14,16 @@ decode_position:
     bne decode_pattern
 
     ; End of pattern. Get next.
-    inc level_pattern
     ldy level_pattern
-    lda @(-- level_patterns),y
+    inc level_pattern
+    lda level_patterns,y
+    bmi tune_screws
     sta level_pos
     beq restart_level
-    bmi tune_screws
-    lda level_patterns,y; Copy vertical pattern offset.
-    sta level_offset
+
     inc level_pattern
+    lda @(++ level_patterns),y ; Copy vertical pattern offset.
+    sta level_offset
     jmp decode_position ; Try again with new pattern...
 
 level_add_repeated_tile:
@@ -52,7 +53,6 @@ n:  lda #$f0 ; beq
 
 restart_level:
     sta level_pattern
-    sta level_pos
     beq decode_position
 
 decode_pattern:
@@ -70,35 +70,35 @@ decode_pattern:
     bcs +up
 
 down:
-    ldy #1
+    ldy #0
     jsr add_tile
+    iny
     inc level_old_y
     lda tmp
     clc
     sbc level_old_y
-    beq +n
-    bcc +n
-    ldy #3
+    beq +done2
+    bcc +done2
     jsr level_add_repeated_tile
     adc screen_tiles_n,x
     sta level_old_y
     sta screen_tiles_y,x
     inc level_old_y
-n:  ldy #5
-    bne +done
+    bne +done2
 
-up: ldy #4
+up: ldy #3
     jsr add_tile
+    iny
     dec level_old_y
     lda level_old_y
     clc
     sbc tmp
-    beq +n
-    bcc +n
-    ldy #2
+    beq +done2
+    bcc +done2
     jsr level_add_repeated_tile
     sbc screen_tiles_n,x
     sta level_old_y
-n:  ldy #0
+done2:
+    iny
 done:
     jmp add_tile

@@ -55,7 +55,7 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
 
     lda #22
     sta level_old_y
-    ldy #0
+    ldy #5
     jsr add_tile
     lda #3
     sta level_delay
