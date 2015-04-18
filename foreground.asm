@@ -11,10 +11,10 @@ test_on_foreground:
 
 add_tile:
     pha
-    lda free_tiles
-    tax
-    clc
-    adc #1
+    ldx free_tiles
+    inx
+    txa
+    dex
     and #@(-- numtiles)
     sta free_tiles
     lda #22
@@ -50,6 +50,8 @@ no_more_tiles:
     jmp rotate_trailing_chars
 
 n:  inc scrolled_chars
+    lda #>foreground_gfx
+    sta @(++ s)
 
     ; Reset character allocations.
     lda #0
@@ -127,7 +129,7 @@ plot:
 repeat:
     dec repetition
     lda repetition
-    bmi next_tile
+    bmi +next_tile
     dec scry
     lda tmp3
     sta scrx
@@ -148,7 +150,7 @@ draw_chars:
     lda tiles_l,x
     beq +n
     jsr blit_char
-    bmi +l           ; jmp n5
+    bmi +l ; jmp
 n:  jsr blit_clear_char
 l:  jsr fetch_foreground_char
     lda tiles_m,x
@@ -171,12 +173,14 @@ next_tile:
     cpx active_tiles
     beq rotate_trailing_chars
 
-    lda sl             ; Set pointer to middle char.
+    ; Set pointer to middle char.
+    lda sl
     clc
     adc #8
     sta sm
 
-    lda tilelist_r,x    ; Set pointer to right char.
+    ; Set pointer to right char.
+    lda tilelist_r,x
     beq +n1
     cmp #<background
     bne +n2
@@ -191,7 +195,8 @@ n1: jsr get_char_addr
     lda @(++ d)
     sta @(++ sr)
 
-    ldy #7              ; Rotate.
+    ; Rotate.
+    ldy #7
 l:  lda (sr),y
     rol
     sta tmp
@@ -217,7 +222,7 @@ l:  lda (sr),y
     adc #16
     sta sl
     inx
-    jmp next_tile
+    jmp -next_tile
 
 rotate_trailing_chars:
     lda #<first_trailing_char
