@@ -31,6 +31,7 @@
         "sprites.asm"
         "controllers.asm"
         "grenade.asm"
+        "game-over.asm"
         "main-start.asm"
           "sniper.asm"
           "scout.asm"
