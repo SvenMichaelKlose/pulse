@@ -4,6 +4,7 @@ grenade:
     dec grenade_counter
 
 draw_grenade:
+    ; Kill everything deadly.
     ldy #14
 l:  tya
     pha
@@ -39,10 +40,8 @@ grenade_bar:
 l:  jsr scrcoladdr
     cpy #22
     bcs +done
-    lda (scr),y
-    and #foreground
-    cmp #foreground
-    beq +n
+    jsr test_on_foreground
+    beq +n          ; Don't draw over foreground…
 grenade_bar_color:
     lda #0
     sta (scr),y
