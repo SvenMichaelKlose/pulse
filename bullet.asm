@@ -16,6 +16,9 @@ l:  rts
 
 add_bullet:
     inc sound_foreground
+    jsr add_bullet_no_sound
+    jmp add_sprite
+
 add_bullet_no_sound:
     ; Get distance to player.
     lda @(+ sprites_x 15)
@@ -66,4 +69,4 @@ l:  and #%11110000          ; Save 4 bits fraction.
     lda tmp
     sta @(+ bullet_init 2)
     ldy #@(-  bullet_init sprite_inits)
-    jmp add_sprite
+    rts

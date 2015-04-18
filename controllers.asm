@@ -107,7 +107,7 @@ sniper_fun:
 
 update_trajectory:
     jsr add_bullet_no_sound
-    jmp remove_sprite
+    jmp replace_sprite
 
 bullet_fun:
     jsr random
