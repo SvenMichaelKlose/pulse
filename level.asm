@@ -76,16 +76,16 @@ down:
     lda tmp
     clc
     sbc level_old_y
-    beq +n4
-    bcc +n4
+    beq +n
+    bcc +n
     ldy #3
     jsr level_add_repeated_tile
     adc screen_tiles_n,x
     sta level_old_y
     sta screen_tiles_y,x
     inc level_old_y
-n4: ldy #5
-    bne +n5
+n:  ldy #5
+    bne +done
 
 up: ldy #4
     jsr add_tile
@@ -93,11 +93,12 @@ up: ldy #4
     lda level_old_y
     clc
     sbc tmp
-    beq +n3
-    bcc +n3
+    beq +n
+    bcc +n
     ldy #2
     jsr level_add_repeated_tile
     sbc screen_tiles_n,x
     sta level_old_y
-n3: ldy #0
-n5: jmp add_tile
+n:  ldy #0
+done:
+    jmp add_tile
