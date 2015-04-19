@@ -17,6 +17,14 @@ n:  pla
     dey
     bpl -l
 
+    jsr random
+    and #%111
+    clc
+    adc #32
+    sta $9001
+    ora #128
+    sta $900d
+
     dec grenade_left
     inc grenade_right
 
