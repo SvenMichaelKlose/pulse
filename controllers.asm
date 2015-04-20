@@ -111,8 +111,6 @@ update_trajectory:
     jmp replace_sprite
 
 bullet_fun:
-    ldy #@(+ yellow 8)
-    jsr energize_color
     jsr random
     and #%00000111
 mod_follow:
