@@ -22,7 +22,7 @@ n:  dex
 
     jsr set_screws
 
-init_trailing_foreground_chars:
+    ; Initialize trailing foreground chars.
     lda #<first_trailing_char
     sta d
     lda #>first_trailing_char
@@ -33,7 +33,7 @@ init_trailing_foreground_chars:
     ldy #15
     jsr blit_copy
 
-init_score_digits:
+    ; Copy score digits from ROM charset.
     ldx #@(* 10 8)
 l:  lda @(+ charset_locase (* 8 #x30)),x
     sta @(+ charset (* 8 score_char0)),x
@@ -42,24 +42,30 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     dex
     bpl -l
 
+    ; Plot ship next to number of lifes.
     ldx #@(+ score_char0 10)
     stx lifes_on_screen
 
+    ; Make number of lifes yellow.
     lda #yellow
     sta @(+ (- (++ lifes_on_screen) screen) colors)
 
+    ; Initialize foreground scroller.
     lda #22
     sta level_old_y
     ldy #5
     jsr add_tile
     lda #3
     sta level_delay
+
     sta lifes
+
+    ; Make player sprite.
     ldx #@(-- numsprites)
     ldy #@(- player_init sprite_inits)
     jsr replace_sprite
 
-make_stars:
+    ; Fill sprite slots with stars.
     ldx #@(- numsprites 2)
 l:  jsr remove_sprite
     dex
