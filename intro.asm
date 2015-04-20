@@ -13,7 +13,6 @@ intro:
     ldx #0
 l:  lda story,x
     beq +e
-    jsr ascii2petscii
 l2: sta @(+ screen (* 5 22)),x
     inx
     bne -l
@@ -47,13 +46,6 @@ l:  sta hiscore,x
 
     jmp game_over
 
-ascii2petscii:
-    cmp #@(++ #\Z)
-    bcc +done
-    sbc #@(-- #\a)
-done:
-    rts
-
 clear_screen_and_colors:
     ldx #253
 l:  lda #32
@@ -67,15 +59,4 @@ l:  lda #32
     rts
 
 story:
-    "Our enemies now attack"
-    "   us from the 20th   "
-    "dimension! We hastily "
-    "created a drone remote"
-    "control software. You "
-    " are one of the last  "
-    "pilots with the right "
-    "hardware to use it out"
-    " there. We don't know "
-    "  what to expect. We  "
-    "    count on you.     "
-    " Good luck! Hit fire!" 0
+    @(petscii-story) 0

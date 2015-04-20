@@ -1,4 +1,5 @@
 (load "files.lisp")
+(load "story.lisp")
 
 (defvar *loader-start* nil)
 
