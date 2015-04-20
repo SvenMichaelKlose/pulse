@@ -5,8 +5,6 @@
 ; s: source address
 ; d: destination address
 ; blit_right_addr + 1: 7 - bits_to_shift
-blit_right_whole_char:
-    ldy #7
 blit_right:
     sta s
 _blit_right_loop:
@@ -35,8 +33,6 @@ l:  ora (d),y
 ; s: source address
 ; s: destination address
 ; blit_right_addr + 1: 7 - bits_to_shift
-blit_left_whole_char:
-    ldy #7
 blit_left:
     sta s
 _blit_left_loop:
