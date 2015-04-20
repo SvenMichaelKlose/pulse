@@ -23,6 +23,7 @@ n:  pla
     adc #32
     sta $9001
     ora #128
+    sta $900a
     sta $900d
 
     dec grenade_left
