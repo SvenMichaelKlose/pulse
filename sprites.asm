@@ -166,7 +166,6 @@ l:  lda sprites_i,x
     bne +n
 
     sta foreground_collision
-
     jsr draw_sprite
 
     ; Save foreground collision.
