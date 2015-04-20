@@ -197,9 +197,7 @@ l:  ; Remove old chars.
     jsr xpixel_to_char
     sta sprites_ox,x
     lda sprites_y,x
-    lsr
-    lsr
-    lsr
+    jsr pixel_to_char
     sta sprites_oy,x
 
     dex
@@ -208,9 +206,14 @@ l:  ; Remove old chars.
 
 xpixel_to_char:
     lda sprites_x,x
+pixel_to_char:
+    cmp #$f8
+    bcs +l      ; Keep sprite from popping out on the left.
     lsr
     lsr
     lsr
+    rts
+l:  lda #$ff
     rts
 
 ; Draw a single sprite.
