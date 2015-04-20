@@ -75,10 +75,8 @@ l:  jsr remove_sprite
 restart:
     ldx #$ff
     txs
-    lda #max_fire_interval
-    sta fire_interval
     lda #150
     sta is_invincible
-    lda #0
-    sta is_firing
-    sta weapon
+    inx
+    stx is_firing
+    stx weapon
