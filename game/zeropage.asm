@@ -15,7 +15,7 @@ framemask           = @(half numchars)
 framechars          = @(half numchars)
 
 first_sprite_char   = 1
-num_trailing_foreground_chars  = 3
+num_trailing_foreground_chars  = 2
 
 foreground          = @(+ (half framechars) (quarter framechars))
 

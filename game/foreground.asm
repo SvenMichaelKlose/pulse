@@ -120,7 +120,6 @@ n:  inc scrx
     bcs +plot
     sec
     sbc #<background
-    beq variable_background
     lsr
     lsr
     lsr
@@ -136,11 +135,6 @@ repeat:
     lda tmp3
     sta scrx
     jmp repeat_plotting_chars
-
-variable_background:
-    lda scry
-    and #1
-    jmp plot_background
 
 remove_tile:
     inc leftmost_tile
