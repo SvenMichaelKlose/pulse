@@ -59,7 +59,7 @@ n:  inc scrolled_chars
 l:  sta tiles_c,x
     dex
     bpl -l
-    lda #@(+ framemask foreground 2)
+    lda #@(+ framemask foreground num_trailing_foreground_chars)
     sta next_foreground_char
     lda leftmost_tile
     and #@(-- numtiles)
@@ -120,9 +120,11 @@ n:  inc scrx
     bcs +plot
     sec
     sbc #<background
+    beq variable_background
     lsr
     lsr
     lsr
+plot_background:
     ora #@(+ framemask foreground)
 plot:
     sta (scr),y
@@ -134,6 +136,11 @@ repeat:
     lda tmp3
     sta scrx
     jmp repeat_plotting_chars
+
+variable_background:
+    lda scry
+    and #1
+    jmp plot_background
 
 remove_tile:
     inc leftmost_tile
@@ -180,13 +187,14 @@ next_tile:
     ; Set pointer to right char.
     lda tilelist_r,x
     beq +n1
-    cmp #<background
-    bne +n2
-    lda #@(+ framemask foreground)
-    jmp +n1
-n2: cmp #<bg_t
-    bne +n1
-    lda #@(+ framemask foreground 1)
+    cmp #@(+ <background (* 8 num_trailing_foreground_chars))
+    bcs +n1
+    sec
+    sbc #<background
+    lsr
+    lsr
+    lsr
+    ora #@(+ framemask foreground)
 n1: jsr get_char_addr
     sta @(++ sr)
     lda d
