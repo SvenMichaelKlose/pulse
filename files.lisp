@@ -1,6 +1,5 @@
 (defconstant +pulse-files+
-      '("vic.defs.asm"
-        "game.defs.asm"
+      '("game.defs.asm"
         "zeropage.asm"
 
         "init.asm"

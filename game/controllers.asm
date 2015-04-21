@@ -92,7 +92,7 @@ explosion_fun:
     lda explosion_colors,y
     sta sprites_c,x
     lda sprites_l,x
-    adc vicreg_rasterlo
+    adc vicreg_rasterhi
     sta sprites_l,x
     dec sprites_d,x
     bpl move_left

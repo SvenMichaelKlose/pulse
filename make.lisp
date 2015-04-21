@@ -3,6 +3,9 @@
 
 (apply #'assemble-files
        "pulse.prg"
-       (@ [+ "game/" _] (. "basic-loader.asm" +pulse-files+)))
+       (+ (@ [+ "bender/vic-20/" _]
+             '("basic-loader.asm"
+               "vic.asm"))
+          (@ [+ "game/" _] +pulse-files+)))
 (make-vice-commands "vice.txt")
 (quit)
