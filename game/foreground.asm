@@ -1,6 +1,5 @@
 first_trailing_char  = @(+ charset (* 8 (+ foreground framemask)))
-second_trailing_char = @(+ charset (* 8 (+ foreground framemask 1)))
-first_tile           = @(+ charset (* 8 (+ foreground framemask 2)))
+first_tile           = @(+ charset (* 8 (+ foreground framemask num_trailing_foreground_chars)))
 
 test_on_foreground:
     ldy scrx
@@ -117,14 +116,14 @@ n:  inc scrx
     jsr scrcoladdr
     lda tiles_r,x
     beq plot
-    cmp #<background
-    bne try_foreground
-    lda #@(+ framemask foreground)
-    bne plot
-try_foreground:
-    cmp #<bg_t
-    bne repeat
-    lda #@(+ framemask foreground 1)
+    cmp #@(+ <background (* 8 num_trailing_foreground_chars))
+    bcs +plot
+    sec
+    sbc #<background
+    lsr
+    lsr
+    lsr
+    ora #@(+ framemask foreground)
 plot:
     sta (scr),y
 repeat:
@@ -228,7 +227,7 @@ rotate_trailing_chars:
     sta sl
     lda #>first_trailing_char
     sta @(++ sl)
-    ldy #15
+    ldy #@(-- (* 8 num_trailing_foreground_chars))
 l:  lda (sl),y
     asl
     adc #0

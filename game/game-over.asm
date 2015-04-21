@@ -30,7 +30,7 @@ n:  dex
     lda #>background
     sta @(++ s)
     lda #<background                                                            
-    ldy #15
+    ldy #@(-- (* 8 num_trailing_foreground_chars))
     jsr blit_copy
 
     ; Copy score digits from ROM charset.
