@@ -51,7 +51,7 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     sta @(+ (- (++ lifes_on_screen) screen) colors)
 
     ; Initialize foreground scroller.
-    lda #22
+    lda #@(-- screen_height)
     sta level_old_y
     ldy #5
     jsr add_tile

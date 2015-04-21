@@ -10,7 +10,7 @@ mod_sniper_probability:
     asl
     asl
     sta @(++ sniper_init)
-    lda #@(* 22 8)
+    lda #@(* screen_width 8)
     sta sniper_init
     ldy #@(- sniper_init sprite_inits)
     jsr add_sprite

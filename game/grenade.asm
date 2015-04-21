@@ -44,10 +44,10 @@ n:  pla
 
 grenade_bar:
     sta @(++ grenade_bar_color)
-    lda #22
+    lda #@(-- screen_height)
     sta scry
 l:  jsr scrcoladdr
-    cpy #22
+    cpy #screen_width
     bcs +done
     jsr test_on_foreground
     beq +n          ; Don't draw over foreground…

@@ -1,3 +1,6 @@
+screen_width  = 22
+screen_height = 23
+
 max_fire_interval = 4
 min_fire_interval = 2
 
