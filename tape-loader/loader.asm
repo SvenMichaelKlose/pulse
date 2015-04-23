@@ -1,7 +1,7 @@
-loaded_loader:
-    org $1e00
+loaded_tape_loader:
+    org @*tape-loader-start*
 
-loader:
+tape_loader:
     lda $911d               ; Get timer underflow bit.
     ldx #@(high *tape-pulse*) ; Restart timer.
     stx $9115

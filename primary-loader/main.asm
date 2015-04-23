@@ -7,9 +7,9 @@
     sta vicreg_rasterlo_rows_charsize
 
     ; Copy loader into screen memory.
-    ldx #@(++ (- waiter_end loader))
-l:  lda @loaded_loader,x
-    sta @loader,x
+    ldx #@(++ (- waiter_end *tape-loader-start*))
+l:  lda @loaded_tape_loader,x
+    sta @*tape-loader-start*,x
     dex
     bpl -l
 
@@ -20,7 +20,7 @@ l:  lda loader_cfg,x
     dex
     bpl -l
 
-    jsr @start_loader
+    jsr @*tape-loader-start*
     jmp @waiter
 
 game_size = @(length (fetch-file "obj/game.bin"))

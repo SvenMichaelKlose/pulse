@@ -1,5 +1,6 @@
 (defconstant +make-wav?+ nil)
 
+(defvar *tape-loader-start* #x1e00)
 (defvar *pulse-short* #x20)
 (defvar *pulse-long* #x30)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
@@ -26,8 +27,8 @@
       '("primary-loader/zeropage.asm"
         "bender/vic-20/vic.asm"
         "bender/vic-20/via.asm"
-        "shared/start-irq-loader.asm"
-        "shared/irq-loader.asm"
+        "tape-loader/start.asm"
+        "tape-loader/loader.asm"
         "primary-loader/waiter.asm")))
 
 (defun make-loader-prg ()
@@ -51,7 +52,7 @@
       '("bender/vic-20/vic.asm"
         "bender/vic-20/via.asm"
         "spinoffs/ohne_dich.asm"
-        "shared/tape_audio_player.asm"))
+        "spinoffs/tape_audio_player.asm"))
   (make-vice-commands "obj/ohne_dich.bin.vice.txt"))
 
 (make-game nil)
@@ -61,11 +62,9 @@
 (defvar *game-start* (get-label 'main))
 
 (make-loader-bin)
-(defvar waiter_end (get-label 'waiter_end))
-(defvar loaded_loader (get-label 'loaded_loader))
-(defvar loader (get-label 'loader))
-(defvar start_loader (get-label 'start_loader))
+(defvar loaded_tape_loader (get-label 'loaded_tape_loader))
 (defvar waiter (get-label 'waiter))
+(defvar waiter_end (get-label 'waiter_end))
 (defvar run (get-label 'run))
 (make-loader-prg)
 

@@ -1,7 +1,7 @@
-start_loader:
-    lda #<loader        ; Set IRQ vector.
+tape_loader_start:
+    lda #<@*tape-loader-start*        ; Set IRQ vector.
     sta $314
-    lda #>loader
+    lda #>@*tape-loader-start*
     sta $315
     lda #@(low *tape-pulse*) ; Set half of timer.
     sta $9114
