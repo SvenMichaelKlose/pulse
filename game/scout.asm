@@ -24,6 +24,7 @@ retry:
 
     lda #8
     sta adding_scout
+    lda #6
     sta formation_left_unhit
     lda #3
     sta adding_scout_delay
