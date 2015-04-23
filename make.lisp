@@ -109,7 +109,7 @@
                   (+ "OHNE DICH       "
                      (fetch-file "obj/ohne_dich.bin"))
                   :start #x1001))
-  (wav2pwm o "obj/ohne_dich_4bit.wav"))
+  (wav2pwm o "obj/ohne_dich_8bit.wav"))
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)

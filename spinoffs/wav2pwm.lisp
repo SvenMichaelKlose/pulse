@@ -17,12 +17,13 @@
 (defun amplitude-conversions ()
   (maptimes #'amp 64))
 
+(defun pwm-pulse-rate ()
+  (integer (/ +cpu-cycles-pal+
+              (* 8 (+ audio_shortest_pulse (half audio_pulse_width))))))
+
 (defun print-pwm-info ()
   (format t "Audio resolution: ~A cycles~%" (* 8 audio_pulse_width))
-  (format t "~A pulses per second.~%"
-          (integer (/ +cpu-cycles-pal+
-                      (* 8 (+ audio_shortest_pulse
-                            (half audio_pulse_width))))))
+  (format t "~A pulses per second.~%" (pwm-pulse-rate))
   (format t "Amplitude conversions: ~A~%" (amplitude-conversions)))
 
 (defun wav2pwm (out in-file)

@@ -15,7 +15,7 @@ text:
     13
     "REWIND OR FORWARD THE" 13
     "TAPE IF YOU SO DESIRE." 13
-    " OUTPUT IS 4.8 KHZ AT" 13
+    " OUTPUT IS " @(string-list (princ (pwm-pulse-rate) nil)) "HZ AT" 13
     "      FOUR BITS." 13
     13
     13
