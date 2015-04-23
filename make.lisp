@@ -95,7 +95,7 @@
     (dolist (i x (list-string (queue-list q)))
       (bin2pottap-byte q i))))
 
-(with-output-file o "pulse.tap"
+(with-output-file o "compiled/pulse.tap"
   (write-tap o
       (+ (bin2cbmtap (cddr (string-list (fetch-file "obj/loader.prg")))
                      (+ "PULSE           "
@@ -103,7 +103,7 @@
                      :start #x1001)
          (bin2pottap (string-list (fetch-file "obj/game.bin"))))))
 
-(with-output-file o "ohne_dich.tap"
+(with-output-file o "compiled/ohne_dich.tap"
   (write-tap o
       (bin2cbmtap (cddr (string-list (fetch-file "obj/ohne_dich.prg")))
                   (+ "OHNE DICH       "
@@ -118,9 +118,11 @@
       (tap2wav in out))))
 
 (when +make-wav?+
-  (make-tape-wav "pulse.tap" "pulse.tape.wav")
-  (make-tape-wav "ohne_dich.tap" "ohne_dich.tape.wav"))
+  (make-tape-wav "compiled/pulse.tap" "compiled/pulse.tape.wav")
+  (make-tape-wav "compiled/ohne_dich.tap" "compiled/ohne_dich.tape.wav"))
 
 (print-pwm-info)
+
+(format t "Done making 'Pulse'. See directory 'compiled/'.~%")
 
 (quit)
