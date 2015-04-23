@@ -42,8 +42,8 @@
   (apply #'assemble-files "obj/ohne_dich.prg"
       '("bender/vic-20/basic-loader.asm"
         "bender/vic-20/vic.asm"
-        "spinoffs/text.asm"
-        "spinoffs/start.asm"))
+        "spinoffs/start.asm"
+        "spinoffs/text.asm"))
   (make-vice-commands "obj/ohne_dich.prg.vice.txt"))
 
 (defun make-ohne-dich-bin ()
@@ -69,11 +69,11 @@
 (defvar run (get-label 'run))
 (make-loader-prg)
 
-(defvar tape_audio_player 0)
+(defvar ohne_dich 0)
 (make-ohne-dich-prg)
 (defvar text (get-label 'text))
 (make-ohne-dich-bin)
-(= tape_audio_player (get-label 'tape_audio_player))
+(= ohne_dich (get-label 'ohne_dich))
 (make-ohne-dich-prg)
 
 (defun bin2pottap-byte (q i)
@@ -120,5 +120,7 @@
 (when +make-wav?+
   (make-tape-wav "pulse.tap" "pulse.tape.wav")
   (make-tape-wav "ohne_dich.tap" "ohne_dich.tape.wav"))
+
+(print-pwm-info)
 
 (quit)

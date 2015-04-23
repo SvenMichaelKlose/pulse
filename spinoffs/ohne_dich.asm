@@ -1,3 +1,5 @@
+    org $351
+
 ohne_dich:
 l:  lda @text,x
     beq +n

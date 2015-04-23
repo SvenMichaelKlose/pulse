@@ -1,5 +1,3 @@
-    org $351
-
 tape_audio_player:
     lda via_peripheral_ctrl ; Start motor.
     and #$fd
