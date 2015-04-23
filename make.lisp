@@ -3,25 +3,10 @@
 (defvar *pulse-short* #x20)
 (defvar *pulse-long* #x30)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
-(defvar audio_shortest_pulse #x15)
-(defvar audio_longest_pulse #x25)
-(defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 
+(load "spinoffs/wav2pwm.lisp")
 (load "game/files.lisp")
 (load "game/story.lisp")
-
-(defvar num-xlats 64)
-
-(defun amp (x)
-  (= x (* 4 x))
-  (- 15
-  (alet (integer (/ (* x (/ 256 audio_pulse_width)) 128))
-    (? (< 15 !)
-       15
-       !))))
-
-(defun amplitude-conversions ()
-  (maptimes #'amp 64))
 
 (defun make-game (tape?)
   (apply #'assemble-files
@@ -110,12 +95,6 @@
     (dolist (i x (list-string (queue-list q)))
       (bin2pottap-byte q i))))
 
-(format t "Audio resolution: ~A cycles~%" (* 8 audio_pulse_width))
-(format t "~A pulses per second.~%"
-        (integer (/ 1000000 (* 8 (+ audio_shortest_pulse
-                                    (half audio_pulse_width))))))
-(format t "Amplitude conversions: ~A~%" (amplitude-conversions))
-
 (with-output-file o "pulse.tap"
   (write-tap o
       (+ (bin2cbmtap (cddr (string-list (fetch-file "obj/loader.prg")))
@@ -130,26 +109,7 @@
                   (+ "OHNE DICH       "
                      (fetch-file "obj/ohne_dich.bin"))
                   :start #x1001))
-  (when nil
-  (with (lowest  128
-         highest 128)
-    (format t "Getting lower/upper boundary…~%")
-    (alet (fetch-file "obj/ohne_dich_4bit.wav")
-      (dotimes (i (length !))
-        (when (== i 128)
-          (= lowest  128)
-          (= highest 128))
-        (let x (elt ! i)
-          (?
-            (< x lowest)  (= lowest (char-code x))
-            (< highest x) (= highest (char-code x))))))
-    (format t "Low/high: ~A, ~A~%" lowest highest)))
-
-  (alet (fetch-file "obj/ohne_dich_4bit.wav")
-    (dotimes (i (length !))
-      (princ (code-char (+ audio_shortest_pulse
-                           (/ (* (elt ! i) audio_pulse_width) 256)))
-             o))))
+  (wav2pwm o "obj/ohne_dich_4bit.wav"))
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
