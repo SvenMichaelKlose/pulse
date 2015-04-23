@@ -1,3 +1,5 @@
+timer = @(- (* 8 audio_longest_pulse) (half (+ 2 2 3 4)))
+
 tape_audio_player:
     lda via_peripheral_ctrl ; Start motor.
     and #$fd
@@ -5,9 +7,9 @@ tape_audio_player:
 
     lda #0
     sta $912b
-    lda #@(low (* 8 audio_longest_pulse))
+    lda #<timer
     sta $9124
-    lda #@(high (* 8 audio_longest_pulse))
+    lda #>timer
     tay
     sta $9125
 
