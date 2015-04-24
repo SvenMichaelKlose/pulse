@@ -46,21 +46,21 @@
         "primary-loader/main.asm"))
   (make-vice-commands "obj/loader.prg.vice.txt"))
 
-(defun make-ohne-dich-prg (tv)
-  (apply #'assemble-files (+ "obj/ohne_dich_" tv ".prg")
-      '("bender/vic-20/basic-loader.asm"
+(defun make-ohne-dich-prg (name tv)
+  (apply #'assemble-files (+ "obj/" name "_" tv ".prg")
+      `("bender/vic-20/basic-loader.asm"
         "bender/vic-20/vic.asm"
         "spinoffs/start.asm"
-        "spinoffs/text.asm"))
-  (make-vice-commands (+ "obj/ohne_dich_" tv ".prg.vice.txt")))
+        ,(+ "spinoffs/text_" name ".asm")))
+  (make-vice-commands (+ "obj/" name "_" tv ".prg.vice.txt")))
 
-(defun make-ohne-dich-bin (tv)
-  (apply #'assemble-files (+ "obj/ohne_dich_" tv ".bin")
+(defun make-ohne-dich-bin (name tv)
+  (apply #'assemble-files (+ "obj/" name "_" tv ".bin")
       '("bender/vic-20/vic.asm"
         "bender/vic-20/via.asm"
         "spinoffs/ohne_dich.asm"
         "spinoffs/tape_audio_player.asm"))
-  (make-vice-commands (+ "obj/ohne_dich_" tv ".bin.vice.txt")))
+  (make-vice-commands (+ "obj/" name "_" tv ".bin.vice.txt")))
 
 (defvar *game-start* nil)
 (defvar loaded_tape_loader nil)
@@ -97,31 +97,33 @@
 (defvar ohne_dich nil)
 (defvar text nil)
 
-(defun make-ohne-dich (tv)
+(defun make-ohne-dich (name tv)
   (= *tv* tv)
   (alet (downcase (symbol-name tv))
     (= ohne_dich 0)
-    (make-ohne-dich-prg !)
+    (make-ohne-dich-prg name !)
     (= text (get-label 'text))
-    (make-ohne-dich-bin !)
+    (make-ohne-dich-bin name !)
     (= ohne_dich (get-label 'ohne_dich))
-    (make-ohne-dich-prg !)
+    (make-ohne-dich-prg name !)
 
-    (with-output-file o (+ "compiled/ohne_dich_" ! ".tap")
+    (with-output-file o (+ "compiled/" name "_" ! ".tap")
       (write-tap o
-          (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/ohne_dich_" ! ".prg"))))
+          (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/" name "_" ! ".prg"))))
                       (+ "OHNE DICH       "
-                         (fetch-file (+ "obj/ohne_dich_" ! ".bin")))
+                         (fetch-file (+ "obj/" name "_" ! ".bin")))
                       :start #x1001))
-      (wav2pwm o (+ "obj/ohne_dich_downsampled_" ! ".wav")))
+      (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav")))
 
     (when +make-wav?+
-      (make-tape-wav (+ "compiled/ohne_dich_" ! ".tap")
-                     (+ "compiled/ohne_dich_" ! ".tape.wav")))))
+      (make-tape-wav (+ "compiled/" name "_" ! ".tap")
+                     (+ "compiled/" name "_" ! ".tape.wav")))))
 
 (make-all-games)
-(make-ohne-dich :pal)
-(make-ohne-dich :ntsc)
+(make-ohne-dich "ohne_dich" :pal)
+(make-ohne-dich "ohne_dich" :ntsc)
+(make-ohne-dich "mario" :pal)
+(make-ohne-dich "mario" :ntsc)
 (print-pwm-info)
 
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
