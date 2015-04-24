@@ -1,11 +1,5 @@
-(defconstant +tv+ 'ntsc)
-
 (defconstant +cpu-cycles-pal+ 1108404)
 (defconstant +cpu-cycles-ntsc+ 1020000)
-
-(defconstant +cpu-cycles+ (? (eq +tv+ 'pal)
-                             +cpu-cycles-pal+
-                             +cpu-cycles-ntsc+))
 
 (defvar audio_shortest_pulse #x18)
 (defvar audio_longest_pulse #x28)
@@ -23,13 +17,16 @@
 (defun amplitude-conversions ()
   (maptimes #'amp 64))
 
-(defun pwm-pulse-rate ()
-  (integer (/ +cpu-cycles+
+(defun pwm-pulse-rate (tv)
+  (integer (/ (? (eq tv :pal)
+                 +cpu-cycles-pal+
+                 +cpu-cycles-ntsc+)
               (* 8 (+ audio_shortest_pulse (half audio_pulse_width))))))
 
 (defun print-pwm-info ()
   (format t "Audio resolution: ~A cycles~%" (* 8 audio_pulse_width))
-  (format t "~A pulses per second.~%" (pwm-pulse-rate))
+  (format t "~A pulses per second (PAL).~%" (pwm-pulse-rate :pal))
+  (format t "~A pulses per second (NTSC).~%" (pwm-pulse-rate :ntsc))
   (format t "Amplitude conversions: ~A~%" (amplitude-conversions)))
 
 (defun unsigned (x)
