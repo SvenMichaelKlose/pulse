@@ -5,7 +5,7 @@ text:
     13
     "     " 18 5"\"OHNE DICH\"" 13
     13
-    "    VOCALS/LYRICS:" 13
+    "  VOCALS/LYRICS/CODE:" 13
     "  SVEN MICHAEL KLOSE" 13
     "  (PIXEL@HUGBOX.ORG)" 13
     13
