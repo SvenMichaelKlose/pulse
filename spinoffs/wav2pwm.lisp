@@ -7,8 +7,8 @@
                              +cpu-cycles-pal+
                              +cpu-cycles-ntsc+))
 
-(defvar audio_shortest_pulse (? (eq +tv+ 'pal) #x18 #x18))
-(defvar audio_longest_pulse (? (eq +tv+ 'pal) #x28 #x28))
+(defvar audio_shortest_pulse #x18)
+(defvar audio_longest_pulse #x28)
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 (defvar num-xlats 64)
 
