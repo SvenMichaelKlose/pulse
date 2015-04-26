@@ -11,13 +11,14 @@
     "sox obj/~A_filtered.wav -c 1 -b 16 -r ~A obj/~A_downsampled_~A.wav~%"
     name (pwm-pulse-rate tv) name (downcase (symbol-name tv))))
 
+(defun make-audio (name file bass)
+  (+ (make-wav name file bass)
+     (make-conversion name :pal)
+     (make-conversion name :ntsc)))
+
 (print-pwm-info)
 (put-file "obj/_make.sh"
-  (+ (make-wav "ohne_dich" "spinoffs/ohne_dich.mp3" -56)
-     (make-conversion "ohne_dich" :pal)
-     (make-conversion "ohne_dich" :ntsc)
-     (make-wav "mario" "spinoffs/mario.flv" -56)
-     (make-conversion "mario" :pal)
-     (make-conversion "mario" :ntsc)))
+  (+ (make-audio "ohne_dich" "spinoffs/ohne_dich.mp3" -56)
+     (make-audio "mario" "spinoffs/mario.flv" -56)))
 
 (quit)
