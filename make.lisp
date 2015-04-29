@@ -34,9 +34,10 @@
       '("primary-loader/zeropage.asm"
         "bender/vic-20/vic.asm"
         "bender/vic-20/via.asm"
-        "tape-loader/start.asm"
         "tape-loader/loader.asm"
-        "primary-loader/waiter.asm")))
+        "tape-loader/start.asm"
+        "primary-loader/waiter.asm"))
+  (make-vice-commands "obj/loader.bin.vice.txt"))
 
 (defun make-loader-prg ()
   (apply #'assemble-files "obj/loader.prg"
@@ -51,16 +52,9 @@
       `("bender/vic-20/basic-loader.asm"
         "bender/vic-20/vic.asm"
         "spinoffs/start.asm"
+        "spinoffs/tape_audio_player.asm"
         ,(+ "spinoffs/text_" name ".asm")))
   (make-vice-commands (+ "obj/" name "_" tv ".prg.vice.txt")))
-
-(defun make-ohne-dich-bin (name tv)
-  (apply #'assemble-files (+ "obj/" name "_" tv ".bin")
-      '("bender/vic-20/vic.asm"
-        "bender/vic-20/via.asm"
-        "spinoffs/ohne_dich.asm"
-        "spinoffs/tape_audio_player.asm"))
-  (make-vice-commands (+ "obj/" name "_" tv ".bin.vice.txt")))
 
 (defvar *game-start* nil)
 (defvar loaded_tape_loader nil)
@@ -68,15 +62,19 @@
 (defvar waiter_end nil)
 (defvar run nil)
 
+(defun padded-name (x)
+  (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
+
 (defun make-all-games ()
-  (make-game nil)
-  (make-vice-commands "obj/pulse.vice.txt")
+;  (make-game nil)
+;  (make-vice-commands "obj/pulse.vice.txt")
   (make-game t)
   (make-vice-commands "obj/game.vice.txt")
   (= *game-start* (get-label 'main))
 
   (make-loader-bin)
   (= loaded_tape_loader (get-label 'loaded_tape_loader))
+  (= tape_loader_start (get-label 'tape_loader_start))
   (= waiter (get-label 'waiter))
   (= waiter_end (get-label 'waiter_end))
   (= run (get-label 'run))
@@ -85,7 +83,7 @@
   (with-output-file o "compiled/pulse.tap"
     (write-tap o
         (+ (bin2cbmtap (cddr (string-list (fetch-file "obj/loader.prg")))
-                       (+ "PULSE           "
+                       (+ (padded-name "PULSE")
                           (fetch-file "obj/loader.bin"))
                        :start #x1001)
            (bin2pottap (string-list (fetch-file "obj/game.bin"))))))
@@ -100,20 +98,17 @@
 (defun make-ohne-dich (name tv)
   (= *tv* tv)
   (alet (downcase (symbol-name tv))
-    (= ohne_dich 0)
-    (make-ohne-dich-prg name !)
-    (= text (get-label 'text))
-    (make-ohne-dich-bin name !)
-    (= ohne_dich (get-label 'ohne_dich))
     (make-ohne-dich-prg name !)
 
     (with-output-file o (+ "compiled/" name "_" ! ".tap")
       (write-tap o
           (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/" name "_" ! ".prg"))))
-                      (+ "OHNE DICH       "
-                         (fetch-file (+ "obj/" name "_" ! ".bin")))
+                      name
                       :start #x1001))
-      (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav")))
+      (? *video?*
+         (with-input-file video "nipkow.dat"
+           (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav") video))
+         (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav"))))
 
     (when +make-wav?+
       (make-tape-wav (+ "compiled/" name "_" ! ".tap")

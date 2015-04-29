@@ -7,11 +7,11 @@
     sta vicreg_rasterlo_rows_charsize
 
     ; Copy loader into screen memory.
-    ldx #@(++ (- waiter_end *tape-loader-start*))
-l:  lda @loaded_tape_loader,x
-    sta @*tape-loader-start*,x
+    ldx #@(- waiter_end *tape-loader-start*)
+l:  lda @(-- loaded_tape_loader),x
+    sta @(-- *tape-loader-start*),x
     dex
-    bpl -l
+    bne -l
 
     ; Configure the loader.
     ldx #6
@@ -20,7 +20,7 @@ l:  lda loader_cfg,x
     dex
     bpl -l
 
-    jsr @*tape-loader-start*
+    jsr @tape_loader_start
     jmp @waiter
 
 game_size = @(length (fetch-file "obj/game.bin"))
