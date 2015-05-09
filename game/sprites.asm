@@ -33,14 +33,14 @@ remove_sprite:
     sty tmp2
 
     ; Add background star.
-    jsr random
-    sta star_init           ; Set X position.
-    jsr random
-    and #%11111000
-    sta @(++ star_init)     ; Set Y position.
-    jsr random
+    jsr random              ; Set X position.
+    sta star_init
+    jsr random              ; Set Y position.
+    and #%11111000          ; (Align on rows to save chars,)
+    sta @(++ star_init)
+    jsr random              ; Set speed.
     and #3
-    sta @(+ star_init 7)    ; Set speed.
+    sta @(+ star_init 7)
     ldy #@(- star_init sprite_inits)
 
 ; Replace decorative sprite by new one.
@@ -103,7 +103,7 @@ out:rts
 ;
 ; Returns:
 ; C: Clear when a hit was found.
-; Y: sprite index
+; Y: Sprite index of other sprite.
 find_hit:
     txa
     pha
@@ -123,14 +123,14 @@ l:  cpy tmp             ; Skip same sprite.
     cmp #8
     bcs +n             ; Too far off horizontally...
 
-    ; Vertically narrow down collision box of horizontal laser.
+    ; Halven collision box of horizontal laser vertically.
     lda #8
     sta collision_y_distance
     lda sprites_i,y
     cmp #@(+ deadly 2)
     bne not_a_hoizontal_laser
-    dec collision_y_distance
-    dec collision_y_distance
+    lda #6
+    sta collision_y_distance
 
 not_a_hoizontal_laser:
     lda sprites_y,x     ; Get Y distance.
