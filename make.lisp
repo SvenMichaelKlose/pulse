@@ -12,49 +12,53 @@
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
-  (with-input-file in in-file
-    (with-output-file out out-file
-      (tap2wav in out))))
+  (with-input-output-file in   in-file
+                          out  out-file
+    (tap2wav in out)))
 
-(defun make-game (tape?)
-  (apply #'assemble-files
-         (? tape?
-            "obj/game.bin"
-            "pulse.prg")
-         (+ (& tape?
-               (list "game/no-loader.asm"))
-            (@ [+ "bender/vic-20/" _]
-               `(,@(unless tape?
-                     (list "basic-loader.asm"))
-                 "vic.asm"))
-            (@ [+ "game/" _] +pulse-files+))))
+(defun make (to files cmds)
+  (apply #'assemble-files to files)
+  (make-vice-commands cmds))
+
+(defun make-game (tape? cmds)
+  (make (? tape?
+           "obj/game.bin"
+           "pulse.prg")
+        (+ (& tape?
+              (list "game/no-loader.asm"))
+           (@ [+ "bender/vic-20/" _]
+              `(,@(unless tape?
+                    (list "basic-loader.asm"))
+                "vic.asm"))
+           (@ [+ "game/" _] +pulse-files+))
+        cmds))
 
 (defun make-loader-bin ()
-  (apply #'assemble-files "obj/loader.bin"
-      '("primary-loader/zeropage.asm"
-        "bender/vic-20/vic.asm"
-        "bender/vic-20/via.asm"
-        "tape-loader/loader.asm"
-        "tape-loader/start.asm"
-        "primary-loader/waiter.asm"))
-  (make-vice-commands "obj/loader.bin.vice.txt"))
+  (make "obj/loader.bin"
+        '("primary-loader/zeropage.asm"
+          "bender/vic-20/vic.asm"
+          "bender/vic-20/via.asm"
+          "tape-loader/loader.asm"
+          "tape-loader/start.asm"
+          "primary-loader/waiter.asm")
+        "obj/loader.bin.vice.txt"))
 
 (defun make-loader-prg ()
-  (apply #'assemble-files "obj/loader.prg"
-      '("bender/vic-20/basic-loader.asm"
-        "bender/vic-20/vic.asm"
-        "primary-loader/zeropage.asm"
-        "primary-loader/main.asm"))
-  (make-vice-commands "obj/loader.prg.vice.txt"))
+  (make "obj/loader.prg"
+        '("bender/vic-20/basic-loader.asm"
+          "bender/vic-20/vic.asm"
+          "primary-loader/zeropage.asm"
+          "primary-loader/main.asm")
+        "obj/loader.prg.vice.txt"))
 
 (defun make-ohne-dich-prg (name tv)
-  (apply #'assemble-files (+ "obj/" name "_" tv ".prg")
-      `("bender/vic-20/basic-loader.asm"
-        "bender/vic-20/vic.asm"
-        "spinoffs/start.asm"
-        "spinoffs/tape_audio_player.asm"
-        ,(+ "spinoffs/text_" name ".asm")))
-  (make-vice-commands (+ "obj/" name "_" tv ".prg.vice.txt")))
+  (make (+ "obj/" name "_" tv ".prg")
+        `("bender/vic-20/basic-loader.asm"
+          "bender/vic-20/vic.asm"
+          "spinoffs/start.asm"
+          "spinoffs/tape_audio_player.asm"
+          ,(+ "spinoffs/text_" name ".asm"))
+        (+ "obj/" name "_" tv ".prg.vice.txt")))
 
 (defvar *game-start* nil)
 (defvar loaded_tape_loader nil)
@@ -66,10 +70,8 @@
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
 
 (defun make-all-games ()
-;  (make-game nil)
-;  (make-vice-commands "obj/pulse.vice.txt")
-  (make-game t)
-  (make-vice-commands "obj/game.vice.txt")
+  (make-game nil "obj/pulse.vice.txt")
+  (make-game t "obj/game.vice.txt")
   (= *game-start* (get-label 'main))
 
   (make-loader-bin)
