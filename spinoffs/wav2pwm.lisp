@@ -4,7 +4,7 @@
 
 (defvar audio_shortest_pulse #x18)
 (defvar audio_longest_pulse #x28)
-(defvar frame_sync_add #x10)
+(defvar frame_sync_width #x08)
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 ;(defvar num-xlats 64)
 
