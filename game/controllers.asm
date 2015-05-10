@@ -115,20 +115,21 @@ bullet_fun:
     and #%00000111
 mod_follow:
     beq update_trajectory
+
     ; Initialize increment/decrement instructions.
-    lda #$f6        ; inc zeropage,x
+    lda #$d6        ; dec zeropage,x
     sta +increment
     sta +step
-    ldy #$d6        ; dec zeropage,x
+    ldy #$f6        ; inc zeropage,x
     lda sprites_i,x
     lsr
     lsr
     lsr             ; (inc_y to carry)
-    bcs +n
+    bcc +n
     sty +step
 n:
     lsr             ; (inc_x to carry)
-    bcs +n
+    bcc +n
     sty +increment
 n:
 
@@ -138,7 +139,9 @@ n:
     sty @(++ +step)
 
     lsr             ; (step_y to carry)
-    bcs +n
+    bcc +n
+
+    ; Step on larger Y.
     sty @(++ +increment)
     lda #sprites_x
     sta @(++ +step)
@@ -160,10 +163,9 @@ increment:
     sta tmp
     tya
     and #%1111
-    clc
-    adc tmp
-    cmp #%10000
-    bcc +n
+    sec
+    sbc tmp
+    bcs +n
 step:
     inc sprites_x,x ; Step along slow axis on overflow.
 n:  and #%1111      ; Put low nibble back into sprite info.
