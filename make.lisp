@@ -99,6 +99,7 @@
   (= *tv* tv)
   (alet (downcase (symbol-name tv))
     (make-ohne-dich-prg name !)
+    (make-vice-commands (+ "compiled/" name "_" ! ".vice.txt"))
 
     (with-output-file o (+ "compiled/" name "_" ! ".tap")
       (write-tap o
