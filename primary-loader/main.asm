@@ -24,11 +24,9 @@ l:  lda loader_cfg,x
     jsr @tape_loader_start
     jmp @waiter
 
-game_size = @(length (fetch-file "obj/game.bin"))
+game_size = @(length (fetch-file "obj/game.crunched.prg"))
 
 loader_cfg:
-    @(low *game-start*)
-    @(high *game-start*)
-    <game_size
-    @(++ >game_size)
+    $ff $0f
+    <game_size @(++ >game_size)
     @(low run) @(high run)

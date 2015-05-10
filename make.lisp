@@ -73,6 +73,7 @@
   (make-game nil "obj/pulse.vice.txt")
   (make-game t "obj/game.vice.txt")
   (= *game-start* (get-label 'main))
+  (sb-ext:run-program "exomizer" '("sfx" "sys" "-t" "20" "-x" "3" "-o" "obj/game.crunched.prg"  "pulse.prg"))
 
   (make-loader-bin)
   (= loaded_tape_loader (get-label 'loaded_tape_loader))
@@ -88,7 +89,7 @@
                        (+ (padded-name "PULSE")
                           (fetch-file "obj/loader.bin"))
                        :start #x1001)
-           (bin2pottap (string-list (fetch-file "obj/game.bin"))))))
+           (bin2pottap (string-list (fetch-file "obj/game.crunched.prg"))))))
 
   (when +make-wav?+
     (make-tape-wav "compiled/pulse.tap" "compiled/pulse.tape.wav")))
