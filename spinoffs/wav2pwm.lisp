@@ -1,5 +1,5 @@
-(defconstant +cpu-cycles-pal+ 1108404)
-(defconstant +cpu-cycles-ntsc+ 1027270)
+(load "bender/vic-20/cpu-cycles.lisp")
+
 (defvar *video?* nil)
 
 (defvar audio_shortest_pulse #x18)

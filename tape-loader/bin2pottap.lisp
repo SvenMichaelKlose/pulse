@@ -1,3 +1,5 @@
+(load "bender/vic-20/cpu-cycles.lisp")
+
 (defun bin2pottap-byte (q i)
   (when (< i 0)
     (= i (+ 256 i)))
