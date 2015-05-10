@@ -1,10 +1,10 @@
+main:
     sei         ; Disable interrupts.
     lda #$7f
     sta $911e
     sta $911d
     sta $912e
     sta $912d
-    org $351
 
     ; Print text.
 l:  lda @text,x

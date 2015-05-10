@@ -1,3 +1,4 @@
+main:
     lda #$7f
     sta $912e       ; Disable and acknowledge interrupts.
     sta $912d
