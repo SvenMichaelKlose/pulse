@@ -2,7 +2,7 @@
 
 (defvar *tape-loader-start* #x1e00)
 (defvar *pulse-short* #x20)
-(defvar *pulse-long* #x30)
+(defvar *pulse-long* #x40)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
 
 (load "tape-loader/bin2pottap.lisp")
@@ -127,6 +127,16 @@
 (make-ohne-dich "mario" :ntsc)
 (print-pwm-info)
 
+(defun tap-rate (tv avg-len)
+  ; XXX Need INTEGER here because tré's FRACTION-CHARS is buggered.
+  (integer (/ (? (eq tv :pal)
+                 +cpu-cycles-pal+
+                 +cpu-cycles-ntsc+)
+              (* 8 avg-len))))
+
+(alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
+  (format t "Baud rates: ~A (NTSC), ~A (PAL)~%"
+          (tap-rate :ntsc !) (tap-rate :pal !)))
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
 
 (quit)
