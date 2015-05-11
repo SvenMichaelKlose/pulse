@@ -7,8 +7,35 @@
 
 (load "tape-loader/bin2pottap.lisp")
 (load "spinoffs/wav2pwm.lisp")
+(load "spinoffs/make-video.lisp")
 (load "game/files.lisp")
 (load "game/story.lisp")
+
+(defun make-wav (name file gain bass)
+  (sb-ext:run-program "/usr/bin/mplayer"
+    (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name ".wav") file))
+  (sb-ext:run-program "/usr/bin/sox"
+    (list (+ "obj/" name ".wav")
+          (+ "obj/" name "_filtered.wav")
+          "bass" bass
+          "lowpass" "2000"
+          "compand" "0.3,1" "6:-70,-60,-20" "-5" "-90" "0.2" "gain" gain)))
+
+(defun make-conversion (name tv)
+  (sb-ext:run-program "/usr/bin/sox"
+    (list (+ "obj/" name "_filtered.wav")
+          "-c" "1"
+          "-b" "16"
+          "-r" (princ (pwm-pulse-rate tv) nil)
+          (+ "obj/" name "_downsampled_" (downcase (symbol-name tv)) ".wav"))))
+
+(defun make-audio (name file gain bass)
+  (make-wav name file gain bass)
+  (make-conversion name :pal)
+  (make-conversion name :ntsc))
+
+(make-audio "ohne_dich" "spinoffs/ohne_dich.mp3" "4" "-56")
+(make-audio "mario" "spinoffs/mario.flv" "4" "-56")
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -121,6 +148,10 @@
           (sb-ext:run-program "/usr/bin/zip" (list (+ ! ".zip") !)))))))
 
 (make-all-games)
+
+(when *video?*
+  (sb-ext:run-program "/usr/bin/mplayer" '("-ao" "dummy" "-vo" "pnm" "-vf" "scale=64:48" "-endpos" "120" "video.mp4")))
+
 (make-ohne-dich "ohne_dich" :pal)
 (make-ohne-dich "ohne_dich" :ntsc)
 (make-ohne-dich "mario" :pal)

@@ -1,5 +1,3 @@
-(load "spinoffs/wav2pwm.lisp")
-
 (defun frame-name (x)
   (alet (format nil "~A" x)
     (list-string (+ (maptimes [identity #\0] (- 8 (length !))) (string-list !) (string-list ".ppm")))))
@@ -29,9 +27,8 @@
               (error "Luminance of ~A.~%" v))
           (princ (code-char (+ v audio_shortest_pulse)) out)))))))
 
-(with-output-file out "nipkow.dat"
-  (dotimes (i 2990)
-    (format t "Making frame ~A…~%" i)
-    (make-frame out (++ i))))
-
-(quit)
+(defun make-nipkow-dat ()
+  (with-output-file out "obj/nipkow.dat"
+    (dotimes (i 2990)
+      (format t "Making frame ~A…~%" i)
+      (make-frame out (++ i)))))

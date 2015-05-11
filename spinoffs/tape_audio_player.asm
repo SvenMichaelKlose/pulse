@@ -50,7 +50,7 @@ n:  dec tleft
     ; Correct time if average pulse length doesn't match our desired value.
 s:  lda @(++ average)   ; average / 256
     tax
-    cmp #$29            ; 41… why? Should be $40.
+    cmp #@(- 64 average_loop_cycles sure_delay 5)
     beq +j              ; It's already what we want.
     bcc +n
     dec current_low
@@ -69,5 +69,3 @@ j:  txa
     lda #128
     sta tleft
     bne -f      ; (4)
-
-;xlat: @(amplitude-conversions)

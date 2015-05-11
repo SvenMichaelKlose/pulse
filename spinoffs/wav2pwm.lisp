@@ -8,17 +8,6 @@
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 ;(defvar num-xlats 64)
 
-(defun amp (x)
-  (= x (* 4 x))
-  (- 15
-  (alet (integer (/ (* x (/ 256 audio_pulse_width)) 128))
-    (? (< 15 !)
-       15
-       !))))
-
-(defun amplitude-conversions ()
-  (maptimes #'amp 64))
-
 (defun pwm-pulse-rate (tv)
   ; XXX Need INTEGER here because tré's FRACTION-CHARS is buggered.
   (integer (/ (? (eq tv :pal)
@@ -29,8 +18,7 @@
 (defun print-pwm-info ()
   (format t "Audio resolution: ~A cycles~%" (* 8 audio_pulse_width))
   (format t "~A pulses per second (PAL).~%" (pwm-pulse-rate :pal))
-  (format t "~A pulses per second (NTSC).~%" (pwm-pulse-rate :ntsc))
-  (format t "Amplitude conversions: ~A~%" (amplitude-conversions)))
+  (format t "~A pulses per second (NTSC).~%" (pwm-pulse-rate :ntsc)))
 
 (defun unsigned (x)
   (+ x (? (< 127 x) -128 128)))
