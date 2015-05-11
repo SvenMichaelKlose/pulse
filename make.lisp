@@ -74,6 +74,7 @@
   (make-game t "obj/game.vice.txt")
   (= *game-start* (get-label 'main))
   (sb-ext:run-program "exomizer" '("sfx" "sys" "-t" "20" "-x" "3" "-o" "obj/game.crunched.prg"  "pulse.prg"))
+  (sb-ext:run-program "exomizer" '("sfx" "sys" "-t" "20" "-x" "3" "-o" "pulse.prg"  "pulse.prg"))
 
   (make-loader-bin)
   (= loaded_tape_loader (get-label 'loaded_tape_loader))
@@ -101,22 +102,23 @@
 (defun make-ohne-dich (name tv)
   (= *tv* tv)
   (alet (downcase (symbol-name tv))
-    (make-ohne-dich-prg name !)
-    (make-vice-commands (+ "compiled/" name "_" ! ".vice.txt"))
-
-    (with-output-file o (+ "compiled/" name "_" ! ".tap")
-      (write-tap o
-          (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/" name "_" ! ".prg"))))
-                      name
-                      :start #x1001))
-      (? *video?*
-         (with-input-file video "nipkow.dat"
-           (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav") video))
-         (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav"))))
-
-    (when +make-wav?+
-      (make-tape-wav (+ "compiled/" name "_" ! ".tap")
-                     (+ "compiled/" name "_" ! ".tape.wav")))))
+    (let tapname (+ "compiled/" name "_" ! ".tap")
+      (make-ohne-dich-prg name !)
+      (make-vice-commands (+ "compiled/" name "_" ! ".vice.txt"))
+      (with-output-file o tapname
+        (write-tap o
+            (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/" name "_" ! ".prg"))))
+                        name
+                        :start #x1001))
+        (? *video?*
+           (with-input-file video "nipkow.dat"
+             (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav") video))
+           (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav"))))
+      (sb-ext:run-program "/usr/bin/zip" (list (+ tapname ".zip") tapname))
+      (when +make-wav?+
+        (alet (+ tapname ".wav")
+          (make-tape-wav tapname !)
+          (sb-ext:run-program "/usr/bin/zip" (list (+ ! ".zip") !)))))))
 
 (make-all-games)
 (make-ohne-dich "ohne_dich" :pal)
