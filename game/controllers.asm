@@ -1,4 +1,4 @@
-    ; Make bonus item if a scout formation has been killed.
+; Make bonus item if a scout formation has been killed.
 hit_formation:
     dec formation_left_unhit
     bne sec_return
@@ -55,6 +55,7 @@ toggle_color:
 l:  sty sprites_c,x
     rts
 
+; Bonus
 bonus_fun:
     ldy #green
     lda framecounter
@@ -63,6 +64,7 @@ bonus_fun:
     jsr toggle_color
     jmp move_left
 
+; Star
 star_fun:
     lda no_stars
     beq +l
@@ -75,6 +77,8 @@ l:  lda framecounter
     beq move_left_blue  ; Slow, blue star.
     bne move_left_a     ; Faster, white star.
 
+; --
+
 move_left_blue:
     lda #blue
     sta sprites_c,x
@@ -84,6 +88,9 @@ move_left_a:
     jsr sprite_left
     jmp remove_if_sprite_is_out
 
+; --
+
+; Explosion
 explosion_fun:
     lda sprites_d,x
     lsr
@@ -98,6 +105,7 @@ explosion_fun:
     bpl move_left
     jmp remove_sprite
 
+; Sniper
 sniper_fun:
     jsr random
 mod_sniper_bullet_probability:
@@ -106,6 +114,7 @@ mod_sniper_bullet_probability:
     jsr add_bullet
     jmp move_left
 
+; Bullet
 update_trajectory:
     jsr add_bullet_no_sound
     jmp replace_sprite
@@ -179,6 +188,7 @@ n:  and #%1111      ; Put low nibble back into sprite info.
     bcs remove_if_on_foreground
     bcc remove_if_sprite_is_out
 
+; Scout
 scout_fun:
     lda framecounter_high
     cmp #8
@@ -207,6 +217,7 @@ l:  lda #4
     sta sprites_y,x
 l:  jmp remove_if_sprite_is_out
 
+; Lasers in general
 laser_fun:
     jsr hit_enemy
     bcs remove_sprites
@@ -214,6 +225,9 @@ laser_fun:
     bcs remove_if_on_foreground
     lda #11
     jsr sprite_right
+
+; --
+
 remove_if_sprite_is_out:
     jsr test_sprite_out
     bcc return2
@@ -243,6 +257,9 @@ explode:
 return2:
     rts
 
+; --
+
+; Lasers
 laser_up_fun:
     lda #8
     jsr sprite_up
@@ -263,6 +280,7 @@ laser_side:
     jsr sprite_right
     jmp remove_if_sprite_is_out
 
+; Player
 player_fun:
     lda death_timer
     beq +n
