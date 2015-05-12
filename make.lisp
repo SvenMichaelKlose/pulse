@@ -7,7 +7,6 @@
 
 (load "tape-loader/bin2pottap.lisp")
 (load "spinoffs/wav2pwm.lisp")
-(load "spinoffs/make-video.lisp")
 (load "game/files.lisp")
 (load "game/story.lisp")
 
@@ -34,8 +33,7 @@
   (make-conversion name :pal)
   (make-conversion name :ntsc))
 
-(make-audio "ohne_dich" "spinoffs/ohne_dich.mp3" "4" "-56")
-(make-audio "mario" "spinoffs/mario.flv" "4" "-56")
+(make-audio "theme" "theme.mp3" "4" "-56")
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -75,17 +73,9 @@
         '("bender/vic-20/basic-loader.asm"
           "bender/vic-20/vic.asm"
           "primary-loader/zeropage.asm"
-          "primary-loader/main.asm")
+          "primary-loader/main.asm"
+          "spinoffs/tape_audio_player.asm")
         "obj/loader.prg.vice.txt"))
-
-(defun make-ohne-dich-prg (name tv)
-  (make (+ "obj/" name "_" tv ".prg")
-        `("bender/vic-20/basic-loader.asm"
-          "bender/vic-20/vic.asm"
-          "spinoffs/start.asm"
-          "spinoffs/tape_audio_player.asm"
-          ,(+ "spinoffs/text_" name ".asm"))
-        (+ "obj/" name "_" tv ".prg.vice.txt")))
 
 (defvar *game-start* nil)
 (defvar loaded_tape_loader nil)
@@ -118,44 +108,13 @@
                           (fetch-file "obj/loader.bin"))
                        :start #x1001)
            (bin2pottap (string-list (fetch-file "obj/game.crunched.prg"))))))
-
-  (when +make-wav?+
-    (make-tape-wav "compiled/pulse.tap" "compiled/pulse.tape.wav")))
-
-(defvar *tv* nil)
-(defvar ohne_dich nil)
-(defvar text nil)
-
-(defun make-ohne-dich (name tv)
-  (= *tv* tv)
-  (alet (downcase (symbol-name tv))
-    (let tapname (+ "compiled/" name "_" ! ".tap")
-      (make-ohne-dich-prg name !)
-      (make-vice-commands (+ "compiled/" name "_" ! ".vice.txt"))
-      (with-output-file o tapname
-        (write-tap o
-            (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/" name "_" ! ".prg"))))
-                        name
-                        :start #x1001))
-        (? *video?*
-           (with-input-file video "nipkow.dat"
-             (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav") video))
-           (wav2pwm o (+ "obj/" name "_downsampled_" ! ".wav"))))
-      (sb-ext:run-program "/usr/bin/zip" (list (+ tapname ".zip") tapname))
-      (when +make-wav?+
-        (alet (+ tapname ".wav")
-          (make-tape-wav tapname !)
-          (sb-ext:run-program "/usr/bin/zip" (list (+ ! ".zip") !)))))))
+  (sb-ext:run-program "/usr/bin/zip" (list "compiled/pulse.tap.zip" "compiled/pulse.tap")))
 
 (make-all-games)
 
 (when *video?*
   (sb-ext:run-program "/usr/bin/mplayer" '("-ao" "dummy" "-vo" "pnm" "-vf" "scale=64:48" "-endpos" "120" "video.mp4")))
 
-(make-ohne-dich "ohne_dich" :pal)
-(make-ohne-dich "ohne_dich" :ntsc)
-(make-ohne-dich "mario" :pal)
-(make-ohne-dich "mario" :ntsc)
 (print-pwm-info)
 
 (defun tap-rate (tv avg-len)
