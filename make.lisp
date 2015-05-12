@@ -1,9 +1,14 @@
-(defconstant +make-wav?+ nil)
+(defvar *video?* nil)
 
 (defvar *tape-loader-start* #x1e00)
 (defvar *pulse-short* #x20)
 (defvar *pulse-long* #x40)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
+
+(defvar audio_shortest_pulse #x18)
+(defvar audio_longest_pulse #x28)
+(defvar frame_sync_width #x08)
+(defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 
 (load "tape-loader/bin2pottap.lisp")
 (load "spinoffs/wav2pwm.lisp")
