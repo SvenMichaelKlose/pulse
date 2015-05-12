@@ -11,7 +11,7 @@
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 
 (load "tape-loader/bin2pottap.lisp")
-(load "spinoffs/wav2pwm.lisp")
+(load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
 (load "game/story.lisp")
 
@@ -79,7 +79,7 @@
           "bender/vic-20/vic.asm"
           "primary-loader/zeropage.asm"
           "primary-loader/main.asm"
-          "spinoffs/tape_audio_player.asm")
+          "nipkow/src/audio-player.asm")
         "obj/loader.prg.vice.txt"))
 
 (defvar *game-start* nil)
