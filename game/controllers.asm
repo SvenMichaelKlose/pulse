@@ -41,6 +41,8 @@ test_foreground_collision_fine:
 test_foreground_collision_raw:
     lda sprites_i,x
     asl
+    asl
+    asl
     rts
 
 energize_color:

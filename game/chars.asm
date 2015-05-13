@@ -79,8 +79,8 @@ l:  jsr alloc_char
     rts
 
 on_foreground:
-    sec
-    rol foreground_collision
+    lda #fg_collision
+    sta foreground_collision
 cant_use_position:
     lda #$f0            ; Draw into ROM.
     sta @(++ d)

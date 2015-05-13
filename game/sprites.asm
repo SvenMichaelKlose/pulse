@@ -10,9 +10,8 @@ l:  lda sprite_rr
     and #@(-- numsprites)
     tax
     inc sprite_rr
-    lda sprites_i,x
-    and #decorative
-    bne replace_sprite2
+    lda sprites_i,x     ; Decorative?
+    bmi replace_sprite2 ; Yes…
     dey
     bpl -l
 
@@ -113,8 +112,7 @@ find_hit:
 l:  cpy tmp             ; Skip same sprite.
     beq +n
     lda sprites_i,y     ; Skip decorative sprite.
-    and #decorative
-    bne +n
+    bmi +n
 
     lda sprites_x,x     ; Get X distance.
     sec
@@ -126,10 +124,10 @@ l:  cpy tmp             ; Skip same sprite.
     ; Halven collision box of horizontal laser vertically.
     lda #8
     sta collision_y_distance
-    lda sprites_i,y
-    cmp #@(+ deadly 2)
+    lda sprites_l,y
+    cmp #<laser
     bne not_a_hoizontal_laser
-    lda #6
+    lda #4
     sta collision_y_distance
 
 not_a_hoizontal_laser:
@@ -153,8 +151,7 @@ draw_sprites:
     ; Draw decorative sprites.
     ldx #@(-- numsprites)
 l:  lda sprites_i,x
-    and #decorative
-    beq +n
+    bpl +n
     jsr draw_sprite
 n:  dex
     bpl -l
@@ -162,16 +159,16 @@ n:  dex
     ; Draw other sprites.
     ldx #@(-- numsprites)
 l:  lda sprites_i,x
-    and #decorative
-    bne +n
+    bmi +n
 
+    lda #0
     sta foreground_collision
     jsr draw_sprite
 
     ; Save foreground collision.
-    asl sprites_i,x
-    lsr foreground_collision
-    ror sprites_i,x
+    lda foreground_collision
+    ora sprites_i,x
+    sta sprites_i,x
 
 n:  dex
     bpl -l

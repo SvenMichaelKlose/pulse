@@ -1,6 +1,6 @@
-decorative   = 32
+decorative   = 128
 deadly       = 64
-fg_collision = 128
+fg_collision = 32
 
 sprite_inits:
 player_init:
