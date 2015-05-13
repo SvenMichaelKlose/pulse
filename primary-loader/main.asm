@@ -1,4 +1,5 @@
 main:
+    sei
     lda #$7f
     sta $912e       ; Disable and acknowledge interrupts.
     sta $912d
@@ -7,12 +8,22 @@ main:
     lda #0
     sta vicreg_rasterlo_rows_charsize
 
+loader_size = @(- waiter_end *tape-loader-start* 1)
+loader_high_offset = @(* 256 (high loader_size))
+
     ; Copy loader into screen memory.
-    ldx #@(- waiter_end *tape-loader-start*)
-l:  lda @(-- loaded_tape_loader),x
-    sta @(-- *tape-loader-start*),x
+    ldx #@(low loader_size)
+    ldy #@(high loader_size)
+l:  lda loaded_tape_loader,x
+l:  lda @(+ loader_high_offset loaded_tape_loader),x
+m:  sta @(+ loader_high_offset *tape-loader-start*),x
     dex
+    cpx #$ff
     bne -l
+    dec @(+ 2 -l)
+    dec @(+ 2 -m)
+    dey
+    bpl -l
 
     ; Configure the loader.
     ldx #6

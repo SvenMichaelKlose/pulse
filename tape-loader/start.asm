@@ -26,5 +26,6 @@ l:  dex
     sta $912e
     lda #@(high *tape-pulse*) ; Start timer.
     sta $9115
+    cli
 
     rts

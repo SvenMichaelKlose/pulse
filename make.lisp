@@ -1,6 +1,6 @@
 (defvar *video?* nil)
 
-(defvar *tape-loader-start* #x1e00)
+(defvar *tape-loader-start* #x0200)
 (defvar *pulse-short* #x20)
 (defvar *pulse-long* #x40)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
@@ -67,10 +67,7 @@
   (make "obj/loader.bin"
         '("primary-loader/zeropage.asm"
           "bender/vic-20/vic.asm"
-          "bender/vic-20/via.asm"
-          "tape-loader/loader.asm"
-          "tape-loader/start.asm"
-          "primary-loader/waiter.asm")
+          "bender/vic-20/via.asm")
         "obj/loader.bin.vice.txt"))
 
 (defun make-loader-prg ()
@@ -79,14 +76,17 @@
           "bender/vic-20/vic.asm"
           "primary-loader/zeropage.asm"
           "primary-loader/main.asm"
-          "nipkow/src/audio-player.asm")
+          "tape-loader/loader.asm"
+          "tape-loader/start.asm"
+          "nipkow/src/audio-player.asm"
+          "primary-loader/waiter.asm")
         "obj/loader.prg.vice.txt"))
 
-(defvar *game-start* nil)
-(defvar loaded_tape_loader nil)
-(defvar waiter nil)
-(defvar waiter_end nil)
-(defvar run nil)
+;(defvar *game-start* nil)
+;(defvar loaded_tape_loader nil)
+;(defvar waiter nil)
+;(defvar waiter_end nil)
+;(defvar run nil)
 
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
@@ -94,23 +94,21 @@
 (defun make-all-games ()
   (make-game nil "obj/pulse.vice.txt")
   (make-game t "obj/game.vice.txt")
-  (= *game-start* (get-label 'main))
+;  (= *game-start* (get-label 'main))
   (sb-ext:run-program "exomizer" '("sfx" "sys" "-t" "20" "-x" "3" "-o" "obj/game.crunched.prg"  "pulse.prg"))
-  (sb-ext:run-program "exomizer" '("sfx" "sys" "-t" "20" "-x" "3" "-o" "pulse.prg"  "pulse.prg"))
 
-  (make-loader-bin)
-  (= loaded_tape_loader (get-label 'loaded_tape_loader))
-  (= tape_loader_start (get-label 'tape_loader_start))
-  (= waiter (get-label 'waiter))
-  (= waiter_end (get-label 'waiter_end))
-  (= run (get-label 'run))
+;  (make-loader-bin)
+;  (= loaded_tape_loader (get-label 'loaded_tape_loader))
+;  (= tape_loader_start (get-label 'tape_loader_start))
+;  (= waiter (get-label 'waiter))
+;  (= waiter_end (get-label 'waiter_end))
+;  (= run (get-label 'run))
   (make-loader-prg)
 
   (with-output-file o "compiled/pulse.tap"
     (write-tap o
         (+ (bin2cbmtap (cddr (string-list (fetch-file "obj/loader.prg")))
-                       (+ (padded-name "PULSE")
-                          (fetch-file "obj/loader.bin"))
+                       "PULSE"
                        :start #x1001)
            (bin2pottap (string-list (fetch-file "obj/game.crunched.prg"))))))
   (sb-ext:run-program "/usr/bin/zip" (list "compiled/pulse.tap.zip" "compiled/pulse.tap")))
