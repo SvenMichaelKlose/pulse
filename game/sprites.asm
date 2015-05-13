@@ -104,8 +104,7 @@ out:rts
 ; C: Clear when a hit was found.
 ; Y: Sprite index of other sprite.
 find_hit:
-    txa
-    pha
+    stx draw_sprite_x
     stx tmp
     ldy #@(-- numsprites)
 
@@ -142,8 +141,7 @@ n:  dey
     bpl -l
     sec
 
-ok: pla
-    tax
+ok: ldx draw_sprite_x
     rts
 
 ; Draw all sprites.
@@ -214,8 +212,7 @@ l:  lda #$ff
 
 ; Draw a single sprite.
 draw_sprite:
-    txa
-    pha
+    stx draw_sprite_x
 
     lda #>sprite_gfx
     sta @(++ s)
@@ -287,8 +284,7 @@ n:  lda sprite_shift_y
     dey
     jsr blit_left
 
-n:  pla
-    tax
+n:  ldx draw_sprite_x
     rts
 
 prepare_upper_blit:

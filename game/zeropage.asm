@@ -100,6 +100,7 @@ grenade_right           = $40
 sprite_rr               = $41
 weapon                  = $42
 tiles_c                 = $43 ; 6 bytes
+draw_sprite_x           = $49
 
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
