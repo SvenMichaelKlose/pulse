@@ -6,12 +6,10 @@ hit_formation:
     sta bonus_init
     lda sprites_y,y
     sta @(++ bonus_init)
-    tya
-    pha
+    sty hit_formation_y
     ldy #@(- bonus_init sprite_inits)
     jsr add_sprite
-    pla
-    tay
+    ldy hit_formation_y
 sec_return:
     sec
     rts
@@ -411,8 +409,7 @@ operate_joystick:
     lda #white
     sta sprites_c,x
 
-    tya                 ;Save joystick status.
-    pha
+    sty joystick_status
 
     ; Shoot forward.
     ldy #@(- laser_init sprite_inits)
@@ -442,8 +439,7 @@ n:  sty fire_interval
     ldy #@(- laser_up_init sprite_inits)
     jsr add_sprite
 
-n:  pla
-    tay
+n:  ldy joystick_status
 
 no_fire:
     lda is_firing

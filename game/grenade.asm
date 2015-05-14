@@ -6,14 +6,12 @@ grenade:
 draw_grenade:
     ; Kill everything deadly.
     ldy #14
-l:  tya
-    pha
+l:  sty draw_grenade_y
     lda sprites_i,y
     and #deadly
     beq +n
     jsr explode
-n:  pla
-    tay
+n:  ldy draw_grenade_y
     dey
     bpl -l
 

@@ -101,6 +101,9 @@ sprite_rr               = $41
 weapon                  = $42
 tiles_c                 = $43 ; 6 bytes
 draw_sprite_x           = $49
+hit_formation_y         = $4a
+joystick_status         = $4b
+draw_grenade_y          = $4c
 
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
