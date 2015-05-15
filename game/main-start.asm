@@ -103,18 +103,15 @@ init_frame:
 ;#endif
 
 ; Call the functions that control sprite behaviour.
-call_controllers:
     ldx #@(-- numsprites)
 l1: lda sprites_fh,x
     beq +n1
     sta @(+ +m1 2)
     lda sprites_fl,x
     sta @(++ +m1)
-    txa
-    pha
+    stx call_controllers_x
 m1: jsr $1234
-    pla
-    tax
+    ldx call_controllers_x
 n1: dex
     bpl -l1
 
