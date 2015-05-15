@@ -126,7 +126,7 @@ l:  cpy tmp             ; Skip same sprite.
     lda sprites_l,y
     cmp #<laser
     bne not_a_hoizontal_laser
-    lda #4
+    lda #3
     sta collision_y_distance
 
 not_a_hoizontal_laser:
