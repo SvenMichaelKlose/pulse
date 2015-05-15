@@ -1,8 +1,8 @@
 (defvar *video?* nil)
 
 (defvar *tape-loader-start* #x0200)
-(defvar *pulse-short* #x20)
-(defvar *pulse-long* #x40)
+(defvar *pulse-short* #x10)
+(defvar *pulse-long* #x20)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
 
 (defvar audio_shortest_pulse #x18)
@@ -38,7 +38,7 @@
   (make-conversion name :pal)
   (make-conversion name :ntsc))
 
-(make-audio "theme" "theme.mp3" "4" "-56")
+(make-audio "theme" "primary-loader/theme.mp3" "4" "-56")
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -78,7 +78,7 @@
           "primary-loader/main.asm"
           "tape-loader/loader.asm"
           "tape-loader/start.asm"
-          "nipkow/src/audio-player.asm"
+          "primary-loader/audio-player.asm"
           "primary-loader/waiter.asm")
         "obj/loader.prg.vice.txt"))
 
@@ -90,6 +90,8 @@
 
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
+
+(defvar *tv* :pal)
 
 (defun make-all-games ()
   (make-game nil "obj/pulse.vice.txt")
@@ -110,7 +112,8 @@
         (+ (bin2cbmtap (cddr (string-list (fetch-file "obj/loader.prg")))
                        "PULSE"
                        :start #x1001)
-           (bin2pottap (string-list (fetch-file "obj/game.crunched.prg"))))))
+           (bin2pottap (string-list (fetch-file "obj/game.crunched.prg")))))
+    (wav2pwm o (+ "obj/theme_downsampled_pal.wav")))
   (sb-ext:run-program "/usr/bin/zip" (list "compiled/pulse.tap.zip" "compiled/pulse.tap")))
 
 (make-all-games)
@@ -130,6 +133,12 @@
 (alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
   (format t "Baud rates: ~A (NTSC), ~A (PAL)~%"
           (tap-rate :ntsc !) (tap-rate :pal !)))
+
+(with-input-output-file i "compiled/pulse.tap"
+                        o "compiled/pulse.tap.wav"
+  (tap2wav i o))
+(sb-ext:run-program "/usr/bin/zip" (list "compiled/pulse.tap.wav.zip" "compiled/pulse.tap.wav"))
+
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
 
 (quit)
