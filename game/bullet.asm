@@ -20,7 +20,7 @@ add_bullet_no_sound:
     jsr abs
     sta distance_y
 
-    lda #@(/ deadly decorative)
+    lda #2
     sta tmp
 
     lda distance_y
