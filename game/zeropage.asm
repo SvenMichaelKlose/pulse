@@ -53,11 +53,11 @@ foreground_collision    = $18
 
 grenade_counter         = $19
 tmp                     = $1a
-distance_x              = tmp
 tmp2                    = $1b
-distance_y              = tmp2
+distance_x              = tmp2
 tmp3                    = $1c
 collision_y_distance    = tmp3
+distance_y              = tmp3
 counter                 = $1d
 repetition              = $1e
 
