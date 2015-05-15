@@ -109,15 +109,21 @@ call_controllers_x      = $4c
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
 sprites_i   = $70   ; Flags.
-                    ; 7 = foreground collision
-                    ; 6 = decorative
-                    ; 5 = deadly
-                    ; 4-0 = sprite type
+                    ; 7 = decorative
+                    ; 6 = deadly
+                    ; 5 = foreground collision
+                    ; 4 = bullet Y step
+                    ; 3 = bullet increment X
+                    ; 2 = bullet increment Y
+                    ; 1-0 = 01 sniper 10 scout
 sprites_c   = $80   ; Colors.
 sprites_l   = $90   ; Low character addresses.
 sprites_fl  = $a0   ; Function controlling the sprite (low).
 sprites_fh  = $b0   ; Function controlling the sprite (high).
 sprites_d   = $c0   ; Whatever the controllers want.
+                    ; Bullet:    SSSSCCCC step and counter
+                    ; Star:      pixels/odd frames, 0 is 1 in blue
+                    ; Explosion: position in explosion_colors
 sprites_ox  = $d0   ; Former X positions for cleaning up.
 sprites_oy  = $e0   ; Former Y positions for cleaning up.
 
