@@ -1,9 +1,11 @@
 intro:
-    ldy #white
-    jsr clear_screen_and_colors
+    ldy #green
+l:  lda #32
+    sta @(-- screen),x
+    sta @(+ screen 252),x
+    dex
+    bne -l
 
-    lda #@(+ 8 black)   ; Screen and border color.
-    sta $900f
     lda #@(* red 16)    ; Auxiliary color.
     sta $900e
     lda #%11110010      ; Up/locase chars.
@@ -21,18 +23,45 @@ l2: sta @(+ screen (* 5 screen_width)),x
     jmp -l
 e:
 
-    ; Wait until joystick button is pressed.
+a:  lda #@(+ 8 black)   ; Screen and border color.
+    sta $900f
+    lda #0
+    sta s
+    sta d
+    ldy #>colors
+    sty @(++ s)
+    iny
+    sty @(++ d)
 l:  lda #0
     sta $9113
     lda $9111
     and #%00100000
-    bne -l
+    beq +n ; Fire…
+    jsr random
+    beq +e
+    sta $900e
+    lsr
+    lda #white
+    bcc +f
+    lda #green
+f:  sta (s),y
+    sta (d),y
+    iny
+    jsr random
+    and #%1
+    clc
+    adc #32
+    sta $9001
+    jmp -l
 
-    ; Avoid screen trash.
-    ldy #black
-    jsr clear_screen_and_colors
+e:  lda #@(+ white 8 (* 16 white))
+    sta $900f
+    ldx #@(/ 64 5)    ; XXX pal or ntsc
+t:  dex
+    bne -t
+    beq -a
 
-    lda #%11111100      ; Our charset.
+n:  lda #%11111100      ; Our charset.
     sta $9005
     lda #@(+ 8 blue)    ; Screen and border color.
     sta $900f
@@ -45,18 +74,6 @@ l:  sta hiscore,x
     bpl -l
 
     jmp game_over
-
-clear_screen_and_colors:
-    ldx #253
-l:  lda #32
-    sta @(-- screen),x
-    sta @(+ screen 252),x
-    tya
-    sta @(-- colors),x
-    sta @(+ colors 252),x
-    dex
-    bne -l
-    rts
 
 story:
     @(petscii-story) 0
