@@ -1,8 +1,8 @@
 (defvar *video?* nil)
 
 (defvar *tape-loader-start* #x0200)
-(defvar *pulse-short* #x10)
-(defvar *pulse-long* #x20)
+(defvar *pulse-short* #x20)
+(defvar *pulse-long* #x30)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
 
 (defvar audio_shortest_pulse #x18)
