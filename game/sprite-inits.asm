@@ -18,7 +18,7 @@ scout_init:
 sniper_init:
     176 0  @(+ deadly 2) white <sniper <sniper_fun >sniper_fun 0
 bonus_init:
-    0 0 0  green         <bonus <bonus_fun >bonus_fun 0
+    0 0    0             green <bonus <bonus_fun >bonus_fun 0
 star_init:
     0 0    decorative    white <star <star_fun >star_fun 0
 explosion_init:
