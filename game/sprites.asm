@@ -31,6 +31,7 @@ remove_sprite:
     stx tmp
     sty tmp2
 
+remove_sprite2:
     ; Add background star.
     jsr random              ; Set X position.
     sta star_init
@@ -42,7 +43,7 @@ remove_sprite:
     sta @(+ star_init 7)
     ldy #@(- star_init sprite_inits)
 
-; Replace decorative sprite by new one.
+; Replace sprite by another.
 ;
 ; X: sprite index
 ; Y: descriptor of new sprite in sprite_inits
@@ -126,7 +127,7 @@ l:  cpy tmp             ; Skip same sprite.
     lda sprites_l,y
     cmp #<laser
     bne not_a_hoizontal_laser
-    lda #3
+    lda #2
     sta collision_y_distance
 
 not_a_hoizontal_laser:

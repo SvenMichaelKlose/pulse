@@ -332,15 +332,18 @@ l:  jsr find_hit
     cmp #<bonus_fun      ; Bonus.
     bne no_bonus_hit
 
-    lda #15             ; Play the "Ping!" sound.
+    ; Play the "Ping!" sound.
+    lda #15
     sta sound_bonus
 
-    sty tmp2            ; Remove bonus sprite.
+    ; Remove bonus sprite.
+    stx tmp
     tya
     tax
-    jsr remove_sprite
+    jsr remove_sprite2
 
-    ldy #10             ; Add ten points.
+    ; Add ten points.
+    ldy #10
 l:  jsr increment_score
     dey
     bne -l
@@ -348,12 +351,14 @@ l:  jsr increment_score
     lda weapon
     cmp #5
     beq full_weapon
+
     inc weapon
     bne operate_joystick
 
 full_weapon:
     jsr random
     bmi make_invincible
+
 start_grenade:
     lda @(+ sprites_x 15)
     lsr
