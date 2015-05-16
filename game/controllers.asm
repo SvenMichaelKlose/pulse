@@ -1,3 +1,11 @@
+bonus_colors:
+    green
+    red
+    purple
+    blue
+    cyan
+    yellow
+
 ; Make bonus item if a scout formation has been killed.
 hit_formation:
     dec formation_left_unhit
@@ -7,6 +15,9 @@ hit_formation:
     lda sprites_y,y
     sta @(++ bonus_init)
     sty hit_formation_y
+    ldy weapon
+    lda bonus_colors,y
+    sta @(+ bonus_init 7)
     ldy #@(- bonus_init sprite_inits)
     jsr add_sprite
     ldy hit_formation_y
@@ -57,7 +68,7 @@ l:  sty sprites_c,x
 
 ; Bonus
 bonus_fun:
-    ldy #green
+    ldy sprites_d,x
     lda framecounter
     lsr
     lsr
@@ -121,7 +132,7 @@ update_trajectory:
 
 bullet_fun:
     jsr random
-    and #%00000111
+    and #%0000011
 mod_follow:
     beq update_trajectory
 
