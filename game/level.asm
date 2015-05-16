@@ -70,7 +70,7 @@ screws_follow:
     $09
     $f0
     $f0
-    $09
+    $f0
     
 restart_level:
     sta level_pattern
