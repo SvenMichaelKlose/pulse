@@ -1,5 +1,8 @@
-tape_current_byte = $00
-tape_bit_counter  = $01
-tape_ptr          = $02
-tape_counter      = $04
-tape_callback     = $06
+    org 0
+    data
+tape_current_byte:  0
+tape_bit_counter:   0
+tape_ptr:           0 0
+tape_counter:       0 0
+tape_callback:      0 0
+    end
