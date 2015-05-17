@@ -1,3 +1,5 @@
+(= *model* :vic-20)
+
 (defvar *video?* nil)
 
 (defvar *tape-loader-start* #x0200)
