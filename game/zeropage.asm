@@ -71,40 +71,38 @@ level_delay             = $24
 level_old_y             = $25
 
 fire_interval           = $26
-;has_double_laser        = $27
-;has_autofire            = $28
-is_firing               = $29
-is_invincible           = $2a
-death_timer             = $2b
-lifes                   = $2c
-active_tiles            = $2d
-tilelist_r              = $2e ; 8 bytes
+is_firing               = $27
+is_invincible           = $28
+death_timer             = $29
+lifes                   = $2a
+active_tiles            = $2b
+tilelist_r              = $2c ; 8 bytes
 
-sound_start             = $36
-sound_explosion         = $36
-sound_laser             = $37
-sound_bonus             = $38
-sound_foreground        = $39
-sound_dead              = $3a
+sound_start             = $34
+sound_explosion         = $34
+sound_laser             = $35
+sound_bonus             = $36
+sound_foreground        = $37
+sound_dead              = $38
 sound_end               = sound_dead
 
-last_random_value       = $3b
+last_random_value       = $39
 
-level_pattern           = $3c
-level_offset            = $3d
+level_pattern           = $3a
+level_offset            = $3b
 
-no_stars                = $3e
+no_stars                = $3c
 
-grenade_left            = $3f
-grenade_right           = $40
-sprite_rr               = $41
-weapon                  = $42
-tiles_c                 = $43 ; 6 bytes
-draw_sprite_x           = $49
-hit_formation_y         = $4a
-joystick_status         = $4b
-draw_grenade_y          = $4c
-call_controllers_x      = $4c
+grenade_left            = $3d
+grenade_right           = $3e
+sprite_rr               = $3f
+weapon                  = $40
+tiles_c                 = $41 ; 6 bytes
+draw_sprite_x           = $47
+hit_formation_y         = $48
+joystick_status         = $49
+draw_grenade_y          = $4a
+call_controllers_x      = draw_grenade_y
 
 sprites_x   = $50   ; X positions.
 sprites_y   = $60   ; Y positions.
