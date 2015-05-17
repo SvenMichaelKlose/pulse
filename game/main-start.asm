@@ -92,7 +92,7 @@ init_frame:
     sta next_sprite_char
 
 ;#ifdef SHOW_CHARSET
-;    ldx #@(-- numchars)
+;    ldx #@(-- num_chars)
 ;l2: txa
 ;    sta screen,x
 ;    lda #white
@@ -103,7 +103,7 @@ init_frame:
 ;#endif
 
 ; Call the functions that control sprite behaviour.
-    ldx #@(-- numsprites)
+    ldx #@(-- num_sprites)
 l1: lda sprites_fh,x
     beq +n1
     sta @(+ +m1 2)

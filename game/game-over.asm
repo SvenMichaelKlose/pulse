@@ -58,15 +58,16 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     lda #3
     sta level_delay
 
+lda #255
     sta lifes
 
     ; Make player sprite.
-    ldx #@(-- numsprites)
+    ldx #@(-- num_sprites)
     ldy #@(- player_init sprite_inits)
     jsr replace_sprite
 
     ; Fill sprite slots with stars.
-    ldx #@(- numsprites 2)
+    ldx #@(- num_sprites 2)
 l:  jsr remove_sprite
     dex
     bne -l

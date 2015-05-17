@@ -5,9 +5,9 @@ add_sprite:
     stx tmp
     sty tmp2
 
-    ldy #@(-- numsprites)
+    ldy #@(-- num_sprites)
 l:  lda sprite_rr
-    and #@(-- numsprites)
+    and #@(-- num_sprites)
     tax
     inc sprite_rr
     lda sprites_i,x     ; Decorative?
@@ -57,7 +57,7 @@ selfmod:
     lda @(++ -selfmod)
     cmp #sprites_d
     beq sprite_added
-    adc #numsprites
+    adc #num_sprites
     sta @(++ -selfmod)
     jmp -l
 
@@ -107,7 +107,7 @@ out:rts
 find_hit:
     stx draw_sprite_x
     stx tmp
-    ldy #@(-- numsprites)
+    ldy #@(-- num_sprites)
 
 l:  cpy tmp             ; Skip same sprite.
     beq +n
@@ -148,7 +148,7 @@ ok: ldx draw_sprite_x
 ; Draw all sprites.
 draw_sprites:
     ; Draw decorative sprites.
-    ldx #@(-- numsprites)
+    ldx #@(-- num_sprites)
 l:  lda sprites_i,x
     bpl +n
     jsr draw_sprite
@@ -156,7 +156,7 @@ n:  dex
     bpl -l
 
     ; Draw other sprites.
-    ldx #@(-- numsprites)
+    ldx #@(-- num_sprites)
 l:  lda sprites_i,x
     bmi +n
 
@@ -173,7 +173,7 @@ n:  dex
     bpl -l
 
     ; Remove remaining chars of sprites in old frame.
-    ldx #@(-- numsprites)
+    ldx #@(-- num_sprites)
 l:  ; Remove old chars.
     lda sprites_ox,x
     sta scrx                ; (upper left)

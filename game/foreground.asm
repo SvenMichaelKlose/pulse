@@ -14,7 +14,7 @@ add_tile:
     inx
     txa
     dex
-    and #@(-- numtiles)
+    and #@(-- num_tiles)
     sta free_tiles
     lda #screen_width
     clc
@@ -62,12 +62,12 @@ l:  sta tiles_c,x
     lda #@(+ framemask foreground num_trailing_foreground_chars)
     sta next_foreground_char
     lda leftmost_tile
-    and #@(-- numtiles)
+    and #@(-- num_tiles)
     sta counter
 
 loop:
     lda counter
-    and #@(-- numtiles)
+    and #@(-- num_tiles)
     cmp free_tiles
     beq no_more_tiles
 

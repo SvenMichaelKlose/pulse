@@ -56,8 +56,8 @@
   (make (? tape?
            "obj/game.bin"
            "pulse.prg")
-        (+ (& tape?
-              (list "game/no-loader.asm"))
+        (+ (list "game/zeropage.asm")
+           (& tape? (list "game/no-loader.asm"))
            (@ [+ "bender/vic-20/" _]
               `(,@(unless tape?
                     (list "basic-loader.asm"))
@@ -74,9 +74,9 @@
 
 (defun make-loader-prg ()
   (make "obj/loader.prg"
-        '("bender/vic-20/basic-loader.asm"
-          "bender/vic-20/vic.asm"
+        '("bender/vic-20/vic.asm"
           "primary-loader/zeropage.asm"
+          "bender/vic-20/basic-loader.asm"
           "primary-loader/main.asm"
           "tape-loader/loader.asm"
           "tape-loader/start.asm"

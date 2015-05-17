@@ -1,18 +1,13 @@
-;#ifdef M3K
-;numchars    = 256
-;#else
-numchars    = 128
-;#endif
+num_chars    = 128
+num_sprites  = 16
+num_tiles    = 32
+charset      = $1000
 
-numsprites  = 16
-numtiles    = 32
-charset     = $1000
-
-charsetsize         = @(* numchars 8)
-charsetmask         = @(-- numchars)
+charsetsize         = @(* num_chars 8)
+charsetmask         = @(-- num_chars)
 framesize           = @(half charsetsize)
-framemask           = @(half numchars)
-framechars          = @(half numchars)
+framemask           = @(half num_chars)
+framechars          = @(half num_chars)
 
 first_sprite_char   = 1
 num_trailing_foreground_chars  = 2
@@ -21,113 +16,120 @@ foreground          = @(+ (half framechars) (quarter framechars))
 
 score_char0         = foreground
 
-s                       = $00   ; source pointer
-d                       = $02   ; destination pointer
-c                       = $04   ; character pointer
-scr                     = $04   ; screen pointer
-col                     = $06   ; colour RAM pointer
-scrx                    = $08   ; X position
-scry                    = $09   ; Y position
-curcol                  = $0a   ; character colour
+    org 0
+    data
 
-sl                      = $04   ; scrolling tile left
-sm                      = $06   ; scrolling tile middle
-sr                      = $08   ; scrolling tile right
+s:      0 0   ; source pointer
+d:      0 0   ; destination pointer
+c:      0 0   ; character pointer
+scr:    0 0   ; screen pointer
+col:    0 0   ; colour RAM pointer
+scrx:   8     ; X position
+scry:   0     ; Y position
+curcol: 0     ; character colour
 
-framecounter            = $0b
-framecounter_high       = $0c
+sl:     0 0   ; scrolling tile left
+sm:     0 0   ; scrolling tile middle
+sr:     0 0   ; scrolling tile right
 
-next_sprite_char        = $0d
-sprite_shift_y          = $0e
-sprite_data_top         = $0f
-sprite_data_bottom      = $10
-sprite_height_top       = $11
-spriteframe             = $12
+framecounter:       0
+framecounter_high:  0
 
-scrolled_bits           = $13
-scrolled_chars          = $14
-leftmost_tile           = $15
-free_tiles              = $16
-next_foreground_char    = $17
-foreground_collision    = $18
+next_sprite_char:   0
+sprite_shift_y:     0
+sprite_data_top:    0
+sprite_data_bottom: 0
+sprite_height_top:  0
+spriteframe:        0
 
-grenade_counter         = $19
-tmp                     = $1a
-tmp2                    = $1b
-distance_x              = tmp2
-tmp3                    = $1c
-collision_y_distance    = tmp3
-distance_y              = tmp3
-counter                 = $1d
-repetition              = $1e
+scrolled_bits:        0
+scrolled_chars:       0
+leftmost_tile:        0
+free_tiles:           0
+next_foreground_char: 0
+foreground_collision: 0
 
-adding_scout            = $1f
-adding_scout_delay      = $20
-scout_formation_y       = $21
-formation_left_unhit    = $22
+grenade_counter:      0
+tmp:                  0
+tmp2:
+distance_x:           0
+tmp3:
+distance_y:           0
+collision_y_distance:
+counter:              0
+repetition:           0
 
-level_pos               = $23
-level_delay             = $24
-level_old_y             = $25
+adding_scout:         0
+adding_scout_delay:   0
+scout_formation_y:    0
+formation_left_unhit: 0
 
-fire_interval           = $26
-is_firing               = $27
-is_invincible           = $28
-death_timer             = $29
-lifes                   = $2a
-active_tiles            = $2b
-tilelist_r              = $2c ; 8 bytes
+level_pos:            0
+level_delay:          0
+level_old_y:          0
 
-sound_start             = $34
-sound_explosion         = $34
-sound_laser             = $35
-sound_bonus             = $36
-sound_foreground        = $37
-sound_dead              = $38
-sound_end               = sound_dead
+fire_interval:        0
+is_firing:            0
+is_invincible:        0
+death_timer:          0
+lifes:                0
+active_tiles:         0
+tilelist_r:           0 0 0 0 0 0 0 0
 
-last_random_value       = $39
+sound_start:          0
+sound_explosion:      0
+sound_laser:          0
+sound_bonus:          0
+sound_foreground:     0
+sound_dead:
+sound_end:            0
 
-level_pattern           = $3a
-level_offset            = $3b
+last_random_value:    0
 
-no_stars                = $3c
+level_pattern:        0
+level_offset:         0
 
-grenade_left            = $3d
-grenade_right           = $3e
-sprite_rr               = $3f
-weapon                  = $40
-tiles_c                 = $41 ; 6 bytes
-draw_sprite_x           = $47
-hit_formation_y         = $48
-joystick_status         = $49
-draw_grenade_y          = $4a
-call_controllers_x      = draw_grenade_y
+no_stars:             0
 
-sprites_x   = $50   ; X positions.
-sprites_y   = $60   ; Y positions.
-sprites_i   = $70   ; Flags.
-                    ; 7 = decorative
-                    ; 6 = deadly
-                    ; 5 = foreground collision
-                    ; 4 = bullet Y step
-                    ; 3 = bullet increment X
-                    ; 2 = bullet increment Y
-                    ; 1-0 = 01 sniper 10 scout
-sprites_c   = $80   ; Colors.
-sprites_l   = $90   ; Low character addresses.
-sprites_fl  = $a0   ; Function controlling the sprite (low).
-sprites_fh  = $b0   ; Function controlling the sprite (high).
-sprites_d   = $c0   ; Whatever the controllers want.
-                    ; Bullet:    SSSSCCCC step and counter
-                    ; Star:      pixels/odd frames, 0 is 1 in blue
-                    ; Explosion: position in explosion_colors
-sprites_ox  = $d0   ; Former X positions for cleaning up.
-sprites_oy  = $e0   ; Former Y positions for cleaning up.
+grenade_left:         0
+grenade_right:        0
+sprite_rr:            0
+weapon:               0
+tiles_c:              0 0 0 0 0 0
+draw_sprite_x:        0
+hit_formation_y:      0
+joystick_status:      0
+call_controllers_x:
+draw_grenade_y:       0
 
-hiscore     = $f8
+sprites_x:  fill num_sprites  ; X positions.
+sprites_y:  fill num_sprites  ; Y positions.
+sprites_i:  fill num_sprites  ; Flags.
+                              ; 7 = decorative
+                              ; 6 = deadly
+                              ; 5 = foreground collision
+                              ; 4 = bullet Y step
+                              ; 3 = bullet increment X
+                              ; 2 = bullet increment Y
+                              ; 1-0 = 01 sniper 10 scout
+sprites_c:  fill num_sprites  ; Colors.
+sprites_l:  fill num_sprites  ; Low character addresses.
+sprites_fl: fill num_sprites  ; Function controlling the sprite (low).
+sprites_fh: fill num_sprites  ; Function controlling the sprite (high).
+sprites_d:  fill num_sprites  ; Whatever the controllers want.
+                              ; Bullet:    SSSSCCCC step and counter
+                              ; Star:      pixels/odd frames, 0 is 1 in blue
+                              ; Explosion: position in explosion_colors
+sprites_ox: fill num_sprites  ; Former X positions for cleaning up.
+sprites_oy: fill num_sprites  ; Former Y positions for cleaning up.
 
-screen_tiles_i = $100  ; Index into tile info.
-screen_tiles_x = $120  ; X positions.
-screen_tiles_y = $140  ; Y positions.
-screen_tiles_n = $160  ; Times duplicated along the Y axis.
+hiscore:    fill num_score_digits
+
+    org $100
+
+screen_tiles_i: fill num_tiles  ; Index into tile info.
+screen_tiles_x: fill num_tiles  ; X positions.
+screen_tiles_y: fill num_tiles  ; Y positions.
+screen_tiles_n: fill num_tiles  ; Times duplicated along the Y axis.
+
+    end
