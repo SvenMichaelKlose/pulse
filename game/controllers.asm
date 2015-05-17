@@ -302,7 +302,7 @@ player_fun:
     bne return2
     lda #<ship
     sta sprites_l,x
-    dec lifes
+    lda lifes
     beq +g
     jmp restart
 
@@ -383,6 +383,7 @@ no_bonus_hit:
 die:
     lda is_invincible
     bne operate_joystick
+    dec lifes
     lda #120
     sta death_timer
     lda #15
