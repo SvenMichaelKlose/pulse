@@ -2,6 +2,7 @@
 
 (defvar *video?* nil)
 
+(defvar *bandwidth* 16)
 (defvar *tape-loader-start* #x0200)
 (defvar *pulse-short* #x20)
 (defvar *pulse-long* #x30)
@@ -115,6 +116,7 @@
                        "PULSE"
                        :start #x1001)
            (bin2pottap (string-list (fetch-file "obj/game.crunched.prg")))))
+    (adotimes 256 (princ (code-char #x20) o))
     (wav2pwm o (+ "obj/theme_downsampled_pal.wav")))
   (sb-ext:run-program "/usr/bin/zip" (list "compiled/pulse.tap.zip" "compiled/pulse.tap")))
 
