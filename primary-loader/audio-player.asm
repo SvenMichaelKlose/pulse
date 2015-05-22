@@ -95,4 +95,4 @@ j:  txa
     sta @(++ average)
     lda #128
     sta tleft
-    bne -f      ; (4)
+    bne -f

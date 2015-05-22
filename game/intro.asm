@@ -56,14 +56,14 @@ f:  sta (s),y
 
 e:  lda #@(+ white 8 (* 16 white))
     sta $900f
-    ldx #@(/ 64 5)    ; XXX pal or ntsc
+    ldx #@(/ 64 5)          ; XXX pal or ntsc
 t:  dex
     bne -t
     beq -a
 
-n:  lda #%11111100      ; Our charset.
+n:  lda #%11111100          ; Our charset.
     sta $9005
-    lda #@(+ 8 blue)    ; Screen and border color.
+    lda #@(+ reverse blue)  ; Screen and border color.
     sta $900f
 
     ; Reset highscore.
