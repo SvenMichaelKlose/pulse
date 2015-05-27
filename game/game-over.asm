@@ -57,8 +57,6 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     jsr add_tile
     lda #3
     sta level_delay
-
-lda #255
     sta lifes
 
     ; Make player sprite.

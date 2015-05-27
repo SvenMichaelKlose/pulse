@@ -1,3 +1,6 @@
+screen = $1e00
+colors = $9600
+
     org 0
     data
 tape_current_byte:  0

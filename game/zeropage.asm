@@ -2,6 +2,8 @@ num_chars    = 128
 num_sprites  = 16
 num_tiles    = 32
 charset      = $1000
+screen       = $1e00
+colors       = $9600
 
 charsetsize         = @(* num_chars 8)
 charsetmask         = @(-- num_chars)
@@ -74,7 +76,7 @@ is_invincible:        0
 death_timer:          0
 lifes:                0
 active_tiles:         0
-tilelist_r:           0 0 0 0 0 0 0 0
+tilelist_r:           0 0 0 0 0 0
 
 sound_start:          0
 sound_explosion:      0
