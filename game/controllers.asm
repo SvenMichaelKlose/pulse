@@ -228,9 +228,11 @@ l:  lda #4
     sta sprites_y,x
 l:  jmp remove_if_sprite_is_out
 
-; Lasers in general
+; Horizontal laser
 laser_fun:
     lda #11
+
+; Lasers in general
 laser_common:
     sta laser_speed_right
     jsr hit_enemy
@@ -406,6 +408,8 @@ operate_joystick:
     lda is_firing
     bne no_fire
 
+    sty joystick_status
+
     lda framecounter    ; Little ramdomness to give the laser some action.
     lsr
     and #7
@@ -426,13 +430,13 @@ operate_joystick:
     sta sound_laser
     lda fire_interval
     sta is_firing
+    lda is_invincible
+    bne +n
     lda #white
     sta sprites_c,x
 
-    sty joystick_status
-
     ; Shoot forward.
-    ldy #@(- laser_init sprite_inits)
+n:  ldy #@(- laser_init sprite_inits)
     jsr add_sprite
 
     lda weapon
