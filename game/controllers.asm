@@ -230,11 +230,14 @@ l:  jmp remove_if_sprite_is_out
 
 ; Lasers in general
 laser_fun:
+    lda #11
+laser_common:
+    sta laser_speed_right
     jsr hit_enemy
     bcs remove_sprites
     jsr test_foreground_collision_raw
     bcs remove_if_on_foreground
-    lda #11
+    lda laser_speed_right
     jsr sprite_right
 
 ; --
@@ -283,13 +286,8 @@ laser_down_fun:
 laser_side:
     ldy #yellow
     jsr energize_color
-    jsr hit_enemy
-    bcs remove_sprites
-    jsr test_foreground_collision_raw
-    bcs remove_if_on_foreground
     lda #8
-    jsr sprite_right
-    jmp remove_if_sprite_is_out
+    jmp laser_common
 
 ; Player
 player_fun:
