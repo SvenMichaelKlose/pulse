@@ -359,12 +359,15 @@ full_weapon:
     bmi make_invincible
 
 start_grenade:
+    ; Set grenade bar X positions to that of player sprite.
     lda @(+ sprites_x 15)
     lsr
     lsr
     lsr
     sta grenade_left
     sta grenade_right
+
+    ; Let grenade bars walk across all of the screen.
     lda #screen_width
     sta grenade_counter
     bne operate_joystick
@@ -382,6 +385,7 @@ no_bonus_hit:
 die:
     lda is_invincible
     bne operate_joystick
+
     dec lifes
     lda #120
     sta death_timer
@@ -493,7 +497,7 @@ n:  tya
     jmp sprite_left
 
     ; Joystick right.
-n:  lda #0              ;Fetch rest of joystick status.
+n:  lda #0          ;Fetch rest of joystick status.
     sta $9122
     lda $9120
     bmi +n
