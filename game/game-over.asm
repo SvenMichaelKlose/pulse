@@ -59,11 +59,6 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     sta level_delay
     sta lifes
 
-    ; Make player sprite.
-    ldx #@(-- num_sprites)
-    ldy #@(- player_init sprite_inits)
-    jsr replace_sprite
-
     ; Fill sprite slots with stars.
     ldx #@(- num_sprites 2)
 l:  jsr remove_sprite
@@ -79,3 +74,8 @@ restart:
     inx
     stx is_firing
     stx weapon
+
+    ; Make player sprite.
+    ldx #@(-- num_sprites)
+    ldy #@(- player_init sprite_inits)
+    jsr replace_sprite

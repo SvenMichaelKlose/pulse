@@ -397,7 +397,14 @@ die:
     sta sound_explosion
     rts
 
+c:  lda #1
+    jmp sprite_right
+
 operate_joystick:
+    lda sprites_x,x
+    cmp #$f0
+    bcs -c
+
     lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
