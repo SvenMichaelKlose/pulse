@@ -127,6 +127,8 @@ sprites_oy: fill num_sprites  ; Former Y positions for cleaning up.
 
 hiscore:    fill num_score_digits
 
+@(check-zeropage-size)
+
     org $100
 
 screen_tiles_i: fill num_tiles  ; Index into tile info.

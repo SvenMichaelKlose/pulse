@@ -18,6 +18,10 @@
 (load "game/files.lisp")
 (load "game/story.lisp")
 
+(defun check-zeropage-size ()
+  (when (<= #x100 *pc*)
+    (error "Zero page overflow by ~A bytes." (- *pc* #x100))))
+
 (defun make-wav (name file gain bass)
   (sb-ext:run-program "/usr/bin/mplayer"
     (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name ".wav") file))
