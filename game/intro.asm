@@ -50,16 +50,16 @@ f:  sta (s),y
     jsr random
     and #%1
     clc
-    adc #32
+    adc #@(? (eq *tv* :pal) 38 21)
     sta $9001
-    jmp -l
+    bne -l
 
 e:  lda #@(+ white 8 (* 16 white))
     sta $900f
-    ldx #@(/ 64 5)          ; XXX pal or ntsc
+    ldx #@(/ (- (? (eq *tv* :pal) 65 71) 8) 5)
 t:  dex
     bne -t
-    beq -a
+    jmp -a
 
 n:  lda #%11111100          ; Our charset.
     sta $9005

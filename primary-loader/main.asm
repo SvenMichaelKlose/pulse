@@ -46,7 +46,7 @@ l:  lda loader_cfg,x
     jsr @tape_loader_start
     jmp @waiter
 
-game_size = @(length (fetch-file "obj/game.crunched.prg"))
+game_size = @(length (fetch-file (+ "obj/game.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg:
     $ff $0f

@@ -58,9 +58,10 @@
   (make-vice-commands cmds))
 
 (defun make-game (tape? cmds)
-  (make (? tape?
-           "obj/game.bin"
-           "pulse.prg")
+  (make (alet (downcase (symbol-name *tv*))
+          (? tape?
+             (+ "obj/game." ! ".bin")
+             (+ "pulse." ! ".prg")))
         (+ (list "game/zeropage.asm")
            (& tape? (list "game/no-loader.asm"))
            (@ [+ "bender/vic-20/" _]
@@ -71,23 +72,25 @@
         cmds))
 
 (defun make-loader-bin ()
-  (make "obj/loader.bin"
-        '("primary-loader/zeropage.asm"
-          "bender/vic-20/vic.asm"
-          "bender/vic-20/via.asm")
-        "obj/loader.bin.vice.txt"))
+  (alet (downcase (symbol-name *tv*))
+    (make (+ "obj/loader." ! ".bin")
+          '("primary-loader/zeropage.asm"
+            "bender/vic-20/vic.asm"
+            "bender/vic-20/via.asm")
+          (+ "obj/loader." ! ".bin.vice.txt"))))
 
 (defun make-loader-prg ()
-  (make "obj/loader.prg"
-        '("bender/vic-20/vic.asm"
-          "primary-loader/zeropage.asm"
-          "bender/vic-20/basic-loader.asm"
-          "primary-loader/main.asm"
-          "tape-loader/loader.asm"
-          "tape-loader/start.asm"
-          "primary-loader/audio-player.asm"
-          "primary-loader/waiter.asm")
-        "obj/loader.prg.vice.txt"))
+  (alet (downcase (symbol-name *tv*))
+    (make (+ "obj/loader." ! ".prg")
+          '("bender/vic-20/vic.asm"
+            "primary-loader/zeropage.asm"
+            "bender/vic-20/basic-loader.asm"
+            "primary-loader/main.asm"
+            "tape-loader/loader.asm"
+            "tape-loader/start.asm"
+            "primary-loader/audio-player.asm"
+            "primary-loader/waiter.asm")
+          (+ "obj/loader." ! ".prg.vice.txt"))))
 
 ;(defvar *game-start* nil)
 ;(defvar loaded_tape_loader nil)
@@ -98,36 +101,32 @@
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
 
-(defvar *tv* :pal)
+(defvar *tv* nil)
 
-(defun make-all-games ()
-  (make-game nil "obj/pulse.vice.txt")
-  (make-game t "obj/game.vice.txt")
-;  (= *game-start* (get-label 'main))
-  (sb-ext:run-program "exomizer" '("sfx" "sys" "-t" "20" "-o" "obj/game.crunched.prg"  "pulse.prg"))
+(defun make-all-games (tv-standard)
+  (with-temporary *tv* tv-standard
+    (let tv (downcase (symbol-name *tv*))
+      (make-game nil (+ "obj/pulse." tv ".vice.txt"))
+      (make-game t (+ "obj/game." tv ".vice.txt"))
+      (sb-ext:run-program "exomizer" `("sfx" "sys"
+                                       "-t" "20"
+                                       "-o" ,(+ "obj/game.crunched." tv ".prg")
+                                       ,(+ "pulse." tv ".prg")))
+      (make-loader-prg)
+      (with-output-file o (+ "compiled/pulse." tv ".tap")
+        (write-tap o
+            (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
+                           (+ "PULSE (" (upcase tv) ")")
+                           :start #x1001)
+               (bin2pottap (string-list (fetch-file (+ "obj/game.crunched." tv ".prg"))))))
+        (adotimes 256 (princ (code-char #x20) o))
+        (wav2pwm o (+ "obj/theme_downsampled_" tv ".wav")))
+      (sb-ext:run-program "/usr/bin/zip"
+                          (list (+ "compiled/pulse." tv ".tap.zip")
+                                (+ "compiled/pulse." tv ".tap"))))))
 
-;  (make-loader-bin)
-;  (= loaded_tape_loader (get-label 'loaded_tape_loader))
-;  (= tape_loader_start (get-label 'tape_loader_start))
-;  (= waiter (get-label 'waiter))
-;  (= waiter_end (get-label 'waiter_end))
-;  (= run (get-label 'run))
-  (make-loader-prg)
-
-  (with-output-file o "compiled/pulse.tap"
-    (write-tap o
-        (+ (bin2cbmtap (cddr (string-list (fetch-file "obj/loader.prg")))
-                       "PULSE"
-                       :start #x1001)
-           (bin2pottap (string-list (fetch-file "obj/game.crunched.prg")))))
-    (adotimes 256 (princ (code-char #x20) o))
-    (wav2pwm o (+ "obj/theme_downsampled_pal.wav")))
-  (sb-ext:run-program "/usr/bin/zip" (list "compiled/pulse.tap.zip" "compiled/pulse.tap")))
-
-(make-all-games)
-
-(when *video?*
-  (sb-ext:run-program "/usr/bin/mplayer" '("-ao" "dummy" "-vo" "pnm" "-vf" "scale=64:48" "-endpos" "120" "video.mp4")))
+(make-all-games :pal)
+(make-all-games :ntsc)
 
 (print-pwm-info)
 
@@ -141,11 +140,6 @@
 (alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
   (format t "Baud rates: ~A (NTSC), ~A (PAL)~%"
           (tap-rate :ntsc !) (tap-rate :pal !)))
-
-(with-input-output-file i "compiled/pulse.tap"
-                        o "compiled/pulse.tap.wav"
-  (tap2wav i o))
-(sb-ext:run-program "/usr/bin/zip" (list "compiled/pulse.tap.wav.zip" "compiled/pulse.tap.wav"))
 
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
 

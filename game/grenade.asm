@@ -18,7 +18,7 @@ n:  ldy draw_grenade_y
     jsr random
     and #%111
     clc
-    adc #32
+    adc #@(? (eq *tv* :pal) 38 21)
     sta $9001
     ora #128
     sta $900a
