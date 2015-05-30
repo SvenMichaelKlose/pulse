@@ -103,6 +103,7 @@ hit_formation_y:      0
 joystick_status:      0
 call_controllers_x:
 draw_grenade_y:       0
+laser_speed_right:    0
 
 sprites_x:  fill num_sprites  ; X positions.
 sprites_y:  fill num_sprites  ; Y positions.
