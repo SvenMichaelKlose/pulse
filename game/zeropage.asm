@@ -14,71 +14,74 @@ framechars          = @(half num_chars)
 first_sprite_char   = 1
 num_trailing_foreground_chars  = 2
 
+; First char of scrolling terrain.
 foreground          = @(+ (half framechars) (quarter framechars))
 
+; First char of score digits.
 score_char0         = foreground
 
     org 0
     data
 
-s:      0 0   ; source pointer
-d:      0 0   ; destination pointer
-c:      0 0   ; character pointer
-scr:    0 0   ; screen pointer
-col:    0 0   ; colour RAM pointer
-scrx:   8     ; X position
-scry:   0     ; Y position
-curcol: 0     ; character colour
+s:                    0 0 ; Source pointer.
+d:                    0 0 ; Destination pointer.
+scr:                  0 0 ; Screen pointer.
+col:                  0 0 ; Colour RAM pointer.
+scrx:                 8   ; X position.
+scry:                 0   ; Y position.
+curcol:               0   ; Character colour.
 
-sl:     0 0   ; scrolling tile left
-sm:     0 0   ; scrolling tile middle
-sr:     0 0   ; scrolling tile right
+framecounter:         0   ; Current frame number relative to start of game.
+framecounter_high:    0
 
-framecounter:       0
-framecounter_high:  0
-
-next_sprite_char:   0
-sprite_shift_y:     0
-sprite_data_top:    0
-sprite_data_bottom: 0
-sprite_height_top:  0
-spriteframe:        0
+next_sprite_char:     0   ; Next free character for sprites.
+sprite_shift_y:       0   ; Number of character line where sprite starts.
+sprite_data_top:      0   ; Start of sprite data in upper chars.
+sprite_data_bottom:   0   ; Start of sprite data in lower chars.
+sprite_height_top:    0   ; Number of sprite lines in upper chars.
+spriteframe:          0   ; Character offset into lower or upper half of charset.
+sprite_rr:            0   ; Round-robin sprite allocation index.
+foreground_collision: 0   ; Set if a sprite collision has been detected.
 
 scrolled_bits:        0
 scrolled_chars:       0
 leftmost_tile:        0
-free_tiles:           0
-next_foreground_char: 0
-foreground_collision: 0
+free_tiles:           0   ; Next free scrolling tile slot.
+active_tiles:         0   ; Active scrolling tiles.
+tilelist_r:           0 0 0 0 0 0 ; Right character of scrolling tile triplets.
+tiles_c:              0 0 0 0 0 0 ; Scrolling tile colors.
+next_foreground_char: 0   ; Next free char for scrolling tiles.
+sl:                   0 0 ; Scrolling tile left.
+sm:                   0 0 ; Scrolling tile middle.
+sr:                   0 0 ; Scrolling tile right.
 
-grenade_counter:      0
+counter:              0 ; Tile redraw counter.
+repetition:           0 ; Vertical repetitions of tiles.
+level_pos:            0 ; Position in level data.
+level_delay:          0 ; Delay until next tile is decoded from level data.
+level_old_y:          0 ; Old height of terrain.
+
+grenade_counter:      0 ; Countdown until grenade effect is over.
 tmp:                  0
 tmp2:
-distance_x:           0
+distance_x:           0 ; Sprite collision X distance.
 tmp3:
-distance_y:           0
-collision_y_distance:
-counter:              0
-repetition:           0
+distance_y:
+collision_y_distance: 0 ; Sprite collision Y distance.
 
-adding_scout:         0
-adding_scout_delay:   0
-scout_formation_y:    0
-formation_left_unhit: 0
+adding_scout:         0 ; Number of scouts in formation that need to be added.
+adding_scout_delay:   0 ; Delay between scout formations.
+scout_formation_y:    0 ; Centre of currently added scout formation.
+formation_left_unhit: 0 ; Scouts that need to be hit until a bonus is on.
+joystick_status:      0
 
-level_pos:            0
-level_delay:          0
-level_old_y:          0
-
-fire_interval:        0
+fire_interval:        0 ; Delay counter until next laser shot gets out.
 is_firing:            0
 is_invincible:        0
-death_timer:          0
-lifes:                0
-active_tiles:         0
-tilelist_r:           0 0 0 0 0 0
+death_timer:          0 ; Delay until game restarts after all lifes are gone.
+lifes:                0 ; Number of lifes left.
 
-sound_start:          0
+sound_start:
 sound_explosion:      0
 sound_laser:          0
 sound_bonus:          0
@@ -86,23 +89,21 @@ sound_foreground:     0
 sound_dead:
 sound_end:            0
 
-last_random_value:    0
+last_random_value:    0 ; Random number generator's last returned value.
 
 level_pattern:        0
 level_offset:         0
 
-no_stars:             0
+no_stars:             0 ; Draw stars in black if set to avoid trash.
 
-grenade_left:         0
+grenade_left:         0 ; Grenade bar X positions.
 grenade_right:        0
-sprite_rr:            0
-weapon:               0
-tiles_c:              0 0 0 0 0 0
-draw_sprite_x:        0
-hit_formation_y:      0
-joystick_status:      0
-call_controllers_x:
-draw_grenade_y:       0
+
+weapon:               0 ; Weapon type.
+draw_sprite_x:        0 ; Temporary store for X register in draw_sprites.
+hit_formation_y:      0 ; Temporary store for Y register in hit_formation.
+call_controllers_x:     ; Temporary store for X register in call_controllers.
+draw_grenade_y:       0 ; Temporary store for Y register in draw_grenade.
 laser_speed_right:    0
 
 sprites_x:  fill num_sprites  ; X positions.
