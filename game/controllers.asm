@@ -252,6 +252,7 @@ remove_if_on_foreground:
     inc sound_foreground
     bpl remove_sprite2
 
+; Remove sprites in slot X, explode sprite Y and increment score.
 remove_sprites:
     jsr remove_sprite       ; Remove sprite in slot X.
 explode:
