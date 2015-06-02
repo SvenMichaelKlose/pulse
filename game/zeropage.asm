@@ -31,6 +31,8 @@ scrx:                 8   ; X position.
 scry:                 0   ; Y position.
 curcol:               0   ; Character colour.
 
+last_random_value:    0   ; Random number generator's last returned value.
+
 framecounter:         0   ; Current frame number relative to start of game.
 framecounter_high:    0
 
@@ -42,6 +44,7 @@ sprite_height_top:    0   ; Number of sprite lines in upper chars.
 spriteframe:          0   ; Character offset into lower or upper half of charset.
 sprite_rr:            0   ; Round-robin sprite allocation index.
 foreground_collision: 0   ; Set if a sprite collision has been detected.
+no_stars:             0   ; Draw stars in black if set to avoid trash.
 
 scrolled_bits:        0
 scrolled_chars:       0
@@ -61,13 +64,8 @@ level_pos:            0 ; Position in level data.
 level_delay:          0 ; Delay until next tile is decoded from level data.
 level_old_y:          0 ; Old height of terrain.
 
-grenade_counter:      0 ; Countdown until grenade effect is over.
-tmp:                  0
-tmp2:
-distance_x:           0 ; Sprite collision X distance.
-tmp3:
-distance_y:
-collision_y_distance: 0 ; Sprite collision Y distance.
+level_pattern:        0
+level_offset:         0
 
 adding_scout:         0 ; Number of scouts in formation that need to be added.
 adding_scout_delay:   0 ; Delay between scout formations.
@@ -90,15 +88,17 @@ sound_foreground:     0
 sound_dead:
 sound_end:            0
 
-last_random_value:    0 ; Random number generator's last returned value.
-
-level_pattern:        0
-level_offset:         0
-
-no_stars:             0 ; Draw stars in black if set to avoid trash.
-
+grenade_counter:      0 ; Countdown until grenade effect is over.
 grenade_left:         0 ; Grenade bar X positions.
 grenade_right:        0
+
+; Temporaries.
+tmp:                  0
+tmp2:
+distance_x:           0 ; Sprite collision X distance.
+tmp3:
+distance_y:
+collision_y_distance: 0 ; Sprite collision Y distance.
 
 ; Temporary stores for index registers.
 add_sprite_x:         0
