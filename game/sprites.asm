@@ -1,5 +1,8 @@
 ; Replace decorative sprite by new one.
 ;
+; Round-robin search for a decorative sprite.
+; This way decorative sprites last as long as possible.
+;
 ; Y: descriptor of new sprite in sprite_inits
 add_sprite:
     stx add_sprite_x
@@ -46,9 +49,9 @@ remove_sprite_regs_already_saved:
 ; Replace sprite by another.
 ;
 ; X: sprite index
-; Y: descriptor of new sprite in sprite_inits
+; Y: low address byte of descriptor of new sprite in sprite_inits
 replace_sprite:
-    lda #sprites_x      ; Copy descriptor to sprite table.
+    lda #sprites_x          ; Copy descriptor to sprite table.
     sta @(++ +selfmod)
 l:  lda sprite_inits,y
 selfmod:
@@ -83,7 +86,7 @@ sprite_right:
     sta sprites_x,x
     rts
 
-; Test if sprite is outside the screen.
+; Test if sprite X is outside the screen.
 ; Return carry flag set when true.
 test_sprite_out:
     lda sprites_x,x
