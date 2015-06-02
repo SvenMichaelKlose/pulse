@@ -196,7 +196,7 @@ n:  and #%1111      ; Put low nibble back into sprite info.
     sta sprites_d,x
 
     jsr test_foreground_collision_raw
-    bcs remove_if_on_foreground
+    bcs hit_foreground
     bcc remove_if_sprite_is_out
 
 ; Scout
@@ -238,7 +238,7 @@ laser_common:
     jsr hit_enemy
     bcs remove_sprites
     jsr test_foreground_collision_raw
-    bcs remove_if_on_foreground
+    bcs hit_foreground
     lda laser_speed_right
     jsr sprite_right
 
@@ -250,7 +250,7 @@ remove_if_sprite_is_out:
 remove_sprite2:
     jmp remove_sprite
 
-remove_if_on_foreground:
+hit_foreground:
     inc sound_foreground
     bpl remove_sprite2
 
