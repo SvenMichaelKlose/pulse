@@ -2,8 +2,8 @@
 ;
 ; Y: descriptor of new sprite in sprite_inits
 add_sprite:
-    stx tmp
-    sty tmp2
+    stx add_sprite_x
+    sty add_sprite_y
 
     ldy #@(-- num_sprites)
 l:  lda sprite_rr
@@ -16,20 +16,20 @@ l:  lda sprite_rr
     bpl -l
 
 sprite_added:
-    ldx tmp
-    ldy tmp2
+    ldx add_sprite_x
+    ldy add_sprite_y
     rts
 
 replace_sprite2:
-    ldy tmp2
+    ldy add_sprite_y
     jmp replace_sprite
 
 ; Replace sprite by decorative background star.
 ;
 ; X: sprite index
 remove_sprite:
-    stx tmp
-    sty tmp2
+    stx add_sprite_x
+    sty add_sprite_y
 
 remove_sprite_regs_already_saved:
     ; Add background star.

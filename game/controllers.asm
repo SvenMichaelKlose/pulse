@@ -336,7 +336,7 @@ l:  jsr find_hit
     sta sound_bonus
 
     ; Remove bonus sprite.
-    stx tmp
+    stx add_sprite_x
     tya
     tax
     jsr remove_sprite_regs_already_saved

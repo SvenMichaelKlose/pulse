@@ -101,6 +101,8 @@ grenade_left:         0 ; Grenade bar X positions.
 grenade_right:        0
 
 ; Temporary stores for index registers.
+add_sprite_x:         0
+add_sprite_y:         0
 draw_sprite_x:        0
 hit_formation_y:      0
 call_controllers_x:
