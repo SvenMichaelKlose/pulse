@@ -105,7 +105,6 @@ out:rts
 ; C: Clear when a hit was found.
 ; Y: Sprite index of other sprite.
 find_hit:
-    stx draw_sprite_x
     stx tmp
     ldy #@(-- num_sprites)
 
@@ -142,8 +141,7 @@ n:  dey
     bpl -l
     sec
 
-ok: ldx draw_sprite_x
-    rts
+ok: rts
 
 ; Draw all sprites.
 draw_sprites:
