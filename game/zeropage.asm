@@ -75,6 +75,7 @@ scout_formation_y:    0 ; Centre of currently added scout formation.
 formation_left_unhit: 0 ; Scouts that need to be hit until a bonus is on.
 joystick_status:      0
 
+weapon:               0 ; Weapon type.
 fire_interval:        0 ; Delay counter until next laser shot gets out.
 is_firing:            0
 is_invincible:        0
@@ -99,11 +100,11 @@ no_stars:             0 ; Draw stars in black if set to avoid trash.
 grenade_left:         0 ; Grenade bar X positions.
 grenade_right:        0
 
-weapon:               0 ; Weapon type.
-draw_sprite_x:        0 ; Temporary store for X register in draw_sprites.
-hit_formation_y:      0 ; Temporary store for Y register in hit_formation.
-call_controllers_x:     ; Temporary store for X register in call_controllers.
-draw_grenade_y:       0 ; Temporary store for Y register in draw_grenade.
+; Temporary stores for index registers.
+draw_sprite_x:        0
+hit_formation_y:      0
+call_controllers_x:
+draw_grenade_y:       0
 laser_speed_right:    0
 
 sprites_x:  fill num_sprites  ; X positions.
