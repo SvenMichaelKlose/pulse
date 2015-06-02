@@ -36,7 +36,7 @@ hit_enemy:
 
 clc_return:
     clc
-r : rts
+    rts
 
 test_foreground_collision_fine:
     lda sprites_x,x
@@ -63,7 +63,7 @@ toggle_color:
     ora #white
     tay
 l:  sty sprites_c,x
-    rts
+r:  rts
 
 ; Bonus
 bonus_fun:
