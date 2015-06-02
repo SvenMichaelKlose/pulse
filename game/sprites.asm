@@ -31,7 +31,7 @@ remove_sprite:
     stx tmp
     sty tmp2
 
-remove_sprite2:
+remove_sprite_regs_already_saved:
     ; Add background star.
     jsr random              ; Set X position.
     sta star_init

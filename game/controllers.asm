@@ -339,7 +339,7 @@ l:  jsr find_hit
     stx tmp
     tya
     tax
-    jsr remove_sprite2
+    jsr remove_sprite_regs_already_saved
 
     ; Add ten points.
     ldy #10
