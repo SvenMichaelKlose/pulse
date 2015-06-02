@@ -36,8 +36,7 @@ hit_enemy:
 
 clc_return:
     clc
-return:
-    rts
+r : rts
 
 test_foreground_collision_fine:
     lda sprites_x,x
@@ -83,7 +82,7 @@ star_fun:
     sta sprites_c,x
 l:  lda framecounter
     lsr
-    bcc return          ; Only move star every second frame.
+    bcc -r              ; Only move star every second frame.
     lda sprites_d,x
     beq move_left_blue  ; Slow, blue star.
     bne move_left_a     ; Faster, white star.
@@ -246,7 +245,7 @@ laser_common:
 
 remove_if_sprite_is_out:
     jsr test_sprite_out
-    bcc return2
+    bcc +r
 remove_sprite2:
     jmp remove_sprite
 
@@ -271,8 +270,7 @@ explode:
     ldy #@(- explosion_init sprite_inits) ; Add explosion sprite.
     jmp add_sprite
 
-return2:
-    rts
+r:  rts
 
 ; --
 
@@ -300,7 +298,7 @@ player_fun:
     sta sprites_l,x
     sta sprites_c,x
     dec death_timer
-    bne return2
+    bne -r
     lda #<ship
     sta sprites_l,x
     lda lifes
