@@ -55,7 +55,7 @@
 
 (defun make (to files cmds)
   (apply #'assemble-files to files)
-  (make-vice-commands cmds))
+  (make-vice-commands cmds "break .stop"))
 
 (defun make-prg (cmds)
   (make "pulse.prg"
@@ -63,7 +63,7 @@
            (@ [+ "bender/vic-20/" _]
               `("basic-loader.asm"
                 "vic.asm"))
-           (@ [+ "game/" _] +pulse-files+))
+           (@ [+ "game/" _] (+ +pulse-files+ (list "color-ram-swap.asm"))))
         cmds))
 
 (defun make-tap (cmds)
