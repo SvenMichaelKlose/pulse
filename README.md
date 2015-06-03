@@ -11,5 +11,6 @@ All rights reversed. It's all yours, too.
 
 # Build and play on Linux
 
-You'll need at least git and sbcl installed.  Then download and start
-'download-and-build.sh' to clone and build all required Github repositories.
+You'll need at least exomizer, git, mplayer, sbcl and sox installed.  Then
+download and start 'download-and-build.sh' to clone and build all required
+Github repositories.
