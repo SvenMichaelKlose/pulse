@@ -299,28 +299,7 @@ laser_side:
 
 ; Player
 player_fun:
-    lda death_timer
-    beq +n
-    jsr random
-    sta sprites_l,x
-    sta sprites_c,x
-    dec death_timer
-    bne -r
-    lda #<ship
-    sta sprites_l,x
-    lda lifes
-    beq +g
-    jmp restart
-
-    ; Save hiscore to zeropage.
-g:  ldx #7
-l:  lda hiscore_on_screen,x
-    sta hiscore,x
-    dex
-    bpl -l
-    jmp game_over
-
-n:  lda #cyan
+    lda #cyan
     sta sprites_c,x
     lda is_invincible
     beq +n
@@ -400,7 +379,9 @@ die:
     sta sound_dead
     lda #7
     sta sound_explosion
-    rts
+    txa
+    tay
+    jmp explode
 
 c:  lda #1
     jmp sprite_right

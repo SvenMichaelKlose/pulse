@@ -91,18 +91,24 @@ init_frame:
     ora #first_sprite_char
     sta next_sprite_char
 
-;#ifdef SHOW_CHARSET
-;    ldx #@(-- num_chars)
-;l2: txa
-;    sta screen,x
-;    lda #white
-;    sta colors,x
-;    dex
-;    cpx #$ff
-;    bne -l2
-;#endif
+    lda death_timer
+    beq +n
+    dec death_timer
+    bne +n
+    lda lifes
+    beq +g
+    jmp restart
 
-; Call the functions that control sprite behaviour.
+    ; Save hiscore to zeropage.
+g:  ldx #7
+l:  lda hiscore_on_screen,x
+    sta hiscore,x
+    dex
+    bpl -l
+    jmp game_over
+n:
+
+    ; Call the functions that control sprite behaviour.
     ldx #@(-- num_sprites)
 l1: lda sprites_fh,x
     beq +n1
