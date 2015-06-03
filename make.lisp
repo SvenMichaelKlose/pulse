@@ -63,7 +63,7 @@
            (@ [+ "bender/vic-20/" _]
               `("basic-loader.asm"
                 "vic.asm"))
-           (@ [+ "game/" _] (+ +pulse-files+ (list "color-ram-swap.asm"))))
+           (@ [+ "game/" _] +pulse-files+))
         cmds))
 
 (defun make-tap (cmds)
