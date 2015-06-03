@@ -116,6 +116,8 @@ explosion_fun:
     lda sprites_l,x
     adc vicreg_rasterhi
     sta sprites_l,x
+    lda #1
+    jsr sprite_down
     dec sprites_d,x
     bpl move_left
     jmp remove_sprite
