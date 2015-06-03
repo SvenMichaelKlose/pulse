@@ -67,11 +67,11 @@
         cmds))
 
 (defun make-tap (cmds)
-  (make (+ "obj/game." (downcase (symbol-name *tv*)) ".bin")
-        (+ (list "game/zeropage.asm"
-                 "game/no-loader.asm")
+  (make (+ "obj/game." (downcase (symbol-name *tv*)) ".prg")
+        (+ (list "game/zeropage.asm")
            (@ [+ "bender/vic-20/" _]
-              `("vic.asm"))
+              `("vic.asm"
+                "basic-loader.asm"))
            (@ [+ "game/" _] +pulse-files+))
         cmds))
 
@@ -96,12 +96,6 @@
             "primary-loader/waiter.asm")
           (+ "obj/loader." ! ".prg.vice.txt"))))
 
-;(defvar *game-start* nil)
-;(defvar loaded_tape_loader nil)
-;(defvar waiter nil)
-;(defvar waiter_end nil)
-;(defvar run nil)
-
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
 
@@ -114,7 +108,7 @@
       (sb-ext:run-program "exomizer" `("sfx" "sys"
                                        "-t" "20"
                                        "-o" ,(+ "obj/game.crunched." tv ".prg")
-                                       ,(+ "pulse." tv ".prg")))
+                                       ,(+ "obj/game." tv ".prg")))
       (make-loader-prg)
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
