@@ -460,8 +460,7 @@ n:  sty fire_interval
     jsr add_sprite
 
     lda weapon
-    lsr
-    lsr
+    and #%11111100
     beq +n
 
     ; Shoot upwards.
