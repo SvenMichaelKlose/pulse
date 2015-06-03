@@ -10,7 +10,14 @@ l:  sty draw_grenade_y
     lda sprites_i,y
     and #deadly
     beq +n
-    jsr explode
+    lda formation_left_unhit
+    clc
+    adc adding_scout
+    cmp #6
+    bne +e
+    jsr make_bonus
+    jmp +n
+e:  jsr explode
 n:  ldy draw_grenade_y
     dey
     bpl -l
@@ -32,6 +39,7 @@ n:  ldy draw_grenade_y
     lda #64
     jsr grenade_bar
     lda #0
+    sta formation_left_unhit
     jsr grenade_bar
 
     lda grenade_right

@@ -6,10 +6,8 @@ bonus_colors:
     cyan
     yellow
 
-; Make bonus item if a scout formation has been killed.
-hit_formation:
-    dec formation_left_unhit
-    bne sec_return
+; Make bonus of sprite Y.
+make_bonus:
     lda sprites_x,y
     sta bonus_init
     lda sprites_y,y
@@ -21,6 +19,13 @@ hit_formation:
     ldy #@(- bonus_init sprite_inits)
     jsr add_sprite
     ldy hit_formation_y
+    rts
+
+; Make bonus item if a scout formation has been killed.
+hit_formation:
+    dec formation_left_unhit
+    bne sec_return
+    jsr make_bonus
 sec_return:
     sec
     rts
