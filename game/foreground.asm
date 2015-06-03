@@ -129,7 +129,6 @@ plot:
     sta (scr),y
 repeat:
     dec repetition
-    lda repetition
     bmi +next_tile
     dec scry
     lda tmp3
