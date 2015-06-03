@@ -14,3 +14,6 @@ All rights reversed. It's all yours, too.
 You'll need at least exomizer, git, mplayer, sbcl and sox installed.  Then
 download and start 'download-and-build.sh' to clone and build all required
 Github repositories.
+
+If you get into problems please don't hestitate to ask pixel@hugbox.org
+about solutions as he's regularly missing out things.
