@@ -111,7 +111,6 @@ n:
     ; Call the functions that control sprite behaviour.
     ldx #@(-- num_sprites)
 l1: lda sprites_fh,x
-    beq +n1
     sta @(+ +m1 2)
     lda sprites_fl,x
     sta @(++ +m1)

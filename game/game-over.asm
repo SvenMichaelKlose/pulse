@@ -63,7 +63,7 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     ldx #@(- num_sprites 2)
 l:  jsr remove_sprite
     dex
-    bne -l
+    bpl -l
 
 ; Re-entry point after lost life.
 restart:
