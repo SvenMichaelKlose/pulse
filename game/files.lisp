@@ -27,6 +27,7 @@
         "gfx-tiles.asm"
         "sprite-inits.asm"
         "sprites.asm"
+        "sprites-vic.asm"
         "controllers.asm"
         "grenade.asm"
         "game-over.asm"

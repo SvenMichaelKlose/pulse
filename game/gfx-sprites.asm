@@ -19,7 +19,6 @@ laser:
     %00000000
     %00000000
 
-;#ifdef HAVE_DOUBLE_LASER
 laser_up:
     %00000111
     %00001111
@@ -29,7 +28,6 @@ laser_up:
     %11111000
     %01110000
     %10100000
-;#endif
 
 laser_down:
     %10100000

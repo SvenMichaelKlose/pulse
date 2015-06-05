@@ -1,4 +1,3 @@
-; Draw a single sprite.
 draw_sprite:
     txa
     pha
