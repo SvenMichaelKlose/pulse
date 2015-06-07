@@ -57,22 +57,9 @@
   (apply #'assemble-files to files)
   (make-vice-commands cmds "break .stop"))
 
-(defun make-prg (cmds)
-  (make "pulse.prg"
-        (+ (list "game/zeropage.asm")
-           (@ [+ "bender/vic-20/" _]
-              `("basic-loader.asm"
-                "vic.asm"))
-           (@ [+ "game/" _] +pulse-files+))
-        cmds))
-
-(defun make-tap (cmds)
-  (make (+ "obj/game." (downcase (symbol-name *tv*)) ".prg")
-        (+ (list "game/zeropage.asm")
-           (@ [+ "bender/vic-20/" _]
-              `("vic.asm"
-                "basic-loader.asm"))
-           (@ [+ "game/" _] +pulse-files+))
+(defun make-game (version file cmds)
+  (make file
+        (@ [+ "game/" _] (pulse-files version))
         cmds))
 
 (defun make-loader-bin ()
@@ -104,7 +91,9 @@
 (defun make-all-games (tv-standard)
   (with-temporary *tv* tv-standard
     (let tv (downcase (symbol-name *tv*))
-      (make-tap (+ "obj/game." tv ".vice.txt"))
+      (make-game :tap
+                 (+ "obj/game." tv ".prg")
+                 (+ "obj/game." tv ".vice.txt"))
       (sb-ext:run-program "exomizer" `("sfx" "sys"
                                        "-t" "20"
                                        "-o" ,(+ "obj/game.crunched." tv ".prg")
@@ -122,7 +111,8 @@
                           (list (+ "compiled/pulse." tv ".tap.zip")
                                 (+ "compiled/pulse." tv ".tap"))))))
 
-(make-prg "obj/pulse.vice.txt")
+(make-game :prg "pulse.prg" "obj/pulse.vice.txt")
+(make-game :virtual "obj/virtual.bin" "obj/virtual.vice.txt")
 (make-all-games :pal)
 (make-all-games :ntsc)
 
