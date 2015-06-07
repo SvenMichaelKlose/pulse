@@ -364,14 +364,13 @@ make_invincible:
     bne operate_joystick
 
 no_bonus_hit:
+    lda is_invincible
+    bne operate_joystick
     lda sprites_i,y
     and #deadly
     beq operate_joystick
 
 die:
-    lda is_invincible
-    bne operate_joystick
-
     dec lifes
     lda #120
     sta death_timer
