@@ -58,7 +58,8 @@ screws_sniper:
     sniper_probability
 screws_sniper_bullet:
     sniper_bullet_probability
-    sniper_bullet_probability_high
+    sniper_bullet_probability
+    ;sniper_bullet_probability_high
     sniper_bullet_probability
     sniper_bullet_probability
 screws_scout:
