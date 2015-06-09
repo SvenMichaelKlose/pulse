@@ -33,7 +33,7 @@
     "gfx-tiles.asm"
     "sprite-inits.asm"
     "sprites.asm"
-    ,@(? (eq version :virtual)
+    ,@(? nil ;(eq version :virtual)
          '("sprites-virtual.asm")
          '("sprites-vic.asm"))
     "controllers.asm"
