@@ -1,5 +1,6 @@
 (= *model* :vic-20)
 
+(defvar *virtual?* nil)
 (defvar *video?* nil)
 
 (defvar *bandwidth* 16)
@@ -94,10 +95,10 @@
       (make-game :tap
                  (+ "obj/game." tv ".prg")
                  (+ "obj/game." tv ".vice.txt"))
-      (sb-ext:run-program "exomizer" `("sfx" "sys"
-                                       "-t" "20"
-                                       "-o" ,(+ "obj/game.crunched." tv ".prg")
-                                       ,(+ "obj/game." tv ".prg")))
+      (sb-ext:run-program "/usr/local/bin/exomizer" `("sfx" "sys"
+                                                      "-t" "20"
+                                                      "-o" ,(+ "obj/game.crunched." tv ".prg")
+                                                      ,(+ "obj/game." tv ".prg")))
       (make-loader-prg)
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
@@ -112,7 +113,8 @@
                                 (+ "compiled/pulse." tv ".tap"))))))
 
 (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
-(make-game :virtual "obj/virtual.bin" "obj/virtual.vice.txt")
+(with-temporary *virtual?* t
+  (make-game :virtual "obj/virtual.bin" "obj/virtual.vice.txt"))
 (make-all-games :pal)
 (make-all-games :ntsc)
 
