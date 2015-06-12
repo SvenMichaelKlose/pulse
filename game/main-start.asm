@@ -105,11 +105,16 @@ l:  lda hiscore_on_screen,x
     sta hiscore,x
     dex
     bpl -l
+
+if @*virtual?*
+    jmp intro
+end
+if @(not *virtual?*)
     jmp game_over
-n:
+end
 
     ; Call the functions that control sprite behaviour.
-    ldx #@(-- num_sprites)
+n:  ldx #@(-- num_sprites)
 l1: lda sprites_fh,x
     sta @(+ +m1 2)
     lda sprites_fl,x

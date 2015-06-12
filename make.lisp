@@ -1,6 +1,7 @@
 (= *model* :vic-20)
 
 (defvar *virtual?* nil)
+(defvar *coinop?* nil)
 (defvar *video?* nil)
 
 (defvar *bandwidth* 16)
@@ -114,7 +115,10 @@
 
 (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
 (with-temporary *virtual?* t
-  (make-game :virtual "obj/virtual.bin" "obj/virtual.vice.txt"))
+  (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))
+(with-temporary *virtual?* t
+  (with-temporary *coinop?* t
+    (make-game :virtual "compiled/coinop.bin" "obj/coinop.vice.txt")))
 (make-all-games :pal)
 (make-all-games :ntsc)
 

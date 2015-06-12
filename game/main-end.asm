@@ -1,4 +1,7 @@
     jsr draw_sprites
+if @*virtual?*
+    $22 2   ; Update display.
+end
 
 increment_framecounter:
     inc framecounter

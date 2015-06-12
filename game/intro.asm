@@ -1,4 +1,18 @@
+    ; Reset highscore.
+    ldx #7
+    lda #score_char0
+l:  sta hiscore,x
+    dex
+    bpl -l
+
 intro:
+if @*virtual?*
+    lda #<start_game
+    sta $a000
+    lda #>start_game
+    sta $a001
+end
+    ldx #0
     ldy #green
 l:  lda #32
     sta @(-- screen),x
@@ -13,6 +27,16 @@ l:  lda #32
 
     ; Copy story to screen.
     ldx #0
+if @*virtual?*
+    lda #<story
+    sta @(+ +l 1)
+    lda #>story
+    sta @(+ +l 2)
+    lda #@(low (+ screen (* 5 screen_width)))
+    sta @(+ +l2 1)
+    lda #@(high (+ screen (* 5 screen_width)))
+    sta @(+ +l2 2)
+end
 l:  lda story,x
     beq +e
 l2: sta @(+ screen (* 5 screen_width)),x
@@ -32,11 +56,14 @@ a:  lda #@(+ 8 black)   ; Screen and border color.
     sty @(++ s)
     iny
     sty @(++ d)
-l:  lda #0
+l:
+if @(not *coinop?*)
+    lda #0
     sta $9113
     lda $9111
     and #%00100000
-    beq +n ; Fire…
+    beq +start_game ; Fire…
+end
     jsr random
     beq +e
     sta $900e
@@ -59,19 +86,16 @@ e:  lda #@(+ white 8 (* 16 white))
     ldx #@(/ (- (? (eq *tv* :pal) 65 71) 8) 5)
 t:  dex
     bne -t
+if @*virtual?*
+    $22 2
+end
     jmp -a
 
-n:  lda #%11111100          ; Our charset.
+start_game:
+    lda #%11111100          ; Our charset.
     sta $9005
     lda #@(+ reverse blue)  ; Screen and border color.
     sta $900f
-
-    ; Reset highscore.
-    ldx #7
-    lda #score_char0
-l:  sta hiscore,x
-    dex
-    bpl -l
 
     jmp game_over
 

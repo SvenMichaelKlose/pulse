@@ -11,4 +11,6 @@
                      " there. We don't know "
                      "  what to expect. We  "
                      "    count on you.     "
-                     " Good luck! Hit fire!"))))
+                     (? *coinop?*
+                        "  Donate & hit fire!"
+                        " Good luck! Hit fire!")))))
