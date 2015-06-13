@@ -65,12 +65,13 @@ l:  jsr remove_sprite
     dex
     bpl -l
 
-    ; Set coin-up vector.
 if @*coinop?*
     lda #<extra_coin
     sta $a000
     lda #>extra_coin
     sta $a001
+    lda #1
+    sta $a002
 end
 
 ; Re-entry point after lost life.
