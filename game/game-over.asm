@@ -70,7 +70,6 @@ if @*coinop?*
     sta $a000
     lda #>extra_coin
     sta $a001
-    lda #1
     sta $a002
 end
 

@@ -1,5 +1,4 @@
 extra_coin:
     inc lifes
-    lda #1
-    sta $a002
+    inc $a002
     rti

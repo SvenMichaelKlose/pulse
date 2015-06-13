@@ -11,8 +11,7 @@ if @*coinop?*
     sta $a000
     lda #>start_game
     sta $a001
-    lda #1              ; Enable coin interrupt.
-    sta $a002
+    sta $a002           ; Enable coin interrupt.
 end
     ldx #0
     ldy #green
