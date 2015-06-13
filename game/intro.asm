@@ -6,7 +6,7 @@ l:  sta hiscore,x
     bpl -l
 
 intro:
-if @*virtual?*
+if @*coinop?*
     lda #<start_game
     sta $a000
     lda #>start_game

@@ -66,7 +66,7 @@ l:  jsr remove_sprite
     bpl -l
 
     ; Set coin-up vector.
-if @*virtual?*
+if @*coinop?*
     lda #<extra_coin
     sta $a000
     lda #>extra_coin

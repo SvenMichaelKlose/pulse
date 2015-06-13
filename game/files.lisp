@@ -35,6 +35,8 @@
         '("lowmem-end.asm"
           "init-end.asm"))
 
+    "level-data.asm"
+    "gfx-tiles.asm"
     "tiles.asm"
     "sinetab.asm"
     "sprite-inits.asm"
@@ -42,7 +44,7 @@
     "sprites-vic.asm"
     "controllers.asm"
     "grenade.asm"
-    ,@(? (eq version :virtual)
+    ,@(? *coinop?*
          '("coin.asm"))
     "game-over.asm"
     "main-start.asm"
@@ -50,6 +52,4 @@
       "scout.asm"
     "main-end.asm"
     "foreground.asm"
-    "level.asm"
-    "level-data.asm"
-    "gfx-tiles.asm"))
+    "level.asm"))
