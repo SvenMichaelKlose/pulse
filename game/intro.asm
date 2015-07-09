@@ -1,3 +1,6 @@
+if @*virtual?*
+    jmp intro
+end
     ; Reset highscore.
     ldx #7
     lda #score_char0
