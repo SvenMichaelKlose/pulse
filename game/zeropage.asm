@@ -130,6 +130,8 @@ sprites_d:  fill num_sprites  ; Whatever the controllers want.
 sprites_ox: fill num_sprites  ; Former X positions for cleaning up.
 sprites_oy: fill num_sprites  ; Former Y positions for cleaning up.
 
+    org $f8
+
 hiscore:    fill num_score_digits
 
 @(check-zeropage-size)
