@@ -107,7 +107,7 @@ l:  lda hiscore_on_screen,x
     bpl -l
 
 if @*virtual?*
-    jmp intro
+    $22 $01     ; Exit.
 end
 if @(not *virtual?*)
     jmp game_over
