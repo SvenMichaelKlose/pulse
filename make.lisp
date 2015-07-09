@@ -21,7 +21,7 @@
 (load "game/story.lisp")
 
 (defun check-zeropage-size ()
-  (when (<= #x100 *pc*)
+  (when (< #x100 *pc*)
     (error "Zero page overflow by ~A bytes." (- *pc* #x100))))
 
 (defun make-wav (name file gain bass)
