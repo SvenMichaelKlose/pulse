@@ -9,13 +9,6 @@ l:  sta hiscore,x
     bpl -l
 
 intro:
-if @*coinop?*
-    lda #<start_game
-    sta $a000
-    lda #>start_game
-    sta $a001
-    sta $a002           ; Enable coin interrupt.
-end
     ldx #0
     ldy #green
 l:  lda #32
@@ -31,16 +24,6 @@ l:  lda #32
 
     ; Copy story to screen.
     ldx #0
-if @*virtual?*
-    lda #<story
-    sta @(+ +l 1)
-    lda #>story
-    sta @(+ +l 2)
-    lda #@(low (+ screen (* 5 screen_width)))
-    sta @(+ +l2 1)
-    lda #@(high (+ screen (* 5 screen_width)))
-    sta @(+ +l2 2)
-end
 l:  lda story,x
     beq +e
 l2: sta @(+ screen (* 5 screen_width)),x
@@ -61,13 +44,11 @@ a:  lda #@(+ 8 black)   ; Screen and border color.
     iny
     sty @(++ d)
 l:
-if @(not *coinop?*)
     lda #0
     sta $9113
     lda $9111
     and #%00100000
     beq +start_game ; Fire…
-end
     jsr random
     beq +e
     sta $900e
