@@ -306,11 +306,10 @@ player_fun:
     ldy #red
     jsr energize_color
     dec is_invincible
-    jmp +l
 
 n:  jsr test_foreground_collision_fine
     bcs die
-l:  jsr find_hit
+    jsr find_hit
     bcs operate_joystick ; Nothing hit...
 
     lda sprites_fl,y
