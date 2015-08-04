@@ -371,7 +371,7 @@ no_bonus_hit:
 
 die:
     dec lifes
-    lda #120
+    lda #@(- 120 16) ; (Minus 16 frames for moving new ship in.)
     sta death_timer
     lda #15
     sta sound_dead
@@ -385,6 +385,7 @@ c:  lda #1
     jmp sprite_right
 
 operate_joystick:
+    ; Move new ship in.
     lda sprites_x,x
     cmp #$f0
     bcs -c
