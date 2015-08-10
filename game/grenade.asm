@@ -50,10 +50,10 @@ n:  ldy draw_grenade_y
 
 grenade_bar:
     sta @(++ grenade_bar_color)
-    lda #@(-- screen_height)
+    lda #@(-- screen_rows)
     sta scry
 l:  jsr scrcoladdr
-    cpy #screen_width
+    cpy #screen_columns
     bcs +done
     jsr test_on_foreground
     beq +n          ; Don't draw over foreground…

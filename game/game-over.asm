@@ -15,7 +15,7 @@ l:  lda #0
     sta @(-- (+ charset (* 8 (+ score_char0 10)))),x
     lda @(-- hiscore),x             ; Copy hiscore to screen.
     sta @(-- hiscore_on_screen),x
-    lda #$ff
+    lda #$ff                        ; Set grenade char.
     sta @(+ charset (* 64 8))
 n:  dex
     bne -l
@@ -51,7 +51,7 @@ l:  lda @(+ charset_locase (* 8 #x30)),x
     sta @(+ (- (++ lifes_on_screen) screen) colors)
 
     ; Initialize foreground scroller.
-    lda #@(-- screen_height)
+    lda #@(-- screen_rows)
     sta level_old_y
     ldy #5
     jsr add_tile

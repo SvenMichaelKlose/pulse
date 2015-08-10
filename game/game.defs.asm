@@ -1,5 +1,7 @@
-screen_width  = 22
-screen_height = 23
+screen_columns  = 22
+screen_rows = 23
+screen_width = @(* 8 screen_columns)
+screen_height = @(* 8 screen_rows)
 
 max_fire_interval = 4
 min_fire_interval = 2

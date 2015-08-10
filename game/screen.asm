@@ -1,13 +1,11 @@
-screen_h = >screen
-
 ; Calculate line address in screen and colour memory.
 scrcoladdr:
     ldy scry
     lda $edfd,y
     sta scr
     sta col
-    cpy #12
-    lda #@(half screen_h)
+    cpy #@(++ (/ 256 screen_columns))
+    lda #@(half (high screen))
     rol
     sta @(++ scr)
     and #1

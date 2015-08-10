@@ -16,7 +16,7 @@ add_tile:
     dex
     and #@(-- num_tiles)
     sta free_tiles
-    lda #screen_width
+    lda #screen_columns
     clc
     adc scrolled_chars
     sta screen_tiles_x,x
@@ -92,7 +92,7 @@ repeat_plotting_chars:
     cmp #$fd            ; Off-screen...
     beq remove_tile
     bcs draw_right
-    cmp #screen_width
+    cmp #screen_columns
     bcs no_more_tiles  ; Off-screen...
     jsr scrcoladdr
     lda #@(+ yellow multicolor) ; Set left char and color.
@@ -102,7 +102,7 @@ repeat_plotting_chars:
 draw_right:
     inc scrx
     lda scrx
-    cmp #screen_width  ; Off-screen...
+    cmp #screen_columns ; Off-screen...
     bcs +n
     jsr scrcoladdr
     lda tiles_c,x      ; Plot regular right char.
@@ -111,7 +111,7 @@ draw_right:
     sta (scr),y
 n:  inc scrx
     lda scrx
-    cmp #screen_width  ; Off-screen...
+    cmp #screen_columns ; Off-screen...
     bcs +repeat
     jsr scrcoladdr
     lda tiles_r,x

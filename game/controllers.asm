@@ -353,7 +353,7 @@ start_grenade:
     sta grenade_right
 
     ; Let grenade bars walk across all of the screen.
-    lda #screen_width
+    lda #screen_columns
     sta grenade_counter
     bne operate_joystick
 
@@ -476,7 +476,7 @@ n:  tya
     and #joy_down
     bne +n
     lda sprites_y,x
-    cmp #@(-- (* (-- screen_height) 8))
+    cmp #@(-- (* (-- screen_rows) 8))
     bcs +n
     lda #4
     jsr sprite_down
@@ -497,7 +497,7 @@ n:  lda #0          ;Fetch rest of joystick status.
     lda $9120
     bmi +n
     lda sprites_x,x
-    cmp #@(* (-- screen_width) 8)
+    cmp #@(* (-- screen_columns) 8)
     bcs +n
     lda #3
     jmp sprite_right

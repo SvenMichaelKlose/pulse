@@ -26,7 +26,7 @@ l:  lda #32
     ldx #0
 l:  lda story,x
     beq +e
-l2: sta @(+ screen (* 5 screen_width)),x
+l2: sta @(+ screen (* 5 screen_columns)),x
     inx
     bne -l
     inc @(+ -l 2)

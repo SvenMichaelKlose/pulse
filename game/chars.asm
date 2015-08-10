@@ -48,10 +48,10 @@ fetch_char:
 
 test_position:
     lda scry
-    cmp #screen_height
+    cmp #screen_rows
     bcs +l
     lda scrx
-    cmp #screen_width
+    cmp #screen_columns
 l:  tay
     rts
 
