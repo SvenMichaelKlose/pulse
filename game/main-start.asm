@@ -83,14 +83,14 @@ n:  dex
     adc #score_char0
     sta @(++ lifes_on_screen)
 
-; Initialize our "double buffering" for sprites.
-init_frame:
+    ; Initialize our "double buffering" for sprites.
     lda spriteframe
     eor #framemask
     sta spriteframe
     ora #first_sprite_char
     sta next_sprite_char
 
+    ; Check if game's over.
     lda death_timer
     beq +n
     dec death_timer
