@@ -83,6 +83,8 @@ restart:
     stx is_firing
     stx weapon
 
+    jsr clean_sprites
+
     ; Make player sprite.
     ldx #@(-- num_sprites)
     ldy #@(- player_init sprite_inits)

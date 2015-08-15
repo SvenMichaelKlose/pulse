@@ -23,6 +23,7 @@ n:  dex
     bpl -l
 
     ; Remove remaining chars of sprites in old frame.
+clean_sprites:
     ldx #@(-- num_sprites)
 l:  ; Remove old chars.
     lda sprites_ox,x
