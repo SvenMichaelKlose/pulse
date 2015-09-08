@@ -14,6 +14,7 @@
 (defvar audio_longest_pulse #x28)
 (defvar frame_sync_width #x08)
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
+(defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
 
 (load "tape-loader/bin2pottap.lisp")
 (load "nipkow/src/wav2pwm.lisp")
@@ -96,6 +97,7 @@
       (make-game :tap
                  (+ "obj/game." tv ".prg")
                  (+ "obj/game." tv ".vice.txt"))
+      (format t "Compressing game with exomizer...~%")
       (sb-ext:run-program "/usr/local/bin/exomizer" `("sfx" "sys"
                                                       "-t" "20"
                                                       "-o" ,(+ "obj/game.crunched." tv ".prg")
