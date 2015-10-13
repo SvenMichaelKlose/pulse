@@ -1,24 +1,20 @@
 tape_loader_start:
+    lda $314
+    sta tape_old_irq
+    lda $315
+    sta @(++ tape_old_irq)
     lda #@(low *tape-loader-start*) ; Set IRQ vector.
     sta $314
     lda #@(high *tape-loader-start*)
     sta $315
     lda #@(low *tape-pulse*) ; Set half of timer.
     sta $9114
+    lda #16
+    sta tape_leader_countdown
 
     lda $911c           ; Start motor.
     and #$fd
     sta $911c
-
-    ldy #32             ; Give it time to start.
-a:  ldx #0
-l:  dex
-    bne -l
-    dey
-    bne -a
-
-    lda #11             ; First byte plus three false pulses.
-    sta tape_bit_counter
 
     lda #%00000000      ; VIA1 T1 one-shot mode
     sta $911b

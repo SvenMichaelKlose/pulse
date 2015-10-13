@@ -1,13 +1,44 @@
 loaded_tape_loader:
     org @*tape-loader-start*
 
+; Leader of long pulses.
 tape_loader:
-    lda $911d               ; Get timer underflow bit.
-    ldx #@(high *tape-pulse*) ; Restart timer.
-    stx $9115
-    ldx $9121
-    asl                     ; Roll underflow bit into our byte.
-    asl
+    jsr tape_get_bit
+    bcs +n
+    lda tape_leader_countdown
+    bpl restart_loader
+    ldx #<tape_leader_shorts
+    ldy #>tape_leader_shorts
+next_leader:
+    lda #16
+    sta tape_leader_countdown
+    jmp set_irq_vector
+n:  dec tape_leader_countdown
+    jmp return_from_interrupt
+
+restart_loader:
+    ldx #<tape_loader
+    ldy #>tape_loader
+    bne next_leader
+
+; Leader of short pulses.
+tape_leader_shorts:
+    jsr tape_get_bit
+    bcc -n
+    lda tape_leader_countdown
+    bpl restart_loader       ; Not enough pulses. Restart loading.
+    lda #8
+    sta tape_bit_counter
+    ldx #<tape_loader_data
+    ldy #>tape_loader_data
+set_irq_vector:
+    stx $314
+    sty $315
+    bne return_from_interrupt
+
+; After one more long pulse the data begins.
+tape_loader_data:
+    jsr tape_get_bit
     ror tape_current_byte
 ;#ifdef IRQ_LOADER_EFFECT
     lda tape_current_byte
@@ -22,6 +53,16 @@ return_from_interrupt:
     tax
     pla
     rti
+
+tape_get_bit:
+    lda $911d               ; Get timer underflow bit.
+    ldx #@(high *tape-pulse*) ; Restart timer.
+    stx $9115
+    ldx $9121
+    inc $900f
+    asl                     ; Get underflow bit.
+    asl
+    rts
 
 byte_complete:
     lda #8                  ; Reset bit count.
@@ -40,6 +81,11 @@ n:  dec tape_counter        ; All bytes loaded?
     sta $912e
     lda #0                  ; Stop motor.
     sta $911c
+    sei
+    lda tape_old_irq
+    sta $314
+    lda @(++ tape_old_irq)
+    sta $315
     jmp (tape_callback)
 
 loader_end:

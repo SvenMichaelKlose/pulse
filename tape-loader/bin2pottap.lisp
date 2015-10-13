@@ -16,5 +16,8 @@
     (enqueue q (code-char #x00))
     (enqueue q (code-char #x04))
     (enqueue q (code-char #x30))
+    (adotimes 32 (enqueue q *pulse-long*))
+    (adotimes 32 (enqueue q *pulse-short*))
+    (enqueue q *pulse-long*)
     (dolist (i x (list-string (queue-list q)))
       (bin2pottap-byte q i))))

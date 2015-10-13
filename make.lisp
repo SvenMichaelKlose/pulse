@@ -116,13 +116,13 @@
                                 (+ "compiled/pulse." tv ".tap"))))))
 
 (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
+(make-all-games :pal)
+(make-all-games :ntsc)
 (with-temporary *virtual?* t
   (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))
 (with-temporary *virtual?* t
   (with-temporary *coinop?* t
     (make-game :virtual "compiled/coinop.bin" "obj/coinop.vice.txt")))
-(make-all-games :pal)
-(make-all-games :ntsc)
 
 (print-pwm-info)
 
