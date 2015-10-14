@@ -3,6 +3,10 @@
 (defvar *virtual?* nil)
 (defvar *coinop?* nil)
 (defvar *video?* nil)
+(defvar *nipkow-fx-border?* t)
+(defvar *nipkow-disable-interrupts?* nil)
+(defvar *nipkow-joystick-stop?* nil)
+(defvar *nipkow-return-address* #x100d)
 
 (defvar *bandwidth* 16)
 (defvar *tape-loader-start* #x0200)
@@ -20,6 +24,7 @@
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
 (load "game/story.lisp")
+;(load "splash.lisp")
 
 (defun check-zeropage-size ()
   (when (< #x100 *pc*)
@@ -48,7 +53,7 @@
   (make-conversion name :pal)
   (make-conversion name :ntsc))
 
-(make-audio "theme" "primary-loader/theme.mp3" "4" "-56")
+(make-audio "theme" "media/theme-boray.mp3" "4" "-72")
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -82,7 +87,7 @@
             "primary-loader/main.asm"
             "tape-loader/loader.asm"
             "tape-loader/start.asm"
-            "primary-loader/audio-player.asm"
+            "nipkow/src/audio-player.asm"
             "primary-loader/waiter.asm")
           (+ "obj/loader." ! ".prg.vice.txt"))))
 

@@ -9,20 +9,10 @@ main:
     lda #0
     sta vicreg_rasterlo_rows_charsize
 
-    ; Print text.
-l:  lda text,x
-    beq +n
-    jsr $ffd2
-    inx
-    bne -l
-    inc @(+ -l 2)
-    jmp -l
-n:
-
 loader_size = @(- waiter_end *tape-loader-start* 1)
 loader_high_offset = @(* 256 (high loader_size))
 
-    ; Copy loader into screen memory.
+    ; Copy loader someplace else.
     ldx #@(low loader_size)
     ldy #@(high loader_size)
 l:  lda loaded_tape_loader,x
@@ -51,11 +41,11 @@ game_size = @(length (fetch-file (+ "obj/game.crunched." (downcase (symbol-name 
 loader_cfg:
     $ff $0f
     <game_size @(++ >game_size)
-    @(low tape_audio_player) @(high tape_audio_player)
+    @(low start_player) @(high start_player)
 
-text:
-    $93
-    "SUBMIT TO YOUR FANTASY"
-    "MUSIC BY LUKAS RAMOLLA"
-    "FIRE TO START THE GAME"
-    0
+start_player:
+    lda #8
+    sta $900f
+    lda #46
+    sta vicreg_rasterlo_rows_charsize
+    jmp tape_audio_player
