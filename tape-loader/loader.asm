@@ -1,6 +1,3 @@
-loaded_tape_loader:
-    org @*tape-loader-start*
-
 ; Leader of long pulses.
 tape_loader:
     jsr tape_get_bit
@@ -10,7 +7,7 @@ tape_loader:
     ldx #<tape_leader_shorts
     ldy #>tape_leader_shorts
 next_leader:
-    lda #16
+    lda #128
     sta tape_leader_countdown
     jmp set_irq_vector
 n:  dec tape_leader_countdown

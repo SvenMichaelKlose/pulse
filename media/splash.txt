@@ -1,0 +1,591 @@
+;settings
+;background-colour=0
+;border-colour=1
+;aux-colour=4
+;char-height=16
+;row-count=12
+;col-count=20
+
+;char data
+.byte  $2C,$11,$85,$A9,$8C,$10,$2D,$00,$24,$18,$81,$BD,$81,$81,$81,$00
+.byte  $BC,$11,$11,$3C,$11,$11,$BC,$00,$2C,$11,$80,$80,$80,$11,$2C,$00
+.byte  $B4,$18,$11,$11,$11,$18,$B4,$00,$BD,$80,$80,$B4,$80,$80,$BD,$00
+.byte  $BD,$80,$80,$B4,$80,$80,$80,$00,$2C,$11,$80,$8D,$81,$11,$2C,$00
+.byte  $81,$81,$81,$BD,$81,$81,$81,$00,$2C,$04,$04,$04,$04,$04,$2C,$00
+.byte  $0D,$08,$08,$08,$08,$88,$34,$00,$81,$88,$84,$B0,$84,$88,$81,$00
+.byte  $80,$80,$80,$80,$80,$80,$BD,$00,$81,$99,$A5,$A5,$81,$81,$81,$00
+.byte  $81,$91,$A1,$85,$89,$81,$81,$00,$24,$18,$81,$81,$81,$18,$24,$00
+.byte  $BC,$81,$81,$BC,$80,$80,$80,$00,$24,$18,$81,$81,$85,$18,$25,$00
+.byte  $BC,$81,$81,$BC,$84,$88,$81,$00,$3C,$81,$80,$3C,$01,$81,$3C,$00
+.byte  $3D,$04,$04,$04,$04,$04,$04,$00,$81,$81,$81,$81,$81,$81,$3C,$00
+.byte  $81,$81,$81,$18,$18,$24,$24,$00,$81,$81,$81,$A5,$A5,$99,$81,$00
+.byte  $81,$81,$18,$24,$18,$81,$81,$00,$11,$11,$11,$2C,$04,$04,$04,$00
+.byte  $BD,$01,$08,$24,$10,$80,$BD,$00,$3C,$10,$10,$10,$10,$10,$3C,$00
+.byte  $0C,$20,$20,$3C,$20,$B0,$9D,$00,$3C,$08,$08,$08,$08,$08,$3C,$00
+.byte  $00,$04,$2C,$15,$04,$04,$04,$04,$00,$00,$20,$10,$BF,$10,$20,$00
+.byte  $CF,$F2,$3C,$CB,$CC,$E3,$CC,$CF,$38,$F3,$8C,$F3,$3C,$CC,$3B,$CC
+.byte  $33,$E3,$CC,$33,$CC,$3B,$C0,$CF,$33,$C8,$CF,$CC,$CF,$C8,$F3,$3C
+.byte  $CE,$CC,$CC,$33,$CB,$CC,$CF,$32,$CF,$30,$23,$CF,$03,$33,$38,$0C
+.byte  $33,$0C,$33,$0C,$32,$CF,$23,$33,$33,$33,$33,$33,$38,$CF,$3B,$CF
+.byte  $33,$EF,$33,$CF,$FB,$33,$FF,$2F,$F3,$3F,$FF,$CF,$FB,$CF,$FF,$CF
+.byte  $FE,$EF,$FF,$FF,$FF,$EF,$FF,$FF,$FF,$FF,$F3,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FB,$FC,$FF,$FC,$FB,$CC,$FF,$F2,$CF,$FC,$33,$EF,$30,$CC
+.byte  $33,$CC,$23,$F0,$0C,$C0,$30,$00,$30,$00,$30,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$C0,$0C,$00,$CC,$08,$C3
+.byte  $33,$CC,$C8,$EC,$CC,$F3,$EF,$F3,$FF,$E3,$FF,$FF,$FF,$F8,$FF,$FF
+.byte  $3C,$CB,$CF,$B3,$CC,$F3,$CE,$B3,$CC,$CE,$FC,$CF,$E3,$F3,$3C,$CF
+.byte  $33,$CE,$CF,$33,$BF,$CE,$F3,$3C,$8F,$F3,$3E,$FC,$CF,$F3,$F8,$CF
+.byte  $FC,$FB,$CF,$BF,$33,$FF,$F3,$38,$FF,$8C,$FF,$33,$FC,$23,$FF,$F3
+.byte  $BC,$CF,$FC,$CE,$EC,$3F,$F3,$3F,$E3,$3F,$FF,$CE,$FF,$FF,$3E,$FF
+.byte  $CF,$EF,$FF,$3F,$FF,$FF,$FF,$FF,$EF,$FF,$BF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FC,$FF,$FE,$E3,$FF,$F3,$3E
+.byte  $B3,$FF,$CE,$F3,$CF,$E3,$F3,$CC,$F3,$33,$CC,$F3,$33,$8C,$C3,$CC
+.byte  $08,$C0,$0C,$00,$CC,$02,$C0,$0C,$C0,$08,$00,$00,$00,$C3,$00,$00
+.byte  $08,$00,$00,$00,$03,$00,$00,$20,$00,$00,$00,$00,$00,$00,$00,$80
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$03,$C0,$00,$00,$CC,$00,$33
+.byte  $0C,$C2,$F3,$CC,$CE,$F3,$8F,$FF,$F3,$FB,$B3,$FF,$FB,$FF,$EF,$FF
+.byte  $F3,$3C,$2E,$CC,$FF,$33,$38,$CF,$FC,$F3,$CC,$FC,$33,$CC,$EF,$33
+.byte  $CC,$3E,$CC,$3F,$33,$3B,$CF,$F3,$3F,$E3,$3C,$FF,$CC,$F3,$EF,$CC
+.byte  $FF,$F8,$3F,$CC,$FF,$CB,$BC,$CF,$FC,$FF,$CE,$FF,$CF,$FE,$CF,$EF
+.byte  $FF,$CE,$FF,$CF,$FC,$FF,$CE,$FF,$FF,$CF,$FF,$FF,$FF,$F3,$FF,$FF
+.byte  $FF,$FF,$FF,$EF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$F3,$FF,$FF,$FF,$3F,$EC,$CF,$FF,$F3,$3E,$CF,$3C,$CF,$38
+.byte  $CF,$3C,$3B,$33,$33,$3C,$8F,$CF,$3C,$8F,$F3,$3E,$33,$EC,$0C,$FC
+.byte  $CC,$33,$CC,$33,$C8,$33,$0C,$00,$CC,$03,$00,$30,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$C0,$00,$23
+.byte  $00,$CC,$03,$F0,$33,$3C,$CE,$BC,$FF,$F3,$EF,$FF,$BF,$FF,$FF,$FF
+.byte  $30,$CC,$33,$F0,$3C,$33,$C8,$3C,$CC,$F8,$CC,$CF,$8C,$FF,$33,$CC
+.byte  $E3,$3C,$CF,$F3,$3C,$CE,$3C,$B3,$3C,$CE,$FF,$23,$FF,$33,$3C,$CE
+.byte  $E3,$3C,$CF,$F3,$3E,$EF,$CF,$CF,$FC,$CF,$FF,$32,$FF,$3B,$FF,$CF
+.byte  $FC,$3F,$FF,$F3,$FE,$EF,$3F,$FF,$FC,$EF,$CF,$FF,$F3,$FF,$BC,$FF
+.byte  $F3,$FB,$FF,$FC,$FF,$FC,$FF,$FE,$F3,$FF,$FF,$FF,$FC,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FC,$FF,$FC,$FF,$FC,$FF,$FC,$FC
+.byte  $FF,$FC,$FC,$FC,$FC,$EC,$FC,$FC,$FC,$FC,$3C,$EC,$FC,$FC,$FC,$FE
+.byte  $FF,$BE,$F3,$FF,$FF,$F3,$FB,$8F,$FF,$CF,$FC,$33,$CF,$F3,$F8,$CF
+.byte  $CC,$33,$FC,$2C,$CC,$03,$CC,$00,$CC,$00,$00,$33,$00,$C0,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$02,$00,$00,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$0C
+.byte  $00,$CC,$03,$CC,$8C,$CC,$F3,$FF,$F3,$FB,$FF,$FE,$EF,$FF,$FF,$FF
+.byte  $CC,$CC,$38,$CC,$33,$33,$CE,$C3,$CC,$CC,$33,$33,$C3,$33,$23,$C3
+.byte  $B3,$CC,$30,$CC,$C3,$38,$F0,$CC,$F3,$30,$F3,$3C,$33,$EC,$F3,$3C
+.byte  $CF,$FC,$CE,$FC,$3F,$CC,$FF,$23,$FC,$CF,$F3,$3F,$F2,$3F,$CF,$F3
+.byte  $FB,$CC,$3F,$B3,$FC,$CF,$3F,$F3,$FE,$CF,$E3,$3F,$F3,$CE,$EF,$CF
+.byte  $FF,$CC,$FF,$CE,$EF,$F3,$CF,$3F,$FF,$FF,$CF,$FB,$CF,$FE,$EA,$CA
+.byte  $E9,$E9,$E6,$A9,$19,$A6,$A9,$A6,$A5,$A9,$A6,$A6,$A6,$A6,$A6,$A9
+.byte  $A6,$A9,$A6,$A9,$A6,$A9,$AA,$A9,$AA,$29,$AA,$AA,$2A,$AA,$2A,$2A
+.byte  $2A,$2A,$2A,$2A,$22,$2A,$0A,$E2,$0A,$8A,$C2,$C0,$B0,$30,$F0,$33
+.byte  $CC,$33,$F2,$CF,$83,$3C,$C3,$CC,$03,$C8,$00,$0C,$00,$00,$0C,$00
+.byte  $00,$C0,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$08,$00,$00,$00,$00,$00,$00,$00,$00,$30
+.byte  $03,$C0,$0C,$C2,$8C,$CF,$33,$3C,$FB,$33,$EF,$FF,$FF,$FF,$FF,$FF
+.byte  $CF,$CC,$CE,$E3,$33,$CF,$CC,$3F,$CC,$EF,$3F,$8C,$3F,$33,$3E,$3F
+.byte  $2F,$F3,$FF,$3F,$38,$CF,$3F,$FB,$0F,$FF,$2F,$0F,$3F,$CF,$0F,$E3
+.byte  $0F,$CF,$CF,$CF,$CF,$CB,$8C,$F3,$CF,$F3,$CC,$F3,$3E,$F3,$3C,$FC
+.byte  $BC,$FF,$CC,$FF,$FC,$FE,$E3,$FF,$3F,$FF,$FC,$FF,$FF,$FE,$FF,$FF
+.byte  $FC,$FF,$FE,$FE,$FE,$FE,$FE,$FA,$FA,$FA,$FA,$FA,$FA,$F9,$EA,$BA
+.byte  $AA,$AA,$AA,$AA,$AA,$6A,$A8,$AA,$AA,$AA,$6A,$6A,$4A,$6A,$6A,$AA
+.byte  $6A,$9A,$6A,$9A,$6A,$9A,$6A,$9A,$6A,$94,$64,$9A,$66,$9A,$9A,$99
+.byte  $A6,$99,$A6,$A9,$99,$AA,$A6,$AA,$A6,$AA,$AA,$A9,$AA,$2A,$0A,$0A
+.byte  $02,$00,$30,$00,$00,$00,$00,$00,$00,$00,$C0,$00,$00,$00,$00,$00
+.byte  $0C,$C0,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$80,$00,$00,$00,$00,$00,$00
+.byte  $0C,$C0,$0C,$C3,$33,$38,$8F,$FF,$FC,$CF,$FB,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FE,$FF,$FC,$FF,$FF,$FC,$FB,$FF,$FC,$FB,$FF,$FC,$FF,$F8,$FF
+.byte  $FC,$FF,$FC,$FF,$FF,$FE,$FF,$FF,$FF,$FB,$FF,$FF,$FF,$FC,$FF,$FF
+.byte  $FF,$FF,$FF,$BF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$BF,$CF,$3F,$FF,$FF,$3F,$FE,$CE,$FA,$C9,$E9,$E9,$E9,$E6,$A5
+.byte  $99,$A6,$95,$99,$99,$66,$99,$66,$99,$66,$68,$60,$80,$80,$80,$00
+.byte  $80,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$80,$80,$80,$A0
+.byte  $90,$A8,$AA,$A6,$AA,$A9,$AA,$A9,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$2A
+.byte  $AA,$2A,$8A,$A2,$8A,$4A,$48,$4A,$A2,$62,$A2,$90,$A2,$A8,$A8,$A8
+.byte  $A8,$00,$00,$08,$00,$00,$00,$08,$00,$00,$00,$00,$00,$00,$02,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$C0,$00,$00,$00,$00
+.byte  $3C,$08,$C3,$33,$33,$F8,$3F,$F3,$FB,$BF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$33,$FE,$F3,$BF,$CC,$FF,$33,$F8,$8F,$F3,$3F,$CC,$F3,$CF,$F2
+.byte  $CF,$33,$EC,$33,$3C,$33,$3C,$33,$33,$CC,$33,$38,$CC,$F3,$33,$8C
+.byte  $3C,$CF,$F3,$32,$FE,$CA,$FA,$CA,$FA,$FA,$CA,$CA,$C2,$C8,$C0,$CC
+.byte  $C0,$C0,$C2,$CA,$C6,$E5,$99,$96,$65,$59,$95,$66,$95,$66,$55,$99
+.byte  $95,$59,$95,$66,$95,$59,$96,$59,$65,$56,$25,$19,$05,$06,$09,$01
+.byte  $01,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$80,$80,$A0,$90,$A8,$66,$99,$6A,$A6,$9A,$A9,$9A
+.byte  $A9,$AA,$A6,$AA,$AA,$A9,$AA,$AA,$2A,$AA,$2A,$AA,$2A,$22,$2A,$22
+.byte  $08,$22,$08,$02,$00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $08,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+.byte  $CC,$C0,$33,$0C,$CB,$FC,$38,$CF,$FF,$FC,$FF,$FE,$FF,$FF,$FF,$FF
+.byte  $FF,$33,$FB,$3F,$F3,$FC,$CE,$B3,$FC,$33,$FC,$3F,$F3,$CE,$3C,$F3
+.byte  $38,$CF,$CC,$3C,$CB,$B3,$33,$CC,$3C,$CC,$8F,$CC,$CC,$33,$CF,$CC
+.byte  $E3,$3C,$0E,$B3,$A8,$9B,$AA,$66,$A6,$9A,$A6,$A9,$A6,$AA,$A9,$2A
+.byte  $8A,$2A,$8A,$62,$52,$9A,$56,$66,$55,$99,$55,$65,$56,$65,$55,$96
+.byte  $55,$95,$59,$55,$65,$55,$59,$55,$65,$55,$56,$95,$55,$59,$55,$95
+.byte  $59,$55,$65,$55,$99,$15,$16,$25,$25,$06,$05,$09,$09,$01,$01,$01
+.byte  $01,$02,$02,$00,$00,$00,$00,$00,$00,$00,$00,$6A,$65,$66,$99,$66
+.byte  $A6,$66,$A6,$69,$99,$A9,$9A,$A6,$69,$AA,$A6,$AA,$A9,$AA,$AA,$A9
+.byte  $AA,$A9,$AA,$26,$A6,$A9,$A9,$A6,$AA,$A9,$AA,$AA,$A9,$AA,$2A,$AA
+.byte  $2A,$8A,$2A,$2A,$0A,$22,$2A,$02,$08,$02,$20,$00,$00,$00,$00,$00
+.byte  $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$03
+.byte  $30,$00,$33,$C0,$3C,$C8,$F3,$8F,$FF,$FF,$F3,$FE,$FF,$FF,$FF,$FB
+.byte  $3F,$B3,$3C,$3F,$CF,$E3,$FF,$CF,$F3,$CE,$EC,$3F,$CF,$3C,$F3,$CE
+.byte  $E3,$3F,$F8,$CC,$33,$3C,$CB,$F3,$CC,$B3,$CC,$CC,$CC,$38,$33,$CC
+.byte  $33,$CF,$33,$CC,$CE,$33,$FC,$CF,$B3,$BC,$4E,$AF,$68,$6B,$9B,$6B
+.byte  $64,$9A,$9A,$99,$A6,$99,$A9,$A6,$A9,$69,$A9,$5A,$59,$56,$66,$55
+.byte  $55,$65,$55,$55,$65,$55,$55,$59,$55,$55,$55,$55,$56,$65,$55,$55
+.byte  $55,$55,$65,$55,$55,$55,$56,$55,$65,$55,$55,$55,$55,$65,$55,$95
+.byte  $55,$59,$55,$65,$55,$59,$65,$55,$99,$55,$66,$55,$99,$56,$99,$65
+.byte  $59,$65,$66,$99,$99,$99,$66,$99,$A6,$69,$99,$A6,$AA,$99,$AA,$99
+.byte  $AA,$6A,$66,$66,$69,$96,$A6,$66,$66,$99,$66,$99,$A6,$99,$A6,$69
+.byte  $A6,$AA,$99,$AA,$A9,$AA,$AA,$2A,$AA,$AA,$2A,$8A,$22,$08,$00,$00
+.byte  $00,$00,$20,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$30,$00
+.byte  $0C,$C3,$0C,$C8,$8C,$CF,$F3,$3F,$FF,$EF,$FF,$FF,$FF,$FF,$BF,$FF
+.byte  $FC,$33,$FB,$B3,$3C,$F3,$3F,$F3,$38,$CF,$F3,$3C,$CC,$F8,$33,$3C
+.byte  $CF,$33,$FC,$CE,$CC,$CC,$33,$38,$CC,$CC,$CF,$F8,$8C,$CC,$33,$F3
+.byte  $33,$3C,$CC,$CF,$38,$CC,$F3,$3C,$CF,$E3,$3C,$CF,$F3,$3F,$F3,$3F
+.byte  $F3,$FE,$F3,$3F,$FF,$FC,$2F,$BF,$AF,$AF,$9F,$6B,$94,$66,$99,$99
+.byte  $96,$69,$65,$65,$59,$59,$96,$56,$56,$55,$56,$55,$55,$55,$55,$55
+.byte  $55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$95,$55
+.byte  $55,$55,$55,$65,$55,$55,$55,$95,$56,$55,$55,$65,$55,$59,$55,$95
+.byte  $65,$95,$56,$65,$95,$59,$65,$96,$65,$99,$96,$65,$69,$99,$99,$A6
+.byte  $69,$99,$AA,$99,$AA,$A9,$6A,$6A,$6A,$9A,$66,$9A,$66,$96,$65,$99
+.byte  $66,$99,$99,$99,$A6,$99,$A6,$6A,$A6,$A9,$AA,$AA,$AA,$AA,$08,$00
+.byte  $0E,$03,$33,$03,$0C,$0C,$33,$08,$0C,$0C,$0F,$C3,$0C,$CF,$0C,$CE
+.byte  $2F,$33,$FF,$CF,$FB,$FF,$BF,$FF,$FF,$FC,$FF,$BF,$F3,$FF,$FF,$E3
+.byte  $F3,$3B,$33,$CF,$E3,$3F,$33,$3B,$CF,$3C,$CF,$CC,$EF,$CC,$3F,$CC
+.byte  $CE,$33,$EC,$0F,$CC,$CF,$33,$CC,$CE,$C3,$33,$CC,$33,$C3,$30,$33
+.byte  $30,$E3,$30,$0C,$F0,$CC,$30,$CC,$83,$30,$F3,$30,$33,$30,$CC,$23
+.byte  $F0,$0C,$CC,$30,$CF,$CC,$CC,$33,$8C,$33,$CC,$CF,$C8,$CF,$33,$CC
+.byte  $A3,$4F,$AC,$6F,$98,$6B,$5B,$5A,$5A,$96,$5A,$95,$96,$56,$95,$66
+.byte  $65,$55,$66,$65,$55,$59,$59,$59,$55,$59,$55,$56,$56,$55,$56,$55
+.byte  $55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$95
+.byte  $55,$55,$55,$56,$95,$55,$65,$55,$55,$99,$55,$95,$65,$95,$66,$65
+.byte  $95,$99,$66,$99,$66,$A5,$9A,$A6,$69,$A6,$AA,$A9,$AA,$AA,$AA,$AA
+.byte  $62,$90,$90,$98,$68,$9B,$68,$6A,$98,$AB,$A8,$68,$A8,$8C,$23,$8E
+.byte  $33,$CF,$33,$3B,$B3,$CF,$FC,$CF,$E3,$FC,$3F,$8F,$FC,$FF,$FB,$FC
+.byte  $CF,$FF,$BC,$CF,$FF,$F3,$FF,$CF,$BC,$FF,$F3,$3F,$EF,$CF,$FF,$FF
+.byte  $FF,$3C,$FB,$3C,$FF,$3B,$FF,$3C,$FF,$CF,$EC,$FF,$CF,$FF,$EF,$FE
+.byte  $FF,$FF,$FE,$FF,$F3,$3F,$EF,$FE,$FF,$3F,$FF,$FF,$2C,$FF,$BF,$F3
+.byte  $BF,$3F,$FF,$CF,$F3,$3F,$CB,$B3,$3F,$33,$3F,$33,$3F,$CB,$3F,$8F
+.byte  $3F,$CF,$FF,$3F,$8F,$FF,$3B,$8F,$FF,$3F,$FF,$3F,$FF,$3B,$FF,$FF
+.byte  $FF,$3F,$FB,$F3,$FF,$3F,$FF,$FF,$CF,$FF,$FF,$BF,$BF,$BF,$BB,$7F
+.byte  $AF,$4F,$6F,$AF,$6F,$6B,$6F,$5F,$9B,$6B,$5B,$67,$5B,$5A,$57,$64
+.byte  $96,$5A,$96,$56,$65,$56,$59,$56,$65,$55,$56,$55,$59,$55,$55,$55
+.byte  $56,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$95,$55,$55,$55
+.byte  $95,$55,$59,$55,$65,$95,$59,$65,$95,$69,$99,$A6,$AA,$9A,$AA,$A8
+.byte  $08,$80,$00,$38,$CF,$B3,$CE,$CC,$F3,$3F,$CC,$EF,$CF,$FC,$CF,$F3
+.byte  $3C,$CC,$33,$EC,$33,$3C,$E3,$3F,$CF,$FC,$3F,$FB,$FF,$FC,$FF,$FF
+.byte  $BF,$FF,$FF,$FF,$FF,$EF,$FF,$FF,$FF,$BF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $F3,$EC,$CF,$F3,$FF,$F3,$FB,$FF,$F3,$BF,$F3,$FF,$FC,$CF,$FB,$FF
+.byte  $FF,$FF,$FC,$FB,$FC,$CF,$FB,$FF,$FF,$CF,$FF,$FC,$EF,$FF,$FF,$EF
+.byte  $FC,$FF,$FE,$8F,$FF,$FF,$FE,$FF,$FF,$FF,$FC,$FB,$FF,$FC,$EC,$FF
+.byte  $F3,$FB,$F3,$FC,$CF,$F3,$FC,$F2,$FF,$F3,$FC,$CF,$F8,$F3,$FC,$FC
+.byte  $CC,$FB,$FC,$F3,$EF,$FC,$BC,$FF,$F3,$FC,$EF,$FC,$FC,$FB,$F3,$FF
+.byte  $FC,$FE,$FC,$FF,$FC,$FF,$FF,$FE,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$BF,$FF,$BF,$BF,$BF,$7F,$BF,$BF,$7F
+.byte  $7F,$7F,$AF,$6F,$6F,$9F,$6F,$5F,$9B,$6B,$5B,$67,$5B,$9A,$5A,$66
+.byte  $5A,$66,$5A,$66,$66,$6A,$99,$AA,$9A,$A6,$A9,$A6,$A9,$AA,$29,$2A
+.byte  $2A,$8A,$8A,$0A,$02,$22,$F0,$CC,$FC,$F8,$FF,$8C,$FF,$CC,$F3,$3C
+.byte  $CE,$F3,$3C,$E3,$FF,$FC,$CE,$EC,$CF,$FC,$BF,$F3,$FF,$FF,$FC,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FE,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $CF,$F3,$3B,$8F,$3C,$F3,$3F,$CE,$F3,$38,$FF,$8F,$FC,$CF,$FC,$3F
+.byte  $F3,$EF,$F3,$FC,$CF,$FF,$F3,$3E,$FC,$CF,$FF,$BF,$FF,$CF,$FF,$FF
+.byte  $EC,$FF,$FF,$FF,$FB,$FF,$FC,$FF,$CE,$F3,$FC,$33,$CC,$CE,$E3,$33
+.byte  $33,$33,$3C,$CC,$33,$30,$CC,$C2,$8C,$00,$CC,$30,$0C,$C0,$33,$C0
+.byte  $33,$00,$CC,$03,$30,$CC,$33,$08,$33,$CC,$33,$CC,$CC,$32,$33,$CC
+.byte  $F3,$CC,$FC,$CF,$F2,$CF,$3F,$F3,$3E,$FC,$FF,$CE,$FF,$EF,$CF,$FF
+.byte  $BF,$FF,$FF,$FF,$FF,$FF,$FF,$EF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FB,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$BF,$FF,$BF,$AF,$6F,$AF,$9F
+.byte  $6B,$9A,$A6,$9A,$A9,$A6,$AA,$AA,$AA,$2A,$2A,$0A,$C9,$CA,$CA,$EA
+.byte  $CE,$F3,$FF,$C3,$3B,$B3,$FC,$CF,$FF,$CF,$FE,$CF,$EF,$FF,$EF,$FF
+.byte  $FF,$FF,$BF,$FF,$FF,$EF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $33,$33,$32,$8C,$F3,$3C,$CC,$CC,$F3,$CC,$B3,$3C,$CC,$F8,$8F,$33
+.byte  $FC,$33,$B3,$CC,$F3,$3C,$C8,$CC,$F3,$CC,$CC,$3C,$8C,$CF,$30,$F3
+.byte  $CC,$B2,$CC,$F3,$30,$FF,$CC,$E2,$33,$CC,$F3,$CC,$CF,$33,$33,$3C
+.byte  $CC,$33,$CC,$CC,$33,$CE,$23,$0C,$C3,$30,$CC,$03,$C3,$30,$0C,$33
+.byte  $00,$CC,$08,$33,$CC,$30,$23,$CC,$33,$CC,$33,$CC,$CC,$38,$CC,$CF
+.byte  $F2,$8C,$F3,$3F,$CC,$3B,$CC,$F3,$3F,$FE,$F3,$FF,$3E,$FC,$CF,$FF
+.byte  $BF,$FF,$FF,$FF,$BF,$FF,$FE,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FE
+.byte  $FF,$FF,$FF,$FF,$FF,$FC,$FB,$BF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FC,$FF,$FF,$B3,$FF,$FE,$FF,$FF,$BF,$FF,$FF
+.byte  $FF,$FF,$FF,$BF,$BF,$BF,$AF,$BF,$8F,$BF,$B8,$BF,$B3,$BB,$BF,$F3
+.byte  $FF,$3E,$F3,$3F,$EF,$FF,$FF,$FF,$FF,$3B,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$BE,$FF,$FF,$FF,$FC,$EF,$FF,$FF,$FC,$FB,$BF,$3F,$FF,$FE
+.byte  $0C,$33,$00,$F3,$20,$CC,$C3,$CC,$33,$C0,$2C,$C3,$CC,$C0,$38,$0C
+.byte  $F3,$00,$3C,$C3,$33,$8C,$C3,$CC,$33,$CC,$C8,$CC,$33,$0C,$C0,$33
+.byte  $C3,$30,$0C,$C3,$38,$00,$CC,$30,$0C,$C3,$30,$0C,$33,$30,$23,$CC
+.byte  $C3,$33,$C8,$8C,$03,$33,$30,$0C,$30,$CC,$03,$30,$0C,$C3,$32,$0C
+.byte  $C3,$8C,$33,$0C,$CC,$C3,$33,$CC,$33,$CC,$33,$CC,$CB,$CC,$CC,$3F
+.byte  $C2,$FC,$33,$3C,$CB,$F3,$CF,$F3,$3B,$CF,$F3,$3F,$FB,$FF,$F3,$FF
+.byte  $BF,$3F,$FF,$FF,$FF,$FF,$FE,$FF,$FF,$FF,$FF,$FF,$EF,$FF,$FF,$FC
+.byte  $FF,$CF,$FE,$FF,$BF,$FF,$FF,$FF,$FF,$F3,$FB,$FF,$CC,$EF,$CC,$FC
+.byte  $3F,$C8,$FF,$33,$BF,$FF,$FC,$FF,$FF,$F3,$FF,$FB,$FF,$FF,$FF,$FF
+.byte  $FF,$EF,$FF,$FF,$FF,$FF,$FC,$FF,$CF,$BF,$FF,$FF,$FF,$FF,$CE,$FF
+.byte  $FF,$FE,$FF,$FF,$FF,$FF,$FF,$FF,$EF,$FF,$FF,$FF,$FF,$FF,$F3,$FF
+.byte  $FB,$3F,$FF,$FF,$FE,$BC,$FF,$FF,$F3,$FB,$FC,$FF,$F3,$3F,$EF,$FF
+.byte  $00,$33,$C0,$0C,$C8,$30,$80,$33,$30,$CC,$C3,$0C,$C0,$33,$C0,$33
+.byte  $20,$CC,$03,$30,$0C,$C0,$0C,$C0,$23,$00,$CC,$30,$0C,$C0,$33,$0C
+.byte  $23,$C0,$33,$03,$CC,$30,$C3,$33,$C0,$33,$0C,$CC,$33,$30,$32,$CC
+.byte  $33,$33,$CC,$33,$2C,$0F,$CC,$CC,$CC,$33,$0C,$CC,$CC,$33,$0C,$CC
+.byte  $33,$CC,$33,$32,$CF,$33,$2C,$CF,$3C,$CE,$2F,$F3,$3F,$EC,$FF,$33
+.byte  $FC,$CF,$F8,$F3,$FF,$33,$FE,$CF,$FB,$3F,$FF,$BF,$FF,$FF,$F3,$FF
+.byte  $FE,$FF,$FC,$EF,$FF,$F3,$FF,$F3,$FF,$EF,$3F,$F3,$EF,$FC,$CF,$FF
+.byte  $BB,$FC,$FF,$F3,$FC,$3C,$B3,$3F,$FC,$FF,$33,$EC,$CF,$FC,$CE,$EF
+.byte  $33,$FF,$F3,$FE,$CC,$FF,$E3,$FF,$FF,$BF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$BE,$FF,$FF,$FF,$FF,$FF,$FC,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$3F,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$BF,$FC
+.byte  $FF,$FF,$FF,$CF,$FB,$FF,$FF,$CF,$BE,$CF,$FF,$FF,$CC,$FF,$EF,$3C
+.byte  $00,$30,$03,$C0,$00,$C0,$0C,$0C,$C0,$0C,$03,$C0,$33,$00,$8C,$00
+.byte  $CC,$30,$0C,$C0,$30,$C3,$80,$30,$0C,$00,$CC,$00,$CC,$00,$33,$00
+.byte  $33,$00,$33,$0C,$C3,$32,$0C,$20,$CC,$0C,$C8,$33,$20,$CF,$33,$CC
+.byte  $33,$8C,$F3,$3F,$CC,$B3,$CF,$FF,$CC,$FE,$CC,$EF,$CF,$BF,$CF,$FF
+.byte  $B3,$FC,$CF,$FC,$CF,$FC,$F3,$EC,$F3,$3C,$FC,$3E,$F3,$FC,$CF,$F8
+.byte  $8F,$FC,$FF,$CF,$FF,$FC,$CF,$FF,$FF,$CF,$FF,$38,$FF,$3F,$FB,$FF
+.byte  $CF,$FF,$FE,$BF,$FC,$CF,$FF,$FB,$EF,$3F,$FC,$FF,$CC,$FE,$F3,$3F
+.byte  $CF,$F2,$3C,$CF,$B3,$F8,$8C,$33,$CF,$33,$F3,$8C,$CF,$F3,$33,$CE
+.byte  $33,$FC,$33,$FF,$CF,$FF,$EF,$CF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FC,$CF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$BF
+.byte  $FF,$FF,$FF,$BF,$FF,$FF,$FF,$BF,$FF,$FE,$BF,$FF,$FF,$FF,$F3,$FF
+.byte  $FB,$FF,$FC,$3F,$EF,$FF,$3C,$FB,$CC,$FF,$33,$FB,$BC,$FC,$CF,$FC
+.byte  $00,$30,$03,$00,$CC,$00,$CC,$03,$30,$08,$33,$0C,$30,$8C,$C3,$30
+.byte  $CC,$83,$30,$C3,$30,$0C,$C3,$30,$CC,$03,$CC,$30,$C3,$30,$0C,$C0
+.byte  $33,$80,$30,$33,$00,$33,$C0,$CC,$33,$CC,$C0,$CC,$CC,$30,$33,$CC
+.byte  $80,$F3,$30,$CC,$C0,$B3,$30,$CC,$C8,$C0,$F0,$8C,$30,$30,$00,$CC
+.byte  $00,$CC,$30,$C0,$33,$C0,$0C,$C3,$30,$CF,$C3,$3C,$33,$F3,$3C,$FB
+.byte  $CC,$FF,$F3,$3C,$FB,$F3,$B3,$3C,$F3,$3E,$B3,$CC,$FC,$CC,$3C,$E3
+.byte  $3C,$F3,$3C,$CF,$FC,$CF,$B3,$FC,$33,$CE,$FC,$CF,$E3,$FC,$CF,$33
+.byte  $FC,$33,$FC,$8F,$F3,$CC,$FB,$33,$CC,$3F,$BC,$CF,$3C,$CF,$3B,$F3
+.byte  $3F,$FF,$F3,$BF,$3F,$FF,$FE,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte  $FF,$FF,$FF,$CF,$FB,$FF,$FC,$CF,$FB,$FC,$CF,$FF,$3F,$FC,$BF,$FE
+.byte  $F3,$FF,$F3,$FC,$33,$F8,$8F,$CC,$CC,$CC,$3C,$CC,$CC,$CB,$F3,$CC
+
+;screen data0
+
+.byte  $10,$1C,$28,$34,$40,$4C,$58,$64
+.byte  $70,$7C,$88,$94,$A0,$AC,$B8,$C4
+.byte  $D0,$DC,$E8,$F4,$11,$1D,$29,$35
+.byte  $41,$4D,$59,$65,$71,$7D,$89,$95
+.byte  $A1,$AD,$B9,$C5,$D1,$DD,$E9,$F5
+.byte  $12,$1E,$2A,$36,$42,$4E,$5A,$66
+.byte  $72,$7E,$8A,$96,$A2,$AE,$BA,$C6
+.byte  $D2,$DE,$EA,$F6,$13,$1F,$2B,$37
+.byte  $43,$4F,$5B,$67,$73,$7F,$8B,$97
+.byte  $A3,$AF,$BB,$C7,$D3,$DF,$EB,$F7
+.byte  $14,$20,$2C,$38,$44,$50,$5C,$68
+.byte  $74,$80,$8C,$98,$A4,$B0,$BC,$C8
+.byte  $D4,$E0,$EC,$F8,$15,$21,$2D,$39
+.byte  $45,$51,$5D,$69,$75,$81,$8D,$99
+.byte  $A5,$B1,$BD,$C9,$D5,$E1,$ED,$F9
+.byte  $16,$22,$2E,$3A,$46,$52,$5E,$6A
+.byte  $76,$82,$8E,$9A,$A6,$B2,$BE,$CA
+.byte  $D6,$E2,$EE,$FA,$17,$23,$2F,$3B
+.byte  $47,$53,$5F,$6B,$77,$83,$8F,$9B
+.byte  $A7,$B3,$BF,$CB,$D7,$E3,$EF,$FB
+.byte  $18,$24,$30,$3C,$48,$54,$60,$6C
+.byte  $78,$84,$90,$9C,$A8,$B4,$C0,$CC
+.byte  $D8,$E4,$F0,$FC,$19,$25,$31,$3D
+.byte  $49,$55,$61,$6D,$79,$85,$91,$9D
+.byte  $A9,$B5,$C1,$CD,$D9,$E5,$F1,$FD
+.byte  $1A,$26,$32,$3E,$4A,$56,$62,$6E
+.byte  $7A,$86,$92,$9E,$AA,$B6,$C2,$CE
+.byte  $DA,$E6,$F2,$FE,$1B,$27,$33,$3F
+.byte  $4B,$57,$63,$6F,$7B,$87,$93,$9F
+.byte  $AB,$B7,$C3,$CF,$DB,$E7,$F3,$FF
+
+;colour data0
+
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+.byte  $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+
+
+; Char Usage Report
+;  =================                                      00 01 02 03 04
+; Char Index (00) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (01) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (02) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (03) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (04) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (05) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (06) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (07) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (08) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (09) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (10) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (11) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (12) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (13) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (14) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (15) TotalScreenCount:00 ScreenUsage [0-4]: --,--,--,--,--,
+; Char Index (16) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (17) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (18) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (19) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (20) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (21) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (22) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (23) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (24) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (25) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (26) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (27) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (28) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (29) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (30) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (31) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (32) TotalScreenCount:05 ScreenUsage [0-4]: 01,40,40,40,40,
+; Char Index (33) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (34) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (35) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (36) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (37) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (38) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (39) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (40) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (41) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (42) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (43) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (44) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (45) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (46) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (47) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (48) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (49) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (50) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (51) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (52) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (53) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (54) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (55) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (56) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (57) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (58) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (59) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (60) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (61) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (62) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (63) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (64) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (65) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (66) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (67) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (68) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (69) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (70) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (71) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (72) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (73) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (74) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (75) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (76) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (77) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (78) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (79) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (80) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (81) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (82) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (83) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (84) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (85) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (86) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (87) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (88) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (89) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (90) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (91) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (92) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (93) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (94) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (95) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (96) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (97) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (98) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (99) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (00) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (01) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (02) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (03) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (04) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (05) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (06) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (07) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (08) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (09) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (10) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (11) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (12) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (13) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (14) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (15) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (16) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (17) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (18) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (19) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (20) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (21) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (22) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (23) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (24) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (25) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (26) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (27) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (28) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (29) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (30) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (31) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (32) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (33) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (34) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (35) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (36) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (37) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (38) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (39) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (40) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (41) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (42) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (43) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (44) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (45) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (46) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (47) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (48) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (49) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (50) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (51) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (52) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (53) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (54) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (55) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (56) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (57) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (58) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (59) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (60) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (61) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (62) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (63) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (64) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (65) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (66) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (67) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (68) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (69) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (70) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (71) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (72) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (73) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (74) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (75) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (76) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (77) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (78) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (79) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (80) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (81) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (82) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (83) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (84) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (85) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (86) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (87) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (88) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (89) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (90) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (91) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (92) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (93) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (94) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (95) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (96) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (97) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (98) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (99) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (00) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (01) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (02) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (03) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (04) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (05) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (06) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (07) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (08) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (09) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (10) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (11) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (12) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (13) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (14) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (15) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (16) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (17) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (18) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (19) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (20) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (21) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (22) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (23) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (24) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (25) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (26) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (27) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (28) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (29) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (30) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (31) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (32) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (33) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (34) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (35) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (36) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (37) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (38) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (39) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (40) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (41) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (42) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (43) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (44) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (45) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (46) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (47) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (48) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (49) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (50) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (51) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (52) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (53) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (54) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
+; Char Index (55) TotalScreenCount:01 ScreenUsage [0-4]: 01,--,--,--,--,
