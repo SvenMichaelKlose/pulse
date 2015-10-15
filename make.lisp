@@ -3,9 +3,9 @@
 (defvar *virtual?* nil)
 (defvar *coinop?* nil)
 (defvar *video?* nil)
-(defvar *nipkow-fx-border?* t)
+(defvar *nipkow-fx-border?* nil)
 (defvar *nipkow-disable-interrupts?* nil)
-(defvar *nipkow-joystick-stop?* nil)
+(defvar *nipkow-joystick-stop?* t)
 (defvar *nipkow-return-address* #x100d)
 
 (defvar *bandwidth* 16)
