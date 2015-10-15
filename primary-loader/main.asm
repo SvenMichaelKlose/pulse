@@ -6,8 +6,8 @@ main:
     sta $911e       ; Disable restore key NMIs.
 
     ; Blank screen.
-;    lda #0
-;    sta vicreg_rasterlo_rows_charsize
+    lda #0
+    sta vicreg_rasterlo_rows_charsize
 
     ; Copy loader someplace else.
     ldx #0
