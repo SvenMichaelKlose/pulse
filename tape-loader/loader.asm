@@ -83,6 +83,13 @@ n:  dec tape_counter        ; All bytes loaded?
     sta $314
     lda @(++ tape_old_irq)
     sta $315
+
+    ldx #$f6
+    txs
+    lda #0
+    sta $911c
+    tax
+    tay
     jmp (tape_callback)
 
 loader_end:
