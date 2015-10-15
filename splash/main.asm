@@ -1,9 +1,8 @@
 saved_zeropage  = $1df0
 saved_stack     = $1de0
-saved_irq       = $1dd0
-current_low     = $1dcf
-average         = $1dcd
-tleft           = $1dcc
+current_low     = $1ddf
+average         = $1ddd
+tleft           = $1ddc
 
 main:
     sei
@@ -38,8 +37,6 @@ l:  lda $0,x
     sta saved_zeropage,x
     lda $01f0,x
     sta saved_stack,x
-    lda $0310,x
-    sta saved_irq,x
     lda loader_configuration,x
     sta tape_ptr,x
     dex
