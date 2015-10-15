@@ -7,6 +7,10 @@ tleft           = $1dcc
 
 main:
     sei
+    lda #$7f
+    sta $912e       ; Disable and acknowledge interrupts.
+    sta $912d
+    sta $911e       ; Disable restore key NMIs.
 
     ; Copy splash screen data.
     ldx #0
