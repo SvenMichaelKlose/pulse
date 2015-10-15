@@ -1,5 +1,5 @@
 loaded_splash:
-    org $1d00
+    org $1ca0
 
 splash:
     ; Restore areas that have been destroyed by the loader.
