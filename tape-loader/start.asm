@@ -12,8 +12,10 @@ tape_loader_start:
     sta $315
     lda #@(low *tape-pulse*) ; Set half of timer.
     sta $9114
-    lda #128
+    lda #16
     sta tape_leader_countdown
+    lda #8
+    sta tape_bit_counter
 
     lda $911c           ; Start motor.
     and #$fd
