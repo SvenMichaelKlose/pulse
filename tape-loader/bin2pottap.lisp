@@ -14,7 +14,7 @@
     (enqueue q (code-char #x00))
     (enqueue q (code-char #x00))
     (enqueue q (code-char #x00))
-    (enqueue q (code-char #x08))
+    (enqueue q (code-char #x10))
     (enqueue q (code-char #x00))
     (adotimes 32 (enqueue q *pulse-short*))
     (adotimes 32 (enqueue q *pulse-long*))

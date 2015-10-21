@@ -1,4 +1,3 @@
-; Leader of short pulses.
 tape_loader:
     jsr tape_get_bit
     bcc +n
@@ -18,12 +17,11 @@ restart_loader:
     ldy #>tape_loader
     bne next_leader
 
-; Leader of short pulses.
 tape_leader_long:
     jsr tape_get_bit
     bcs -n
     lda tape_leader_countdown
-    bpl restart_loader       ; Not enough pulses. Restart loading.
+    bpl restart_loader
     ldx #<tape_loader_data
     ldy #>tape_loader_data
 set_irq_vector:
@@ -31,7 +29,6 @@ set_irq_vector:
     sty $315
     bne return_from_interrupt
 
-; After one more long pulse the data begins.
 tape_loader_data:
     jsr tape_get_bit
     ror tape_current_byte
@@ -69,12 +66,11 @@ n:  dec tape_counter        ; All bytes loaded?
     bne return_from_interrupt ; No...
     dec @(++ tape_counter)
     bne return_from_interrupt ; No...
+
+    sei
     lda #$7f                ; Turn off tape pulse interrupt.
     sta $912e
-    sta $911c               ; Stop motor.
-    ora #2
-    sta $911c
-    sei
+
     lda tape_old_irq
     sta $314
     lda @(++ tape_old_irq)
