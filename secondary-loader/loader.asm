@@ -39,12 +39,7 @@ tape_loader_data:
 return_from_interrupt:
     lda #$7f                ; Acknowledge tape pulse interrupt.
     sta $912d
-    pla
-    tay
-    pla
-    tax
-    pla
-    rti
+    jmp $eb18
 
 tape_get_bit:
     lda $912d               ; Get timer underflow bit.
