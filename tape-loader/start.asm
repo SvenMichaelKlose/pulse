@@ -15,11 +15,11 @@ tape_loader_start:
     lda #8
     sta tape_bit_counter
     lda #@(low *tape-pulse*) ; Set half of timer.
-    sta $9114
+    sta $9124
     lda #@(high *tape-pulse*) ; Start timer.
-    sta $9115
+    sta $9125
     lda #%00000000      ; VIA1 T1 one-shot mode
-    sta $911b
+    sta $912b
     lda #%10000010      ; CA1 enable (tape pulse)
     sta $912e
     cli

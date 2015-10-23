@@ -37,6 +37,8 @@ tape_loader_data:
     dec tape_bit_counter
     beq byte_complete
 return_from_interrupt:
+    lda #$7f                ; Acknowledge tape pulse interrupt.
+    sta $912d
     pla
     tay
     pla
@@ -45,11 +47,11 @@ return_from_interrupt:
     rti
 
 tape_get_bit:
-    lda $911d               ; Get timer underflow bit.
+    lda $912d               ; Get timer underflow bit.
     ldx #@(high *tape-pulse*) ; Restart timer.
-    stx $9115
+    stx $9125
     ldx $9121
-    asl                     ; Get underflow bit.
+    asl     ; Move underflow bit into carry.
     asl
     rts
 
