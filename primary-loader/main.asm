@@ -7,7 +7,7 @@ main:
 
     ; Blank screen.
     lda #0
-    sta vicreg_rasterlo_rows_charsize
+;    sta vicreg_rasterlo_rows_charsize
 
     ; Copy loader someplace else.
     ldx #0
@@ -17,6 +17,11 @@ l:  lda loaded_tape_loader,x
     sta tape_ptr,x
     inx
     bne -l
+
+    ; Start tape motor.
+    lda $911c
+    and #$fd
+    sta $911c
 
     jmp @*tape-loader-start*
 
