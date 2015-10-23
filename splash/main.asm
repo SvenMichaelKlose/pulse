@@ -1,17 +1,12 @@
 saved_zeropage  = $1df0
 saved_stack     = $1de0
-current_low     = $1ddf
-average         = $1ddd
-tleft           = $1ddc
+current_low     = $1ddb
+average         = $1ddc
+tleft           = $1dde
+tmp             = $1ddf
 
 main:
-    sei
-    lda #$7f
-    sta $912e       ; Disable and acknowledge interrupts.
-    sta $912d
-    sta $911e       ; Disable restore key NMIs.
-
-    ; Copy splash screen data.
+    ; Copy splash screen data to where the game won't load to.
     ldx #0
 l:  lda @(+ characters #x0000),x
     sta $0000,x
@@ -22,11 +17,12 @@ l:  lda @(+ characters #x0000),x
     lda @(+ characters #x0300),x
     sta $0300,x
     lda screen_data,x
-    sta $1e00,x
-    lda color_data,x
-    sta $9600,x
+    sta screen,x
+    lda #$0b
+    sta colors,x
+    sta @(+ colors #x100),x
     lda loaded_splash,x
-    sta splash,x
+    sta relocated_splash,x
     inx
     bne -l
 
@@ -42,11 +38,11 @@ l:  lda $0,x
     dex
     bpl -l
 
-    jmp $1f00 ;@tape_loader_start
+    jmp @*tape-loader-start*
 
 game_size = @(length (fetch-file (+ "obj/game.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_configuration:
     $ff $0f
     <game_size @(++ >game_size)
-    @(low splash) @(high splash)
+    <splash >splash

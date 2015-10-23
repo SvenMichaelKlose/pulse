@@ -1,5 +1,6 @@
 loaded_splash:
     org $1ca0
+relocated_splash:
 
 splash:
     ; Restore areas that have been destroyed by the loader.
@@ -11,9 +12,26 @@ l:  lda saved_zeropage,x
     dex
     bpl -l
 
-    lda #150
+    ldy #4
+p:  ldx #0
+l:  lda $1000,x
+    sta tmp
+m:  $bd $00 $00 ;lda $0000,x
+n:  sta $1000,x
+    lda tmp
+o:  $9d $00 $00 ;sta $0000,x
+    inx
+    bne -l
+    inc @(+ -l 2)
+    inc @(+ -m 2)
+    inc @(+ -n 2)
+    inc @(+ -o 2)
+    dey
+    bne -p
+
+    lda #150        ; Unblank screen.
     sta $9002
-    lda #8              ; (character set at $0000)
+    lda #$fc        ; Character set at $1000.
     sta $9005
-    lda #8              : (black screen and border)
+    lda #8          ; Black screen and border.
     sta $900f

@@ -7,7 +7,7 @@ main:
 
     ; Blank screen.
     lda #0
-;    sta vicreg_rasterlo_rows_charsize
+    sta $9002
 
     ; Copy loader someplace else.
     ldx #0
@@ -25,7 +25,7 @@ l:  lda loaded_tape_loader,x
 
     jmp @*tape-loader-start*
 
-splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
+splash_size = @(length (fetch-file (+ "obj/splash." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg:
     $ff $0f

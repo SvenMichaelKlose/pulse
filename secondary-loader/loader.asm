@@ -72,6 +72,7 @@ n:  dec tape_counter        ; All bytes loaded?
     sei
     lda #$7f                ; Turn off tape pulse interrupt.
     sta $912e
+    sta $912d
 
     lda tape_old_irq
     sta $314
@@ -83,7 +84,6 @@ n:  dec tape_counter        ; All bytes loaded?
     lda #0
     tax
     tay
-stop:
     jmp (tape_callback)
 
 loader_end:

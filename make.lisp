@@ -3,10 +3,8 @@
 (defvar *virtual?* nil)
 (defvar *coinop?* nil)
 (defvar *video?* nil)
-(defvar *nipkow-fx-border?* nil)
-(defvar *nipkow-disable-interrupts?* nil)
-(defvar *nipkow-joystick-stop?* t)
-(defvar *nipkow-return-address* #x100d)
+(defvar *make-wav?* nil)
+(defvar *only-pal-vic?* nil)
 
 (defvar *bandwidth* 16)
 (defvar *tape-loader-start* #x1f00)
@@ -20,7 +18,7 @@
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 (defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
 
-(load "tape-loader/bin2pottap.lisp")
+(load "secondary-loader/bin2pottap.lisp")
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
 (load "game/story.lisp")
@@ -52,7 +50,8 @@
   (make-conversion name :pal)
   (make-conversion name :ntsc))
 
-(make-audio "theme" "media/theme-boray.mp3" "4" "-72")
+(make-audio "theme" "media/boray_no_syrup.mp3" "4" "-72")
+(make-audio "theme2" "media/theme-lukas.mp3" "4" "-72")
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -76,8 +75,8 @@
             "primary-loader/zeropage.asm"
             "bender/vic-20/basic-loader.asm"
             "primary-loader/main.asm"
-            "tape-loader/start.asm"
-            "tape-loader/loader.asm")
+            "secondary-loader/start.asm"
+            "secondary-loader/loader.asm")
           (+ "obj/loader." ! ".prg.vice.txt"))))
 
 (defun make-splash-prg ()
@@ -89,7 +88,7 @@
             "splash/main.asm"
             "splash/gfx.asm"
             "splash/splash.asm"
-            "nipkow/src/audio-player.asm")
+            "splash/audio-player.asm")
           (+ "obj/splash." ! ".prg.vice.txt"))))
 
 (defun padded-name (x)
@@ -107,6 +106,7 @@
       (sb-ext:run-program "/usr/local/bin/exomizer"
                           `("sfx" "sys"
                             "-t" "20"
+                            "-n"
                             "-o" ,(+ "obj/game.crunched." tv ".prg")
                             ,(+ "obj/game." tv ".prg"))
                           :pty cl:*standard-output*)
@@ -115,6 +115,7 @@
       (sb-ext:run-program "/usr/local/bin/exomizer"
                           `("sfx" "sys"
                             "-t" "20"
+                            "-n"
                             "-o" ,(+ "obj/splash.crunched." tv ".prg")
                             ,(+ "obj/splash." tv ".prg"))
                           :pty cl:*standard-output*)
@@ -124,22 +125,24 @@
             (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
                            (+ "PULSE (" (upcase tv) ")")
                            :start #x1001)
-               (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
+               (bin2pottap (string-list (fetch-file (+ "obj/splash." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/game.crunched." tv ".prg"))))))
         (adotimes 256 (princ (code-char #x20) o))
-        (wav2pwm o (+ "obj/theme_downsampled_" tv ".wav")))
+        (wav2pwm o (+ "obj/theme_downsampled_" tv ".wav"))
+        (wav2pwm o (+ "obj/theme2_downsampled_" tv ".wav")))
       (sb-ext:run-program "/usr/bin/zip"
                           (list (+ "compiled/pulse." tv ".tap.zip")
                                 (+ "compiled/pulse." tv ".tap"))))))
 
-(make-game :prg "pulse.prg" "obj/pulse.vice.txt")
 (make-all-games :pal)
-(make-all-games :ntsc)
-(with-temporary *virtual?* t
-  (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))
-(with-temporary *virtual?* t
-  (with-temporary *coinop?* t
-    (make-game :virtual "compiled/coinop.bin" "obj/coinop.vice.txt")))
+(unless *only-pal-vic?*
+  (make-all-games :ntsc)
+  (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
+  (with-temporary *virtual?* t
+    (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))
+  (with-temporary *virtual?* t
+    (with-temporary *coinop?* t
+      (make-game :virtual "compiled/coinop.bin" "obj/coinop.vice.txt"))))
 
 (print-pwm-info)
 
@@ -154,15 +157,16 @@
   (format t "Baud rates: ~A (NTSC), ~A (PAL)~%"
           (tap-rate :ntsc !) (tap-rate :pal !)))
 
-;(format t "Making PAL WAV file...~%")
-;(with-input-file i "compiled/pulse.pal.tap"
-;  (with-output-file o "compiled/pulse.pal.wav"
-;    (tap2wav i o)))
+(when *make-wav?*
+  (format t "Making PAL WAV file...~%")
+  (with-input-file i "compiled/pulse.pal.tap"
+    (with-output-file o "compiled/pulse.pal.wav"
+      (tap2wav i o)))
 
-;(format t "Making NTSC WAV file...~%")
-;(with-input-file i "compiled/pulse.ntsc.tap"
-;  (with-output-file o "compiled/pulse.ntsc.wav"
-;    (tap2wav i o)))
+  (format t "Making NTSC WAV file...~%")
+  (with-input-file i "compiled/pulse.ntsc.tap"
+    (with-output-file o "compiled/pulse.ntsc.wav"
+      (tap2wav i o))))
 
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
 
