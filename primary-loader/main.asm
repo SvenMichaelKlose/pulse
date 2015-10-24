@@ -1,4 +1,7 @@
-main:
+main = $351
+
+    org $120c
+
     sei
     lda #$7f
     sta $912e       ; Disable and acknowledge interrupts.

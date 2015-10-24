@@ -4,7 +4,7 @@
 (defvar *coinop?* nil)
 (defvar *video?* nil)
 (defvar *make-wav?* nil)
-(defvar *only-pal-vic?* t)
+(defvar *only-pal-vic?* nil)
 
 (defvar *bandwidth* 16)
 (defvar *pulse-short* #x20)
@@ -69,6 +69,11 @@
 
 (defvar *splash-start* #x1234)
 (defvar *tape-loader-start* #x1234)
+
+(defun make-model-detection ()
+  (make "obj/model-detection.bin"
+        '("primary-loader/model-detection.asm")
+        "obj/model-detection.vice.txt"))
 
 (defun make-loader-prg ()
   (alet (downcase (symbol-name *tv*))
@@ -139,7 +144,8 @@
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
             (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
-                           (+ "PULSE (" (upcase tv) ")")
+                           (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
+                              (fetch-file "obj/model-detection.bin"))
                            :start #x1001)
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/game.crunched." tv ".prg"))))))
@@ -150,6 +156,7 @@
                           (list (+ "compiled/pulse." tv ".tap.zip")
                                 (+ "compiled/pulse." tv ".tap"))))))
 
+(make-model-detection)
 (make-all-games :pal)
 (unless *only-pal-vic?*
   (make-all-games :ntsc)
