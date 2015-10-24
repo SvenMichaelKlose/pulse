@@ -25,9 +25,9 @@ l:  lda loaded_tape_loader,x
 
     jmp tape_loader_start
 
-splash_size = @(length (fetch-file (+ "obj/splash." (downcase (symbol-name *tv*)) ".prg")))
+splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg:
     $00 $10
     <splash_size @(++ >splash_size)
-    $00 $10
+    $02 $10

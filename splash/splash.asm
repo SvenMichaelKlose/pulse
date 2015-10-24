@@ -1,5 +1,5 @@
 loaded_splash:
-    org $1c70
+    org @*splash-start*
 relocated_splash:
 
 splash:

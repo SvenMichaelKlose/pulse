@@ -7,7 +7,6 @@
 (defvar *only-pal-vic?* t)
 
 (defvar *bandwidth* 16)
-(defvar *tape-loader-start* #x1d56)
 (defvar *pulse-short* #x20)
 (defvar *pulse-long* #x30)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
@@ -68,6 +67,9 @@
         (@ [+ "game/" _] (pulse-files version))
         cmds))
 
+(defvar *splash-start* #x1234)
+(defvar *tape-loader-start* #x1234)
+
 (defun make-loader-prg ()
   (alet (downcase (symbol-name *tv*))
     (make (+ "obj/loader." ! ".prg")
@@ -97,6 +99,23 @@
 
 (defvar *tv* nil)
 
+(defun make-loaders (tv)
+  (make-splash-prg)
+  (with (splash-size  (- (get-label 'relocated_splash_end)
+                         (get-label 'relocated_splash)))
+    (format t "Compressing splash with exomizer...~%")
+    (sb-ext:run-program "/usr/local/bin/exomizer"
+                        `("sfx" "$1002"
+                          "-t" "20"
+                          "-n"
+                          "-Di_load_addr=$1002"
+                          "-o" ,(+ "obj/splash.crunched." tv ".prg")
+                          ,(+ "obj/splash." tv ".prg"))
+                        :pty cl:*standard-output*)
+    (alet (get-label 'memory_end)
+      (make-loader-prg)
+      (values splash-size !))))
+
 (defun make-all-games (tv-standard)
   (with-temporary *tv* tv-standard
     (let tv (downcase (symbol-name *tv*))
@@ -105,28 +124,23 @@
                  (+ "obj/game." tv ".vice.txt"))
       (format t "Compressing game with exomizer...~%")
       (sb-ext:run-program "/usr/local/bin/exomizer"
-                          `("sfx" "$1000"
+                          `("sfx" "$1002"
                             "-t" "20"
                             "-n"
+                            "-Di_load_addr=$1002"
                             "-o" ,(+ "obj/game.crunched." tv ".prg")
                             ,(+ "obj/game." tv ".prg"))
                           :pty cl:*standard-output*)
-      (make-splash-prg)
-      (format t "Compressing splash with exomizer...~%")
-      (sb-ext:run-program "/usr/local/bin/exomizer"
-                          `("sfx" "sys"
-                            "-t" "20"
-                            "-n"
-                            "-o" ,(+ "obj/splash.crunched." tv ".prg")
-                            ,(+ "obj/splash." tv ".prg"))
-                          :pty cl:*standard-output*)
-      (make-loader-prg)
+      (with ((splash-size memory-end) (make-loaders tv))
+        (= *tape-loader-start* (- memory-end (- (get-label 'loader_end) (get-label 'tape_loader))))
+        (= *splash-start* (- *tape-loader-start* splash-size)))
+      (make-loaders tv)
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
             (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
                            (+ "PULSE (" (upcase tv) ")")
                            :start #x1001)
-               (bin2pottap (string-list (fetch-file (+ "obj/splash." tv ".prg"))))
+               (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/game.crunched." tv ".prg"))))))
         (adotimes 256 (princ (code-char #x20) o))
         (wav2pwm o (+ "obj/theme_downsampled_" tv ".wav"))

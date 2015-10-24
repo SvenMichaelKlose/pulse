@@ -66,9 +66,6 @@ n:  dec tape_counter        ; All bytes loaded?
 
     ldx #$f6
     txs
-    lda #0
-    tax
-    tay
     jmp (tape_callback)
 
 loader_end:

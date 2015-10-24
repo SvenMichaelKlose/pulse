@@ -5,7 +5,10 @@ average         = $1ddc
 tleft           = $1dde
 tmp             = $1ddf
 
-    org $1000
+memory_end = current_low
+
+    $02 $10
+    org $1002
 
 main:
     ; Copy splash screen data to where the game won't load to.
