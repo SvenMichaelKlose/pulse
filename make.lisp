@@ -4,7 +4,7 @@
 (defvar *coinop?* nil)
 (defvar *video?* nil)
 (defvar *make-wav?* nil)
-(defvar *only-pal-vic?* nil)
+(defvar *only-pal-vic?* t)
 
 (defvar *bandwidth* 16)
 (defvar *pulse-short* #x20)
@@ -144,7 +144,7 @@
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/game.crunched." tv ".prg"))))))
         (adotimes 256 (princ (code-char #x20) o))
-        (wav2pwm o (+ "obj/theme_downsampled_" tv ".wav"))
+        (wav2pwm o (+ "obj/theme_downsampled_" tv ".wav") :pause-before 0)
         (wav2pwm o (+ "obj/theme2_downsampled_" tv ".wav")))
       (sb-ext:run-program "/usr/bin/zip"
                           (list (+ "compiled/pulse." tv ".tap.zip")
