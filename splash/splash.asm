@@ -1,5 +1,5 @@
 loaded_splash:
-    org $1ca0
+    org $1c70
 relocated_splash:
 
 splash:
@@ -33,5 +33,5 @@ o:  $9d $00 $00 ;sta $0000,x
     sta $9002
     lda #$fc        ; Character set at $1000.
     sta $9005
-    lda #8          ; Black screen and border.
+    lda #$09        ; Black screen
     sta $900f

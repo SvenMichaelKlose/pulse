@@ -1,14 +1,11 @@
-loaded_tape_loader:                                                             
-    org @*tape-loader-start*
-
 tape_loader_start:
     lda $314            ; Save old IRQ vector.
     sta tape_old_irq
     lda $315
     sta @(++ tape_old_irq)
-    lda #<tape_loader   ; Set IRQ vector.
+    lda #@(low *tape-loader-start*)   ; Set IRQ vector.
     sta $314
-    lda #>tape_loader
+    lda #@(high *tape-loader-start*)
     sta $315
     lda #16
     sta tape_leader_countdown
@@ -22,6 +19,14 @@ tape_loader_start:
     sta $912b
     lda #%10000010      ; CA1 enable (tape pulse)
     sta $912e
-    cli
 
-w:  jmp -w
+    ; Make endless loop.
+    lda #$4c
+    sta $1ffd
+    lda #$fd
+    sta $1ffe
+    lda #$1f
+    sta $1fff
+
+    cli
+    jmp $1ffd

@@ -3,9 +3,10 @@
     "game.defs.asm"
     "zeropage.asm"
 
-    ,@(? (eq version :virtual)
-         '("no-loader.asm")
-         '("../bender/vic-20/basic-loader.asm"))
+    ,@(?
+        (eq version :virtual)  '("no-loader.asm")
+        (eq version :tap)      '("tape-loader.asm")
+        '("../bender/vic-20/basic-loader.asm"))
 
     ,@(? (eq version :virtual)
          '("init-virtual.asm")

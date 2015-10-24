@@ -1,3 +1,6 @@
+loaded_tape_loader:
+    org @*tape-loader-start*
+
 tape_loader:
     jsr tape_get_bit
     bcc +n

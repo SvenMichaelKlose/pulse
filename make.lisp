@@ -4,10 +4,10 @@
 (defvar *coinop?* nil)
 (defvar *video?* nil)
 (defvar *make-wav?* nil)
-(defvar *only-pal-vic?* nil)
+(defvar *only-pal-vic?* t)
 
 (defvar *bandwidth* 16)
-(defvar *tape-loader-start* #x1f00)
+(defvar *tape-loader-start* #x1d56)
 (defvar *pulse-short* #x20)
 (defvar *pulse-long* #x30)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
@@ -84,8 +84,9 @@
     (make (+ "obj/splash." ! ".prg")
           '("bender/vic-20/vic.asm"
             "primary-loader/zeropage.asm"
-            "bender/vic-20/basic-loader.asm"
+;            "bender/vic-20/basic-loader.asm"
             "splash/main.asm"
+            "secondary-loader/start.asm"
             "splash/gfx.asm"
             "splash/splash.asm"
             "splash/audio-player.asm")
@@ -104,7 +105,7 @@
                  (+ "obj/game." tv ".vice.txt"))
       (format t "Compressing game with exomizer...~%")
       (sb-ext:run-program "/usr/local/bin/exomizer"
-                          `("sfx" "sys"
+                          `("sfx" "$1000"
                             "-t" "20"
                             "-n"
                             "-o" ,(+ "obj/game.crunched." tv ".prg")

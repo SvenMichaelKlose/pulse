@@ -23,6 +23,7 @@ l:  lda $912d       ; Read the VIA2 CA1 status bit.
     lsr             ; Reduce sample from 7 to 4 bits.
     lsr
     lsr
+    ora #$40        ; Auxiliary colour.
     sta $900e       ; Play it!
 
     lda #0              ; Fetch joystick status.
@@ -86,9 +87,8 @@ m:  sta $1000,x
     dey
     bne -p
 
-    ldx #$f6
+    ldx #$ff
     txs
-    lda #0
-    tax
-    tay
-    jmp $100d
+    jmp $1000
+
+relocated_splash_end:
