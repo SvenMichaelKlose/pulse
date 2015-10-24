@@ -1,33 +1,20 @@
 tape_loader:
     jsr tape_get_bit
     bcc +n
-    lda tape_leader_countdown
-    bpl restart_loader
-    ldx #<tape_leader_long
-    ldy #>tape_leader_long
-next_leader:
-    lda #16
-    sta tape_leader_countdown
-    bne set_irq_vector
-n:  dec tape_leader_countdown
-    jmp return_from_interrupt
-
-restart_loader:
     ldx #<tape_loader
     ldy #>tape_loader
-    bne next_leader
-
-tape_leader_long:
-    jsr tape_get_bit
-    bcs -n
     lda tape_leader_countdown
     bpl restart_loader
-    ldx #<tape_loader_data
-    ldy #>tape_loader_data
-set_irq_vector:
+    ldx #<tape_loader_data ;leader_long
+    ldy #>tape_loader_data ;leader_long
+restart_loader:
+    lda #16
+    sta tape_leader_countdown
     stx $314
     sty $315
     bne return_from_interrupt
+n:  dec tape_leader_countdown
+    jmp return_from_interrupt
 
 tape_loader_data:
     jsr tape_get_bit
