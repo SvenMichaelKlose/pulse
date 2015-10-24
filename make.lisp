@@ -4,7 +4,7 @@
 (defvar *coinop?* nil)
 (defvar *video?* nil)
 (defvar *make-wav?* nil)
-(defvar *only-pal-vic?* t)
+(defvar *only-pal-vic?* nil)
 
 (defvar *bandwidth* 16)
 (defvar *pulse-short* #x20)
@@ -131,9 +131,10 @@
                             "-o" ,(+ "obj/game.crunched." tv ".prg")
                             ,(+ "obj/game." tv ".prg"))
                           :pty cl:*standard-output*)
-      (with ((splash-size memory-end) (make-loaders tv))
-        (= *tape-loader-start* (- memory-end (- (get-label 'loader_end) (get-label 'tape_loader))))
-        (= *splash-start* (- *tape-loader-start* splash-size)))
+      (when (== *splash-start* #x1234)
+        (with ((splash-size memory-end) (make-loaders tv))
+          (= *tape-loader-start* (- memory-end (- (get-label 'loader_end) (get-label 'tape_loader))))
+          (= *splash-start* (- *tape-loader-start* splash-size))))
       (make-loaders tv)
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
