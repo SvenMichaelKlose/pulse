@@ -1,9 +1,9 @@
-saved_zeropage  = $1df0
-saved_stack     = $1de0
-current_low     = $1ddb
-average         = $1ddc
-tleft           = $1dde
-tmp             = $1ddf
+saved_zeropage  = @(- #x1e00 tape_leader_countdown 1)
+saved_stack     = @(- saved_zeropage tape_leader_countdown 1)
+tmp             = @(- saved_stack 1)
+tleft           = @(- tmp 1)
+average         = @(- tleft 2)
+current_low     = @(- average 1)
 
 memory_end = current_low
 
@@ -11,6 +11,9 @@ memory_end = current_low
     org $1002
 
 main:
+    ldx #$ff
+    txs
+
     ; Copy splash screen data to where the game won't load to.
     ldx #0
 l:  lda @(+ characters #x0000),x
@@ -28,19 +31,18 @@ l:  lda @(+ characters #x0000),x
     lda #$0b
     sta colors,x
     sta @(+ colors #x100),x
-    inx
-    bne -l
-
-    ; Copy splash screen code someplace else.
-    ldx #@(- relocated_splash_end relocated_splash)
-l:  lda @(-- loaded_splash),x
-    sta @(-- relocated_splash),x
-    dex
+;    lda loaded_splash,x
+;    sta relocated_splash,x
+    cpx #@(++ (low (- relocated_splash_end relocated_splash)))
+    bcs +n
+    lda @(-- (+ loaded_splash 0)),x
+    sta @(-- (+ relocated_splash 0)),x
+n:  inx
     bne -l
 
     ; Save parts that'll be destroyed by the loader.
     ; Also configure the loader.
-    ldx #$0f
+    ldx #tape_leader_countdown
 l:  lda $0,x
     sta saved_zeropage,x
     lda $01f0,x

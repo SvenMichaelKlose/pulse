@@ -2,9 +2,25 @@ loaded_splash:
     org @*splash-start*
 relocated_splash:
 
+copy_from_color_ram:
+    ldx #0
+l:  lda $9400,x
+    asl
+    asl
+    asl
+    asl
+    sta tmp
+    lda $9500,x
+    and #$0f
+    ora tmp
+    sta @(+ characters #x400),x
+    dex
+    bne -l
+    rts
+
 splash:
     ; Restore areas that have been destroyed by the loader.
-    ldx #$0f
+    ldx #tape_leader_countdown
 l:  lda saved_zeropage,x
     sta $0000,x
     lda saved_stack,x
