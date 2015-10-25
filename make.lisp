@@ -26,21 +26,21 @@
   (when (< #x100 *pc*)
     (error "Zero page overflow by ~A bytes." (- *pc* #x100))))
 
-(defun make-wav (name file gain bass)
+(defun make-wav (name file gain bass tv)
   (sb-ext:run-program "/usr/bin/mplayer"
-    (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name ".wav") file)
+    (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name "." (downcase (symbol-name tv)) ".wav") file)
     :pty cl:*standard-output*)
   (sb-ext:run-program "/usr/bin/sox"
-    (list (+ "obj/" name ".wav")
-          (+ "obj/" name "_filtered.wav")
+    (list (+ "obj/" name "." (downcase (symbol-name tv)) ".wav")
+          (+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
           "bass" bass
-          "lowpass" "2000"
+          "lowpass" (princ (half (pwm-pulse-rate tv)) nil)
           "compand" "0.3,1" "6:-70,-60,-20" "-1" "-90" "0.2" "gain" gain)
     :pty cl:*standard-output*))
 
 (defun make-conversion (name tv)
   (sb-ext:run-program "/usr/bin/sox"
-    (list (+ "obj/" name "_filtered.wav")
+    (list (+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
           "-c" "1"
           "-b" "16"
           "-r" (princ (pwm-pulse-rate tv) nil)
@@ -48,11 +48,12 @@
     :pty cl:*standard-output*))
 
 (defun make-audio (name file gain bass)
-  (make-wav name file gain bass)
+  (make-wav name file gain bass :pal)
+  (make-wav name file gain bass :ntsc)
   (make-conversion name :pal)
   (make-conversion name :ntsc))
 
-(make-audio "theme" "media/boray_no_syrup.mp3" "3" "-72")
+(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-72")
 (make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
 
 (defun make-tape-wav (in-file out-file)
@@ -153,7 +154,7 @@
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/game.crunched." tv ".prg"))))))
         (adotimes 256 (princ (code-char #x20) o))
-        (wav2pwm o (+ "obj/theme_downsampled_" tv ".wav") :pause-before 0)
+        (wav2pwm o (+ "obj/theme1_downsampled_" tv ".wav") :pause-before 0)
         (wav2pwm o (+ "obj/theme2_downsampled_" tv ".wav")))
       (sb-ext:run-program "/usr/bin/zip"
                           (list (+ "compiled/pulse." tv ".tap.zip")
