@@ -53,7 +53,7 @@
   (make-conversion name :pal)
   (make-conversion name :ntsc))
 
-(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-72")
+(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
 (make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
 
 (defun make-tape-wav (in-file out-file)
@@ -78,6 +78,7 @@
   (make "obj/model-detection.bin"
         '("primary-loader/model-detection.asm")
         "obj/model-detection.vice.txt"))
+(make-model-detection)
 
 (defun make-loader-prg ()
   (alet (downcase (symbol-name *tv*))
@@ -90,6 +91,24 @@
             "secondary-loader/loader.asm")
           (+ "obj/loader." ! ".prg.vice.txt"))))
 
+(defun make-splash-gfx ()
+  (make "obj/splash-gfx.bin"
+        '("splash/gfx.asm")
+        "obj/splash-gfx.bin.vice.txt"))
+(make-splash-gfx)
+
+(defun break-up-splash-gfx ()
+  (put-file "obj/splash.chars.0-127.bin" (subseq (fetch-file "obj/splash-gfx.bin") 0 1024))
+  (put-file "obj/splash.chars.128-159.bin" (subseq (fetch-file "obj/splash-gfx.bin") 1024 (+ 1024 256)))
+  (put-file "obj/splash.screen.bin" (alet (+ 1024 256) (subseq (fetch-file "obj/splash-gfx.bin") ! (+ ! 506))))
+  (put-file "obj/splash.colors.bin" (alet (+ 1024 256 528) (subseq (fetch-file "obj/splash-gfx.bin") !))))
+(break-up-splash-gfx)
+
+(defun glued-game-and-splash-gfx (game)
+  (+ (subseq (fetch-file game) 0 1024)
+     (fetch-file "obj/splash.chars.128-159.bin")
+     (subseq (fetch-file game) (+ 1024 256))))
+
 (defun make-splash-prg ()
   (alet (downcase (symbol-name *tv*))
     (make (+ "obj/splash." ! ".prg")
@@ -98,7 +117,6 @@
 ;            "bender/vic-20/basic-loader.asm"
             "splash/main.asm"
             "secondary-loader/start.asm"
-            "splash/gfx.asm"
             "splash/splash.asm"
             "splash/audio-player.asm")
           (+ "obj/splash." ! ".prg.vice.txt"))))
@@ -107,6 +125,7 @@
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
 
 (defvar *tv* nil)
+(defvar *current-game* nil)
 
 (defun make-loaders (tv)
   (make-splash-prg)
@@ -128,6 +147,7 @@
 (defun make-all-games (tv-standard)
   (with-temporary *tv* tv-standard
     (let tv (downcase (symbol-name *tv*))
+      (= *current-game* (+ "obj/game.crunched." tv ".prg"))
       (make-game :tap
                  (+ "obj/game." tv ".prg")
                  (+ "obj/game." tv ".vice.txt"))
@@ -152,15 +172,15 @@
                               (fetch-file "obj/model-detection.bin"))
                            :start #x1001)
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
-               (bin2pottap (string-list (fetch-file (+ "obj/game.crunched." tv ".prg"))))))
+               (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))))
         (adotimes 256 (princ (code-char #x20) o))
         (wav2pwm o (+ "obj/theme1_downsampled_" tv ".wav") :pause-before 0)
         (wav2pwm o (+ "obj/theme2_downsampled_" tv ".wav")))
       (sb-ext:run-program "/usr/bin/zip"
                           (list (+ "compiled/pulse." tv ".tap.zip")
-                                (+ "compiled/pulse." tv ".tap"))))))
+                                (+ "compiled/pulse." tv ".tap"))
+                          :pty cl:*standard-output*))))
 
-(make-model-detection)
 (make-all-games :pal)
 (unless *only-pal-vic?*
   (make-all-games :ntsc)

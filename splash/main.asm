@@ -33,6 +33,13 @@ l:  lda @(+ characters #x0000),x
     sta @(+ colors #x100),x
 ;    lda loaded_splash,x
 ;    sta relocated_splash,x
+    lda game_part,x
+    sta $9400,x
+    lsr
+    lsr
+    lsr
+    lsr
+    sta $9500,x
     cpx #@(++ (low (- relocated_splash_end relocated_splash)))
     bcs +n
     lda @(-- (+ loaded_splash 0)),x
@@ -60,3 +67,8 @@ loader_configuration:
     $00 $10
     <game_size @(++ >game_size)
     <splash >splash
+
+characters:     @(fetch-file "obj/splash.chars.0-127.bin")
+screen_data:    @(fetch-file "obj/splash.screen.bin")
+color_data:     @(fetch-file "obj/splash.colors.bin")
+game_part:      @(subseq (fetch-file *current-game*) 1024 (+ 1024 256))

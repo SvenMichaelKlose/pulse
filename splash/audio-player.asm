@@ -87,6 +87,20 @@ m:  sta $1000,x
     dey
     bne -p
 
+    ldx #0
+l:  lda $9500,x
+    asl
+    asl
+    asl
+    asl
+    sta tmp
+    lda $9400,x
+    and #$0f
+    ora tmp
+    sta $1400,x
+    dex
+    bne -l
+
     jmp $1002
 
 relocated_splash_end:
