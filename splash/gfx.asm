@@ -135,6 +135,7 @@ characters:
     $FF $BF $FF $BF $AF $6F $AF $9F
     $AA $2A $2A $0A $C9 $CA $CA $EA
     $8F $BF $BF $BF $BF $BF $BF $FF
+fill 256
 
 screen_data:
     $4B $4B $4B $4B $4B $4B $4B $4B
@@ -203,3 +204,6 @@ screen_data:
     $4B $4B $00 $00 $00 $00 $00 $00
     $00 $00 $00 $00 $00 $00 $00 $00
     $00 $00 $00 $00 $00 $00 $00 $4B
+
+color_data:
+fill 506
