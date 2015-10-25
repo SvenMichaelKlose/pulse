@@ -28,13 +28,15 @@
 
 (defun make-wav (name file gain bass)
   (sb-ext:run-program "/usr/bin/mplayer"
-    (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name ".wav") file))
+    (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name ".wav") file)
+    :pty cl:*standard-output*)
   (sb-ext:run-program "/usr/bin/sox"
     (list (+ "obj/" name ".wav")
           (+ "obj/" name "_filtered.wav")
           "bass" bass
           "lowpass" "2000"
-          "compand" "0.3,1" "6:-70,-60,-20" "-5" "-90" "0.2" "gain" gain)))
+          "compand" "0.3,1" "6:-70,-60,-20" "-1" "-90" "0.2" "gain" gain)
+    :pty cl:*standard-output*))
 
 (defun make-conversion (name tv)
   (sb-ext:run-program "/usr/bin/sox"
@@ -42,15 +44,16 @@
           "-c" "1"
           "-b" "16"
           "-r" (princ (pwm-pulse-rate tv) nil)
-          (+ "obj/" name "_downsampled_" (downcase (symbol-name tv)) ".wav"))))
+          (+ "obj/" name "_downsampled_" (downcase (symbol-name tv)) ".wav"))
+    :pty cl:*standard-output*))
 
 (defun make-audio (name file gain bass)
   (make-wav name file gain bass)
   (make-conversion name :pal)
   (make-conversion name :ntsc))
 
-(make-audio "theme" "media/boray_no_syrup.mp3" "4" "-72")
-(make-audio "theme2" "media/theme-lukas.mp3" "4" "-72")
+(make-audio "theme" "media/boray_no_syrup.mp3" "3" "-72")
+(make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
