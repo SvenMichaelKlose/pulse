@@ -87,8 +87,6 @@ m:  sta $1000,x
     dey
     bne -p
 
-    ldx #$f6
-    txs
     jmp $1002
 
 relocated_splash_end:
