@@ -44,12 +44,8 @@ clc_return:
     rts
 
 test_foreground_collision_fine:
-    lda sprites_x,x
-    and #7
-    sta tmp
     lda scrolled_bits
     and #7
-    cmp tmp
     bne clc_return
 test_foreground_collision_raw:
     lda sprites_i,x
