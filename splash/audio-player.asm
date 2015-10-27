@@ -68,6 +68,8 @@ j:  asl
     bne -f      ; (4)
 
 start_game:
+    sta $900e
+
     ; Stop tape motor.
     lda $911c
     ora #2

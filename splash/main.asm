@@ -59,6 +59,23 @@ l:  lda $0,x
     dex
     bpl -l
 
+    ; Let soprano channel's shift clear all bits.
+    ldx #$7e
+    stx $900c
+    ldy #0
+l:  dey
+    bne -l
+
+    ; Configure a high–frequency noise waveform to
+    ; amplify the digital audio played later.
+    lda #$fe
+    stx $900c
+    stx $900c
+    sta $900c
+    sta $900c
+    stx $900c
+    sta $900c
+
     jmp tape_loader_start
 
 game_size = @(length (fetch-file (+ "obj/game.crunched." (downcase (symbol-name *tv*)) ".prg")))
