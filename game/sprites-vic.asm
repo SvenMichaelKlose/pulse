@@ -15,8 +15,9 @@ l:  lda sprites_i,x
     lda #0
     sta foreground_collision
     jsr draw_sprite
-    lda foreground_collision
-    ora sprites_i,x
+    lda sprites_i,x
+    and #@(bit-xor 255 fg_collision)
+    ora foreground_collision
     sta sprites_i,x
 
 n:  dex
