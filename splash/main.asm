@@ -66,8 +66,15 @@ l:  lda $0,x
 l:  dey
     bne -l
 
-    ; Configure a high–frequency noise waveform to
-    ; amplify the digital audio played later.
+    ; Boost digital audio.
+    lda #$0f
+    sta $900e
+    ldx #$7e
+    stx $900b
+    stx $900c
+    ldy #0
+l:  dey
+    bne -l
     lda #$fe
     stx $900c
     stx $900c
