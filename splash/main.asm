@@ -59,18 +59,10 @@ l:  lda $0,x
     dex
     bpl -l
 
-    ; Let soprano channel's shift clear all bits.
-    ldx #$7e
-    stx $900c
-    ldy #0
-l:  dey
-    bne -l
-
     ; Boost digital audio.
     lda #$0f
     sta $900e
     ldx #$7e
-    stx $900b
     stx $900c
     ldy #0
 l:  dey
