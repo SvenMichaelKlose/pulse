@@ -121,6 +121,16 @@
             "splash/audio-player.asm")
           (+ "obj/splash." ! ".prg.vice.txt"))))
 
+(defun make-3k (imported-labels)
+  (with-temporary *imported-labels* imported-labels
+    (alet (downcase (symbol-name *tv*))
+      (make (+ "obj/3k." ! ".prg")
+            '("bender/vic-20/vic.asm"
+              "expanded/3k.asm"
+              "expanded/patch-3k.asm"
+              "expanded/sprites-vic-preshifted.asm")
+            (+ "obj/3k." ! ".prg.vice.txt")))))
+
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
 
@@ -160,11 +170,13 @@
                             "-o" ,(+ "obj/game.crunched." tv ".prg")
                             ,(+ "obj/game." tv ".prg"))
                           :pty cl:*standard-output*)
-      (when (== *splash-start* #x1234)
-        (with ((splash-size memory-end) (make-loaders tv))
-          (= *tape-loader-start* (- memory-end (- (get-label 'loader_end) (get-label 'tape_loader))))
-          (= *splash-start* (- *tape-loader-start* splash-size))))
-      (make-loaders tv)
+      (let game-labels (get-labels)
+        (when (== *splash-start* #x1234)
+          (with ((splash-size memory-end) (make-loaders tv))
+            (= *tape-loader-start* (- memory-end (- (get-label 'loader_end) (get-label 'tape_loader))))
+            (= *splash-start* (- *tape-loader-start* splash-size))))
+        (make-loaders tv)
+        (make-3k game-labels))
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
             (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))

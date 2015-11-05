@@ -3,6 +3,7 @@ draw_sprites:
     ldx #@(-- num_sprites)
 l:  lda sprites_i,x
     bpl +n
+draw_sprite_caller:
     jsr draw_sprite
 n:  dex
     bpl -l
