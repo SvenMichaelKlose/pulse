@@ -4,27 +4,27 @@ model = $1ffc
     org $351
 
 model_detection:
-    lda #0
+    lda #vic_unexpanded
     sta model
 
     ; Test on +3K.
-    ldx #1
+    ldx #vic_3k
     ldy #$04
     jsr check_model
 
     ; Test on +8K.
-    ldx #2
+    ldx #vic_8k
     ldy #$20
     jsr check_model
 
     ; Test on +16K.
-    ldx #4
+    ldx #vic_16k
     ldy #$40
     jsr check_model
 
     ; Test on +24K.
-    ldx #8
-    ldy #$40
+    ldx #vic_24k
+    ldy #$60
     jsr check_model
 
     ; Relocate for unexpanded.

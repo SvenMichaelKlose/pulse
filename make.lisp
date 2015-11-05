@@ -76,7 +76,8 @@
 
 (defun make-model-detection ()
   (make "obj/model-detection.bin"
-        '("primary-loader/model-detection.asm")
+        '("primary-loader/models.asm"
+          "primary-loader/model-detection.asm")
         "obj/model-detection.vice.txt"))
 (make-model-detection)
 
