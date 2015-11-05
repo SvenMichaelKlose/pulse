@@ -24,15 +24,15 @@ l:  lda @(+ characters #x0000),x
     sta $0200,x
     lda @(+ characters #x0300),x
     sta $0300,x
+    cpx #253
+    bcs +n
     lda screen_data,x
     sta screen,x
-    lda @(+ screen_data #x100),x
-    sta @(+ screen #x100),x
-    lda #$0b
+    lda @(+ screen_data 253),x
+    sta @(+ screen 253),x
+n:  lda #$0b
     sta colors,x
     sta @(+ colors #x100),x
-;    lda loaded_splash,x
-;    sta relocated_splash,x
     lda game_part,x
     sta $9400,x
     lsr
