@@ -1,5 +1,4 @@
 start = $120c
-model = $1ffc
 
     org $351
 

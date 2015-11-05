@@ -16,7 +16,7 @@ main = $351
     ldx #0
 l:  lda loaded_tape_loader,x
     sta @*tape-loader-start*,x
-    lda loader_cfg,x
+    lda loader_cfg_3k,x
     sta tape_ptr,x
     inx
     bne -l
@@ -28,9 +28,9 @@ l:  lda loaded_tape_loader,x
 
     jmp tape_loader_start
 
-splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
+patch_3k_size = @(length (fetch-file (+ "obj/3k." (downcase (symbol-name *tv*)) ".prg")))
 
-loader_cfg:
+loader_cfg_3k:
     $00 $10
-    <splash_size @(++ >splash_size)
-    $02 $10
+    <patch_3k_size @(++ >patch_3k_size)
+    $00 $10

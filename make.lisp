@@ -4,7 +4,7 @@
 (defvar *coinop?* nil)
 (defvar *video?* nil)
 (defvar *make-wav?* nil)
-(defvar *only-pal-vic?* nil)
+(defvar *only-pal-vic?* t)
 
 (defvar *bandwidth* 16)
 (defvar *pulse-short* #x20)
@@ -85,6 +85,7 @@
   (alet (downcase (symbol-name *tv*))
     (make (+ "obj/loader." ! ".prg")
           '("bender/vic-20/vic.asm"
+            "primary-loader/models.asm"
             "primary-loader/zeropage.asm"
             "bender/vic-20/basic-loader.asm"
             "primary-loader/main.asm"
@@ -114,8 +115,8 @@
   (alet (downcase (symbol-name *tv*))
     (make (+ "obj/splash." ! ".prg")
           '("bender/vic-20/vic.asm"
+            "primary-loader/models.asm"
             "primary-loader/zeropage.asm"
-;            "bender/vic-20/basic-loader.asm"
             "splash/main.asm"
             "secondary-loader/start.asm"
             "splash/splash.asm"
@@ -127,8 +128,11 @@
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/3k." ! ".prg")
             '("bender/vic-20/vic.asm"
+              "primary-loader/models.asm"
+              "primary-loader/zeropage.asm"
               "expanded/3k.asm"
               "expanded/patch-3k.asm"
+              "secondary-loader/start.asm"
               "expanded/sprites-vic-preshifted.asm")
             (+ "obj/3k." ! ".prg.vice.txt")))))
 
@@ -138,22 +142,24 @@
 (defvar *tv* nil)
 (defvar *current-game* nil)
 
-(defun make-loaders (tv)
-  (make-splash-prg)
-  (with (splash-size  (- (get-label 'relocated_splash_end)
-                         (get-label 'relocated_splash)))
-    (format t "Compressing splash with exomizer...~%")
-    (sb-ext:run-program "/usr/local/bin/exomizer"
-                        `("sfx" "$1002"
-                          "-t" "20"
-                          "-n"
-                          "-Di_load_addr=$1002"
-                          "-o" ,(+ "obj/splash.crunched." tv ".prg")
-                          ,(+ "obj/splash." tv ".prg"))
-                        :pty cl:*standard-output*)
-    (alet (get-label 'memory_end)
-      (make-loader-prg)
-      (values splash-size !))))
+(defun make-loaders (tv imported-labels)
+  (with-temporary *imported-labels* imported-labels
+    (make-splash-prg)
+    (with (splash-size  (- (get-label 'relocated_splash_end)
+                           (get-label 'relocated_splash)))
+      (format t "Compressing splash with exomizer...~%")
+      (sb-ext:run-program "/usr/local/bin/exomizer"
+                          `("sfx" "$1002"
+                            "-t" "20"
+                            "-n"
+                            "-Di_load_addr=$1002"
+                            "-o" ,(+ "obj/splash.crunched." tv ".prg")
+                            ,(+ "obj/splash." tv ".prg"))
+                          :pty cl:*standard-output*)
+      (alet (get-label 'memory_end)
+        (make-3k imported-labels)
+        (make-loader-prg)
+        (values splash-size !)))))
 
 (defun make-all-games (tv-standard)
   (with-temporary *tv* tv-standard
@@ -173,17 +179,18 @@
                           :pty cl:*standard-output*)
       (let game-labels (get-labels)
         (when (== *splash-start* #x1234)
-          (with ((splash-size memory-end) (make-loaders tv))
+          ; Find out how much space the loader will occupy right below the screen.
+          (with ((splash-size memory-end) (make-loaders tv game-labels))
             (= *tape-loader-start* (- memory-end (- (get-label 'loader_end) (get-label 'tape_loader))))
             (= *splash-start* (- *tape-loader-start* splash-size))))
-        (make-loaders tv)
-        (make-3k game-labels))
+        (make-loaders tv game-labels))
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
             (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
                            (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
                               (fetch-file "obj/model-detection.bin"))
                            :start #x1001)
+               (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))))
         (adotimes 256 (princ (code-char #x20) o))
@@ -194,9 +201,13 @@
                                 (+ "compiled/pulse." tv ".tap"))
                           :pty cl:*standard-output*))))
 
-(make-all-games :pal)
+(defvar *tape-release?* nil)
+
+(with-temporary *tape-release?* t
+  (make-all-games :pal))
 (unless *only-pal-vic?*
-  (make-all-games :ntsc)
+  (with-temporary *tape-release?* t
+    (make-all-games :ntsc))
   (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
   (with-temporary *virtual?* t
     (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))

@@ -89,6 +89,7 @@ m:  sta $1000,x
     dey
     bne -p
 
+    ; Return missing game part (chars 128-195) from color RAM.
     ldx #0
 l:  lda $9500,x
     asl

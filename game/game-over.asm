@@ -1,4 +1,9 @@
 game_over:
+if @*tape-release?*
+    jmp (model_patch)
+post_patch:
+end
+
     ; Zero out various areas.
     ldx #@(-- hiscore)
 l:  lda #0

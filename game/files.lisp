@@ -2,6 +2,7 @@
   `("../bender/vic-20/vic.asm"
     "game.defs.asm"
     "zeropage.asm"
+    "../primary-loader/models.asm"
 
     ,@(?
         (eq version :virtual)  '("no-loader.asm")

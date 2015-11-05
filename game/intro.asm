@@ -9,7 +9,7 @@ l:  sta hiscore,x
     bpl -l
 
 intro:
-    ldx #0
+    ldx #253
     ldy #green
 l:  lda #32
     sta @(-- screen),x
