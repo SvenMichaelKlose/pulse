@@ -3,7 +3,7 @@ draw_sprites:
     ldx #@(-- num_sprites)
 l:  lda sprites_i,x
     bpl +n
-draw_sprite_caller:
+draw_sprite_caller_1:
     jsr draw_sprite
 n:  dex
     bpl -l
@@ -15,6 +15,7 @@ l:  lda sprites_i,x
 
     lda #0
     sta foreground_collision
+draw_sprite_caller_2:
     jsr draw_sprite
     lda sprites_i,x
     and #@(bit-xor 255 fg_collision)

@@ -4,9 +4,11 @@ loaded_patch3k:
 patch3k:
     jsr preshift_sprites
     lda #<draw_preshifted_sprite
-    sta @(+ draw_sprite_caller 1)
+    sta @(+ draw_sprite_caller_1 1)
+    sta @(+ draw_sprite_caller_2 1)
     lda #>draw_preshifted_sprite
-    sta @(+ draw_sprite_caller 2)
+    sta @(+ draw_sprite_caller_1 2)
+    sta @(+ draw_sprite_caller_2 2)
 
     ; Remove the patch caller.
     lda #$4c    ; JMP
