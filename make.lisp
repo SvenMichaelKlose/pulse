@@ -131,8 +131,9 @@
               "primary-loader/models.asm"
               "primary-loader/zeropage.asm"
               "expanded/3k.asm"
-              "expanded/patch-3k.asm"
+              "expanded/load-3k.asm"
               "secondary-loader/start.asm"
+              "expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm")
             (+ "obj/3k." ! ".prg.vice.txt")))))
 

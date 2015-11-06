@@ -1,1 +1,1 @@
-preshifted_sprites = $600
+preshifted_sprites = @(- #x1000 #x480)

@@ -25,9 +25,9 @@ score_char0         = foreground
 
 sl:
 s:                    0 0 ; Source pointer.
-sr:
-d:                    0 0 ; Destination pointer.
 dl:
+d:                    0 0 ; Destination pointer.
+sr:
 scr:                  0 0 ; Screen pointer.
 dr:
 col:                  0 0 ; Colour RAM pointer.

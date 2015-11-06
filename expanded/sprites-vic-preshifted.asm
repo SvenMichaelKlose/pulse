@@ -1,8 +1,8 @@
 preshift_sprites:
     lda #<preshifted_sprites
-    sta s
+    sta sl
     lda #>preshifted_sprites
-    sta @(++ s)
+    sta @(++ sl)
     ldx #<sprite_gfx
 l:  txa
     pha
@@ -13,7 +13,7 @@ l:  txa
     adc #16
     sta sl
     bcc +n
-    inc @(++ s)
+    inc @(++ sl)
 n:
     pla
     clc
@@ -72,10 +72,8 @@ m:
     clc
     adc #8
     sta sr
-    clc
     adc #8
     sta dl
-    clc
     adc #8
     sta dr
 
@@ -98,7 +96,7 @@ l:  lda (sl),y
     adc #16
     sta sl
     bcc +n
-    inc @(++ s)
+    inc @(++ sl)
 n:
 
     dec tmp
@@ -107,9 +105,9 @@ n:
 done:
     rts
 
-addrs_lo:       @(maptimes [low (* _ 128)] 16)
-addrs_hi:       @(maptimes [+ (high preshifted_sprites) (high (* _ 128))] 16)
-shift_offsets:  @(maptimes [low (* _ 16)] 8)
+addrs_lo:       @(maptimes [low (+ (* _ 128) preshifted_sprites)] 16)
+addrs_hi:       @(maptimes [high (+ (* _ 128) preshifted_sprites)] 16)
+shift_offsets:  @(maptimes [* _ 16] 8)
 
 draw_preshifted_sprite:
     txa
