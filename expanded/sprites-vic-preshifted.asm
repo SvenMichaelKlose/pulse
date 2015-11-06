@@ -179,8 +179,7 @@ l:  lda (s),y
     adc sprite_shift_y
     sta d
     lda sprite_data_top
-    clc     ; Step to right char in pair.
-    adc #8
+    adc #8      ; Step to right char in pair.
     sta s
     ldy sprite_height_top
 l:  lda (s),y
