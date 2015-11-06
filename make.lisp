@@ -4,7 +4,7 @@
 (defvar *coinop?* nil)
 (defvar *video?* nil)
 (defvar *make-wav?* nil)
-(defvar *only-pal-vic?* t)
+(defvar *only-pal-vic?* nil)
 
 (defvar *bandwidth* 16)
 (defvar *pulse-short* #x20)
