@@ -1,6 +1,11 @@
 game_over:
 if @*tape-release?*
+patch_caller:
+    ; Test if patch is set for unexpanded machines.
+    lda @(++ model_patch)
+    beq +n
     jmp (model_patch)
+n:
 post_patch:
 end
 
