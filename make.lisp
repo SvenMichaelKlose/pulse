@@ -48,9 +48,10 @@
 
 (defun make-audio (name file gain bass)
   (make-wav name file gain bass :pal)
-  (make-wav name file gain bass :ntsc)
   (make-conversion name :pal)
-  (make-conversion name :ntsc))
+  (unless *only-pal-vic?*
+    (make-wav name file gain bass :ntsc)
+    (make-conversion name :ntsc)))
 
 (make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
 (make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
