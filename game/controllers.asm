@@ -215,7 +215,7 @@ l:  lda #4
     lda framecounter_high
     cmp #3
     bcc +l
-    ldy #@(+ yellow 8)
+    ldy #scout_energized_color
     jsr energize_color
     lda sprites_x,x
     lsr

@@ -16,7 +16,7 @@ laser_down_init:
 bullet_init:
     0 0    0          @(+ yellow multicolor) <bullet <bullet_fun >bullet_fun 0
 scout_init:
-    176 0  t_scout    @(+ yellow multicolor) <scout <scout_fun >scout_fun 0
+    176 0  t_scout    scout_initial_color <scout <scout_fun >scout_fun 0
 sniper_init:
     176 0  t_sniper   white <sniper <sniper_fun >sniper_fun 0
 bonus_init:
