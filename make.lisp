@@ -20,7 +20,6 @@
 (load "secondary-loader/bin2pottap.lisp")
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
-(load "game/story.lisp")
 
 (defun check-zeropage-size ()
   (when (< #x100 *pc*)
