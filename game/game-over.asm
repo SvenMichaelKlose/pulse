@@ -75,14 +75,6 @@ l:  jsr remove_sprite
     dex
     bpl -l
 
-if nil ;@*coinop?*
-    lda #<extra_coin
-    sta $a000
-    lda #>extra_coin
-    sta $a001
-    sta $a002   ; Enable coin interrupt.
-end
-
 ; Re-entry point after lost life.
 restart:
     ldx #$ff

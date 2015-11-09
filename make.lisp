@@ -1,7 +1,6 @@
 (= *model* :vic-20)
 
 (defvar *virtual?* nil)
-(defvar *coinop?* nil)
 (defvar *video?* nil)
 (defvar *make-wav?* nil)
 (defvar *only-pal-vic?* nil)
@@ -213,10 +212,7 @@
   (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
   (when *make-shadowvic-versions?*
     (with-temporary *virtual?* t
-      (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))
-    (with-temporary *virtual?* t
-      (with-temporary *coinop?* t
-        (make-game :virtual "compiled/coinop.bin" "obj/coinop.vice.txt")))))
+      (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))))
 
 (print-pwm-info)
 

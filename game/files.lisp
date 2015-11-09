@@ -46,8 +46,6 @@
     "sprites-vic.asm"
     "controllers.asm"
     "grenade.asm"
-    ,@(? nil ;*coinop?*
-         '("coin.asm"))
     "game-over.asm"
     "main-start.asm"
       "sniper.asm"
