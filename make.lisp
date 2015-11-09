@@ -5,6 +5,7 @@
 (defvar *video?* nil)
 (defvar *make-wav?* nil)
 (defvar *only-pal-vic?* nil)
+(defvar *make-shadowvic-versions?* nil)
 
 (defvar *bandwidth* 16)
 (defvar *pulse-short* #x20)
@@ -210,11 +211,12 @@
   (with-temporary *tape-release?* t
     (make-all-games :ntsc))
   (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
-  (with-temporary *virtual?* t
-    (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))
-  (with-temporary *virtual?* t
-    (with-temporary *coinop?* t
-      (make-game :virtual "compiled/coinop.bin" "obj/coinop.vice.txt"))))
+  (when *make-shadowvic-versions?*
+    (with-temporary *virtual?* t
+      (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))
+    (with-temporary *virtual?* t
+      (with-temporary *coinop?* t
+        (make-game :virtual "compiled/coinop.bin" "obj/coinop.vice.txt")))))
 
 (print-pwm-info)
 
