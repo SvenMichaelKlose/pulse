@@ -53,11 +53,7 @@
       (with (total (apply #'+ (array-list !))
              probs (make-array 256))
         (dotimes (i 256)
-          (= (aref probs i) (list i (let v (integer (/ (* top (aref ! i)) total))
-                                      (? (& (zero? v)
-                                            (not (zero? (aref ! i))))
-                                         1
-                                         v)))))
+          (= (aref probs i) (list i (aref ! i))))
         (alet (remove-if [zero? ._.] probs)
           (format t "Total is ~A with ~A symbols.~%"
                   (apply #'+ (@ #'cadr (array-list !)))
@@ -82,6 +78,7 @@
          hi  (-- top)
          lo #x00
          denoms (make-denoms probs)
+         total  (apply #'+ (@ #'cadr (array-list probs)))
          pending-bits 0
          out0 #'(()
                   (princ 0 o)
@@ -105,9 +102,11 @@
 ;      (print !)
       (with (range (++ (- hi lo))
              i     (aref indexes !))
-;        (format t "in: ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A~%" i range hi lo (cadr (aref probs (++ i))) (aref denoms i))
-        (= hi (integer (+ lo (>> (* range (aref denoms (++ i))) 8))))
-        (= lo (integer (+ lo (>> (* range (aref denoms i)) 8))))
+        (| (<= range top)
+           (error "Range overflow ~A." range))
+;        (format t "in: ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A~%" i range hi lo (cadr (aref probs i)) (aref denoms i))
+        (= hi (integer (+ lo (/ (* range (aref denoms (++ i))) total))))
+        (= lo (integer (+ lo (/ (* range (aref denoms i)) total))))
 ;        (format t "*Hi: ~A, lo: ~A~%" hi lo)
         (loop
 ;          (format t "Hi: ~A, lo: ~A~%" hi lo)
@@ -167,11 +166,11 @@
             (return)))))))
 
 
-;(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
+(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
 ;(test-delta-compression "4bit.bin")
 
 ;(sb-ext:run-program "/bin/cp" (list "delta.bin" "sdelta.bin"))
 ;(test-delta-compression "sdelta.bin")
 
-(compress 16 "pop.prg" "compressed.bin")
+(compress 16 "4bit.bin" "compressed.bin")
 (quit)
