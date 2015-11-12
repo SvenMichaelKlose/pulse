@@ -8,12 +8,6 @@
   (!-- bits-left)
   (= b (bit-or b (bit-and x 1))))
 
-(defun byte (x)
-  (bit-and #xff
-    (?
-      (< x 0)  (+ 256 x)
-      x)))
-
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
   (with-input-file i from
@@ -59,25 +53,26 @@
   (unless (equal (fetch-file "4bit.bin") (fetch-file "undelta.bin"))
     (error "Failed.")))
 
-(defun get-probabilities (x)
-  (alet (make-array 256)
-    (dotimes (i 256)
-      (= (aref ! i) 0))
-    (dotimes (i (length x))
-      (++! (aref ! (char-code (aref x i)))))
-    (with (total (apply #'+ (array-list !))
-           probs (make-array 256))
+(defun get-probabilities (x num-bits)
+  (let top (<< 1 num-bits)
+    (alet (make-array 256)
       (dotimes (i 256)
-        (= (aref probs i) (list i (let v (integer (/ (* 256 (aref ! i)) total))
-                                    (? (& (zero? v)
-                                          (not (zero? (aref ! i))))
-                                       1
-                                       v)))))
-      (alet (remove-if [zero? ._.] probs)
-        (format t "Total is ~A with ~A symbols.~%"
-                (apply #'+ (@ #'cadr (array-list !)))
-                (length !))
-        (print (sort ! :test #'((a b) (>= .a. .b.))))))))
+        (= (aref ! i) 0))
+      (dotimes (i (length x))
+        (++! (aref ! (char-code (aref x i)))))
+      (with (total (apply #'+ (array-list !))
+             probs (make-array 256))
+        (dotimes (i 256)
+          (= (aref probs i) (list i (let v (integer (/ (* top (aref ! i)) total))
+                                      (? (& (zero? v)
+                                            (not (zero? (aref ! i))))
+                                         1
+                                         v)))))
+        (alet (remove-if [zero? ._.] probs)
+          (format t "Total is ~A with ~A symbols.~%"
+                  (apply #'+ (@ #'cadr (array-list !)))
+                  (length !))
+          (sort ! :test #'((a b) (>= .a. .b.))))))))
 
 (defun make-denoms (probs)
   (aprog1 (make-array (++ (length probs)))
@@ -86,8 +81,15 @@
     (dotimes (i (length probs))
       (= (aref ! (++ i)) (+ (aref ! (++ i)) (aref ! i))))))
  
-(defun arith-encode (probs i o)
-  (with (hi #xff
+(defun arith-encode (probs num-bits i o)
+  (with (top (<< 1 num-bits)
+         ma  (-- top)
+         ha  (half top)
+         hap (++ ha)
+         ham (-- ha)
+         uq  (* 3 (/ top 4))
+         lq  (/ top 4)
+         hi  (-- top)
          lo #x00
          denoms (make-denoms probs)
          pending-bits 0
@@ -102,21 +104,20 @@
                    (= out-byte (bit-or out-byte bits)))]
          out0 #'(()
                   (outbit nil)
-                  (= hi (bit-or (<< hi 1) 1))
-                  (= lo (<< lo 1)))
+                  (= hi (bit-and (bit-or (<< hi 1) 1) ma))
+                  (= lo (bit-and (<< lo 1) ma)))
          out1 #'(()
                   (outbit t)
-                  (= hi (bit-or (<< hi 1) 1))
-                  (= lo (<< lo 1)))
+                  (= hi (bit-and (bit-or (<< hi 1) 1) ma))
+                  (= lo (bit-and (<< lo 1) ma)))
          outx #'(()
                   (++! pending-bits)
-                  (= hi (<< hi 1))
-                  (= hi (bit-or hi #x81))
-                  (= lo (<< lo 1))
-                  (= lo (bit-and lo #x7f)))
+                  (= hi (bit-and (bit-or (<< hi 1) hap) ma))
+                  (= lo (bit-and (<< lo 1) ham)))
          indexes (aprog1 (make-array 256)
                    (dotimes (i (length probs))
                      (= (aref ! i) (position-if [== i _.] probs)))))
+    (format t "~FTop: ~A~%" top)
     (print denoms)
     (awhile (read-byte i)
             nil
@@ -130,20 +131,19 @@
         (loop
 ;          (format t "Hi: ~A, lo: ~A~%" hi lo)
           (?
-            (< hi #x80)      (out0)
-            (>= lo  #x80)     (out1)
-            (& (< hi  #xc0)
-               (>= lo  #x40)) (outx)
-            (return))
-          (= hi (bit-and #xff hi))
-          (= lo (bit-and #xff lo)))))))
+            (< hi ha)       (out0)
+            (>= lo  ha)     (out1)
+            (& (< hi  uq)
+               (>= lo  lq)) (outx)
+            (return)))))))
 
-(defun compress (in out)
+(defun compress (num-bits in out)
   (format t "Arithmetic encoding of '~A' to '~A'…~%" in out)
-  (alet (get-probabilities (string-array (fetch-file in)))
+  (alet (get-probabilities (string-array (fetch-file in)) num-bits)
+    (print !)
     (with-input-file i in
       (with-output-file o out
-        (arith-encode ! i o)))))
+        (arith-encode ! num-bits i o)))))
 
 (defun arith-decode (probs i o)
   (with (hi #xff
@@ -173,7 +173,7 @@
             (& (>= lo #x80)
                (< hi #x80))
               (progn
-                (= lo (<< lo 1))
+                (= lo (bit-and (<< lo 1) #xff))
                 (= hi (bit-or (<< hi 1) 1))
                 (= in-byte (+ in-byte (get-bit))))
             (& (>= lo #x40)
@@ -186,11 +186,11 @@
             (return)))))))
 
 
-(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
+;(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
 ;(test-delta-compression "4bit.bin")
 
 ;(sb-ext:run-program "/bin/cp" (list "delta.bin" "sdelta.bin"))
 ;(test-delta-compression "sdelta.bin")
 
-(compress "4bit.bin" "compressed.bin")
+(compress 16 "pulse.prg" "compressed.bin")
 (quit)
