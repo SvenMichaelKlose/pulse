@@ -15,13 +15,12 @@
       x)))
 
 (defun wav-to-4bit (from to)
+  (format t "Converting '~A' to 4-bit '~A'…~%" from to)
   (with-input-file i from
     (with-output-file o to
       (awhile (read-byte i)
               nil
         (princ (code-char (>> (bit-and (+ 128 !) 255) 4)) o)))))
-(format t "Converting to 4bit…~%")
-(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
 
 (let f 0
   (defun init-delta-compress ()
@@ -80,14 +79,17 @@
                 (length !))
         (print (sort ! :test #'((a b) (>= .a. .b.))))))))
 
+(defun make-denoms (probs)
+  (aprog1 (make-array (++ (length probs)))
+    (dotimes (i (length probs))
+      (= (aref ! (++ i)) (cadr (aref probs i))))
+    (dotimes (i (length probs))
+      (= (aref ! (++ i)) (+ (aref ! (++ i)) (aref ! i))))))
+ 
 (defun arith-encode (probs i o)
   (with (hi #xff
          lo #x00
-         denoms (aprog1 (make-array (++ (length probs)))
-                  (dotimes (i (length probs))
-                    (= (aref ! (++ i)) (cadr (aref probs i))))
-                  (dotimes (i (length probs))
-                    (= (aref ! (++ i)) (+ (aref ! (++ i)) (aref ! i)))))
+         denoms (make-denoms probs)
          pending-bits 0
          bits   1
          out-byte 0
@@ -143,6 +145,48 @@
       (with-output-file o out
         (arith-encode ! i o)))))
 
+(defun arith-decode (probs i o)
+  (with (hi #xff
+         lo #x00
+         denoms (make-denoms probs)
+         pending-bits 0
+         bits   1
+         in-byte 0
+         value   0
+         get-bit #'(()
+                      (prog1 (bit-and in-byte 1)
+                        (= bits (<< bits 1))
+                        (when (== bits 256)
+                          (= bits 1)
+                          (= in-byte (read-byte i))))))
+    (adotimes 8
+      (= value (+ (<< value 1) (get-bit))))
+    (loop
+      (with (range  (- hi lo -1)
+             cnt    (- value lo)
+             s      (-- (position-if [< cnt _] denoms)))
+        (princ (code-char (car (elt probs s))) o)
+        (= hi (integer (+ lo (>> (* range (aref denoms (++ s))) 8) -1)))
+        (= lo (integer (+ lo (>> (* range (aref denoms s)) 8))))
+        (loop
+          (?
+            (& (>= lo #x80)
+               (< hi #x80))
+              (progn
+                (= lo (<< lo 1))
+                (= hi (bit-or (<< hi 1) 1))
+                (= in-byte (+ in-byte (get-bit))))
+            (& (>= lo #x40)
+               (< hi #xc0))
+              (progn
+                (= lo (bit-and (<< lo 1) #x7f))
+                (= hi (<< hi 1))
+                (= hi (bit-or hi #x81))
+                (= in-byte (+ in-byte (get-bit))))
+            (return)))))))
+
+
+(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
 ;(test-delta-compression "4bit.bin")
 
 ;(sb-ext:run-program "/bin/cp" (list "delta.bin" "sdelta.bin"))
