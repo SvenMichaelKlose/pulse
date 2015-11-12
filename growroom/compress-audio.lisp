@@ -1,13 +1,3 @@
-(defvar b 0)
-(defvar bits-left 0)
-
-(defun store-bit (o x)
-  (when (zero? bits-left)
-    (= bits-left 8)
-    (= b 0))
-  (!-- bits-left)
-  (= b (bit-or b (bit-and x 1))))
-
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
   (with-input-file i from
@@ -93,21 +83,12 @@
          lo #x00
          denoms (make-denoms probs)
          pending-bits 0
-         bits   1
-         out-byte 0
-         outbit [(= bits (<< bits 1))
-                 (when (== bits 256)
-                   (princ (code-char out-byte) o)
-                   (= out-byte 0)
-                   (= bits 1))
-                 (when _
-                   (= out-byte (bit-or out-byte bits)))]
          out0 #'(()
-                  (outbit nil)
+                  (princ 0 o)
                   (= hi (bit-and (bit-or (<< hi 1) 1) ma))
                   (= lo (bit-and (<< lo 1) ma)))
          out1 #'(()
-                  (outbit t)
+                  (princ 1 o)
                   (= hi (bit-and (bit-or (<< hi 1) 1) ma))
                   (= lo (bit-and (<< lo 1) ma)))
          outx #'(()
@@ -143,7 +124,7 @@
     (print !)
     (with-input-file i in
       (with-output-file o out
-        (arith-encode ! num-bits i o)))))
+        (arith-encode ! num-bits i (make-bit-stream :out o))))))
 
 (defun arith-decode (probs i o)
   (with (hi #xff
@@ -192,5 +173,5 @@
 ;(sb-ext:run-program "/bin/cp" (list "delta.bin" "sdelta.bin"))
 ;(test-delta-compression "sdelta.bin")
 
-(compress 16 "pulse.prg" "compressed.bin")
+(compress 16 "pop.prg" "compressed.bin")
 (quit)
