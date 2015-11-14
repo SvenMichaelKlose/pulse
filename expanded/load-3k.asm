@@ -20,6 +20,7 @@ l:  lda loaded_patch3k,x
     lda #>post_patch
     sta @(++ model_patch)
 
+    ; Check if there's only +3K RAM.
     lda model
     beq +i
     lsr
