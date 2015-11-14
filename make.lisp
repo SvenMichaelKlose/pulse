@@ -17,6 +17,7 @@
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 (defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
 
+(load "bender/vic-20/cpu-cycles.lisp")
 (load "secondary-loader/bin2pottap.lisp")
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
@@ -231,12 +232,12 @@
   (format t "Making PAL WAV file...~%")
   (with-input-file i "compiled/pulse.pal.tap"
     (with-output-file o "compiled/pulse.pal.wav"
-      (tap2wav i o)))
+      (tap2wav i o 48000 (cpu-cycles :pal))))
 
   (format t "Making NTSC WAV file...~%")
   (with-input-file i "compiled/pulse.ntsc.tap"
     (with-output-file o "compiled/pulse.ntsc.wav"
-      (tap2wav i o))))
+      (tap2wav i o 48000 (cpu-cycles :ntsc)))))
 
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
 
