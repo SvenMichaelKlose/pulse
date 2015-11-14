@@ -194,7 +194,7 @@
                (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))))
-        (adotimes 256 (princ (code-char #x20) o))
+;        (adotimes 256 (princ (code-char #x20) o))
         (wav2pwm o (+ "obj/theme1_downsampled_" tv ".wav") :pause-before 0)
         (wav2pwm o (+ "obj/theme2_downsampled_" tv ".wav")))
       (sb-ext:run-program "/usr/bin/zip"
