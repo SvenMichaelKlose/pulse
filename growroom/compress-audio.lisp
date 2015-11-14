@@ -1,16 +1,18 @@
+;(cl:proclaim '(optimize (speed 0) (space 0) (safety 3) (debug 3)))
+
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
   (with-input-file i from
     (with-output-file o to
       (awhile (read-byte i)
               nil
-        (princ (code-char (>> (bit-and (+ 128 !) 255) 4)) o)))))
+        (write-byte (>> (bit-and (+ 128 !) 255) 4) o)))))
 
 (let f 0
   (defun init-delta-compress ()
     (= f 0))
   (defun delta-compress (o x)
-    (princ (code-char (byte (- x f))) o)
+    (write-byte (byte (- x f)) o)
     (= f x)))
 
 (defun delta-compress-file (from to)
@@ -22,10 +24,29 @@
         (delta-compress o !)))))
 
 (let f 0
+  (defun init-ldelta-compress ()
+    (= f 0))
+  (defun ldelta-compress (o x)
+    (write (?
+             (< x f) (progn (++! f) 1)
+             (> x f) (progn (--! f) 255)
+             0)
+           o)
+    (= f x)))
+
+(defun ldelta-compress-file (from to)
+  (init-ldelta-compress)
+  (with-input-file i from
+    (with-output-file o to
+      (awhile (read-byte i)
+              nil
+        (ldelta-compress o !)))))
+
+(let f 0
   (defun init-delta-uncompress ()
     (= f 0))
   (defun delta-uncompress (o x)
-    (princ (code-char (= f (byte (+ x f)))) o)))
+    (write-byte (= f (byte (+ x f))) o)))
 
 (defun delta-uncompress-file (from to)
   (init-delta-uncompress)
@@ -75,8 +96,8 @@
          ham (-- ha)
          uq  (* 3 (/ top 4))
          lq  (/ top 4)
-         hi  (-- top)
-         lo #x00
+         hi  ma
+         lo  0
          denoms (make-denoms probs)
          total  (apply #'+ (@ #'cadr (array-list probs)))
          pending-bits 0
@@ -96,17 +117,17 @@
                    (dotimes (i (length probs))
                      (= (aref ! i) (position-if [== i _.] probs)))))
     (format t "~FTop: ~A~%" top)
-    (print denoms)
+    (late-print denoms)
     (awhile (read-byte i)
             nil
 ;      (print !)
       (with (range (++ (- hi lo))
-             i     (aref indexes !))
+             s     (aref indexes !))
+        (format t "in: ~A, ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A, diff: ~A~%" ! s range hi lo (cadr (aref probs s)) (aref denoms s) (integer (/ (* range (aref denoms s)) total)))
         (| (<= range top)
            (error "Range overflow ~A." range))
-;        (format t "in: ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A~%" i range hi lo (cadr (aref probs i)) (aref denoms i))
-        (= hi (integer (+ lo (/ (* range (aref denoms (++ i))) total))))
-        (= lo (integer (+ lo (/ (* range (aref denoms i)) total))))
+        (= hi (integer (+ lo (/ (* range (aref denoms (++ s))) total))))
+        (= lo (integer (+ lo (/ (* range (aref denoms s)) total))))
 ;        (format t "*Hi: ~A, lo: ~A~%" hi lo)
         (loop
 ;          (format t "Hi: ~A, lo: ~A~%" hi lo)
@@ -115,62 +136,73 @@
             (>= lo  ha)     (out1)
             (& (< hi  uq)
                (>= lo  lq)) (outx)
-            (return)))))))
+            (return)))))
+    (adotimes num-bits (out0))))
 
-(defun compress (num-bits in out)
+(defun compress (probs num-bits in out)
   (format t "Arithmetic encoding of '~A' to '~A'…~%" in out)
-  (alet (get-probabilities (string-array (fetch-file in)) num-bits)
-    (print !)
-    (with-input-file i in
-      (with-output-file o out
-        (arith-encode ! num-bits i (make-bit-stream :out o))))))
+  (with-input-file i in
+    (with-output-file o out
+      (arith-encode probs num-bits i (make-bit-stream :out o)))))
 
-(defun arith-decode (probs i o)
-  (with (hi #xff
-         lo #x00
+(defun arith-decode (probs num-bits num-bytes i o)
+  (with (top    (<< 1 num-bits)
+         ma     (-- top)
+         ha     (half top)
+         hap    (++ ha)
+         ham    (-- ha)
+         uq     (* 3 (/ top 4))
+         lq     (/ top 4)
+         hi     ma
+         lo     0
          denoms (make-denoms probs)
-         pending-bits 0
-         bits   1
-         in-byte 0
-         value   0
-         get-bit #'(()
-                      (prog1 (bit-and in-byte 1)
-                        (= bits (<< bits 1))
-                        (when (== bits 256)
-                          (= bits 1)
-                          (= in-byte (read-byte i))))))
+         total  (apply #'+ (@ #'cadr (array-list probs)))
+         value   0)
     (adotimes 8
-      (= value (+ (<< value 1) (get-bit))))
-    (loop
+      (= value (+ (<< value 1) (read-byte i))))
+    (while (not (zero? (--! num-bytes)))
+           nil
       (with (range  (- hi lo -1)
-             cnt    (- value lo)
-             s      (-- (position-if [< cnt _] denoms)))
-        (princ (code-char (car (elt probs s))) o)
-        (= hi (integer (+ lo (>> (* range (aref denoms (++ s))) 8) -1)))
-        (= lo (integer (+ lo (>> (* range (aref denoms s)) 8))))
+             diff   (- value lo -1)
+             cnt    (/ (* total diff) range)
+             s      (position-if [< cnt _] denoms)
+             c      (car (elt probs s)))
+        (write-byte c o)
+        (format t "~Lin: ~A, ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A, diff: ~A, cnt: ~A~%" c s range hi lo (cadr (aref probs s)) (aref denoms s) diff (integer cnt))
+        (= hi (integer (+ lo (/ (* range (aref denoms (++ s))) total) -1)))
+        (= lo (integer (+ lo (/ (* range (aref denoms s)) total))))
         (loop
           (?
-            (& (>= lo #x80)
-               (< hi #x80))
+            (| (>= lo ha)
+               (< hi ha))
               (progn
-                (= lo (bit-and (<< lo 1) #xff))
-                (= hi (bit-or (<< hi 1) 1))
-                (= in-byte (+ in-byte (get-bit))))
-            (& (>= lo #x40)
-               (< hi #xc0))
+                (= lo (bit-and (<< lo 1) ma))
+                (= hi (bit-and (bit-or (<< hi 1) 1) ma))
+                (= value (+ value (read-byte i))))
+            (& (>= lo lq)
+               (< hi uq))
               (progn
-                (= lo (bit-and (<< lo 1) #x7f))
-                (= hi (<< hi 1))
-                (= hi (bit-or hi #x81))
-                (= in-byte (+ in-byte (get-bit))))
+                (= lo (bit-and (<< lo 1) ham))
+                (= hi (bit-and (<< hi 1) ma))
+                (= hi (bit-or hi hap))
+                (= value (+ value (read-byte i))))
             (return)))))))
 
+(defun uncompress (probs num-bits num-bytes in out)
+  (format t "Arithmetic decoding of '~A' to '~A'…~%" in out)
+  (with-input-file i in
+    (with-output-file o out
+      (arith-decode probs num-bits num-bytes (make-bit-stream :in i) o))))
 
-(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
-;(test-delta-compression "4bit.bin")
 
-;(sb-ext:run-program "/bin/cp" (list "delta.bin" "sdelta.bin"))
-;(test-delta-compression "sdelta.bin")
+;(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
 
-(compress 16 "4bit.bin" "compressed.bin")
+(defun test-arith (in)
+  (let num-bits 16
+    (alet (get-probabilities (string-array (fetch-file in)) num-bits)
+      (compress ! num-bits in "pulse.compressed.bin")
+      (uncompress ! num-bits (length (fetch-file in)) "pulse.compressed.bin" "pulse.uncompressed.bin"))))
+ 
+(with-output-file o "numbers.bin" (princ (list-string '(5 6 7 8 9 0 1 2 3 4)) o))
+(test-arith "numbers.bin")
 (quit)
