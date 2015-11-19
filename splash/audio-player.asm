@@ -68,7 +68,10 @@ j:  asl
     bne -f      ; (4)
 
 start_game:
-    sta $900e
+    lda #150
+    sta $9002       ; 22 columns
+    lda #46         ; 23 rows
+    sta $9003
 
     ; Stop tape motor.
     lda $911c

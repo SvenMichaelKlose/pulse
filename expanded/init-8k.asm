@@ -8,10 +8,10 @@ l:  lda loader_cfg,x
     bpl -l
 
     ldx #0
-l:  lda loaded_patch3k,x
-    sta patch3k,x
-    lda @(+ #x100 loaded_patch3k),x
-    sta @(+ #x100 patch3k),x
+l:  lda loaded_patch8k,x
+    sta patch8k,x
+    lda @(+ #x100 loaded_patch8k),x
+    sta @(+ #x100 patch8k),x
     dex
     bne -l
 
@@ -20,17 +20,15 @@ l:  lda loaded_patch3k,x
     lda #>post_patch
     sta @(++ model_patch)
 
-    ; Check if there's only +3K RAM.
+    ; Check if there's minimum +8K RAM.
     lda model
-    beq +i
     lsr
     bne +i
-    bcc +i
 
     ; Set patch vector called by game.
-    lda #<patch3k
+    lda #<patch8k
     sta model_patch
-    lda #>patch3k
+    lda #>patch8k
     sta @(++ model_patch)
 
 i:  jmp tape_loader_start

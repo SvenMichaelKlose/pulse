@@ -7,8 +7,8 @@
 (defvar *make-shadowvic-versions?* nil)
 
 (defvar *bandwidth* 16)
-(defvar *pulse-short* #x20)
-(defvar *pulse-long* #x30)
+(defvar *pulse-short* #x28)
+(defvar *pulse-long* #x38)
 (defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
 
 (defvar audio_shortest_pulse #x18)
@@ -54,8 +54,8 @@
     (make-wav name file gain bass :ntsc)
     (make-conversion name :ntsc)))
 
-(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
-(make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
+;(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
+;(make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -63,9 +63,9 @@
                           out  out-file
     (tap2wav in out)))
 
-(defun make (to files cmds)
+(defun make (to files &optional (cmds nil))
   (apply #'assemble-files to files)
-  (make-vice-commands cmds "break .stop"))
+  (& cmds (make-vice-commands cmds "break .stop")))
 
 (defun make-game (version file cmds)
   (make file
@@ -94,18 +94,47 @@
             "secondary-loader/loader.asm")
           (+ "obj/loader." ! ".prg.vice.txt"))))
 
+(defun convert-splash-bit (x)
+  (?
+    (== x 0)  1
+    (== x 1)  0
+    x))
+
+(defun convert-splash-byte-mc (out x)
+  (let v 0
+    (dotimes (i 4 (write-byte v out))
+      (let s (* 2 i)
+        (= v (+ v (<< (convert-splash-bit (>> (bit-and x (<< 3 s)) s)) s)))))))
+
+(defun convert-splash-byte-sc (out x)
+  (let v 0
+    (dotimes (i 8 (write-byte v out))
+      (= v (+ v (<< (convert-splash-bit (>> (bit-and x (<< 1 i)) i)) i))))))
+
+(defun convert-splash-colors (out in screen colors)
+  (dotimes (i 160)
+    (let c (char-code (elt colors (position-if [== _ i] screen)))
+      (dotimes (j 8)
+        (? (zero? (bit-and c 8))
+           (convert-splash-byte-sc out (read-byte in))
+           (convert-splash-byte-mc out (read-byte in)))))))
+
 (defun make-splash-gfx ()
-  (make "obj/splash-gfx.bin"
-        '("splash/gfx.asm")
-        "obj/splash-gfx.bin.vice.txt"))
+  (make "obj/splash.chars.bin"
+        '("splash/gfx-chars.asm"))
+  (make "obj/splash.screen.bin"
+        '("splash/gfx-screen.asm"))
+  (make "obj/splash.colors.bin"
+        '("splash/gfx-colors.asm")))
+;  (with-input-file in "obj/splash.chars.bin"
+;    (with-output-file out "obj/splash.chars.negated.bin"
+;      (convert-splash-colors out in (fetch-file "obj/splash.screen.bin") (fetch-file "obj/splash.colors.bin")))))
 (make-splash-gfx)
 
-(defun break-up-splash-gfx ()
-  (put-file "obj/splash.chars.0-127.bin" (subseq (fetch-file "obj/splash-gfx.bin") 0 1024))
-  (put-file "obj/splash.chars.128-159.bin" (subseq (fetch-file "obj/splash-gfx.bin") 1024 (+ 1024 256)))
-  (put-file "obj/splash.screen.bin" (alet (+ 1024 256) (subseq (fetch-file "obj/splash-gfx.bin") ! (+ ! 506))))
-  (put-file "obj/splash.colors.bin" (alet (+ 1024 256 528) (subseq (fetch-file "obj/splash-gfx.bin") !))))
-(break-up-splash-gfx)
+(defun break-up-splash-chars ()
+  (put-file "obj/splash.chars.0-127.bin" (subseq (fetch-file "obj/splash.chars.bin") 0 1024))
+  (put-file "obj/splash.chars.128-159.bin" (subseq (fetch-file "obj/splash.chars.bin") 1024 (+ 1024 256))))
+(break-up-splash-chars)
 
 (defun glued-game-and-splash-gfx (game)
   (+ (subseq (fetch-file game) 0 1024)
@@ -124,6 +153,20 @@
             "splash/audio-player.asm")
           (+ "obj/splash." ! ".prg.vice.txt"))))
 
+(defun make-8k (imported-labels)
+  (with-temporary *imported-labels* imported-labels
+    (alet (downcase (symbol-name *tv*))
+      (make (+ "obj/8k." ! ".prg")
+            '("bender/vic-20/vic.asm"
+              "primary-loader/models.asm"
+              "primary-loader/zeropage.asm"
+              "expanded/8k.asm"
+              "expanded/init-8k.asm"
+              "secondary-loader/start.asm"
+              "expanded/patch-8k.asm"
+              "expanded/sprites-vic-preshifted.asm")
+            (+ "obj/8k." ! ".prg.vice.txt")))))
+
 (defun make-3k (imported-labels)
   (with-temporary *imported-labels* imported-labels
     (alet (downcase (symbol-name *tv*))
@@ -132,7 +175,7 @@
               "primary-loader/models.asm"
               "primary-loader/zeropage.asm"
               "expanded/3k.asm"
-              "expanded/load-3k.asm"
+              "expanded/init-3k.asm"
               "secondary-loader/start.asm"
               "expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm")
@@ -159,6 +202,7 @@
                             ,(+ "obj/splash." tv ".prg"))
                           :pty cl:*standard-output*)
       (alet (get-label 'memory_end)
+        (make-8k imported-labels)
         (make-3k imported-labels)
         (make-loader-prg)
         (values splash-size !)))))
@@ -193,6 +237,7 @@
                               (fetch-file "obj/model-detection.bin"))
                            :start #x1001)
                (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
+               (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))))
 ;        (adotimes 256 (princ (code-char #x20) o))

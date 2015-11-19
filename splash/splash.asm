@@ -8,7 +8,7 @@ splash:
 l:  lda saved_zeropage,x
     sta $0000,x
     lda saved_stack,x
-    sta $01f0,x
+    sta @(- #x200 tape_leader_countdown),x
     dex
     bpl -l
 
@@ -29,9 +29,7 @@ o:  $9d $00 $00 ;sta $0000,x
     dey
     bne -p
 
-    lda #150        ; Unblank screen.
-    sta $9002
-    lda #$fc        ; Character set at $1000.
-    sta $9005
-    lda #$09        ; Black screen
+    lda #$09        ; Black screen, white border.
     sta $900f
+    lda #148        ; Unblank screen. 20 columns.
+    sta $9002

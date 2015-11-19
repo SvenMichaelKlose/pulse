@@ -12,7 +12,7 @@ main = $351
     lda #0
     sta $9002
 
-    ; Copy loader someplace else.
+    ; Copy loader someplace else and configure it.
     ldx #0
 l:  lda loaded_tape_loader,x
     sta @*tape-loader-start*,x
