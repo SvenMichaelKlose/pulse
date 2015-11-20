@@ -36,6 +36,12 @@ l:  lda loader_cfg_8k,x
     jmp tape_loader_start
 
 load_splash:
+    lda model
+    lsr
+    beq +n
+    jsr $2000
+n:
+
     ldx #5
 l:  lda loader_cfg_splash,x
     sta tape_ptr,x

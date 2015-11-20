@@ -54,9 +54,6 @@
     (make-wav name file gain bass :ntsc)
     (make-conversion name :ntsc)))
 
-;(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
-;(make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
-
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
   (with-input-output-file in   in-file
@@ -80,7 +77,6 @@
         '("primary-loader/models.asm"
           "primary-loader/model-detection.asm")
         "obj/model-detection.vice.txt"))
-(make-model-detection)
 
 (defun make-loader-prg ()
   (alet (downcase (symbol-name *tv*))
@@ -129,12 +125,10 @@
 ;  (with-input-file in "obj/splash.chars.bin"
 ;    (with-output-file out "obj/splash.chars.negated.bin"
 ;      (convert-splash-colors out in (fetch-file "obj/splash.screen.bin") (fetch-file "obj/splash.colors.bin")))))
-(make-splash-gfx)
 
 (defun break-up-splash-chars ()
   (put-file "obj/splash.chars.0-127.bin" (subseq (fetch-file "obj/splash.chars.bin") 0 1024))
   (put-file "obj/splash.chars.128-159.bin" (subseq (fetch-file "obj/splash.chars.bin") 1024 (+ 1024 256))))
-(break-up-splash-chars)
 
 (defun glued-game-and-splash-gfx (game)
   (+ (subseq (fetch-file game) 0 1024)
@@ -162,7 +156,6 @@
               "primary-loader/zeropage.asm"
               "expanded/8k.asm"
               "expanded/init-8k.asm"
-              "secondary-loader/start.asm"
               "expanded/patch-8k.asm"
               "expanded/sprites-vic-preshifted.asm")
             (+ "obj/8k." ! ".prg.vice.txt")))))
@@ -249,6 +242,12 @@
                           :pty cl:*standard-output*))))
 
 (defvar *tape-release?* nil)
+
+;(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
+;(make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
+(make-model-detection)
+(make-splash-gfx)
+(break-up-splash-chars)
 
 (with-temporary *tape-release?* t
   (make-all-games :pal))

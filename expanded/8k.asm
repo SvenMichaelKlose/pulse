@@ -1,1 +1,1 @@
-preshifted_sprites = @(- #x1000 #x480)
+preshifted_sprites = @(- #x4000 #x480)
