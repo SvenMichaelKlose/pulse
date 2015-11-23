@@ -1,4 +1,5 @@
 ; Calculate line address in screen and colour memory.
+block
 scrcoladdr:
     ldy scry
     lda $edfd,y
@@ -13,3 +14,4 @@ scrcoladdr:
     sta @(++ col)
     ldy scrx
     rts
+end block

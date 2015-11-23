@@ -4,6 +4,7 @@
 ; This way decorative sprites last as long as possible.
 ;
 ; Y: descriptor of new sprite in sprite_inits
+block
 add_sprite:
     stx add_sprite_x
     sty add_sprite_y
@@ -26,7 +27,9 @@ sprite_added:
 replace_sprite2:
     ldy add_sprite_y
     jmp replace_sprite
+end block
 
+block
 ; Replace sprite by decorative background star.
 ;
 ; X: sprite index
@@ -63,7 +66,9 @@ selfmod:
     adc #num_sprites
     sta @(++ -selfmod)
     jmp -l
+end block
 
+block
 ; Move sprite X up A pixels.
 sprite_up:
     jsr neg
@@ -74,7 +79,9 @@ sprite_down:
     adc sprites_y,x
     sta sprites_y,x
     rts
+end block
 
+block
 ; Move sprite X left A pixels.
 sprite_left:
     jsr neg
@@ -85,9 +92,11 @@ sprite_right:
     adc sprites_x,x
     sta sprites_x,x
     rts
+end block
 
 ; Test if sprite X is outside the screen.
 ; Return carry flag set when true.
+block
 test_sprite_out:
     lda sprites_x,x
     clc
@@ -99,6 +108,7 @@ test_sprite_out:
     adc #8
     cmp #@(* 24 8)
 out:rts
+end block
 
 ; Find collision with other sprite.
 ;
@@ -107,6 +117,7 @@ out:rts
 ; Returns:
 ; C: Clear when a hit was found.
 ; Y: Sprite index of other sprite.
+block
 find_hit:
     stx tmp
     ldy #@(-- num_sprites)
@@ -145,3 +156,4 @@ n:  dey
     sec
 
 ok: rts
+end block

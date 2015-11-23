@@ -1,3 +1,4 @@
+block
 draw_sprites:
     ; Draw decorative sprites.
     ldx #@(-- num_sprites)
@@ -52,7 +53,9 @@ l:  ; Remove old chars.
     dex
     bpl -l
     rts
+end block
 
+block
 xpixel_to_char:
     lda sprites_x,x
 pixel_to_char:
@@ -64,8 +67,10 @@ pixel_to_char:
     rts
 l:  lda #$ff
     rts
+end block
 
 ; Draw a single sprite.
+block
 draw_sprite:
     stx draw_sprite_x
 
@@ -141,7 +146,9 @@ n:  lda sprite_shift_y
 
 n:  ldx draw_sprite_x
     rts
+end block
 
+block
 prepare_upper_blit:
     jsr get_char
     lda d
@@ -151,3 +158,4 @@ prepare_upper_blit:
     lda sprite_data_top
     ldy sprite_height_top
     rts
+end block

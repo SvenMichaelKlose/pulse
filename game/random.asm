@@ -1,4 +1,5 @@
 ; Turn cosmic radiation into a random number.
+block
 random:
     lda last_random_value
     asl
@@ -7,3 +8,4 @@ random:
     eor #1
     sta last_random_value
     rts
+end block

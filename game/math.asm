@@ -1,3 +1,4 @@
+block
 abs:
     bpl _abs_end
 neg:eor #$ff
@@ -5,3 +6,4 @@ neg:eor #$ff
     adc #1
 _abs_end:
     rts
+end block

@@ -1,3 +1,4 @@
+block
 bonus_colors:
     green
     red
@@ -5,8 +6,10 @@ bonus_colors:
     blue
     cyan
     yellow
+end block
 
 ; Make bonus of sprite Y.
+block
 make_bonus:
     lda sprites_x,y
     sta bonus_init
@@ -20,14 +23,15 @@ make_bonus:
     jsr add_sprite
     ldy hit_formation_y
     rts
+end block
 
 ; Make bonus item if a scout formation has been killed.
+block
 hit_formation:
     dec formation_left_unhit
-    bne sec_return
+    bne +n
     jsr make_bonus
-sec_return:
-    sec
+n:  sec
     rts
 
 hit_enemy:
@@ -53,7 +57,9 @@ test_foreground_collision_raw:
     asl
     asl
     rts
+end block
 
+block
 energize_color:
     lda framecounter
     lsr
@@ -65,8 +71,10 @@ toggle_color:
     tay
 l:  sty sprites_c,x
 r:  rts
+end block
 
 ; Bonus
+block
 bonus_fun:
     ldy sprites_d,x
     lda framecounter
@@ -74,7 +82,9 @@ bonus_fun:
     lsr
     jsr toggle_color
     jmp move_left
+end block
 
+block
 ; Star
 star_fun:
     lda no_stars
@@ -126,7 +136,9 @@ mod_sniper_bullet_probability:
     bne move_left
     jsr add_bullet
     jmp move_left
+end block
 
+block
 ; Bullet
 update_trajectory:
     jsr add_bullet_no_sound
@@ -200,8 +212,10 @@ n:  and #%1111      ; Put low nibble back into sprite info.
     jsr test_foreground_collision_raw
     bcs hit_foreground
     bcc remove_if_sprite_is_out
+end block
 
 ; Scout
+block
 scout_fun:
     lda framecounter_high
     cmp #8
@@ -229,7 +243,9 @@ l:  lda #4
     adc scout_formation_y
     sta sprites_y,x
 l:  jmp remove_if_sprite_is_out
+end block
 
+block
 ; Horizontal laser
 laser_fun:
     lda #11
@@ -274,15 +290,18 @@ explode:
     jmp add_sprite
 
 r:  rts
-
+end block
 ; --
 
 ; Lasers
+block
 laser_up_fun:
     lda #8
     jsr sprite_up
     jmp laser_side
+end block
 
+block
 laser_down_fun:
     lda #8
     jsr sprite_down
@@ -292,8 +311,10 @@ laser_side:
     jsr energize_color
     lda #8
     jmp laser_common
+end block
 
 ; Player
+block
 player_fun:
     lda #cyan
     sta sprites_c,x
@@ -499,3 +520,4 @@ n:  lda #0          ;Fetch rest of joystick status.
     jmp sprite_right
 
 n:  rts
+end block

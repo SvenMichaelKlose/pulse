@@ -1,3 +1,4 @@
+block
 foreground_gfx:
 background:
     %01010101
@@ -98,3 +99,4 @@ bg_br:
     %01010101
     %01010101
     %01010101
+end block

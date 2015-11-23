@@ -4,6 +4,7 @@ fg_collision = 32
 t_scout      = @(+ deadly 1)
 t_sniper     = @(+ deadly 2)
 
+block
 sprite_inits:
 player_init:
     $f0 16 0          cyan <ship <player_fun >player_fun 0
@@ -26,3 +27,4 @@ star_init:
 explosion_init:
     0 0    decorative yellow 0 <explosion_fun >explosion_fun 15
 sprite_inits_end:
+end block

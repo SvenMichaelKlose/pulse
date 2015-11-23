@@ -1,3 +1,4 @@
+block
 level_data:
     16 20    ; width/inverted height
     0
@@ -44,3 +45,4 @@ t_two_up:
     2 1
     2 0
     0
+end block

@@ -2,11 +2,14 @@ step_y = 16
 inc_x  = 8
 inc_y  = 4
 
+block
 add_bullet:
     inc sound_foreground
     jsr add_bullet_no_sound
     jmp add_sprite
+end block
 
+block
 add_bullet_no_sound:
     ; Get distance to player.
     lda @(+ sprites_x 15)
@@ -63,3 +66,4 @@ l:  ror
     sta @(+ bullet_init 1)
     ldy #@(- bullet_init sprite_inits)
     rts
+end block

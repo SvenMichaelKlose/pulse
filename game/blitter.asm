@@ -5,6 +5,7 @@
 ; s: source address
 ; d: destination address
 ; blit_right_addr + 1: 7 - bits_to_shift
+block
 blit_right:
     sta s
 _blit_right_loop:
@@ -25,6 +26,7 @@ l:  ora (d),y
     bpl _blit_right_loop
     lda @(++ blit_left_addr)
     rts
+end block
 
 ; Blit bytes from s to d, shifting them to the left.
 ;
@@ -33,6 +35,7 @@ l:  ora (d),y
 ; s: source address
 ; s: destination address
 ; blit_right_addr + 1: 7 - bits_to_shift
+block
 blit_left:
     sta s
 _blit_left_loop:
@@ -53,7 +56,9 @@ l:  ora (d),y
     dey
     bpl _blit_left_loop
     rts
+end block
 
+block
 blit_char:
     ldy #7
 blit_copy:
@@ -63,7 +68,9 @@ l1: lda (s),y
     dey
     bpl -l1
     rts
+end block
 
+block
 blit_clear_char:
     ldy #7
     lda #0
@@ -71,3 +78,4 @@ l:  sta (d),y
     dey
     bpl -l
     rts
+end block

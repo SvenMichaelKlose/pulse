@@ -1,3 +1,4 @@
+block
 increment_score:
     stx tmp
     sty tmp2
@@ -48,3 +49,4 @@ done:
     ldx tmp
     ldy tmp2
     rts
+end block

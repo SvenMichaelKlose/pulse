@@ -1,3 +1,4 @@
+block
 level_patterns:
     2 0
     @(- t_two_up level_data) 18
@@ -17,3 +18,4 @@ level_patterns:
     @(- level_data_rest level_data) 0
     @(+ 128 3)
     0
+end block

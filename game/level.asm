@@ -1,3 +1,40 @@
+block
+screws_sniper:
+    sniper_probability
+    sniper_probability_high
+    sniper_probability
+    sniper_probability
+end block
+
+block
+screws_sniper_bullet:
+    sniper_bullet_probability
+    sniper_bullet_probability
+    ;sniper_bullet_probability_high
+    sniper_bullet_probability
+    sniper_bullet_probability
+end block
+
+block
+screws_scout:
+    0
+    1
+    0
+    0
+end block
+
+block
+screws_follow:
+    $09
+    $f0
+    $f0
+    $f0
+end block
+    
+block
+restart_level:
+    sta level_pattern
+    beq decode_position
 process_level:
     ; Only do every 8th frame.
     lda scrolled_bits
@@ -51,32 +88,6 @@ set_screws:
     sta mod_follow
     rts
 
-screws_sniper:
-    sniper_probability
-    sniper_probability_high
-    sniper_probability
-    sniper_probability
-screws_sniper_bullet:
-    sniper_bullet_probability
-    sniper_bullet_probability
-    ;sniper_bullet_probability_high
-    sniper_bullet_probability
-    sniper_bullet_probability
-screws_scout:
-    0
-    1
-    0
-    0
-screws_follow:
-    $09
-    $f0
-    $f0
-    $f0
-    
-restart_level:
-    sta level_pattern
-    beq decode_position
-
 decode_pattern:
     sta level_delay
     iny
@@ -124,3 +135,4 @@ done2:
     iny
 done:
     jmp add_tile
+end block

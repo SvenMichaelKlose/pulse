@@ -1,13 +1,23 @@
 first_trailing_char  = @(+ charset (* 8 (+ foreground framemask)))
 first_tile           = @(+ charset (* 8 (+ foreground framemask num_trailing_foreground_chars)))
 
+block
 test_on_foreground:
     ldy scrx
     lda (scr),y
     and #foreground
     cmp #foreground
     rts
+end block
 
+block
+fetch_foreground_char:
+    lda next_foreground_char
+    inc next_foreground_char
+    jmp fetch_char
+end block
+
+block
 add_tile:
     pha
     ldx free_tiles
@@ -29,11 +39,6 @@ add_tile:
     pla
 done:
     rts
-
-fetch_foreground_char:
-    lda next_foreground_char
-    inc next_foreground_char
-    jmp fetch_char
 
 draw_foreground:
     lda scrolled_bits
@@ -157,7 +162,9 @@ l:  jsr fetch_foreground_char
     sta tilelist_r,y
     inc active_tiles
     jmp restart_plotting_chars
+end block
 
+block
 rotate_tiles:
     ; Set pointer to left char.
     lda #<first_tile
@@ -238,3 +245,4 @@ l:  lda (sl),y
     dey
     bpl -l
     rts
+end block

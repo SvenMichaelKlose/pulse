@@ -1,3 +1,4 @@
+block
 grenade:
     lda grenade_counter
     beq +done
@@ -67,3 +68,4 @@ n:  dec scry
 done:
     inc scrx
     rts
+end block
