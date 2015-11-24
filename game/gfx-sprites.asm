@@ -1,4 +1,3 @@
-block
 sprite_gfx:
 ship:
     %10110000
@@ -90,4 +89,3 @@ star:
     %00000000
     %00000000
 sprite_gfx_end:
-end block

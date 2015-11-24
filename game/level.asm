@@ -10,7 +10,6 @@ block
 screws_sniper_bullet:
     sniper_bullet_probability
     sniper_bullet_probability
-    ;sniper_bullet_probability_high
     sniper_bullet_probability
     sniper_bullet_probability
 end block

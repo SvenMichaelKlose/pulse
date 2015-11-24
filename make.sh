@@ -1,5 +1,6 @@
 #!/bin/sh
 
-#rm -rf obj; mkdir obj
-#rm -rf compiled; mkdir compiled
+rm -rf obj compiled
+mkdir -p obj
+mkdir -p compiled
 sbcl --noinform --core bender/bender make.lisp

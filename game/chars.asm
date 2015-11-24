@@ -1,4 +1,3 @@
-block
 ; Reuse char already allocated by another sprite.
 reuse_char:
     lda curcol
@@ -86,9 +85,7 @@ cant_use_position:
     lda #$f0            ; Draw into ROM.
     sta @(++ d)
     rts
-end block
 
-block
 scraddr_clear_char:
     jsr scrcoladdr
 
@@ -107,4 +104,3 @@ clear_char:
     lda #0
     sta (scr),y
 l:  rts
-end block

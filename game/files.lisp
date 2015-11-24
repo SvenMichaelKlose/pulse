@@ -12,36 +12,27 @@
     ,@(? (eq version :virtual)
          '("init-virtual.asm")
          '("init.asm"))
-
     "intro.asm"
 
-    ,@(unless (eq version :virtual)
-        '("stackmem-start.asm"))
+    "low-segments.asm"
+
+    "gfx-sprites.asm"
+    "gfx-tiles.asm"
+    "sprite-inits.asm"
+
+    "high-segment.asm"
+
     "random.asm"
     "score.asm"
     "explosion-colors.asm"
-    ,@(unless (eq version :virtual)
-        '("stackmem-end.asm"))
-
-    ,@(unless (eq version :virtual)
-        '("lowmem-start.asm"))
     "blitter.asm"
     "chars.asm"
     "screen.asm"
     "math.asm"
     "bullet.asm"
     "bits.asm"
-    "gfx-sprites.asm"
-    "level-patterns.asm"
-    ,@(unless (eq version :virtual)
-        '("lowmem-end.asm"
-          "init-end.asm"))
-
-    "level-data.asm"
-    "gfx-tiles.asm"
     "tiles.asm"
     "sinetab.asm"
-    "sprite-inits.asm"
     "sprites.asm"
     "sprites-vic.asm"
     "controllers.asm"
@@ -52,4 +43,7 @@
       "scout.asm"
     "main-end.asm"
     "foreground.asm"
-    "level.asm"))
+    "level-data.asm"
+    "level.asm"
+    "level-patterns.asm"
+    ))

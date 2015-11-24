@@ -1,10 +1,13 @@
 (= *model* :vic-20)
-
-(defvar *virtual?* nil)
-(defvar *video?* nil)
 (defvar *make-wav?* nil)
 (defvar *only-pal-vic?* nil)
 (defvar *make-shadowvic-versions?* nil)
+
+(defvar *virtual?* nil)
+(defvar *video?* nil)
+(defvar *tape-release?* nil)
+(defvar *tv* nil)
+(defvar *current-game* nil)
 
 (defvar *bandwidth* 16)
 (defvar *pulse-short* #x28)
@@ -177,9 +180,6 @@
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
 
-(defvar *tv* nil)
-(defvar *current-game* nil)
-
 (defun make-loaders (tv imported-labels)
   (with-temporary *imported-labels* imported-labels
     (make-splash-prg)
@@ -241,10 +241,15 @@
                                 (+ "compiled/pulse." tv ".tap"))
                           :pty cl:*standard-output*))))
 
-(defvar *tape-release?* nil)
+(defun tap-rate (tv avg-len)
+  ; XXX Need INTEGER here because tré's FRACTION-CHARS is buggered.
+  (integer (/ (? (eq tv :pal)
+                 +cpu-cycles-pal+
+                 +cpu-cycles-ntsc+)
+              (* 8 avg-len))))
 
-;(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
-;(make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
+(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
+(make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
 (make-model-detection)
 (make-splash-gfx)
 (break-up-splash-chars)
@@ -260,13 +265,6 @@
       (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))))
 
 (print-pwm-info)
-
-(defun tap-rate (tv avg-len)
-  ; XXX Need INTEGER here because tré's FRACTION-CHARS is buggered.
-  (integer (/ (? (eq tv :pal)
-                 +cpu-cycles-pal+
-                 +cpu-cycles-ntsc+)
-              (* 8 avg-len))))
 
 (alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
   (format t "Baud rates: ~A (NTSC), ~A (PAL)~%"
