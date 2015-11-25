@@ -135,7 +135,11 @@ draw_preshifted_sprite:
 
     ; Calculate text position.
     lda sprites_x,x
-    lsr
+    cmp #$f0
+    bcc +n
+stop:
+    nop
+n:  lsr
     lsr
     lsr
     sta scrx
@@ -173,6 +177,9 @@ l:  lda (s),y
 
     ; Draw upper right.
     inc scrx
+    lda scrx
+    and #$1f
+    sta scrx
     jsr get_char
     lda d
     clc
@@ -213,6 +220,9 @@ l:  lda (s),y
 
     ; Draw lower right.
     inc scrx
+    lda scrx
+    and #$1f
+    sta scrx
     jsr get_char
     lda sprite_data_bottom
     clc     ; Step to right char in pair.
