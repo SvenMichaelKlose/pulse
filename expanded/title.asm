@@ -1,4 +1,33 @@
 title_screen:
+    ; Avoid screen trash
+    lda #150
+l:  cmp $9004
+    bne -l
+
+    ; Clear screen.
+    lda #reverse    ; Screen and border color.
+    sta $900f
+    lda #@(* red 16)    ; Auxiliary color.
+    sta $900e
+    lda #%11110010      ; Up/locase chars.
+    sta $9005
+    ldy #white
+    jsr clear_screen
+
+    ; Print game over text.
+    lda #7
+    sta scrx
+    lda #11
+    sta scry
+    lda #<txt_game_over
+    sta s
+    lda #>txt_game_over
+    sta @(++ s)
+    jsr strout
+
+    ldx #@(* 3 (? (eq *tv* :pal) 50 60))
+    jsr wait
+
     ldy #white
     jsr clear_screen
 
@@ -38,9 +67,9 @@ l:  sta colors,x
     sta scrx
     lda #4
     sta scry
-    ldx #<txt_game
+    lda #<txt_game
+    sta s
     lda #>txt_game
-    stx s
     sta @(++ s)
 
 retrace:
@@ -56,7 +85,7 @@ l:  lda $9004
     lda tmp
     and #%00000001
     bne +l
-    jsr strout
+    jsr strchrout
 
     lda #0              ; Fetch joystick status.
     sta $9113
@@ -92,7 +121,21 @@ l:  lda #32
     bne -l
     rts
 
+wait:
+l:  lda $9004
+    bne -l
+n:  lda $9004
+    beq -n
+    dex
+    bne -l
+    rts
+
 strout:
+    jsr strchrout
+    bne strout
+    rts
+
+strchrout:
 l:  ldy #0
     lda (s),y
     beq +done
@@ -133,6 +176,9 @@ scrcoladdr:
     sta @(++ col)
     ldy scrx
     rts
+
+txt_game_over:
+    @(ascii2petscii "GAME OVER") 0
 
 txt_game:
     @(ascii2petscii "         GAME") 255 255
