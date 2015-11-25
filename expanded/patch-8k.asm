@@ -15,5 +15,3 @@ patch8k:
     lda #>post_patch
     sta @(+ 2 patch_caller)
     jmp post_patch
-
-fake:   @(subseq (fetch-file "hiscore-theme.bin") 0 (* 1 1024))
