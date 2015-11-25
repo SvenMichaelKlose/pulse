@@ -10,7 +10,6 @@ l:  sta hiscore,x
 
 intro:
     ldx #253
-    ldy #green
 l:  lda #32
     sta @(-- screen),x
     sta @(+ screen 252),x
