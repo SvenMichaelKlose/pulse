@@ -42,8 +42,8 @@
       "sniper.asm"
       "scout.asm"
     "main-end.asm"
-    "foreground.asm"
     "level-data.asm"
-    "level.asm"
     "level-patterns.asm"
+    "foreground.asm"
+    "level.asm"
     ))
