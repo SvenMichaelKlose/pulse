@@ -74,7 +74,7 @@ tune_screws:
     and #%111
     tax
     jsr set_screws
-    bne decode_position
+    bne decode_position ; (jmp)
 
 set_screws:
     lda screws_sniper,x
