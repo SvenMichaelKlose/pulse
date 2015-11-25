@@ -1,4 +1,3 @@
-;    $02 $10
     org $2000
 
     ; Check if there's minimum +8K RAM.

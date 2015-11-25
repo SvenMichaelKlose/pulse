@@ -1,4 +1,3 @@
-;    $02 $10
     org $1000
 
     ldx #0
@@ -6,6 +5,12 @@ l:  lda loaded_patch3k,x
     sta patch3k,x
     lda @(+ #x100 loaded_patch3k),x
     sta @(+ #x100 patch3k),x
+    lda @(+ #x200 loaded_patch3k),x
+    sta @(+ #x200 patch3k),x
+    lda @(+ #x300 loaded_patch3k),x
+    sta @(+ #x300 patch3k),x
+    lda @(+ #x400 loaded_patch3k),x
+    sta @(+ #x400 patch3k),x
     dex
     bne -l
 
@@ -39,7 +44,7 @@ load_splash:
     lda model
     lsr
     beq +n
-    jsr $2000
+    jsr $2000       ; Call +8K init.
 n:
 
     ldx #5

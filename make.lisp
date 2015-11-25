@@ -1,6 +1,6 @@
 (= *model* :vic-20)
 (defvar *make-wav?* nil)
-(defvar *only-pal-vic?* nil)
+(defvar *only-pal-vic?* t)
 (defvar *make-shadowvic-versions?* nil)
 
 (defvar *virtual?* nil)
@@ -157,7 +157,9 @@
               "expanded/8k.asm"
               "expanded/init-8k.asm"
               "expanded/patch-8k.asm"
-              "expanded/sprites-vic-preshifted.asm")
+              "expanded/sprites-vic-preshifted.asm"
+              "expanded/title.asm"
+              "expanded/gfx-title.asm")
             (+ "obj/8k." ! ".prg.vice.txt")))))
 
 (defun make-3k (imported-labels)
@@ -171,7 +173,9 @@
               "expanded/init-3k.asm"
               "secondary-loader/start.asm"
               "expanded/patch-3k.asm"
-              "expanded/sprites-vic-preshifted.asm")
+              "expanded/sprites-vic-preshifted.asm"
+              "expanded/title.asm"
+              "expanded/gfx-title.asm")
             (+ "obj/3k." ! ".prg.vice.txt")))))
 
 (defun padded-name (x)

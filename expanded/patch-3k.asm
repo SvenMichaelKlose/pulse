@@ -13,8 +13,8 @@ patch3k:
     ; Remove the patch caller.
     lda #$4c    ; JMP
     sta patch_caller
-    lda #<post_patch
+    lda #<title_screen
     sta @(+ 1 patch_caller)
-    lda #>post_patch
+    lda #>title_screen
     sta @(+ 2 patch_caller)
     jmp post_patch
