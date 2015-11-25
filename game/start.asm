@@ -27,6 +27,12 @@ l:  lda #0
     sta @(-- hiscore_on_screen),x
     lda #$ff                        ; Set grenade char.
     sta @(+ charset (* 64 8))
+n:  cpx #@(++ (* 10 8))
+    bcs +n
+    lda @(-- (+ charset_locase (* 8 #x30))),x ; Copy score digits from ROM charset.
+    sta @(-- (+ charset (* 8 score_char0))),x
+    lda #cyan
+    sta colors,x
 n:  dex
     bne -l
 
@@ -42,15 +48,6 @@ n:  dex
     lda #<background                                                            
     ldy #@(-- (* 8 num_trailing_foreground_chars))
     jsr blit_copy
-
-    ; Copy score digits from ROM charset.
-    ldx #@(* 10 8)
-l:  lda @(+ charset_locase (* 8 #x30)),x
-    sta @(+ charset (* 8 score_char0)),x
-    lda #cyan
-    sta colors,x
-    dex
-    bpl -l
 
     ; Plot ship next to number of lifes.
     ldx #@(+ score_char0 10)
