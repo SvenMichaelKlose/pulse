@@ -135,11 +135,7 @@ draw_preshifted_sprite:
 
     ; Calculate text position.
     lda sprites_x,x
-    cmp #$f0
-    bcc +n
-stop:
-    nop
-n:  lsr
+    lsr
     lsr
     lsr
     sta scrx
