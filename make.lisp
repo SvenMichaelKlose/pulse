@@ -50,12 +50,9 @@
           (+ "obj/" name "_downsampled_" (downcase (symbol-name tv)) ".wav"))
     :pty cl:*standard-output*))
 
-(defun make-audio (name file gain bass)
-  (make-wav name file gain bass :pal)
-  (make-conversion name :pal)
-  (unless *only-pal-vic?*
-    (make-wav name file gain bass :ntsc)
-    (make-conversion name :ntsc)))
+(defun make-audio (tv name file gain bass)
+  (make-wav name file gain bass tv)
+  (make-conversion name tv))
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -223,6 +220,8 @@
             (= *tape-loader-start* (- memory-end (- (get-label 'loader_end) (get-label 'tape_loader))))
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
+      (make-audio *tv* "theme1" "media/boray_no_syrup.mp3" "3" "-64")
+      (make-audio *tv* "theme2" "media/theme-lukas.mp3" "3" "-72")
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
             (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
@@ -253,8 +252,6 @@
      *assign-blocks-to-segments?*
      (error "End of program exceeds $1e00 by ~A bytes." (- *pc* #x1e00))))
 
-(make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
-(make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
 (make-model-detection)
 (make-splash-gfx)
 (break-up-splash-chars)
