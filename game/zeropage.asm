@@ -23,11 +23,11 @@ score_char0         = foreground
     org 0
     data
 
-sl:
+sl:                       ; Scrolling tile left of triple.
 s:                    0 0 ; Source pointer.
 dl:
 d:                    0 0 ; Destination pointer.
-sr:
+sr:                       ; Scrolling tile right of triple.
 scr:                  0 0 ; Screen pointer.
 dr:
 col:                  0 0 ; Colour RAM pointer.
@@ -58,9 +58,7 @@ active_tiles:         0   ; Active scrolling tiles.
 tilelist_r:           0 0 0 0 0 0 ; Right character of scrolling tile triplets.
 tiles_c:              0 0 0 0 0 0 ; Scrolling tile colors.
 next_foreground_char: 0   ; Next free char for scrolling tiles.
-sl:                   0 0 ; Scrolling tile left.
 sm:                   0 0 ; Scrolling tile middle.
-sr:                   0 0 ; Scrolling tile right.
 
 counter:              0 ; Tile redraw counter.
 repetition:           0 ; Vertical repetitions of tiles.
