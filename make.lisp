@@ -248,6 +248,11 @@
                  +cpu-cycles-ntsc+)
               (* 8 avg-len))))
 
+(defun check-end ()
+  (& (< #x1e00 *pc*)
+     *assign-blocks-to-segments?*
+     (error "End of program exceeds $1e00 by ~A bytes." (- *pc* #x1e00))))
+
 (make-audio "theme1" "media/boray_no_syrup.mp3" "3" "-64")
 (make-audio "theme2" "media/theme-lukas.mp3" "3" "-72")
 (make-model-detection)

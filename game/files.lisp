@@ -46,4 +46,5 @@
     "level-patterns.asm"
     "foreground.asm"
     "level.asm"
+    "check-end.asm"
     ))
