@@ -9,16 +9,11 @@ main:
 
     ; Copy code to $200-3ff.
     ldx #0
-l:  lda lowmem,x
+l:  lda @(- stackmem 128),x
+    sta $100,x
+    lda lowmem,x
     sta $200,x
     lda @(+ lowmem #x100),x
     sta $300,x
     dex
     bne -l
-
-    ; Copy code to stack.
-    ldx #$5f
-l:  lda stackmem,x
-    sta $180,x
-    dex
-    bpl -l
