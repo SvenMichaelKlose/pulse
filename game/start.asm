@@ -31,7 +31,7 @@ n:  cpx #@(++ (* 10 8))
     bcs +n
     lda @(-- (+ charset_locase (* 8 #x30))),x ; Copy score digits from ROM charset.
     sta @(-- (+ charset (* 8 score_char0))),x
-    lda #cyan
+    lda #cyan                       ; Set (hi)score counter color.
     sta colors,x
 n:  dex
     bne -l
@@ -50,8 +50,8 @@ n:  dex
     jsr blit_copy
 
     ; Plot ship next to number of lifes.
-    ldx #@(+ score_char0 10)
-    stx lifes_on_screen
+    lda #@(+ score_char0 10)
+    sta lifes_on_screen
 
     ; Make number of lifes yellow.
     lda #yellow
