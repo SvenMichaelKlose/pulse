@@ -21,7 +21,7 @@ l:  lda loaded_patch3k,x
     bne load_8k
     bcc load_8k
 
-    ; Set patch vector called by game.
+    ; Only +3K. Set patch vector called by game.
     lda #<patch3k
     sta model_patch
     lda #>patch3k
