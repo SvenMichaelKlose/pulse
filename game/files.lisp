@@ -37,11 +37,13 @@
     "sprites-vic.asm"
     "controllers.asm"
     "grenade.asm"
-    "game-over.asm"
-    "main-start.asm"
+
+    "start.asm"
+    "mainloop-start.asm"
       "sniper.asm"
       "scout.asm"
-    "main-end.asm"
+    "mainloop-end.asm"
+
     "level-data.asm"
     "level-patterns.asm"
     "foreground.asm"
