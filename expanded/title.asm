@@ -190,6 +190,11 @@ get_ready:
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 game_over_screen:
+    lda #0
+    sta $900a
+    sta $900b
+    sta $900c
+    sta $900d
     jsr hide_screen
     jsr set_text_mode
     jsr clear_screen
