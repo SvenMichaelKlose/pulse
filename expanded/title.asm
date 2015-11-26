@@ -52,15 +52,15 @@ fx_clear2:
     dec do_play_fx
     ldx do_play_fx
     lda #32
-    sta @(+ screen 66),x
-    sta @(+ screen 66 50),x
-    sta @(+ screen 66 100),x
-    sta @(+ screen 66 150),x
-    sta @(+ screen 66 200),x
-    sta @(+ screen 66 250),x
-    sta @(+ screen 66 300),x
-    sta @(+ screen 66 350),x
-    sta @(+ screen 66 400),x
+    sta @(+ screen 68),x
+    sta @(+ screen 68 50),x
+    sta @(+ screen 68 100),x
+    sta @(+ screen 68 150),x
+    sta @(+ screen 68 200),x
+    sta @(+ screen 68 250),x
+    sta @(+ screen 68 300),x
+    sta @(+ screen 68 350),x
+    sta @(+ screen 68 400),x
     jmp +cont_fx
 
 fx_wait:
@@ -333,9 +333,16 @@ txt_game_over:
     @(ascii2petscii "GAME OVER") 0
 
 txt_game:
+    @(ascii2petscii "   First, do what's") 255 255
+    @(ascii2petscii "       necessary.") 255 255
+    @(ascii2petscii "    Then do what's") 255 255
+    @(ascii2petscii "       possible.") 255 255
+    @(ascii2petscii " And suddenly you're") 255 255
+    @(ascii2petscii "doing the impossible.") 0
+
     @(ascii2petscii " CODE, GFX AND SOUND:") 255 255
     @(ascii2petscii "        pixel") 255
-    @(ascii2petscii " (Sven Michael Klose)") 255
+    @(ascii2petscii " (Sven Michael Klose)") 255 255
     @(ascii2petscii "    www.hugbox.org") 0
 ;   @(ascii2petscii "                      ") 255 255 255 255
 
@@ -343,18 +350,20 @@ txt_game:
     @(ascii2petscii "       darkatx") 255
     @(ascii2petscii "    (Bryan Henry)") 0
 
-    @(ascii2petscii " SPLASH SCREEN MUSIC:") 255
+    @(ascii2petscii "  SPLASH SCREEN TUNE ") 255
     @(ascii2petscii "     ('No Syrup')") 255 255
-    @(ascii2petscii "        boray") 255
-    @(ascii2petscii "  (Anders Petersson)") 255
+    @(ascii2petscii "         boray") 255
+    @(ascii2petscii "  (Anders Petersson)") 255 255
     @(ascii2petscii "     www.boray.se") 0
 
     @(ascii2petscii " HISCORE TABLE TUNE:") 255 255
     @(ascii2petscii "    Lukas Ramolla") 0
 
-    @(ascii2petscii "Love and respect go to") 255
-    @(ascii2petscii "     the folks at") 255
+    255
+    @(ascii2petscii "Love and respect go to") 255 255
+    @(ascii2petscii "     the folks at") 255 255
     @(ascii2petscii "    VIC-20 Denial!") 0
 
+    255 255
     @(ascii2petscii "   Hit fire to play!") 0 0
 
