@@ -1,17 +1,8 @@
 title_screen:
-    ; Avoid screen trash
-    lda #150
-l:  cmp $9004
-    bne -l
-
-    ; Clear screen.
-    lda #reverse    ; Screen and border color.
-    sta $900f
-    lda #@(* red 16)    ; Auxiliary color.
-    sta $900e
-    lda #%11110010      ; Up/locase chars.
-    sta $9005
-    ldy #white
+    jsr wait_for_screen_bottom
+    lda #0
+    sta $9003
+    jsr set_text_mode
     jsr clear_screen
 
     ; Print game over text.
@@ -25,9 +16,14 @@ l:  cmp $9004
     sta @(++ s)
     jsr strout
 
+    jsr wait_for_screen_bottom
+    lda @(+ #xede4 3)
+    sta $9003
     ldx #@(* 3 (? (eq *tv* :pal) 50 60))
     jsr wait
 
+    lda #0
+    sta $9003
     ldy #white
     jsr clear_screen
 
@@ -72,15 +68,14 @@ l:  sta colors,x
     lda #>txt_game
     sta @(++ s)
 
-    lda $ede5
-    sta $9001
-
 retrace:
 l:  lda $9004
     bne -l
 
-    lda #reverse    ; Screen and border color.
-    sta $900f
+    lda $ede5
+    sta $9001
+    lda @(+ #xede4 3)
+    sta $9003
     lda #%11111100          ; Our charset.
     sta $9005
 
@@ -94,26 +89,65 @@ l:  lda $9004
     sta $9113
     lda $9111
     and #joy_fire
-    beq +done
+    beq +get_ready
 
 l:  lda $9004
     cmp #52
     bne -l
 
-    lda #@(* red 16)    ; Auxiliary color.
-    sta $900e
     lda #%11110010      ; Up/locase chars.
     sta $9005
 
     jmp retrace
 
-done:
+get_ready:
+    jsr wait_for_screen_bottom
+    lda #0
+    sta $9003
+    jsr set_text_mode
+    jsr clear_screen
+
+    ; Print game over text.
+    lda #6
+    sta scrx
+    lda #11
+    sta scry
+    lda #<txt_get_ready
+    sta s
+    lda #>txt_get_ready
+    sta @(++ s)
+    jsr strout
+
+    jsr wait_for_screen_bottom
+    lda @(+ #xede4 3)
+    sta $9003
+    ldx #@(* 3 (? (eq *tv* :pal) 50 60))
+    jsr wait
+
+    jsr wait_for_screen_bottom
+    lda #%11111100          ; Our charset.
+    sta $9005
     lda #@(+ reverse blue)  ; Screen and border color.
     sta $900f
     jmp post_patch
 
+set_text_mode:
+    lda #reverse        ; Screen and border color.
+    sta $900f
+    lda #%11110010      ; Up/locase chars.
+    sta $9005
+    rts
+
+wait_for_screen_bottom:
+    ; Avoid screen trash
+    lda #150
+l:  cmp $9004
+    bne -l
+    rts
+
 clear_screen:
     ldx #253
+    ldy #white
 l:  lda #32                                                                                            
     sta @(-- screen),x
     sta @(+ screen 252),x
@@ -179,6 +213,9 @@ scrcoladdr:
     sta @(++ col)
     ldy scrx
     rts
+
+txt_get_ready:
+    @(ascii2petscii "GET READY!") 0
 
 txt_game_over:
     @(ascii2petscii "GAME OVER") 0

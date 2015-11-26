@@ -14,4 +14,4 @@ patch8k:
     sta @(+ 1 patch_caller)
     lda #>title_screen
     sta @(+ 2 patch_caller)
-    jmp post_patch
+    jmp get_ready
