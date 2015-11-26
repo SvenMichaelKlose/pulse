@@ -5,6 +5,9 @@ title_screen:
     ldx #$ff
     txs
 
+    lda #white
+    sta curcol
+
     jsr game_over_screen
     jsr init_fx_player
 
@@ -120,6 +123,8 @@ get_ready:
     jsr clear_screen
 
     ; Print game over text.
+    lda #white
+    sta curcol
     lda #6
     sta scrx
     lda #11
@@ -197,11 +202,10 @@ l:  cmp $9004
 
 clear_screen:
     ldx #253
-    ldy #white
 l:  lda #32                                                                                            
     sta @(-- screen),x
     sta @(+ screen 252),x
-    tya
+    lda #0
     sta @(-- colors),x
     sta @(+ colors 252),x
     dex
@@ -209,10 +213,10 @@ l:  lda #32
     rts
 
 wait:
-l:  lda $9004
+l:  lsr $9004
     bne -l
-n:  lda $9004
-    beq -n
+m:  lsr $9004
+    beq -m
     dex
     bne -l
     rts
@@ -223,13 +227,11 @@ strout:
     rts
 
 strchrout:
-l:  ldy #0
+    ldy #0
     lda (s),y
     beq +done
     jsr chrout
-    inc s
-    bne +done
-    inc @(++ s)
+    jsr inc_s
 done:
     rts
     
@@ -244,7 +246,7 @@ n:  pha
     jsr scrcoladdr
     pla
     sta (scr),y
-    lda #white
+    lda curcol
     sta (col),y
     inc scrx
     rts
@@ -262,6 +264,17 @@ scrcoladdr:
     ora #@(high colors)
     sta @(++ col)
     ldy scrx
+    rts
+
+;;;;;;;;;;;;;;;;
+;;; POINTERS ;;;
+;;;;;;;;;;;;;;;;
+
+inc_s:
+    inc s
+    bne +done
+    inc @(++ s)
+done:
     rts
 
 ;;;;;;;;;;;;;
