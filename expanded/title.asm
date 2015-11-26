@@ -1,29 +1,43 @@
+fx = sm
+do_stop_fx = tmp2
+
 title_screen:
-    jsr wait_for_screen_bottom
-    lda #0
-    sta $9003
-    jsr set_text_mode
-    jsr clear_screen
+    ldx #$ff
+    txs
 
-    ; Print game over text.
-    lda #7
+    jsr game_over_screen
+    jsr init_fx_player
+
+    lda #0
     sta scrx
-    lda #11
+    lda #4
     sta scry
-    lda #<txt_game_over
+    lda #<txt_game
     sta s
-    lda #>txt_game_over
+    lda #>txt_game
     sta @(++ s)
-    jsr strout
+    lda #<fx_write_text
+    sta fx
+    lda #>fx_write_text
+    sta @(++ fx)
+    jsr show_fx
 
-    jsr wait_for_screen_bottom
-    lda @(+ #xede4 3)
-    sta $9003
-    ldx #@(* 3 (? (eq *tv* :pal) 50 60))
-    jsr wait
+l:  jmp -l
 
-    lda #0
-    sta $9003
+fx_write_text:
+    dec tmp
+    lda tmp
+    and #%00000001
+    bne +cont_fx
+    jsr strchrout
+    jmp +cont_fx
+
+;;;;;;;;;;;;;;;;;
+;;; FX PLAYER ;;;
+;;;;;;;;;;;;;;;;;
+
+init_fx_player:
+    jsr hide_screen
     ldy #white
     jsr clear_screen
 
@@ -58,17 +72,12 @@ l:  lda gfx_title_screen,x
 l:  sta colors,x
     dex
     bpl -l
+    rts
 
+show_fx:
     lda #0
-    sta scrx
-    lda #4
-    sta scry
-    lda #<txt_game
-    sta s
-    lda #>txt_game
-    sta @(++ s)
+    sta do_stop_fx
 
-retrace:
 l:  lsr $9004
     bne -l
 
@@ -79,12 +88,6 @@ l:  lsr $9004
     lda #%11111100          ; Our charset.
     sta $9005
 
-    dec tmp
-    lda tmp
-    and #%00000001
-    bne +l
-    jsr strchrout
-
     lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
@@ -92,18 +95,27 @@ l:  lsr $9004
     beq +get_ready
 
     lda #@(? (eq *tv* :pal) 52 37)
-l:  cmp $9004
-    bne -l
+m:  cmp $9004
+    bne -m
 
     lda #%11110010      ; Up/locase chars.
     sta $9005
 
-    jmp retrace
+    jmp (fx)
+
+cont_fx:
+    lda do_stop_fx
+    bne +done
+    jmp -l
+done:
+    rts
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;; GET READY SCREEN ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
 
 get_ready:
-    jsr wait_for_screen_bottom
-    lda #0
-    sta $9003
+    jsr hide_screen
     jsr set_text_mode
     jsr clear_screen
 
@@ -118,9 +130,7 @@ get_ready:
     sta @(++ s)
     jsr strout
 
-    jsr wait_for_screen_bottom
-    lda @(+ #xede4 3)
-    sta $9003
+    jsr show_screen
     ldx #@(* 3 (? (eq *tv* :pal) 50 60))
     jsr wait
 
@@ -130,6 +140,46 @@ get_ready:
     lda #@(+ reverse blue)  ; Screen and border color.
     sta $900f
     jmp post_patch
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;; GAME OVER SCREEN ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+game_over_screen:
+    jsr hide_screen
+    jsr set_text_mode
+    jsr clear_screen
+
+    ; Print game over text.
+    lda #7
+    sta scrx
+    lda #11
+    sta scry
+    lda #<txt_game_over
+    sta s
+    lda #>txt_game_over
+    sta @(++ s)
+    jsr strout
+
+    jsr show_screen
+    ldx #@(* 3 (? (eq *tv* :pal) 50 60))
+    jmp wait
+
+;;;;;;;;;;;;;;
+;;; SCREEN ;;;
+;;;;;;;;;;;;;;
+
+hide_screen:
+    jsr wait_for_screen_bottom
+    lda #0
+    sta $9003
+    rts
+
+show_screen:
+    jsr wait_for_screen_bottom
+    lda @(+ #xede4 3)
+    sta $9003
+    rts
 
 set_text_mode:
     lda #reverse        ; Screen and border color.
@@ -213,6 +263,10 @@ scrcoladdr:
     sta @(++ col)
     ldy scrx
     rts
+
+;;;;;;;;;;;;;
+;;; TEXTS ;;;
+;;;;;;;;;;;;;
 
 txt_get_ready:
     @(ascii2petscii "GET READY!") 0
