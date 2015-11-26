@@ -69,10 +69,10 @@ l:  sta colors,x
     sta @(++ s)
 
 retrace:
-l:  lda $9004
+l:  lsr $9004
     bne -l
 
-    lda $ede5
+    lda @(+ #xede4 1)
     sta $9001
     lda @(+ #xede4 3)
     sta $9003
@@ -91,8 +91,8 @@ l:  lda $9004
     and #joy_fire
     beq +get_ready
 
-l:  lda $9004
-    cmp #52
+    lda #@(? (eq *tv* :pal) 52 37)
+l:  cmp $9004
     bne -l
 
     lda #%11110010      ; Up/locase chars.
@@ -140,7 +140,7 @@ set_text_mode:
 
 wait_for_screen_bottom:
     ; Avoid screen trash
-    lda #150
+    lda #@(? (eq *tv* :pal) 150 120)
 l:  cmp $9004
     bne -l
     rts
