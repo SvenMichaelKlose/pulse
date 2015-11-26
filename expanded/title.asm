@@ -346,6 +346,7 @@ txt_game:
     @(ascii2petscii "    www.hugbox.org") 0
 ;   @(ascii2petscii "                      ") 255 255 255 255
 
+    255
     @(ascii2petscii "SPLASH SCREEN GRAPHICS") 255 255
     @(ascii2petscii "       darkatx") 255
     @(ascii2petscii "    (Bryan Henry)") 0
@@ -356,8 +357,10 @@ txt_game:
     @(ascii2petscii "  (Anders Petersson)") 255 255
     @(ascii2petscii "     www.boray.se") 0
 
-    @(ascii2petscii " HISCORE TABLE TUNE:") 255 255
-    @(ascii2petscii "    Lukas Ramolla") 0
+    255
+    255
+    @(ascii2petscii "  HISCORE TABLE TUNE:") 255 255
+    @(ascii2petscii "     Lukas Ramolla") 0
 
     255
     @(ascii2petscii "Love and respect go to") 255 255
