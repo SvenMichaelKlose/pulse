@@ -121,7 +121,6 @@ n:  inc scrx
     lsr
     lsr
     lsr
-plot_background:
     ora #@(+ framemask foreground)
 plot:
     sta (scr),y
