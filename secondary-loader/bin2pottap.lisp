@@ -12,10 +12,9 @@
 (defun bin2pottap (x)
   (with-queue q
     (enqueue q (code-char #x00))
-    (enqueue q (code-char #x10))
     (enqueue q (code-char #x00))
     (enqueue q (code-char #x00))
-    (enqueue q (code-char #x00))
+    (enqueue q (code-char #x08))
     (adotimes 32 (enqueue q *pulse-short*))
     (enqueue q *pulse-long*)
     (dolist (i x (list-string (queue-list q)))
