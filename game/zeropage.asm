@@ -55,8 +55,8 @@ scrolled_chars:       0
 leftmost_tile:        0
 free_tiles:           0   ; Next free scrolling tile slot.
 active_tiles:         0   ; Active scrolling tiles.
-tilelist_r:           0 0 0 0 0 0 ; Right character of scrolling tile triplets.
-tiles_c:              0 0 0 0 0 0 ; Scrolling tile colors.
+tilelist_r:           0 0 0 0 0 0 ; Rightmost tile of scrolling tile triples.
+tiles_c:              0 0 0 0 0 0 ; Leftmost character of scrolling tile triples.
 next_foreground_char: 0   ; Next free char for scrolling tiles.
 sm:                   0 0 ; Scrolling tile middle.
 
