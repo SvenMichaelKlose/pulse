@@ -130,18 +130,18 @@ l:  lsr $9004
     lda #%11111100          ; Our charset.
     sta $9005
 
-    lda #0              ; Fetch joystick status.
-    sta $9113
-    lda $9111
-    and #joy_fire
-    beq +get_ready
-
     lda #@(? (eq *tv* :pal) 52 37)
 m:  cmp $9004
     bne -m
 
     lda #%11110010      ; Up/locase chars.
     sta $9005
+
+    lda #0              ; Fetch joystick status.
+    sta $9113
+    lda $9111
+    and #joy_fire
+    beq +get_ready
 
     jmp (fx)
 
