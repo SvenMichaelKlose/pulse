@@ -1,5 +1,5 @@
 fx = sm
-do_stop_fx = tmp2
+do_play_fx = tmp2
 
 title_screen:
     ldx #$ff
@@ -11,7 +11,7 @@ title_screen:
     jsr game_over_screen
     jsr init_fx_player
 
-    lda #0
+l:  lda #0
     sta scrx
     lda #4
     sta scry
@@ -19,21 +19,57 @@ title_screen:
     sta s
     lda #>txt_game
     sta @(++ s)
-    lda #<fx_write_text
-    sta fx
+    ldx #<fx_write_text
     lda #>fx_write_text
-    sta @(++ fx)
+    ldy #1
     jsr show_fx
 
-l:  jmp -l
+    ldx #100
+    jsr fx_wait
+    jsr fx_clear
+
+    jmp -l
 
 fx_write_text:
     dec tmp
     lda tmp
     and #%00000001
-    bne +cont_fx
+    bne +c
     jsr strchrout
+    bne +c
+    dec do_play_fx
+c:  jmp cont_fx
+
+fx_clear:
+    ldx #<fx_clear2
+    lda #>fx_clear2
+    ldy #50
+    jmp show_fx
+
+fx_clear2:
+    dec do_play_fx
+    ldx do_play_fx
+    lda #32
+    sta @(+ screen 66),x
+    sta @(+ screen 66 50),x
+    sta @(+ screen 66 100),x
+    sta @(+ screen 66 150),x
+    sta @(+ screen 66 200),x
+    sta @(+ screen 66 250),x
+    sta @(+ screen 66 300),x
+    sta @(+ screen 66 350),x
+    sta @(+ screen 66 400),x
     jmp +cont_fx
+
+fx_wait:
+    ldx #<fx_wait2
+    lda #>fx_wait2
+    jmp show_fx
+
+fx_wait2:
+    dec do_play_fx
+    jmp cont_fx
+
 
 ;;;;;;;;;;;;;;;;;
 ;;; FX PLAYER ;;;
@@ -78,8 +114,9 @@ l:  sta colors,x
     rts
 
 show_fx:
-    lda #0
-    sta do_stop_fx
+    stx fx
+    sta @(++ fx)
+    sty do_play_fx
 
 l:  lsr $9004
     bne -l
@@ -107,8 +144,8 @@ m:  cmp $9004
     jmp (fx)
 
 cont_fx:
-    lda do_stop_fx
-    bne +done
+    lda do_play_fx
+    beq +done
     jmp -l
 done:
     rts
@@ -136,7 +173,7 @@ get_ready:
     jsr strout
 
     jsr show_screen
-    ldx #@(* 3 (? (eq *tv* :pal) 50 60))
+    ldx #@(* 2 (? (eq *tv* :pal) 50 60))
     jsr wait
 
     jsr wait_for_screen_bottom
@@ -232,6 +269,7 @@ strchrout:
     beq +done
     jsr chrout
     jsr inc_s
+    lda #1
 done:
     rts
     
