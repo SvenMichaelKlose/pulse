@@ -72,6 +72,9 @@ l:  sta colors,x
     lda #>txt_game
     sta @(++ s)
 
+    lda $ede5
+    sta $9001
+
 retrace:
 l:  lda $9004
     bne -l

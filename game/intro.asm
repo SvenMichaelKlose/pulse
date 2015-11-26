@@ -61,7 +61,7 @@ f:  sta (s),y
     jsr random
     and #%1
     clc
-    adc #@(? (eq *tv* :pal) 38 21)
+    adc $ede5
     sta $9001
     bne -l
 
