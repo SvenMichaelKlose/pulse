@@ -276,6 +276,8 @@ strchrout:
     beq +done
     jsr chrout
     jsr inc_s
+    cmp #32
+    beq strchrout
     lda #1
 done:
     rts
@@ -290,10 +292,12 @@ chrout:
 n:  pha
     jsr scrcoladdr
     pla
+    pha
     sta (scr),y
     lda curcol
     sta (col),y
     inc scrx
+    pla
     rts
 
 scrcoladdr:
@@ -340,7 +344,7 @@ txt_game:
     @(ascii2petscii " And suddenly you're") 255 255
     @(ascii2petscii "doing the impossible.") 0
 
-    @(ascii2petscii " CODE, GFX AND SOUND:") 255 255
+    @(ascii2petscii "        GAME:") 255 255
     @(ascii2petscii "        pixel") 255
     @(ascii2petscii " (Sven Michael Klose)") 255 255
     @(ascii2petscii "    www.hugbox.org") 0
