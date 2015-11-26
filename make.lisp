@@ -1,6 +1,6 @@
 (= *model* :vic-20)
 (defvar *make-wav?* nil)
-(defvar *only-pal-vic?* t)
+(defvar *only-pal-vic?* nil)
 (defvar *make-shadowvic-versions?* nil)
 
 (defvar *virtual?* nil)

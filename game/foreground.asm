@@ -116,8 +116,6 @@ n:  inc scrx
     jsr scrcoladdr
     lda tiles_r,x
     beq plot
-    cmp #@(+ <background (* 8 num_trailing_foreground_chars))
-    bcs +plot
     sec
     sbc #<background
     lsr
@@ -180,8 +178,6 @@ next_tile:
     ; Set pointer to right char.
     lda tilelist_r,x
     beq +n1
-    cmp #@(+ <background (* 8 num_trailing_foreground_chars))
-    bcs +n1
     sec
     sbc #<background
     lsr
