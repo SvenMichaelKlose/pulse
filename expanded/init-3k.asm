@@ -13,6 +13,8 @@ l:  lda loaded_patch3k,x
     sta @(+ #x400 patch3k),x
     lda @(+ #x500 loaded_patch3k),x
     sta @(+ #x500 patch3k),x
+    lda @(+ #x600 loaded_patch3k),x
+    sta @(+ #x600 patch3k),x
     dex
     bne -l
 

@@ -11,24 +11,26 @@ title_screen:
     jsr game_over_screen
     jsr init_fx_player
 
-l:  lda #0
-    sta scrx
-    lda #4
-    sta scry
-    lda #<txt_game
+l:  lda #<txt_game
     sta s
     lda #>txt_game
     sta @(++ s)
+m:  lda #0
+    sta scrx
+    lda #9
+    sta scry
     ldx #<fx_write_text
     lda #>fx_write_text
     ldy #1
     jsr show_fx
-
-    ldx #100
+    ldx #@(? (eq *tv* :pal) 25 30)
     jsr fx_wait
     jsr fx_clear
-
-    jmp -l
+    jsr inc_s
+    ldy #0
+    lda (s),y
+    bne -m
+    beq -l
 
 fx_write_text:
     dec tmp
@@ -326,19 +328,28 @@ txt_game_over:
     @(ascii2petscii "GAME OVER") 0
 
 txt_game:
-    @(ascii2petscii "         GAME") 255 255
-
-    @(ascii2petscii " Code, gfx and sound:") 255 255
+    @(ascii2petscii " CODE, GFX AND SOUND:") 255 255
     @(ascii2petscii "        pixel") 255
-    @(ascii2petscii " (Sven Michael Klose)") 255 255
+    @(ascii2petscii " (Sven Michael Klose)") 255
+    @(ascii2petscii "    www.hugbox.org") 0
 ;   @(ascii2petscii "                      ") 255 255 255 255
 
-    @(ascii2petscii "    SPLASH SCREEN") 255 255
-
-    @(ascii2petscii "      Graphics:") 255 255
+    @(ascii2petscii "SPLASH SCREEN GRAPHICS") 255 255
     @(ascii2petscii "       darkatx") 255
-    @(ascii2petscii "    (Bryan Henry)") 255 255
+    @(ascii2petscii "    (Bryan Henry)") 0
 
-    @(ascii2petscii "        Music:") 255 255
+    @(ascii2petscii " SPLASH SCREEN MUSIC:") 255
+    @(ascii2petscii "     ('No Syrup')") 255 255
     @(ascii2petscii "        boray") 255
-    @(ascii2petscii "  (Anders Petersson)") 0
+    @(ascii2petscii "  (Anders Petersson)") 255
+    @(ascii2petscii "     www.boray.se") 0
+
+    @(ascii2petscii " HISCORE TABLE TUNE:") 255 255
+    @(ascii2petscii "    Lukas Ramolla") 0
+
+    @(ascii2petscii "Love and respect go to") 255
+    @(ascii2petscii "     the folks at") 255
+    @(ascii2petscii "    VIC-20 Denial!") 0
+
+    @(ascii2petscii "   Hit fire to play!") 0 0
+
