@@ -25,6 +25,12 @@
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
 
+(defun tile-rc (x)
+  (unless (first-pass?)
+    (+ (>> (- (low (get-label x)) (low (get-label 'background))) 3)
+       (get-label 'framemask)
+       (get-label 'foreground))))
+
 (defun check-zeropage-size ()
   (when (< #x100 *pc*)
     (error "Zero page overflow by ~A bytes." (- *pc* #x100))))

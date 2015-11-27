@@ -115,14 +115,6 @@ n:  inc scrx
     bcs +repeat
     jsr scrcoladdr
     lda tiles_r,x
-    beq plot
-    sec
-    sbc #<background
-    lsr
-    lsr
-    lsr
-    ora #@(+ framemask foreground)
-plot:
     sta (scr),y
 repeat:
     dec repetition
@@ -176,14 +168,7 @@ next_tile:
 
     ; Set pointer to right char.
     lda tilelist_r,x
-    beq +n1
-    sec
-    sbc #<background
-    lsr
-    lsr
-    lsr
-    ora #@(+ framemask foreground)
-n1: jsr get_char_addr
+    jsr get_char_addr
     sta @(++ sr)
     lda d
     sta sr
