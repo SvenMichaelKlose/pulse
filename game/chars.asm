@@ -27,7 +27,7 @@ alloc_wrap:
     lda spriteframe
     ora #first_sprite_char
     sta no_stars    ; Draw stars black to avoid visible trash everywhere.
-    jmp fetch_char
+    bne fetch_char      ; (JMP)
 
 alloc_char:
     lda next_sprite_char

@@ -22,7 +22,7 @@ play_sound_dead:
     ora #@(* red 16)
     sta vicreg_auxcol_volume
     ora #128
-    jmp play_sound_bonus3
+    bne play_sound_bonus3   ; (JMP)
 
 ; Bonus "ping!".
 play_sound_bonus:
@@ -51,7 +51,7 @@ play_sound_explosion:
     sta vicreg_auxcol_volume
     lda #196
     sta vicreg_noise
-    jmp play_sound_laser
+    bne play_sound_laser    ; (JMP)
 
 n:  lda sound_foreground
     bne +n2

@@ -60,7 +60,7 @@ decode_position:
     inc level_pattern
     lda @(++ level_patterns),y ; Copy vertical pattern offset.
     sta level_offset
-    jmp decode_position ; Try again with new pattern...
+    bpl decode_position ; (JMP) Try again with new pattern...
 
 level_add_repeated_tile:
     jsr add_tile
@@ -74,7 +74,7 @@ tune_screws:
     and #%111
     tax
     jsr set_screws
-    bne decode_position ; (jmp)
+    bne decode_position ; (JMP)
 
 set_screws:
     lda screws_sniper,x

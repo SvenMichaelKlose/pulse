@@ -289,7 +289,7 @@ laser_side:
     ldy #yellow
     jsr energize_color
     lda #8
-    jmp laser_common
+    bne laser_common        ; (JMP)
 
 ; Player
 player_fun:

@@ -62,7 +62,7 @@ selfmod:
     beq sprite_added
     adc #num_sprites
     sta @(++ -selfmod)
-    jmp -l
+    bne -l                  ; (JMP)
 
 ; Move sprite X up A pixels.
 sprite_up:

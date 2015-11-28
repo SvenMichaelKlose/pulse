@@ -30,7 +30,7 @@ l2: sta @(+ screen (* 5 screen_columns)),x
     bne -l
     inc @(+ -l 2)
     inc @(+ -l2 2)
-    jmp -l
+    bne -l              ; (JMP)
 e:
 
 a:  lda #@(+ 8 black)   ; Screen and border color.
@@ -73,7 +73,7 @@ t:  dex
 if @*virtual?*
     $22 2
 end
-    jmp -a
+    beq -a      ; (JMP)
 
 start_game:
     lda #%11111100          ; Our charset.
