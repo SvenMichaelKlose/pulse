@@ -1,5 +1,6 @@
 (= *model* :vic-20)
 (defvar *make-wav?* nil)
+(defvar *only-free?* nil)
 (defvar *only-pal-vic?* nil)
 (defvar *make-shadowvic-versions?* nil)
 
@@ -262,19 +263,20 @@
      *assign-blocks-to-segments?*
      (error "End of program exceeds $1e00 by ~A bytes." (- *pc* #x1e00))))
 
-(make-model-detection)
-(make-splash-gfx)
-(break-up-splash-chars)
-
-(with-temporary *tape-release?* t
-  (make-all-games :pal))
-(unless *only-pal-vic?*
+(unless *only-free?*
   (with-temporary *tape-release?* t
-    (make-all-games :ntsc))
+    (make-model-detection)
+    (make-splash-gfx)
+    (break-up-splash-chars)
+    (make-all-games :pal)))
+(unless *only-pal-vic?*
   (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
-  (when *make-shadowvic-versions?*
-    (with-temporary *virtual?* t
-      (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt"))))
+  (unless *only-free?*
+    (with-temporary *tape-release?* t
+      (make-all-games :ntsc))
+    (when *make-shadowvic-versions?*
+      (with-temporary *virtual?* t
+        (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt")))))
 
 (print-pwm-info)
 
