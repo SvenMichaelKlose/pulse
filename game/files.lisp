@@ -14,7 +14,8 @@
          '("init.asm"))
     "intro.asm"
 
-    "low-segments.asm"
+    ,@(unless (eq version :virtual)
+        '("low-segments.asm"))
 
     "gfx-sprites.asm"
     "gfx-tiles.asm"
@@ -50,5 +51,4 @@
     "level-patterns.asm"
     "foreground.asm"
     "level.asm"
-    "check-end.asm"
-    ))
+    "check-end.asm"))

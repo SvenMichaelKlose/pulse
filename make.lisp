@@ -1,8 +1,9 @@
 (= *model* :vic-20)
-(defvar *make-wav?* nil)
-(defvar *only-free?* nil)
-(defvar *only-pal-vic?* nil)
-(defvar *make-shadowvic-versions?* nil)
+
+(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :wav))
+
+(defun make-version? (&rest x)
+  (some [member _ +versions+] x))
 
 (defvar *virtual?* nil)
 (defvar *video?* nil)
@@ -97,31 +98,6 @@
             "secondary-loader/loader.asm")
           (+ "obj/loader." ! ".prg.vice.txt"))))
 
-(defun convert-splash-bit (x)
-  (?
-    (== x 0)  1
-    (== x 1)  0
-    x))
-
-(defun convert-splash-byte-mc (out x)
-  (let v 0
-    (dotimes (i 4 (write-byte v out))
-      (let s (* 2 i)
-        (= v (+ v (<< (convert-splash-bit (>> (bit-and x (<< 3 s)) s)) s)))))))
-
-(defun convert-splash-byte-sc (out x)
-  (let v 0
-    (dotimes (i 8 (write-byte v out))
-      (= v (+ v (<< (convert-splash-bit (>> (bit-and x (<< 1 i)) i)) i))))))
-
-(defun convert-splash-colors (out in screen colors)
-  (dotimes (i 160)
-    (let c (char-code (elt colors (position-if [== _ i] screen)))
-      (dotimes (j 8)
-        (? (zero? (bit-and c 8))
-           (convert-splash-byte-sc out (read-byte in))
-           (convert-splash-byte-mc out (read-byte in)))))))
-
 (defun make-splash-gfx ()
   (make "obj/splash.chars.bin"
         '("splash/gfx-chars.asm"))
@@ -129,9 +105,6 @@
         '("splash/gfx-screen.asm"))
   (make "obj/splash.colors.bin"
         '("splash/gfx-colors.asm")))
-;  (with-input-file in "obj/splash.chars.bin"
-;    (with-output-file out "obj/splash.chars.negated.bin"
-;      (convert-splash-colors out in (fetch-file "obj/splash.screen.bin") (fetch-file "obj/splash.colors.bin")))))
 
 (defun break-up-splash-chars ()
   (put-file "obj/splash.chars.0-127.bin" (subseq (fetch-file "obj/splash.chars.bin") 0 1024))
@@ -166,7 +139,8 @@
               "expanded/patch-8k.asm"
               "expanded/sprites-vic-preshifted.asm"
               "expanded/title.asm"
-              "expanded/gfx-title.asm")
+              "expanded/gfx-title.asm"
+              "expanded/ram-audio-player.asm")
             (+ "obj/8k." ! ".prg.vice.txt")))))
 
 (defun make-3k (imported-labels)
@@ -208,8 +182,19 @@
         (make-loader-prg)
         (values splash-size !)))))
 
+(defun check-end ()
+  (& (< #x1e00 *pc*)
+     *assign-blocks-to-segments?*
+     (error "End of program exceeds $1e00 by ~A bytes." (- *pc* #x1e00))))
+
+(defun make-zip-archive (archive input-file)
+  (sb-ext:run-program "/usr/bin/zip"
+                      (list archive input-file)
+                      :pty cl:*standard-output*))
+
 (defun make-all-games (tv-standard)
-  (with-temporary *tv* tv-standard
+  (with-temporaries (*tv* tv-standard
+                     *tape-release?* t)
     (let tv (downcase (symbol-name *tv*))
       (= *current-game* (+ "obj/game.crunched." tv ".prg"))
       (make-game :tap
@@ -228,7 +213,8 @@
         (when (== *splash-start* #x1234)
           ; Find out how much space the loader will occupy right below the screen.
           (with ((splash-size memory-end) (make-loaders tv game-labels))
-            (= *tape-loader-start* (- memory-end (- (get-label 'loader_end) (get-label 'tape_loader))))
+            (= *tape-loader-start* (- memory-end (- (get-label 'loader_end)
+                                                    (get-label 'tape_loader))))
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
       (make-audio *tv* "theme1" "media/boray_no_syrup.mp3" "3" "-64")
@@ -243,58 +229,42 @@
                (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))))
-;        (adotimes 256 (princ (code-char #x20) o))
         (wav2pwm o (+ "obj/theme1_downsampled_" tv ".wav") :pause-before 0)
         (wav2pwm o (+ "obj/theme2_downsampled_" tv ".wav")))
-      (sb-ext:run-program "/usr/bin/zip"
-                          (list (+ "compiled/pulse." tv ".tap.zip")
-                                (+ "compiled/pulse." tv ".tap"))
-                          :pty cl:*standard-output*))))
+      (make-zip-archive (+ "compiled/pulse." tv ".tap.zip")
+                        (+ "compiled/pulse." tv ".tap"))
+      (make-version? :wav)
+        (format t "Making ~A WAV file...~%" (symbol-name *tv*))
+        (with-input-file i (+ "compiled/pulse." tv ".tap")
+          (with-output-file o (+ "compiled/pulse." tv ".wav")
+            (tap2wav i o 48000 (cpu-cycles *tv*)))
+            (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
+                              (+ "compiled/pulse." tv ".wav"))))))
 
 (defun tap-rate (tv avg-len)
-  ; XXX Need INTEGER here because tré's FRACTION-CHARS is buggered.
   (integer (/ (? (eq tv :pal)
                  +cpu-cycles-pal+
                  +cpu-cycles-ntsc+)
               (* 8 avg-len))))
 
-(defun check-end ()
-  (& (< #x1e00 *pc*)
-     *assign-blocks-to-segments?*
-     (error "End of program exceeds $1e00 by ~A bytes." (- *pc* #x1e00))))
+(defun print-bitrate-info ()
+  (print-pwm-info)
+  (alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
+    (format t "Baud rates: ~A (NTSC), ~A (PAL)~%"
+              (tap-rate :ntsc !) (tap-rate :pal !))))
 
-(unless *only-free?*
-  (with-temporary *tape-release?* t
-    (make-model-detection)
-    (make-splash-gfx)
-    (break-up-splash-chars)
-    (make-all-games :pal)))
-(unless *only-pal-vic?*
-  (make-game :prg "pulse.prg" "obj/pulse.vice.txt")
-  (unless *only-free?*
-    (with-temporary *tape-release?* t
-      (make-all-games :ntsc))
-    (when *make-shadowvic-versions?*
-      (with-temporary *virtual?* t
-        (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt")))))
-
-(print-pwm-info)
-
-(alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
-  (format t "Baud rates: ~A (NTSC), ~A (PAL)~%"
-          (tap-rate :ntsc !) (tap-rate :pal !)))
-
-(when *make-wav?*
-  (format t "Making PAL WAV file...~%")
-  (with-input-file i "compiled/pulse.pal.tap"
-    (with-output-file o "compiled/pulse.pal.wav"
-      (tap2wav i o 48000 (cpu-cycles :pal))))
-
-  (format t "Making NTSC WAV file...~%")
-  (with-input-file i "compiled/pulse.ntsc.tap"
-    (with-output-file o "compiled/pulse.ntsc.wav"
-      (tap2wav i o 48000 (cpu-cycles :ntsc)))))
-
+(when (make-version? :free)
+  (make-game :prg "pulse.prg" "obj/pulse.vice.txt"))
+(when (make-version? :pal-tape :ntsc-tape)
+  (make-model-detection)
+  (make-splash-gfx)
+  (break-up-splash-chars))
+(when (make-version? :pal-tape)
+  (make-all-games :pal))
+(when (make-version? :ntsc-tape)
+  (make-all-games :ntsc))
+(when (make-version? :shadowvic)
+  (with-temporary *virtual?* t
+    (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt")))
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
-
 (quit)

@@ -1,12 +1,19 @@
-if @*virtual?*
-    jmp intro
-end
+if @(not *virtual?*)
     ; Reset highscore.
     ldx #7
     lda #score_char0
 l:  sta hiscore,x
     dex
     bpl -l
+end
+if @*virtual?*
+    ; Wait unttil fire button has been released.
+l:  lda #0          ; Get joystick status.
+    sta $9113
+    lda $9111
+    and #%00100000
+    beq -l
+end
 
 intro:
     ldx #253
@@ -43,7 +50,7 @@ a:  lda #@(+ 8 black)   ; Screen and border color.
     iny
     sty @(++ d)
 l:
-    lda #0
+    lda #0          ; Get joystick status.
     sta $9113
     lda $9111
     and #%00100000
