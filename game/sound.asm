@@ -6,12 +6,11 @@ play_sound_foreground:
     sta vicreg_noise
     lda #@(+ (* red 16) 15)
     sta vicreg_auxcol_volume
-    bne +n2
+    bne play_sound_dead
 n:  sta no_stars
     lda sound_explosion
-    bne +n2
+    bne play_sound_dead
     sta vicreg_noise
-n2:
 
 ; "Ow!" sound if you die.
 play_sound_dead:
@@ -52,9 +51,8 @@ play_sound_explosion:
     bne play_sound_laser    ; (JMP)
 
 n:  lda sound_foreground
-    bne +n2
+    bne play_sound_laser
     sta vicreg_noise
-n2:
 
 ; Classic sound of a laser on its way.
 play_sound_laser:
