@@ -40,6 +40,8 @@
 
     "start.asm"
     "mainloop-start.asm"
+      "sound.asm"
+      "frame.asm"
       "sniper.asm"
       "scout.asm"
     "mainloop-end.asm"
