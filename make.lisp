@@ -22,6 +22,8 @@
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 (defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
 
+(defvar *ram-audio-rate* 2000)
+
 (load "bender/vic-20/cpu-cycles.lisp")
 (load "secondary-loader/bin2pottap.lisp")
 (load "nipkow/src/wav2pwm.lisp")
@@ -37,7 +39,7 @@
   (when (< #x100 *pc*)
     (error "Zero page overflow by ~A bytes." (- *pc* #x100))))
 
-(defun make-wav (name file gain bass tv)
+(defun make-wav (name file gain bass tv rate)
   (sb-ext:run-program "/usr/bin/mplayer"
     (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name "." (downcase (symbol-name tv)) ".wav") file)
     :pty cl:*standard-output*)
@@ -45,22 +47,47 @@
     (list (+ "obj/" name "." (downcase (symbol-name tv)) ".wav")
           (+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
           "bass" bass
-          "lowpass" (princ (half (pwm-pulse-rate tv)) nil)
+          "lowpass" (princ (half rate) nil)
           "compand" "0.3,1" "6:-70,-60,-20" "-1" "-90" "0.2" "gain" gain)
     :pty cl:*standard-output*))
 
-(defun make-conversion (name tv)
+(defun downsampled-audio-name (name tv)
+  (+ "obj/" name "_downsampled_" (downcase (symbol-name tv)) ".wav"))
+
+(defun make-conversion (name tv rate)
   (sb-ext:run-program "/usr/bin/sox"
     (list (+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
           "-c" "1"
           "-b" "16"
-          "-r" (princ (pwm-pulse-rate tv) nil)
-          (+ "obj/" name "_downsampled_" (downcase (symbol-name tv)) ".wav"))
+          "-r" (princ rate nil)
+          (downsampled-audio-name name tv))
     :pty cl:*standard-output*))
 
-(defun make-audio (tv name file gain bass)
-  (make-wav name file gain bass tv)
-  (make-conversion name tv))
+(defun make-tape-audio (tv name file gain bass)
+  (make-wav name file gain bass tv (pwm-pulse-rate tv))
+  (make-conversion name tv (pwm-pulse-rate tv)))
+
+(defun make-pwm (out in)
+  (with (i nil
+         b 0)
+    (awhile (read-word in)
+            nil
+      (let v (integer (+ 8 (>> ! 12)))
+        (? i
+           (= b v)
+           (write-byte (byte (+ b (<< v 4))) out)))
+      (= i (toggle i)))))
+
+(defun convert-to-pwm (in-name out-name)
+  (with-input-file in in-name
+    (with-output-file out out-name
+      (make-pwm out in))))
+
+(defun make-ram-audio (name file gain bass)
+  (make-wav name file gain bass :ram *ram-audio-rate*)
+  (make-conversion name :ram *ram-audio-rate*)
+  (convert-to-pwm "obj/get_ready_downsampled_ram.wav"
+                  "obj/get_ready.pwm"))
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -127,8 +154,11 @@
             "splash/audio-player.asm")
           (+ "obj/splash." ! ".prg.vice.txt"))))
 
+(defvar *have-ram-audio-player?* nil)
+
 (defun make-8k (imported-labels)
-  (with-temporary *imported-labels* imported-labels
+  (with-temporaries(*imported-labels* imported-labels
+                    *have-ram-audio-player?* t)
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/8k." ! ".prg")
             '("bender/vic-20/vic.asm"
@@ -217,8 +247,8 @@
                                                     (get-label 'tape_loader))))
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
-      (make-audio *tv* "theme1" "media/boray_no_syrup.mp3" "3" "-64")
-      (make-audio *tv* "theme2" "media/theme-lukas.mp3" "3" "-72")
+      (make-tape-audio *tv* "theme1" "media/boray_no_syrup.mp3" "3" "-64")
+      (make-tape-audio *tv* "theme2" "media/theme-lukas.mp3" "3" "-72")
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
             (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
@@ -233,13 +263,13 @@
         (wav2pwm o (+ "obj/theme2_downsampled_" tv ".wav")))
       (make-zip-archive (+ "compiled/pulse." tv ".tap.zip")
                         (+ "compiled/pulse." tv ".tap"))
-      (make-version? :wav)
+      (when (make-version? :wav)
         (format t "Making ~A WAV file...~%" (symbol-name *tv*))
         (with-input-file i (+ "compiled/pulse." tv ".tap")
           (with-output-file o (+ "compiled/pulse." tv ".wav")
             (tap2wav i o 48000 (cpu-cycles *tv*)))
             (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
-                              (+ "compiled/pulse." tv ".wav"))))))
+                              (+ "compiled/pulse." tv ".wav")))))))
 
 (defun tap-rate (tv avg-len)
   (integer (/ (? (eq tv :pal)
@@ -258,7 +288,8 @@
 (when (make-version? :pal-tape :ntsc-tape)
   (make-model-detection)
   (make-splash-gfx)
-  (break-up-splash-chars))
+  (break-up-splash-chars)
+  (make-ram-audio "get_ready" "media/get_ready.wav" "3" "-64"))
 (when (make-version? :pal-tape)
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)

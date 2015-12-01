@@ -60,7 +60,7 @@ fx_clear2:
     sta @(+ screen 68 250),x
     sta @(+ screen 68 300),x
     sta @(+ screen 68 350),x
-    sta @(+ screen 68 400),x
+;    sta @(+ screen 68 400),x
     jmp +cont_fx
 
 fx_wait:
@@ -175,6 +175,22 @@ get_ready:
     jsr strout
 
     jsr show_screen
+if @*have-ram-audio-player?*
+    lda model
+    and #vic_8k
+    beq +n
+    lda #<sample_get_ready
+    sta @(+ 1 mod_sample_ptr)
+    lda #>sample_get_ready
+    sta @(+ 2 mod_sample_ptr)
+    lda #<sample_get_ready_end
+    sta @(+ 1 sample_end)
+    lda #<sample_get_ready_end
+    sta @(+ 2 sample_end)
+    jsr start_player
+n:
+end
+
     ldx #@(* 2 (? (eq *tv* :pal) 50 60))
     jsr wait
 
@@ -374,3 +390,8 @@ txt_game:
     255 255
     @(ascii2petscii "   Hit fire to play!") 0 0
 
+if @*have-ram-audio-player?*
+sample_get_ready:
+    @(fetch-file "obj/get_ready.pwm")
+sample_get_ready_end:
+end

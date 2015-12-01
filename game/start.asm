@@ -15,7 +15,7 @@ l:  lda #0
     sta 0,x                         ; Clear zero page.
     sta @(-- screen),x              ; Clear screen.
     sta @(- (+ screen hiscore) 2),x
-    sta @(- #x2000 hiscore),x
+    sta @(- #x2000 hiscore 6),x
     cpx #9
     bcs +n
     sta @(-- charset),x             ; Clear first character.

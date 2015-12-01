@@ -40,7 +40,7 @@ l2: sta @(+ screen (* 5 screen_columns)),x
     bne -l              ; (JMP)
 e:
 
-a:  lda #@(+ 8 black)   ; Screen and border color.
+a:  lda #@(+ reverse black) ; Screen and border color.
     sta $900f
     lda #0
     sta s
@@ -81,6 +81,7 @@ if @*virtual?*
     $22 2
 end
     beq -a      ; (JMP)
+;end
 
 start_game:
     lda #%11111100          ; Our charset.
