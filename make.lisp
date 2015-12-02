@@ -68,6 +68,8 @@
   (make-conversion name tv (pwm-pulse-rate tv)))
 
 (defun make-pwm (out in)
+  (adotimes 44
+    (read-byte in))
   (with (i nil
          b 0)
     (awhile (read-word in)
