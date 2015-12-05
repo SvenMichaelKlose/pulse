@@ -28,6 +28,18 @@
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
 
+(defun tap-rate (tv avg-len)
+  (integer (/ (? (eq tv :pal)
+                 +cpu-cycles-pal+
+                 +cpu-cycles-ntsc+)
+              (* 8 avg-len))))
+
+(defun print-bitrate-info ()
+  (alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
+    (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
+              (tap-rate :ntsc !) (tap-rate :pal !)))
+  (print-pwm-info))
+
 (defun tile-rc (x)
   (unless (first-pass?)
     (+ (>> (- (low (get-label x)) (low (get-label 'background))) 3)
@@ -272,18 +284,6 @@
             (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
                               (+ "compiled/pulse." tv ".wav")))))))
 
-(defun tap-rate (tv avg-len)
-  (integer (/ (? (eq tv :pal)
-                 +cpu-cycles-pal+
-                 +cpu-cycles-ntsc+)
-              (* 8 avg-len))))
-
-(defun print-bitrate-info ()
-  (print-pwm-info)
-  (alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
-    (format t "Baud rates: ~A (NTSC), ~A (PAL)~%"
-              (tap-rate :ntsc !) (tap-rate :pal !))))
-
 (when (make-version? :free)
   (make-game :prg "pulse.prg" "obj/pulse.vice.txt"))
 (when (make-version? :pal-tape :ntsc-tape)
@@ -298,5 +298,6 @@
 (when (make-version? :shadowvic)
   (with-temporary *virtual?* t
     (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt")))
+(print-bitrate-info)
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
 (quit)
