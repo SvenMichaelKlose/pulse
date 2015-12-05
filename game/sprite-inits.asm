@@ -24,5 +24,5 @@ bonus_init:
 star_init:
     0 0    decorative white <star <star_fun >star_fun 0
 explosion_init:
-    0 0    decorative yellow 0 <explosion_fun >explosion_fun 15
+    0 0    decorative yellow 0 <explosion_fun >explosion_fun 31
 sprite_inits_end:

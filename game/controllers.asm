@@ -105,6 +105,7 @@ explosion_fun:
     lda sprites_d,x
     lsr
     lsr
+    lsr
     tay
     lda explosion_colors,y
     sta sprites_c,x
