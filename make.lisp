@@ -260,7 +260,7 @@
                                                     (get-label 'tape_loader))))
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
-      (make-tape-audio *tv* "theme1" "media/boray_no_syrup.mp3" "3" "-64")
+      (make-tape-audio *tv* "theme1" "media/theme-boray.mp3" "3" "-64")
       (make-tape-audio *tv* "theme2" "media/theme-lukas.mp3" "3" "-72")
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
@@ -290,7 +290,7 @@
   (make-model-detection)
   (make-splash-gfx)
   (break-up-splash-chars)
-  (make-ram-audio "get_ready" "media/get_ready.wav" "3" "-64"))
+  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-64"))
 (when (make-version? :pal-tape)
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)
