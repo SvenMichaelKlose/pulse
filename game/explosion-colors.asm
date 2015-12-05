@@ -1,7 +1,7 @@
 block
 explosion_colors:
     red
-    @(+ black multicolor)
+    @(+ red multicolor)
     @(+ orange multicolor)
     @(+ yellow multicolor)
 end block
