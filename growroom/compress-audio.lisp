@@ -213,8 +213,8 @@
     (with-output-file o out
       (arith-decode probs num-bits num-bytes (make-bit-stream :in i) o))))
 
-;(wav-to-4bit "obj/theme2_downsampled_pal.wav" "4bit.bin")
+(wav-to-4bit "obj/theme-hiscore.downsampled.pal.wav" "4bit.bin")
 ;(delta-compress-file "4bit.bin" "delta.bin")
-(with-output-file o "numbers.bin" (princ (list-string '(5 6 7 8 9 0 1 2 3 4)) o))
+;(with-output-file o "numbers.bin" (princ (list-string '(5 6 7 8 9 0 1 2 3 4)) o))
 (compress 8 "4bit.bin" "hiscore-theme.bin")
 (quit)
