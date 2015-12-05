@@ -1,0 +1,97 @@
+/*
+ * Copyright (c) 2007,2009-2010 Sven Klose
+ */
+
+.content {
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+}
+
+.content * {
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
+    line-height: 1.5em;
+}
+
+.h1 {
+	text-align: center;
+    font-size: 2.25em;
+}
+
+.section {
+    font-size: 1.5em;
+}
+
+.subsection {
+    font-size: 1.125em;
+}
+
+.section, .subsection {
+	text-align: left;
+}
+
+.headingtext {
+    font-size: 0.875em;
+	text-align: center;
+}
+
+.preformatted,
+.p {
+    font-size: 0.75em;
+}
+
+.label {
+	display: block;
+	text-align: center;
+}
+
+.ruler {
+	width: 90%;
+	border: none;
+	height: 1px;
+	color: black;
+}
+
+.olist,
+.ulist {
+	margin-left: 1.5em;
+	vertical-align: top;
+    font-size: 0.75em;
+}
+
+.listitem {
+	padding: 0em;
+	margin: 0em;
+}
+
+input,
+.formlabel {
+	display: block;
+}
+
+form .formlabel,
+form .inputtext,
+form .textarea {
+	margin: 0px;
+}
+
+form .formlabel {
+	font-weight: bold;
+}
+
+form .textarea {
+	display: block;
+}
+
+.form-select option {
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+abbr {
+    letter-spacing: 0.1em;
+}
+
+.kerning {
+    letter-spacing: -0.05em;
+}

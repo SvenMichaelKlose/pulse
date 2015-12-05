@@ -1,0 +1,55 @@
+
+.container {
+    height: 4in;
+    overflow: hidden;
+}
+
+.page {
+    float: left;
+    border: 1px black;
+    font-size: .125in;
+}
+
+h1 {
+    font-size: .18in;
+}
+
+.tail {
+    width: 1in;
+    min-width: 1in;
+}
+
+.spine {
+    width: .5in;
+    min-width: .5in;
+}
+
+.front {
+    width: 2.5625 in;
+    min-width: 2.5625 in;
+}
+
+.page1 {
+    width: 2.5in;
+    min-width: 2.5in;
+}
+
+.page2 {
+    width: 2.4375in;
+    min-width: 2.4375in;
+}
+
+.page3 {
+    width: 2.375in;
+    min-width: 2.4375in;
+}
+
+.page4 {
+    width: 2.3125in;
+    min-width: 2.4375in;
+}
+
+.page4 {
+    width: 2.25in;
+    min-width: 2.4375in;
+}
