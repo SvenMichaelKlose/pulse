@@ -285,7 +285,7 @@
                               (+ "compiled/pulse." tv ".wav")))))))
 
 (when (make-version? :free)
-  (make-game :prg "pulse.prg" "obj/pulse.vice.txt"))
+  (make-game :prg "compiled/pulse.prg" "obj/pulse.vice.txt"))
 (when (make-version? :pal-tape :ntsc-tape)
   (make-model-detection)
   (make-splash-gfx)
