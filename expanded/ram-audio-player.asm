@@ -37,6 +37,7 @@ n:
     cmp #>sample_end
     bne +n
 
+stop:
     lda #$7f        ; Disable NMI timer and interrupt.
     sta $911b
     lda #$7f
