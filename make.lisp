@@ -63,7 +63,7 @@
     :pty cl:*standard-output*))
 
 (defun downsampled-audio-name (name tv)
-  (+ "obj/" name "_downsampled_" (downcase (symbol-name tv)) ".wav"))
+  (+ "obj/" name ".downsampled." (downcase (symbol-name tv)) ".wav"))
 
 (defun make-conversion (name tv rate)
   (sb-ext:run-program "/usr/bin/sox"
@@ -99,7 +99,7 @@
 (defun make-ram-audio (name file gain bass)
   (make-wav name file gain bass :ram *ram-audio-rate*)
   (make-conversion name :ram *ram-audio-rate*)
-  (convert-to-pwm "obj/get_ready_downsampled_ram.wav"
+  (convert-to-pwm "obj/get_ready.downsampled.ram.wav"
                   "obj/get_ready.pwm"))
 
 (defun make-tape-wav (in-file out-file)
@@ -260,8 +260,8 @@
                                                     (get-label 'tape_loader))))
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
-      (make-tape-audio *tv* "theme1" "media/theme-boray.mp3" "3" "-64")
-      (make-tape-audio *tv* "theme2" "media/theme-lukas.mp3" "3" "-72")
+      (make-tape-audio *tv* "theme-splash" "media/splash/theme-boray.mp3" "3" "-64")
+      (make-tape-audio *tv* "theme-hiscore" "media/theme-lukas.mp3" "3" "-72")
       (with-output-file o (+ "compiled/pulse." tv ".tap")
         (write-tap o
             (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
@@ -272,8 +272,7 @@
                (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))))
-        (wav2pwm o (+ "obj/theme1_downsampled_" tv ".wav") :pause-before 0)
-        (wav2pwm o (+ "obj/theme2_downsampled_" tv ".wav")))
+        (wav2pwm o (+ "obj/theme-splash.downsampled." tv ".wav") :pause-before 0))
       (make-zip-archive (+ "compiled/pulse." tv ".tap.zip")
                         (+ "compiled/pulse." tv ".tap"))
       (when (make-version? :wav)
