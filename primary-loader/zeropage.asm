@@ -10,4 +10,9 @@ tape_current_byte:  0
 tape_bit_counter:   0
 tape_old_irq:       0 0
 tape_leader_countdown: 0
+
+current_low:        0
+average:            0 0
+tleft:              0
+
     end

@@ -1,6 +1,7 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :wav))
+;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :wav))
+(defconstant +versions+ '(:pal-tape))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -12,9 +13,15 @@
 (defvar *current-game* nil)
 
 (defvar *bandwidth* 16)
-(defvar *pulse-short* #x28)
-(defvar *pulse-long* #x38)
-(defvar *tape-pulse* (* 8 (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))))
+(defvar *pulse-short* #x20)
+(defvar *pulse-long* #x30)
+(defvar *pulse-average* (+ *pulse-short* (half (- *pulse-long* *pulse-short*))))
+(defvar *tape-pulse* (* 8 *pulse-average*))
+
+(defvar *radio-pulse-short* #x18)
+(defvar *radio-pulse-long* #x38)
+(defvar *radio-pulse-average* #x30)
+(defvar *radio-pulse* (* 8 *radio-pulse-average*))
 
 (defvar audio_shortest_pulse #x18)
 (defvar audio_longest_pulse #x28)
@@ -25,19 +32,25 @@
 
 (load "bender/vic-20/cpu-cycles.lisp")
 (load "secondary-loader/bin2pottap.lisp")
+(load "radio/tap.lisp")
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
 
-(defun tap-rate (tv avg-len)
+(defun tap-rate (tv)
   (integer (/ (? (eq tv :pal)
                  +cpu-cycles-pal+
                  +cpu-cycles-ntsc+)
-              (* 8 avg-len))))
+              (* 8 *pulse-average*))))
+
+(defun radio-rate (tv)
+  (integer (/ (? (eq tv :pal)
+                 +cpu-cycles-pal+
+                 +cpu-cycles-ntsc+)
+              (* 8 *radio-pulse-long*))))
 
 (defun print-bitrate-info ()
-  (alet (+ *pulse-short* (half (- *pulse-long* *pulse-short*)))
-    (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
-              (tap-rate :ntsc !) (tap-rate :pal !)))
+  (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
+            (tap-rate :ntsc) (tap-rate :pal))
   (print-pwm-info))
 
 (defun tile-rc (x)
@@ -55,11 +68,11 @@
     (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name "." (downcase (symbol-name tv)) ".wav") file)
     :pty cl:*standard-output*)
   (sb-ext:run-program "/usr/bin/sox"
-    (list (+ "obj/" name "." (downcase (symbol-name tv)) ".wav")
-          (+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
-          "bass" bass
-          "lowpass" (princ (half rate) nil)
-          "compand" "0.3,1" "6:-70,-60,-20" "-1" "-90" "0.2" "gain" gain)
+    `(,(+ "obj/" name "." (downcase (symbol-name tv)) ".wav")
+      ,(+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
+      ,@(& bass `("bass" ,bass))
+      "lowpass" ,(princ (half rate) nil)
+      ,@(& gain `("compand" "0.3,1" "6:-70,-60,-20" "-1" "-90" "0.2" "gain" ,gain)))
     :pty cl:*standard-output*))
 
 (defun downsampled-audio-name (name tv)
@@ -107,6 +120,21 @@
   (with-input-output-file in   in-file
                           out  out-file
     (tap2wav in out)))
+
+(defun make-radio-wav (tv)
+  (format t "Making radio…~%")
+  (make-wav "radio" "media/radio.wav" nil nil tv (radio-rate tv))
+  (make-conversion "radio" tv (radio-rate tv))
+  (with-output-file out "obj/radio.tap"
+  (with-input-file in-wav "obj/radio.downsampled.pal.wav"
+    (with-input-file in-bin "obj/game.crunched.pal.prg"
+      (radio2tap out in-wav in-bin))
+    (with-input-file in-bin "obj/game.crunched.pal.prg"
+      (radio2tap out in-wav in-bin :with-lead-in? nil))
+    (with-input-file in-bin "obj/game.crunched.pal.prg"
+      (radio2tap out in-wav in-bin :with-lead-in? nil))
+    (with-input-file in-bin "obj/game.crunched.pal.prg"
+      (radio2tap out in-wav in-bin :with-lead-in? nil)))))
 
 (defun make (to files &optional (cmds nil))
   (apply #'assemble-files to files)
@@ -195,6 +223,7 @@
               "primary-loader/zeropage.asm"
               "expanded/3k.asm"
               "expanded/init-3k.asm"
+              "radio/loader.asm"
               "secondary-loader/start.asm"
               "expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm"
@@ -260,6 +289,7 @@
                                                     (get-label 'tape_loader))))
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
+      (make-radio-wav *tv*)
       (make-tape-audio *tv* "theme-splash" "media/splash/theme-boray.mp3" "3" "-64")
       (make-tape-audio *tv* "theme-hiscore" "media/theme-lukas.mp3" "3" "-72")
       (with-output-file o (+ "compiled/pulse." tv ".tap")
@@ -269,6 +299,7 @@
                               (fetch-file "obj/model-detection.bin"))
                            :start #x1001)
                (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
+               (fetch-file "obj/radio.tap")
                (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
                (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
                (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))))

@@ -42,6 +42,8 @@ l:  lda loader_cfg_8k,x
     sta tape_ptr,x
     dex
     bpl -l
+    jsr radio_start
+w:  jmp -w
     jmp tape_loader_start
 
 load_splash:
