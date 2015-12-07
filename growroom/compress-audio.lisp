@@ -4,9 +4,9 @@
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
   (with-input-file i from
     (with-output-file o to
-      (awhile (read-byte i)
+      (awhile (read-word i)
               nil
-        (write-byte (>> (bit-and (+ 128 !) 255) 4) o)))))
+        (write-byte (bit-xor (>> ! 12) 8) o)))))
 
 (let f 0
   (defun init-delta-compress ()
