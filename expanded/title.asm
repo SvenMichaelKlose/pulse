@@ -374,7 +374,7 @@ txt_game:
     @(ascii2petscii "  SPLASH SCREEN TUNE ") 255
     @(ascii2petscii "     ('No Syrup')") 255 255
     @(ascii2petscii "         boray") 255
-    @(ascii2petscii "  (Anders Petersson)") 255 255
+    @(ascii2petscii "   (Anders Persson)") 255 255
     @(ascii2petscii "     www.boray.se") 0
 
     255
