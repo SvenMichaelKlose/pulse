@@ -10,7 +10,7 @@ main = $351
 
     ; Blank screen.
     lda #0
-;    sta $9002
+    sta $9002
 
     ; Copy loader someplace else and configure it.
     ldx #0

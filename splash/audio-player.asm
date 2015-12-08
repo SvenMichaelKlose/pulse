@@ -20,17 +20,17 @@ l:  lda $912d       ; Read the VIA2 CA1 status bit.
     sty $9125       ; Write high byte to restart the timer.
 
     tax
-    lsr             ; Reduce sample from 7 to 4 bits.
+    bpl +n
+    cmp #196
+    bcc +s
+    lda #0
+    beq +n
+s:  lda #127
+n:  lsr             ; Reduce sample from 7 to 4 bits.
     lsr
     lsr
     ora #$40        ; Auxiliary colour.
     sta $900e       ; Play it!
-
-    lda #0              ; Fetch joystick status.
-    sta $9113
-    lda $9111
-    and #joy_fire
-    beq start_game
 
     ; Make sum of samples.
     txa
@@ -39,15 +39,14 @@ l:  lda $912d       ; Read the VIA2 CA1 status bit.
     sta average
     bcc +n
     inc @(++ average)
-    bne -f
 
 n:  dec tleft
     bne -f
 
     ; Correct time if average pulse length doesn't match our desired value.
     lda @(++ average)   ; average / 256
-    cmp #@(- #x40 restart_delay)
-    beq +j              ; It's already what we want.
+    cmp #$3f
+    beq -f              ; It's already what we want.
     tax
     bcc +n
     dec current_low
@@ -56,16 +55,13 @@ n:  inc current_low
 d:  lda current_low
     sta $9124
 
-    ; Divide average by 128 and restart summing up samples.
-    txa
-j:  asl
-    sta average
     lda #0
-    rol
+    sta average
     sta @(++ average)
-    lda #128
-    sta tleft
-    bne -f      ; (4)
+    sta $9113
+    lda $9111
+    and #joy_fire
+    bne -f
 
 start_game:
     lda #150

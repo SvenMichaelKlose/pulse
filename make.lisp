@@ -1,6 +1,6 @@
 (= *model* :vic-20)
 
-;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :wav))
+;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
 (defconstant +versions+ '(:pal-tape))
 
 (defun make-version? (&rest x)
@@ -29,6 +29,7 @@
 (defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
 
 (defvar *ram-audio-rate* 2000)
+(defconstant +c64-pal-cycles+ 985248)
 
 (load "bender/vic-20/cpu-cycles.lisp")
 (load "secondary-loader/bin2pottap.lisp")
@@ -46,7 +47,7 @@
   (integer (/ (? (eq tv :pal)
                  +cpu-cycles-pal+
                  +cpu-cycles-ntsc+)
-              (* 8 *radio-pulse-long*))))
+              (* 8 *radio-pulse-average*))))
 
 (defun print-bitrate-info ()
   (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
@@ -123,7 +124,7 @@
 
 (defun make-radio-wav (tv)
   (format t "Making radio…~%")
-  (make-wav "radio" "media/radio.wav" nil nil tv (radio-rate tv))
+  (make-wav "radio" "media/radio.ogg" "3" "0" tv (radio-rate tv))
   (make-conversion "radio" tv (radio-rate tv))
   (with-output-file out "obj/radio.tap"
   (with-input-file in-wav "obj/radio.downsampled.pal.wav"
@@ -264,6 +265,25 @@
                       (list archive input-file)
                       :pty cl:*standard-output*))
 
+(defun make-tap (c64-master?)
+  (with (tv        (downcase (symbol-name *tv*))
+         out-name  (+ "compiled/pulse." tv (? c64-master? ".c64-master" "") ".tap"))
+    (with-output-file o out-name
+      (write-tap o
+          (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
+                         (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
+                            (fetch-file "obj/model-detection.bin"))
+                         :start #x1001)
+             (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
+  ;               (fetch-file "obj/radio.tap")
+             (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
+             (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
+             (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))
+             (fetch-file (+ "obj/splash-audio." tv ".bin")))
+          :original-cycles (& c64-master? (cpu-cycles *tv*))
+          :converted-cycles (& c64-master? +c64-pal-cycles+)))
+    (make-zip-archive (+ out-name ".zip") out-name)))
+
 (defun make-all-games (tv-standard)
   (with-temporaries (*tv* tv-standard
                      *tape-release?* t)
@@ -290,22 +310,12 @@
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
       (make-radio-wav *tv*)
-      (make-tape-audio *tv* "theme-splash" "media/splash/theme-boray.mp3" "3" "-64")
+      (make-tape-audio *tv* "theme-splash" "media/splash/theme-boray.mp3" "3" "-48")
+;      (make-tape-audio *tv* "theme-splash" "media/radio.wav" "0" "-32")
       (make-tape-audio *tv* "theme-hiscore" "media/theme-lukas.mp3" "3" "-72")
-      (with-output-file o (+ "compiled/pulse." tv ".tap")
-        (write-tap o
-            (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
-                           (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
-                              (fetch-file "obj/model-detection.bin"))
-                           :start #x1001)
-               (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
-               (fetch-file "obj/radio.tap")
-               (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
-               (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
-               (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))))
+      (with-output-file o (+ "obj/splash-audio." tv ".bin")
         (wav2pwm o (+ "obj/theme-splash.downsampled." tv ".wav") :pause-before 0))
-      (make-zip-archive (+ "compiled/pulse." tv ".tap.zip")
-                        (+ "compiled/pulse." tv ".tap"))
+      (make-tap nil)
       (when (make-version? :wav)
         (format t "Making ~A WAV file...~%" (symbol-name *tv*))
         (with-input-file i (+ "compiled/pulse." tv ".tap")
@@ -325,6 +335,10 @@
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)
   (make-all-games :ntsc))
+(when (make-version? :c64-master)
+  (with-temporary *tv* :pal
+    (format t "Making master with C64 timing…~%")
+    (make-tap t)))
 (when (make-version? :shadowvic)
   (with-temporary *virtual?* t
     (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt")))
