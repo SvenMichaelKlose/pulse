@@ -1,5 +1,3 @@
-num_sound_rasters = @(/ (* (? (eq *tv* :pal) 312 261) 50) (half (pwm-pulse-rate *tv*)))
-
 flight:
     lda $9003
     asl
@@ -22,7 +20,7 @@ play:
     tay
     sec
     sbc last_audio_raster
-    cmp #num_sound_rasters
+    cmp #@(radio-rasters)
     bcs +n
     rts
 
@@ -33,12 +31,6 @@ mod_sample_getter:
     sta $900e
     dex
     stx rr_sample
-    beq +c
-    rts
-
-c:  lda @(+ 2 mod_sample_getter)
-    eor #1
-    sta @(+ 2 mod_sample_getter)
     rts
 
 draw_object:

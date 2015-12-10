@@ -100,10 +100,6 @@ done:
     lda #0
     sta average
     sta @(++ average)
-    lda @(+ 2 mod_sample_setter)
-    eor #1
-    sta @(+ 2 mod_sample_setter)
-    sta do_play_radio
     jsr radio_start_data
     lda #<radio_skip_pulse_data
     sta $314
@@ -117,6 +113,13 @@ radio_skip_pulse_data:
     sta $314
     lda #>radio_loader_data
     sta $315
+    lda @(+ 2 mod_sample_setter)
+    sta @(+ 2 mod_sample_getter)
+    eor #1
+    sta @(+ 2 mod_sample_setter)
+    sta do_play_radio
+    lda #0
+    sta rr_sample
     jmp return_from_interrupt
 
 radio_loader:
