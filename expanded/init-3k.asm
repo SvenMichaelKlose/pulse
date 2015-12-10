@@ -1,6 +1,7 @@
 preshifted_sprites = @(- #x1000 #x480)
 
-    org $1000
+    $02 $10
+    org $1002
 
     ldx #0
 l:  lda loaded_patch3k,x
@@ -45,8 +46,6 @@ l:  lda loader_cfg_8k,x
     dex
     bpl -l
     jmp tape_loader_start
-    jsr radio_start
-    jmp flight
 
 load_splash:
     lda model

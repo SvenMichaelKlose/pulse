@@ -28,9 +28,9 @@ l:  lda loaded_tape_loader,x
 
     jmp tape_loader_start
 
-patch_3k_size = @(length (fetch-file (+ "obj/3k." (downcase (symbol-name *tv*)) ".prg")))
+patch_3k_size = @(length (fetch-file (+ "obj/3k.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_3k:
     $00 $10
     <patch_3k_size @(++ >patch_3k_size)
-    $00 $10
+    $02 $10

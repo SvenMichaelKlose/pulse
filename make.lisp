@@ -126,6 +126,16 @@
       (with-input-file in-bin "obj/game.crunched.pal.prg"
         (radio2tap out in-wav in-bin)))))
 
+(defun exomize (from to addr)
+  (sb-ext:run-program "/usr/local/bin/exomizer"
+                      `("sfx" ,(+ "$" addr)
+                        "-t" "20"
+                        "-n"
+                        ,(+ "-Di_load_addr=$" addr)
+                        "-o" ,to
+                        ,from)
+                      :pty cl:*standard-output*))
+
 (defun make (to files &optional (cmds nil))
   (apply #'assemble-files to files)
   (& cmds (make-vice-commands cmds "break .stop")))
@@ -211,15 +221,17 @@
               "primary-loader/models.asm"
               "primary-loader/zeropage.asm"
               "expanded/init-3k.asm"
-              "radio/loader.asm"
-              "radio/flight.asm"
+;              "radio/loader.asm"
+;              "radio/flight.asm"
               "secondary-loader/start.asm"
               "expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm"
               "expanded/title.asm"
               "expanded/gfx-title.asm")
-            (+ "obj/3k." ! ".prg.vice.txt")))))
-
+            (+ "obj/3k." ! ".prg.vice.txt"))
+      (exomize (+ "obj/3k." ! ".prg")
+               (+ "obj/3k.crunched." ! ".prg")
+               "1002"))))
 
 (defun make-eyes ()
   (with-temporary *imported-labels* nil
@@ -243,18 +255,13 @@
     (with (splash-size  (- (get-label 'relocated_splash_end)
                            (get-label 'relocated_splash)))
       (format t "Compressing splash with exomizer...~%")
-      (sb-ext:run-program "/usr/local/bin/exomizer"
-                          `("sfx" "$1002"
-                            "-t" "20"
-                            "-n"
-                            "-Di_load_addr=$1002"
-                            "-o" ,(+ "obj/splash.crunched." tv ".prg")
-                            ,(+ "obj/splash." tv ".prg"))
-                          :pty cl:*standard-output*)
+      (exomize (+ "obj/splash." tv ".prg")
+               (+ "obj/splash.crunched." tv ".prg")
+               "1002")
       (alet (get-label 'memory_end)
         (make-8k imported-labels)
         (make-3k imported-labels)
-        (make-eyes)
+;        (make-eyes)
         (make-loader-prg)
         (values splash-size !)))))
 
@@ -278,7 +285,7 @@
                             (fetch-file "obj/model-detection.bin"))
                          :start #x1001)
 ;             (bin2pottap (string-list (fetch-file (+ "obj/intro." tv ".prg"))))
-             (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
+             (bin2pottap (string-list (fetch-file (+ "obj/3k.crunched." tv ".prg"))))
 ;             (fetch-file "obj/radio.tap")
              (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
@@ -315,7 +322,6 @@
         (make-loaders tv game-labels))
       (make-radio-wav *tv*)
       (make-tape-audio *tv* "theme-splash" "media/splash/theme-boray.mp3" "3" "-48")
-;      (make-tape-audio *tv* "theme-splash" "media/radio.wav" "0" "-32")
       (make-tape-audio *tv* "theme-hiscore" "media/theme-lukas.mp3" "3" "-72")
       (with-output-file o (+ "obj/splash-audio." tv ".bin")
         (wav2pwm o (fetch-file (+ "obj/theme-splash.downsampled." tv ".wav")) :pause-before 0))
