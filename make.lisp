@@ -221,19 +221,17 @@
             (+ "obj/3k." ! ".prg.vice.txt")))))
 
 
-(defun make-eyes (imported-labels)
-  (with-temporary *imported-labels* imported-labels
+(defun make-eyes ()
+  (with-temporary *imported-labels* nil
     (alet (downcase (symbol-name *tv*))
-      (make (+ "obj/3k." ! ".prg")
+      (make (+ "obj/intro." ! ".prg")
             '("bender/vic-20/vic.asm"
               "primary-loader/models.asm"
               "primary-loader/zeropage.asm"
-              "expanded/init-3k.asm"
-              "secondary-loader/start.asm"
-              "expanded/patch-3k.asm"
-              "expanded/sprites-vic-preshifted.asm"
-              "expanded/title.asm"
-              "expanded/gfx-title.asm")
+              "radio/intro.asm"
+              "game/random.asm"
+              "game/high-segment.asm"
+              "secondary-loader/start.asm")
             (+ "obj/3k." ! ".prg.vice.txt")))))
 
 (defun padded-name (x)
@@ -256,6 +254,7 @@
       (alet (get-label 'memory_end)
         (make-8k imported-labels)
         (make-3k imported-labels)
+        (make-eyes)
         (make-loader-prg)
         (values splash-size !)))))
 
@@ -278,6 +277,7 @@
                          (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
                             (fetch-file "obj/model-detection.bin"))
                          :start #x1001)
+;             (bin2pottap (string-list (fetch-file (+ "obj/intro." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
 ;             (fetch-file "obj/radio.tap")
              (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
