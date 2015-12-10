@@ -42,9 +42,9 @@ l:  lda loader_cfg_8k,x
     sta tape_ptr,x
     dex
     bpl -l
-    jmp tape_loader_start
     jsr radio_start
-w:  jmp -w
+    jmp flight
+    jmp tape_loader_start
 
 load_splash:
     lda model

@@ -1,7 +1,7 @@
 (= *model* :vic-20)
 
 ;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
-(defconstant +versions+ '(:pal-tape))
+(defconstant +versions+ '(:pal-tape ))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -17,11 +17,6 @@
 (defvar *pulse-long* #x30)
 (defvar *pulse-average* (+ *pulse-short* (half (- *pulse-long* *pulse-short*))))
 (defvar *tape-pulse* (* 8 *pulse-average*))
-
-(defvar *radio-pulse-short* #x18)
-(defvar *radio-pulse-long* #x38)
-(defvar *radio-pulse-average* #x30)
-(defvar *radio-pulse* (* 8 *radio-pulse-average*))
 
 (defvar audio_shortest_pulse #x18)
 (defvar audio_longest_pulse #x28)
@@ -124,18 +119,12 @@
 
 (defun make-radio-wav (tv)
   (format t "Making radio…~%")
-  (make-wav "radio" "media/radio.ogg" "3" "0" tv (radio-rate tv))
-  (make-conversion "radio" tv (radio-rate tv))
+  (make-wav "radio" "media/radio.ogg" "3" "0" tv (half (pwm-pulse-rate tv)))
+  (make-conversion "radio" tv (half (pwm-pulse-rate tv)))
   (with-output-file out "obj/radio.tap"
-  (with-input-file in-wav "obj/radio.downsampled.pal.wav"
-    (with-input-file in-bin "obj/game.crunched.pal.prg"
-      (radio2tap out in-wav in-bin))
-    (with-input-file in-bin "obj/game.crunched.pal.prg"
-      (radio2tap out in-wav in-bin :with-lead-in? nil))
-    (with-input-file in-bin "obj/game.crunched.pal.prg"
-      (radio2tap out in-wav in-bin :with-lead-in? nil))
-    (with-input-file in-bin "obj/game.crunched.pal.prg"
-      (radio2tap out in-wav in-bin :with-lead-in? nil)))))
+    (with-input-file in-wav "obj/radio.downsampled.pal.wav"
+      (with-input-file in-bin "obj/game.crunched.pal.prg"
+        (radio2tap out in-wav in-bin)))))
 
 (defun make (to files &optional (cmds nil))
   (apply #'assemble-files to files)
@@ -225,6 +214,7 @@
               "expanded/3k.asm"
               "expanded/init-3k.asm"
               "radio/loader.asm"
+              "radio/flight.asm"
               "secondary-loader/start.asm"
               "expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm"
@@ -275,7 +265,7 @@
                             (fetch-file "obj/model-detection.bin"))
                          :start #x1001)
              (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
-  ;               (fetch-file "obj/radio.tap")
+              (fetch-file "obj/radio.tap")
              (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
              (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))
@@ -314,7 +304,7 @@
 ;      (make-tape-audio *tv* "theme-splash" "media/radio.wav" "0" "-32")
       (make-tape-audio *tv* "theme-hiscore" "media/theme-lukas.mp3" "3" "-72")
       (with-output-file o (+ "obj/splash-audio." tv ".bin")
-        (wav2pwm o (+ "obj/theme-splash.downsampled." tv ".wav") :pause-before 0))
+        (wav2pwm o (fetch-file (+ "obj/theme-splash.downsampled." tv ".wav")) :pause-before 0))
       (make-tap nil)
       (when (make-version? :wav)
         (format t "Making ~A WAV file...~%" (symbol-name *tv*))
