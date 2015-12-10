@@ -1,3 +1,5 @@
+preshifted_sprites = @(- #x1000 #x480)
+
     org $1000
 
     ldx #0
@@ -42,9 +44,9 @@ l:  lda loader_cfg_8k,x
     sta tape_ptr,x
     dex
     bpl -l
+    jmp tape_loader_start
     jsr radio_start
     jmp flight
-    jmp tape_loader_start
 
 load_splash:
     lda model

@@ -195,7 +195,6 @@
             '("bender/vic-20/vic.asm"
               "primary-loader/models.asm"
               "primary-loader/zeropage.asm"
-              "expanded/8k.asm"
               "expanded/init-8k.asm"
               "expanded/patch-8k.asm"
               "expanded/sprites-vic-preshifted.asm"
@@ -211,10 +210,25 @@
             '("bender/vic-20/vic.asm"
               "primary-loader/models.asm"
               "primary-loader/zeropage.asm"
-              "expanded/3k.asm"
               "expanded/init-3k.asm"
               "radio/loader.asm"
               "radio/flight.asm"
+              "secondary-loader/start.asm"
+              "expanded/patch-3k.asm"
+              "expanded/sprites-vic-preshifted.asm"
+              "expanded/title.asm"
+              "expanded/gfx-title.asm")
+            (+ "obj/3k." ! ".prg.vice.txt")))))
+
+
+(defun make-eyes (imported-labels)
+  (with-temporary *imported-labels* imported-labels
+    (alet (downcase (symbol-name *tv*))
+      (make (+ "obj/3k." ! ".prg")
+            '("bender/vic-20/vic.asm"
+              "primary-loader/models.asm"
+              "primary-loader/zeropage.asm"
+              "expanded/init-3k.asm"
               "secondary-loader/start.asm"
               "expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm"
@@ -265,7 +279,7 @@
                             (fetch-file "obj/model-detection.bin"))
                          :start #x1001)
              (bin2pottap (string-list (fetch-file (+ "obj/3k." tv ".prg"))))
-              (fetch-file "obj/radio.tap")
+;             (fetch-file "obj/radio.tap")
              (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
              (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))

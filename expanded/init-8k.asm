@@ -1,3 +1,5 @@
+preshifted_sprites = @(- #x4000 #x480)
+
     org $2000
 
     ; Check if there's minimum +8K RAM.
