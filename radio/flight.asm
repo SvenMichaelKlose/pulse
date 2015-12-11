@@ -31,44 +31,17 @@ mod_sample_getter:
     jmp -c
 
 draw_object:
-l:
-
-    ; Fetch pixel position.
-    ldy #0
-    lda (s),y
-    bmi +done
-    sta scrx
-    iny
-    lda (s),y
-    sta scry
-    inc s
-    inc s
-    bne +n
-    inc @(++ s)
-
-n:  ldx scry
-    cpx screen_columns
-    bcc -l          ; off–screen…
-    ldy scrx
-    cpy screen_rows
-    bcc -l          ; off–screen…
-    lda scrlines_l,x
-    sta scr
-    lda scrlines_h,x
-    sta @(++ scr)
-    lda collines_l,x
-    sta col
-    lda collines_h,x
-    sta @(++ col)
-
-    lda curchar
-    sta (scr),y
-    lda curcol
-    sta (col),y
-    jmp -l
-done: rts
+    
 
 scrlines_l: @(maptimes [low (+ #x1e00 (* 22 _))] 23)
 scrlines_h: @(maptimes [high (+ #x1e00 (* 22 _))] 23)
 collines_l: @(maptimes [low (+ #x9600 (* 22 _))] 23)
 collines_h: @(maptimes [high (+ #x9600 (* 22 _))] 23)
+
+zoomtabs:
+    @(apply #'nconc
+            (print (maptimes [alet (- 22 _)
+                        (append (maptimes [integer (* _ (/ 22 !))] !)
+                                (list 255))]
+               22)))
+
