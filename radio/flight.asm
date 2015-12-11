@@ -10,6 +10,9 @@ flight:
 l:  lda do_play_radio
     beq -l
 l:  jsr play
+    lda $900f
+    eor #$11
+    sta $900f
     jmp -l
 
 play:
