@@ -126,10 +126,10 @@
       (with-input-file in-bin "obj/game.crunched.pal.prg"
         (radio2tap out in-wav in-bin)))))
 
-(defun exomize (from to addr)
+(defun exomize (from to addr target)
   (sb-ext:run-program "/usr/local/bin/exomizer"
                       `("sfx" ,(+ "$" addr)
-                        "-t" "20"
+                        "-t" ,target
                         "-n"
                         ,(+ "-Di_load_addr=$" addr)
                         "-o" ,to
@@ -193,7 +193,10 @@
             "secondary-loader/start.asm"
             "splash/splash.asm"
             "splash/audio-player.asm")
-          (+ "obj/splash." ! ".prg.vice.txt"))))
+          (+ "obj/splash." ! ".prg.vice.txt"))
+    (exomize (+ "obj/splash." ! ".prg")
+             (+ "obj/splash.crunched." ! ".prg")
+             "1002" "20")))
 
 (defvar *have-ram-audio-player?* nil)
 
@@ -211,7 +214,10 @@
               "expanded/title.asm"
               "expanded/gfx-title.asm"
               "expanded/ram-audio-player.asm")
-            (+ "obj/8k." ! ".prg.vice.txt")))))
+            (+ "obj/8k." ! ".prg.vice.txt"))
+      (exomize (+ "obj/8k." ! ".prg")
+               (+ "obj/8k.crunched." ! ".prg")
+               "2002" "52"))))
 
 (defun make-3k (imported-labels)
   (with-temporary *imported-labels* imported-labels
@@ -231,7 +237,7 @@
             (+ "obj/3k." ! ".prg.vice.txt"))
       (exomize (+ "obj/3k." ! ".prg")
                (+ "obj/3k.crunched." ! ".prg")
-               "1002"))))
+               "1002" "20"))))
 
 (defun make-eyes ()
   (with-temporary *imported-labels* nil
@@ -254,10 +260,6 @@
     (make-splash-prg)
     (with (splash-size  (- (get-label 'relocated_splash_end)
                            (get-label 'relocated_splash)))
-      (format t "Compressing splash with exomizer...~%")
-      (exomize (+ "obj/splash." tv ".prg")
-               (+ "obj/splash.crunched." tv ".prg")
-               "1002")
       (alet (get-label 'memory_end)
         (make-8k imported-labels)
         (make-3k imported-labels)
@@ -287,7 +289,7 @@
 ;             (bin2pottap (string-list (fetch-file (+ "obj/intro." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/3k.crunched." tv ".prg"))))
 ;             (fetch-file "obj/radio.tap")
-             (bin2pottap (string-list (fetch-file (+ "obj/8k." tv ".prg"))))
+             (bin2pottap (string-list (fetch-file (+ "obj/8k.crunched." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
              (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))

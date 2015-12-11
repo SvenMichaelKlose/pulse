@@ -51,7 +51,7 @@ load_splash:
     lda model
     lsr
     beq +n
-    jsr $2000       ; Call +8K init.
+    jsr $2002       ; Call +8K init.
 n:
 
     ldx #5
@@ -62,7 +62,7 @@ l:  lda loader_cfg_splash,x
     jmp tape_loader_start
 
 
-patch_8k_size = @(length (fetch-file (+ "obj/8k." (downcase (symbol-name *tv*)) ".prg")))
+patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
 splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_8k:
