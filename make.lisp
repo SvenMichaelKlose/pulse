@@ -1,7 +1,7 @@
 (= *model* :vic-20)
 
-;(defconstant +versions+ '(:pal-tape))
-(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
+(defconstant +versions+ '(:pal-tape))
+;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -211,8 +211,7 @@
                     *have-ram-audio-player?* t)
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/8k." ! ".prg")
-            '(;"bender/vic-20/vic.asm"
-              "expanded/init-8k.asm"
+            '("expanded/init-8k.asm"
               "expanded/patch-8k.asm"
               "expanded/sprites-vic-preshifted.asm"
               "expanded/title.asm"
@@ -227,15 +226,13 @@
   (with-temporary *imported-labels* imported-labels
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/patch-3k." ! ".bin")
-            '(;"bender/vic-20/vic.asm"
-              "expanded/patch-3k.asm"
+            '("expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm"
               "expanded/title.asm"
               "expanded/gfx-title.asm")
             (+ "obj/patch-3k." ! ".bin.vice.txt"))
       (make (+ "obj/3k." ! ".prg")
-            '(;"bender/vic-20/vic.asm"
-              "primary-loader/models.asm"
+            '("primary-loader/models.asm"
               "radio/zeropage.asm"
               "expanded/init-3k.asm"
               "radio/loader.asm"
@@ -252,12 +249,15 @@
       (make (+ "obj/intro." ! ".prg")
             '("bender/vic-20/vic.asm"
               "primary-loader/models.asm"
-              "primary-loader/zeropage.asm"
+              "radio/zeropage.asm"
               "radio/intro.asm"
               "game/random.asm"
               "game/high-segment.asm"
               "secondary-loader/start.asm")
-            (+ "obj/3k." ! ".prg.vice.txt")))))
+            (+ "obj/intro." ! ".prg.vice.txt"))
+      (exomize (+ "obj/intro." ! ".prg")
+               (+ "obj/intro.crunched." ! ".prg")
+               "1002" "20"))))
 
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
@@ -270,7 +270,7 @@
       (alet (get-label 'memory_end)
         (make-8k imported-labels)
         (make-3k imported-labels)
-;        (make-eyes)
+        (make-eyes)
         (make-loader-prg)
         (values splash-size !)))))
 
@@ -293,10 +293,12 @@
                          (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
                             (fetch-file "obj/model-detection.bin"))
                          :start #x1001)
-;             (bin2pottap (string-list (fetch-file (+ "obj/intro." tv ".prg"))))
+             (bin2pottap (string-list (fetch-file (+ "obj/intro.crunched." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/3k.crunched." tv ".prg"))))
              (fetch-file "obj/radio.tap")
-;             (bin2pottap (string-list (fetch-file (+ "obj/8k.crunched." tv ".prg"))))
+;             (bin2pottap (maptimes [cl:random 256] 4096))
+;             (bin2pottap (maptimes [cl:random 256] 4096))
+;             (bin2pottap (maptimes [cl:random 256] 4096))
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
              (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))

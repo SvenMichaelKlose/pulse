@@ -38,7 +38,6 @@ l:  lda loader_cfg_8k,x
     bpl -l
     jsr radio_start
     jmp flight
-    jmp tape_loader_start
 
 init_8k:
     ; Set patch vector called by game.
@@ -48,6 +47,33 @@ init_8k:
     jsr $2002
 n:
 
+    ; Load +16K block.
+    ldx #5
+l:  lda loader_cfg_16k,x
+    sta tape_ptr,x
+    dex
+    bpl -l
+;    jmp tape_loader_start
+
+init_16k:
+    ; Load +24K block.
+    ldx #5
+l:  lda loader_cfg_24k,x
+    sta tape_ptr,x
+    dex
+    bpl -l
+;    jmp tape_loader_start
+
+init_24k:
+    ; Load +32K block.
+    ldx #5
+l:  lda loader_cfg_32k,x
+    sta tape_ptr,x
+    dex
+    bpl -l
+;    jmp tape_loader_start
+
+init_32k:
     ; Load splash screen.
     ldx #5
 l:  lda loader_cfg_splash,x
@@ -58,12 +84,30 @@ l:  lda loader_cfg_splash,x
 
 
 patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
+patch_16k_size = $1000
+patch_24k_size = $1000
+patch_32k_size = $1000
 splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_8k:
     $00 $20
     <patch_8k_size @(++ >patch_8k_size)
     <init_8k >init_8k
+
+loader_cfg_16k:
+    $00 $40
+    <patch_16k_size @(++ >patch_16k_size)
+    <init_16k >init_16k
+
+loader_cfg_24k:
+    $00 $60
+    <patch_24k_size @(++ >patch_24k_size)
+    <init_24k >init_24k
+
+loader_cfg_32k:
+    $00 $a0
+    <patch_32k_size @(++ >patch_32k_size)
+    <init_32k >init_32k
 
 loader_cfg_splash:
     $00 $10

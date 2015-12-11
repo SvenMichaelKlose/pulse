@@ -1,9 +1,34 @@
 screen_columns  = 22
 screen_rows  = 23
 
-eyes:
+    org $1000
+    $02 $10
+
+    lda #@(+ reverse black) ; Screen and border color.
+    sta $900f
     jsr clrscr
-w:  jmp -w
+l:  lda $9004
+    bne -l
+    lda #148        ; Unblank screen. 20 columns.
+    sta $9002
+    lda #%11110010      ; Up/locase chars.
+    sta $9005
+
+    ; Load +3K RAM
+    ldx #5
+l:  lda loader_cfg_3k,x
+    sta tape_ptr,x
+    dex
+    bpl -l
+
+    jmp tape_loader_start
+
+patch_3k_size = @(length (fetch-file (+ "obj/3k.crunched." (downcase (symbol-name *tv*)) ".prg")))
+
+loader_cfg_3k:
+    $00 $10
+    <patch_3k_size @(++ >patch_3k_size)
+    $02 $10
 
 txt_eyes:
     @(ascii2petscii "East") 255
