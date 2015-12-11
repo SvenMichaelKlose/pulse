@@ -1,43 +1,40 @@
+radio_timer = @(/ (cpu-cycles *tv*) (half (pwm-pulse-rate *tv*)))
+
 flight:
-    lda $9003
-    asl
-    lda $9004
-    rol
-    sta last_audio_raster
+    lda #<radio_timer
+    sta $9114
+    lda #>radio_timer
+    sta $9115
+    lda #$40
+    sta $911b
     lda #0
     sta rr_sample
     sta do_play_radio
 l:  lda do_play_radio
     beq -l
-l:  jsr play
-    lda $900f
+l:  lda $911d
+    asl
+    bmi play_sample
+c:  lda $900f
     eor #$11
     sta $900f
     jmp -l
 
-play:
-    lda $9003
-    asl
-    lda $9004
-    rol
-    tay
-    sec
-    sbc last_audio_raster
-    cmp #@(radio-rasters)
-    bcs +n
-    rts
-
-n:  sty last_audio_raster
+play_sample:
     ldx rr_sample
 mod_sample_getter:
     lda sample_buffer,x
     sta $900e
     dex
     stx rr_sample
-    rts
+    lda #>radio_timer
+    sta $9115
+    lda #$7f
+    sta $911d
+    jmp -c
 
 draw_object:
-l:  jsr play
+l:
 
     ; Fetch pixel position.
     ldy #0
