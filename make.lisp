@@ -1,7 +1,7 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:pal-tape))
-;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
+;(defconstant +versions+ '(:pal-tape))
+(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))

@@ -31,7 +31,7 @@ l:  lda $9004
     lda #%11110010      ; Up/locase chars.
     sta $9005
 
-    lda #white
+    lda #black
     sta curcol
 
     lda #4
@@ -80,7 +80,7 @@ patch_3k_size = @(length (fetch-file (+ "obj/3k.crunched." (downcase (symbol-nam
 loader_cfg_3k:
     $00 $10
     <patch_3k_size @(++ >patch_3k_size)
-    $02 $10
+    <init_3k >init_3k
 
 txt_eyes:
     @(ascii2petscii "East") 0
@@ -89,6 +89,31 @@ txt_eyes:
     @(ascii2petscii "Software") 0
 
 blink:
+    lda #white
+    sta @(+ colors 11 (* 9 22))
+    jsr laser
+    lda #white
+    sta @(+ colors 11 (* 11 22))
+    jsr laser
+    lda #white
+    sta @(+ colors 11 (* 10 22))
+    jsr laser
+    lda #white
+    sta @(+ colors 11 (* 12 22))
+    ldx #16
+    jsr laser2
+
+    lda #12
+    jsr show_text
+    lda #10
+    jsr show_text
+    lda #11
+    jsr show_text
+    lda #9
+    jsr show_text
+    ldx #16
+    jsr swait
+
     lda #15
     sta sound_bonus
 l:  ldx #1
@@ -100,6 +125,27 @@ l:  ldx #1
     lda #yellow
     jsr set_rectangle_color
     jmp -l
+
+show_text:
+    sta scry
+    lda #11
+    sta scrx
+    jsr scrcoladdr
+    lda #white
+l:  sta (col),y
+    iny
+    cpy #22
+    bne -l
+    inc sound_foreground
+    ldx #4
+    jmp swait
+    
+laser:
+    ldx #4
+laser2:
+    lda #7
+    sta sound_laser
+    jmp swait
 
 set_rectangle_color:
     sta @(+ colors 7 (* 9 22))
@@ -117,8 +163,8 @@ set_rectangle_color:
     rts
 
 swait:
-l:  lsr $9004
-    bne -l
+    lsr $9004
+    bne swait
 m:  lsr $9004
     beq -m
     txa
@@ -127,5 +173,11 @@ m:  lsr $9004
     pla
     tax
     dex
-    bne -l
+    beq +done
+    jmp swait
+done:
     rts
+
+init_3k:
+    jsr clear_screen
+    jmp $1002
