@@ -1,24 +1,15 @@
-preshifted_sprites = @(- #x1000 #x480)
-
     $02 $10
     org $1002
 
     ldx #0
+    ldy #$07
 l:  lda loaded_patch3k,x
-    sta patch3k,x
-    lda @(+ #x100 loaded_patch3k),x
-    sta @(+ #x100 patch3k),x
-    lda @(+ #x200 loaded_patch3k),x
-    sta @(+ #x200 patch3k),x
-    lda @(+ #x300 loaded_patch3k),x
-    sta @(+ #x300 patch3k),x
-    lda @(+ #x400 loaded_patch3k),x
-    sta @(+ #x400 patch3k),x
-    lda @(+ #x500 loaded_patch3k),x
-    sta @(+ #x500 patch3k),x
-    lda @(+ #x600 loaded_patch3k),x
-    sta @(+ #x600 patch3k),x
+m:  sta $400,x
     dex
+    bne -l
+    inc @(+ 2 -l)
+    inc @(+ 2 -m)
+    dey
     bne -l
 
     lda #<post_patch
@@ -34,9 +25,9 @@ l:  lda loaded_patch3k,x
     bcc load_8k
 
     ; Only +3K. Set patch vector called by game.
-    lda #<patch3k
+    lda #$00
     sta model_patch
-    lda #>patch3k
+    lda #$04
     sta @(++ model_patch)
 
 load_8k:
@@ -45,15 +36,19 @@ l:  lda loader_cfg_8k,x
     sta tape_ptr,x
     dex
     bpl -l
+    jsr radio_start
+    jmp flight
     jmp tape_loader_start
 
-load_splash:
+init_8k:
+    ; Set patch vector called by game.
     lda model
     lsr
     beq +n
-    jsr $2002       ; Call +8K init.
+    jsr $2002
 n:
 
+    ; Load splash screen.
     ldx #5
 l:  lda loader_cfg_splash,x
     sta tape_ptr,x
@@ -68,9 +63,12 @@ splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-n
 loader_cfg_8k:
     $00 $20
     <patch_8k_size @(++ >patch_8k_size)
-    <load_splash >load_splash
+    <init_8k >init_8k
 
 loader_cfg_splash:
     $00 $10
     <splash_size @(++ >splash_size)
     $02 $10
+
+loaded_patch3k:
+    @(fetch-file (+ "obj/patch-3k." (downcase (symbol-name *tv*)) ".bin"))

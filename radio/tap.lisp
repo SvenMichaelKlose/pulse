@@ -13,11 +13,12 @@
     acc))
 
 (defun radio-rasters ()
-  (integer (/ (* (? (eq *tv* :pal)
-                    312
-                    261)
-                 50)
-              (half (pwm-pulse-rate *tv*)))))
+  (integer (+ (? (eq *tv* :pal) 0 1)
+              (/ (* (? (eq *tv* :pal)
+                       312
+                       261)
+                    50)
+                 (half (pwm-pulse-rate *tv*))))))
 
 (defun radio-window-cycles ()
   (* (radio-rasters)

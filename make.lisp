@@ -1,7 +1,6 @@
 (= *model* :vic-20)
 
-;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
-(defconstant +versions+ '(:pal-tape ))
+(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -122,9 +121,10 @@
   (make-wav "radio" "media/radio.ogg" "3" "0" tv (half (pwm-pulse-rate tv)))
   (make-conversion "radio" tv (half (pwm-pulse-rate tv)))
   (with-output-file out "obj/radio.tap"
-    (with-input-file in-wav "obj/radio.downsampled.pal.wav"
-      (with-input-file in-bin "obj/game.crunched.pal.prg"
-        (radio2tap out in-wav in-bin)))))
+    (alet (downcase (symbol-name tv))
+      (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
+        (with-input-file in-bin (+ "obj/8k.crunched." ! ".prg")
+          (radio2tap out in-wav in-bin))))))
 
 (defun exomize (from to addr target)
   (sb-ext:run-program "/usr/local/bin/exomizer"
@@ -205,9 +205,7 @@
                     *have-ram-audio-player?* t)
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/8k." ! ".prg")
-            '("bender/vic-20/vic.asm"
-              "primary-loader/models.asm"
-              "primary-loader/zeropage.asm"
+            '(;"bender/vic-20/vic.asm"
               "expanded/init-8k.asm"
               "expanded/patch-8k.asm"
               "expanded/sprites-vic-preshifted.asm"
@@ -222,18 +220,21 @@
 (defun make-3k (imported-labels)
   (with-temporary *imported-labels* imported-labels
     (alet (downcase (symbol-name *tv*))
-      (make (+ "obj/3k." ! ".prg")
-            '("bender/vic-20/vic.asm"
-              "primary-loader/models.asm"
-              "primary-loader/zeropage.asm"
-              "expanded/init-3k.asm"
-;              "radio/loader.asm"
-;              "radio/flight.asm"
-              "secondary-loader/start.asm"
+      (make (+ "obj/patch-3k." ! ".bin")
+            '(;"bender/vic-20/vic.asm"
               "expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm"
               "expanded/title.asm"
               "expanded/gfx-title.asm")
+            (+ "obj/patch-3k." ! ".bin.vice.txt"))
+      (make (+ "obj/3k." ! ".prg")
+            '(;"bender/vic-20/vic.asm"
+              "primary-loader/models.asm"
+              "radio/zeropage.asm"
+              "expanded/init-3k.asm"
+              "radio/loader.asm"
+              "radio/flight.asm"
+              "secondary-loader/start.asm")
             (+ "obj/3k." ! ".prg.vice.txt"))
       (exomize (+ "obj/3k." ! ".prg")
                (+ "obj/3k.crunched." ! ".prg")
@@ -288,8 +289,8 @@
                          :start #x1001)
 ;             (bin2pottap (string-list (fetch-file (+ "obj/intro." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/3k.crunched." tv ".prg"))))
-;             (fetch-file "obj/radio.tap")
-             (bin2pottap (string-list (fetch-file (+ "obj/8k.crunched." tv ".prg"))))
+             (fetch-file "obj/radio.tap")
+;             (bin2pottap (string-list (fetch-file (+ "obj/8k.crunched." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
              (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))

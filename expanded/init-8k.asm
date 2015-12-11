@@ -1,12 +1,5 @@
-preshifted_sprites = @(- #x4000 #x480)
-
+    org $2000
     $02 $20
-    org $2002
-
-    ; Check if there's minimum +8K RAM.
-    lda model
-    lsr
-    beq +i
 
     ; Set patch vector called by game.
     lda #<patch8k
@@ -14,4 +7,4 @@ preshifted_sprites = @(- #x4000 #x480)
     lda #>patch8k
     sta @(++ model_patch)
 
-i:  rts
+    rts

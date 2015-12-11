@@ -1,4 +1,5 @@
-loaded_patch3k:
+preshifted_sprites = @(- #x1000 #x480)
+
     org $0400
 
 patch3k:

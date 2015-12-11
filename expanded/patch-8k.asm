@@ -1,3 +1,5 @@
+preshifted_sprites = @(- #x4000 #x480)
+
 patch8k:
     jsr preshift_sprites
     lda #<draw_preshifted_sprite

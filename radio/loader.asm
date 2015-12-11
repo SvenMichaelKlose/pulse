@@ -171,7 +171,6 @@ n:  dec tape_counter        ; All bytes loaded?
     bne +n
     dec @(++ tape_counter)
     bne +n
-beq +n
 
     sei
     lda #$7f                ; Turn off tape pulse interrupt.
