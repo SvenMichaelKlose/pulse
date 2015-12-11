@@ -15,10 +15,7 @@ l:  lda do_play_radio
 l:  lda $911d
     asl
     bmi play_sample
-c:  lda $900f
-    eor #$11
-    sta $900f
-    jmp -l
+c:  jmp -l
 
 play_sample:
     ldx rr_sample

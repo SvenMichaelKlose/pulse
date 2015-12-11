@@ -209,6 +209,7 @@
              "1002" "20")))
 
 (defvar *have-ram-audio-player?* nil)
+(defvar *tape-loader-start-returning?* nil)
 
 (defun make-8k (imported-labels)
   (with-temporaries(*imported-labels* imported-labels
@@ -219,6 +220,7 @@
               "expanded/patch-8k.asm"
               "expanded/sprites-vic-preshifted.asm"
               "expanded/title.asm"
+              "expanded/print.asm"
               "expanded/gfx-title.asm"
               "expanded/ram-audio-player.asm")
             (+ "obj/8k." ! ".prg.vice.txt"))
@@ -233,6 +235,7 @@
             '("expanded/patch-3k.asm"
               "expanded/sprites-vic-preshifted.asm"
               "expanded/title.asm"
+              "expanded/print.asm"
               "expanded/gfx-title.asm")
             (+ "obj/patch-3k." ! ".bin.vice.txt"))
       (make (+ "obj/3k." ! ".prg")
@@ -248,16 +251,18 @@
                "1002" "20"))))
 
 (defun make-eyes ()
-  (with-temporary *imported-labels* nil
+  (with-temporaries (*imported-labels* nil
+                     *tape-loader-start-returning?* t)
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/intro." ! ".prg")
             '("bender/vic-20/vic.asm"
               "primary-loader/models.asm"
               "radio/zeropage.asm"
+              "radio/main.asm"
+              "secondary-loader/start.asm"
               "radio/intro.asm"
-              "game/random.asm"
               "game/high-segment.asm"
-              "secondary-loader/start.asm")
+              "expanded/print.asm")
             (+ "obj/intro." ! ".prg.vice.txt"))
       (exomize (+ "obj/intro." ! ".prg")
                (+ "obj/intro.crunched." ! ".prg")

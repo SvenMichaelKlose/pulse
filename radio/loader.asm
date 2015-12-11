@@ -200,4 +200,11 @@ done:
     sta $911e
     sta $912d   ; Acknowledge tape pulse interrupt.
     sta $912e   ; Turn off tape pulse interrupt.
+
+    ldx #0
+    lda #8
+l:  sta sample_buffer,x
+    sta @(+ 256 sample_buffer),x
+    dex
+    bne -l
     jmp (tape_callback)

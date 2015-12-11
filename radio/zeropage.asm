@@ -15,6 +15,8 @@ tape_leader_countdown: 0
 
 s:                  0 0
 d:                  0 0
+scr:                0 0
+col:                0 0
 scrx:               0
 scry:               0
 curcol:             0
@@ -31,5 +33,16 @@ do_play_radio:      0
 last_audio_raster:  0
 rr_sample:          0
 curchar:            0
+
+; Intro sounds.
+sound_start:
+sound_explosion:      0
+sound_laser:          0
+sound_bonus:          0
+sound_foreground:     0
+sound_dead:
+sound_end:            0
+
+no_stars:           0
 
     end

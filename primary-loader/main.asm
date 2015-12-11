@@ -8,9 +8,14 @@ main = $351
     sta $912d
     sta $911e       ; Disable restore key NMIs.
 
+l:  lda $9004
+    bne -l
+
     ; Blank screen.
     lda #0
     sta $9002
+    lda #@(+ reverse black) ; Screen and border color.
+    sta $900f
 
     ; Copy loader someplace else and configure it.
     ldx #0

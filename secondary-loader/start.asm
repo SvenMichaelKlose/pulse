@@ -20,6 +20,12 @@ tape_loader_start:
     lda #%10000010      ; CA1 enable (tape pulse)
     sta $912e
 
+    cli
+
+if @*tape-loader-start-returning?*
+    rts
+end
+if @(not *tape-loader-start-returning?*)
     ; Make endless loop.
     lda #$4c
     sta $1ffd
@@ -27,6 +33,5 @@ tape_loader_start:
     sta $1ffe
     lda #$1f
     sta $1fff
-
-    cli
     jmp $1ffd
+end
