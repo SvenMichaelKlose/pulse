@@ -67,10 +67,6 @@ l:  dey
 
     lda #0
     sta nibble
-    lda #$40        ; Enable NMI timer and interrupt.
-    sta $911b
-    lda #$c0
-    sta $911e
 
     lda #<timer
     sta $9114
@@ -82,6 +78,12 @@ l:  dey
     sta $318
     lda #>play_audio_sample
     sta $319
+
+    ; Enable NMI timer and interrupt.
+    lda #$40
+    sta $911b
+    lda #$c0
+    sta $911e
 
     ; Let the IRQ handler do everthing.
     cli
