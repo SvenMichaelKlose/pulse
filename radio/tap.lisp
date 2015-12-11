@@ -1,10 +1,10 @@
 ; Copyright (c) 2015 Sven Michael Klose <pixel@hugbox.org>
 
 (defun radio2tap-audio (out in-wav)
-  (let acc audio_shortest_pulse
-    (write-byte audio_shortest_pulse out)
+  (let acc radio_shortest_pulse
+    (write-byte radio_shortest_pulse out)
     (adotimes 256
-      (let v (+ audio_shortest_pulse
+      (let v (+ radio_shortest_pulse
                 (| (awhen (read-word in-wav)
                      (unclip (bit-xor (>> ! 12) 8) 15))
                    8))

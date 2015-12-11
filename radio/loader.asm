@@ -5,7 +5,7 @@ irq_delay = 7
 irq_handler_delay = 29
 restart_delay = @(+ irq_break_delay irq_delay irq_handler_delay)
 
-timer = @(- (* 8 audio_longest_pulse) restart_delay)
+timer = @(- (* 8 radio_longest_pulse) restart_delay)
 
 radio_start:
     ; Boost digital audio with distorted HF carrier.
@@ -29,9 +29,9 @@ l:  dey
     lda #<timer
     sta current_low
     jsr radio_start_data
-    lda #<radio_loader
+    lda #<radio_detect
     sta $314
-    lda #>radio_loader
+    lda #>radio_detect
     sta $315
     lda #%00000000      ; VIA1 T1 one-shot mode
     sta $912b
@@ -53,7 +53,7 @@ radio_start_data:
     sta $9125
     rts
 
-radio_audio_sample:
+radio_play:
     lda $9124       ; Read the timer's low byte which is your sample.
     ldy #>timer
     sty $9125
@@ -67,7 +67,8 @@ radio_audio_sample:
     beq +n
 s:  lda #127
 
-n:  lsr             ; Reduce sample from 7 to 4 bits.
+    ; Reduce sample from 7 to 4 bits and save it.
+n:  lsr
     lsr
     lsr
     ldy tleft
@@ -101,17 +102,17 @@ done:
     sta average
     sta @(++ average)
     jsr radio_start_data
-    lda #<radio_skip_pulse_data
+    lda #<radio_sync_data
     sta $314
-    lda #>radio_skip_pulse_data
+    lda #>radio_sync_data
     sta $315
     jmp return_from_interrupt
 
-radio_skip_pulse_data:
+radio_sync_data:
     jsr radio_get_bit
-    lda #<radio_loader_data
+    lda #<radio_load_data
     sta $314
-    lda #>radio_loader_data
+    lda #>radio_load_data
     sta $315
     lda @(+ 2 mod_sample_setter)
     sta @(+ 2 mod_sample_getter)
@@ -122,15 +123,15 @@ radio_skip_pulse_data:
     sta rr_sample
     jmp return_from_interrupt
 
-radio_loader:
+radio_detect:
     jsr radio_get_bit
     bcc +n
-    ldx #<radio_loader
-    ldy #>radio_loader
+    ldx #<radio_detect
+    ldy #>radio_detect
     lda tape_leader_countdown
     bpl restart_loader
-    ldx #<radio_loader_data
-    ldy #>radio_loader_data
+    ldx #<radio_load_data
+    ldy #>radio_load_data
 restart_loader:
     lda #16
     sta tape_leader_countdown
@@ -152,7 +153,7 @@ radio_get_bit:
     asl
     rts
 
-radio_loader_data:
+radio_load_data:
     jsr radio_get_bit
     ror tape_current_byte
     dec tape_bit_counter
@@ -170,21 +171,14 @@ byte_complete:
 n:  dec tape_counter        ; All bytes loaded?
     bne +n
     dec @(++ tape_counter)
-    bne +n
-
-    sei
-    lda #$7f                ; Turn off tape pulse interrupt.
-    sta $912e
-    sta $912d
-
-    jmp (tape_callback)
+    beq +done
 
 n:  dec dleft
     bne return_from_interrupt
 
-    lda #<radio_skip_pulse_audio
+    lda #<radio_sync_audio
     sta $314
-    lda #>radio_skip_pulse_audio
+    lda #>radio_sync_audio
     sta $315
     lda current_low
     sta $9124
@@ -192,9 +186,16 @@ n:  dec dleft
     sta $9125
     jmp return_from_interrupt
 
-radio_skip_pulse_audio:
-    lda #<radio_audio_sample
+radio_sync_audio:
+    lda #<radio_play
     sta $314
-    lda #>radio_audio_sample
+    lda #>radio_play
     sta $315
     jmp return_from_interrupt
+
+done:
+    sei
+    lda #$7f
+    sta $912d   ; Acknowledge tape pulse interrupt.
+    sta $912e   ; Turn off tape pulse interrupt.
+    jmp (tape_callback)

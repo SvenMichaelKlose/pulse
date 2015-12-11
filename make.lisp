@@ -1,5 +1,6 @@
 (= *model* :vic-20)
 
+;(defconstant +versions+ '(:pal-tape))
 (defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
 
 (defun make-version? (&rest x)
@@ -21,6 +22,11 @@
 (defvar audio_longest_pulse #x28)
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 (defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
+
+(defvar radio_shortest_pulse #x18)
+(defvar radio_longest_pulse #x28)
+(defvar radio_pulse_width (- radio_longest_pulse radio_shortest_pulse))
+(defvar radio_average_pulse (+ radio_shortest_pulse (half radio_pulse_width)))
 
 (defvar *ram-audio-rate* 2000)
 (defconstant +c64-pal-cycles+ 985248)
