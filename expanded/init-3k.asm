@@ -53,7 +53,8 @@ l:  lda loader_cfg_16k,x
     sta tape_ptr,x
     dex
     bpl -l
-;    jmp tape_loader_start
+    jsr radio_start
+    jmp flight
 
 init_16k:
     ; Load +24K block.
@@ -62,7 +63,8 @@ l:  lda loader_cfg_24k,x
     sta tape_ptr,x
     dex
     bpl -l
-;    jmp tape_loader_start
+    jsr radio_start
+    jmp flight
 
 init_24k:
     ; Load +32K block.
@@ -71,9 +73,14 @@ l:  lda loader_cfg_32k,x
     sta tape_ptr,x
     dex
     bpl -l
-;    jmp tape_loader_start
+    jsr radio_start
+    jmp flight
 
 init_32k:
+    ; Blank screen.
+    lda #0
+    sta $9002
+
     ; Load splash screen.
     ldx #5
 l:  lda loader_cfg_splash,x
@@ -84,9 +91,9 @@ l:  lda loader_cfg_splash,x
 
 
 patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
-patch_16k_size = $1000
-patch_24k_size = $1000
-patch_32k_size = $1000
+patch_16k_size = patch_8k_size
+patch_24k_size = patch_8k_size
+patch_32k_size = patch_8k_size
 splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_8k:

@@ -122,15 +122,21 @@
                           out  out-file
     (tap2wav in out)))
 
+(defun make-radio-tap (to in-wav bin)
+  (with-output-file out to
+    (with-input-file in-bin bin
+      (radio2tap out in-wav in-bin))))
+
 (defun make-radio-wav (tv)
   (format t "Making radio…~%")
   (make-wav "radio" "media/radio.ogg" "3" "0" tv (half (pwm-pulse-rate tv)))
   (make-conversion "radio" tv (half (pwm-pulse-rate tv)))
-  (with-output-file out "obj/radio.tap"
-    (alet (downcase (symbol-name tv))
-      (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
-        (with-input-file in-bin (+ "obj/8k.crunched." ! ".prg")
-          (radio2tap out in-wav in-bin))))))
+  (alet (downcase (symbol-name tv))
+    (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
+      (make-radio-tap "obj/radio0.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))
+      (make-radio-tap "obj/radio1.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))
+      (make-radio-tap "obj/radio2.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))
+      (make-radio-tap "obj/radio3.tap" in-wav (+ "obj/8k.crunched." ! ".prg")))))
 
 (defun exomize (from to addr target)
   (sb-ext:run-program "/usr/local/bin/exomizer"
@@ -295,10 +301,10 @@
                          :start #x1001)
              (bin2pottap (string-list (fetch-file (+ "obj/intro.crunched." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/3k.crunched." tv ".prg"))))
-             (fetch-file "obj/radio.tap")
-;             (bin2pottap (maptimes [cl:random 256] 4096))
-;             (bin2pottap (maptimes [cl:random 256] 4096))
-;             (bin2pottap (maptimes [cl:random 256] 4096))
+             (fetch-file "obj/radio0.tap")
+             (fetch-file "obj/radio1.tap")
+             (fetch-file "obj/radio2.tap")
+             (fetch-file "obj/radio3.tap")
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
              (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))
