@@ -228,6 +228,19 @@
                (+ "obj/8k.crunched." ! ".prg")
                "2002" "52"))))
 
+(defun make-flight ()
+  (alet (downcase (symbol-name *tv*))
+    (make (+ "obj/flight." ! ".prg")
+          '("primary-loader/models.asm"
+            "radio/zeropage.asm"
+            "radio/flight.asm"
+            "radio/loader.asm"
+            "secondary-loader/start.asm")
+          (+ "obj/flight." ! ".prg.vice.txt"))
+    (exomize (+ "obj/flight." ! ".prg")
+             (+ "obj/flight.crunched." ! ".prg")
+             "1002" "20")))
+
 (defun make-3k (imported-labels)
   (with-temporary *imported-labels* imported-labels
     (alet (downcase (symbol-name *tv*))
@@ -242,8 +255,6 @@
             '("primary-loader/models.asm"
               "radio/zeropage.asm"
               "expanded/init-3k.asm"
-              "radio/loader.asm"
-              "radio/flight.asm"
               "secondary-loader/start.asm")
             (+ "obj/3k." ! ".prg.vice.txt"))
       (exomize (+ "obj/3k." ! ".prg")
@@ -278,6 +289,7 @@
                            (get-label 'relocated_splash)))
       (alet (get-label 'memory_end)
         (make-8k imported-labels)
+        (make-flight)
         (make-3k imported-labels)
         (make-eyes)
         (make-loader-prg)
@@ -304,12 +316,14 @@
                          :start #x1001)
              (bin2pottap (string-list (fetch-file (+ "obj/intro.crunched." tv ".prg"))))
              (bin2pottap (string-list (fetch-file (+ "obj/3k.crunched." tv ".prg"))))
+             (bin2pottap (string-list (fetch-file (+ "obj/flight.crunched." tv ".prg"))))
              (fetch-file "obj/radio0.tap")
              (fetch-file "obj/radio1.tap")
              (fetch-file "obj/radio2.tap")
              (fetch-file "obj/radio3.tap")
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
              (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))
+             (fetch-file (+ "obj/splash-audio." tv ".bin"))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))
           :original-cycles (& c64-master? (cpu-cycles *tv*))
           :converted-cycles (& c64-master? +c64-pal-cycles+)))
