@@ -44,10 +44,8 @@
               (* 8 *pulse-average*))))
 
 (defun radio-rate (tv)
-  (integer (/ (? (eq tv :pal)
-                 +cpu-cycles-pal+
-                 +cpu-cycles-ntsc+)
-              (* 8 *radio-pulse-average*))))
+  (pwm-pulse-rate tv :shortest radio_shortest_pulse
+                     :width radio_pulse_width))
 
 (defun print-bitrate-info ()
   (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
@@ -129,8 +127,8 @@
 
 (defun make-radio-wav (tv)
   (format t "Making radio…~%")
-  (make-wav "radio" "media/radio.ogg" "3" "0" tv (half (pwm-pulse-rate tv)))
-  (make-conversion "radio" tv (half (pwm-pulse-rate tv)))
+  (make-wav "radio" "media/radio.ogg" "3" "-32" tv (half (radio-rate tv)))
+  (make-conversion "radio" tv (half (radio-rate tv)))
   (alet (downcase (symbol-name tv))
     (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
       (make-radio-tap "obj/radio0.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))

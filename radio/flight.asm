@@ -1,4 +1,4 @@
-radio_timer = @(/ (cpu-cycles *tv*) (half (pwm-pulse-rate *tv*)))
+radio_timer = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
 
 flight:
     lda #<radio_timer

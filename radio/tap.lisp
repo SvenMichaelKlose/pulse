@@ -18,17 +18,17 @@
                        312
                        261)
                     50)
-                 (half (pwm-pulse-rate *tv*))))))
+                 (half (radio-rate *tv*))))))
 
 (defun radio-window-cycles ()
-  (* (radio-rasters)
-     (? (eq *tv* :pal)
-        71
-        65)
-     256))
-;  (integer (* (/ (cpu-cycles *tv*)
-;                 (pwm-pulse-rate *tv*))
-;              512)))
+;  (* (radio-rasters)
+;     (? (eq *tv* :pal)
+;        71
+;        65)
+;     256))
+  (integer (* (/ (cpu-cycles *tv*)
+                 (radio-rate *tv*))
+              512)))
 
 (defun radio-data-size ()
   (with (tap-cycle-resolution   8
