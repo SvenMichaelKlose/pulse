@@ -196,6 +196,8 @@ radio_sync_audio:
 done:
     sei
     lda #$7f
+    sta $911b
+    sta $911e
     sta $912d   ; Acknowledge tape pulse interrupt.
     sta $912e   ; Turn off tape pulse interrupt.
     jmp (tape_callback)
