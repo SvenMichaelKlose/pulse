@@ -323,7 +323,7 @@
              (fetch-file "obj/radio3.tap")
              (bin2pottap (string-list (fetch-file (+ "obj/splash.crunched." tv ".prg"))))
              (bin2pottap (string-list (glued-game-and-splash-gfx *current-game*)))
-             (fetch-file (+ "obj/splash-audio." tv ".bin"))
+;             (fetch-file (+ "obj/splash-audio." tv ".bin"))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))
           :original-cycles (& c64-master? (cpu-cycles *tv*))
           :converted-cycles (& c64-master? +c64-pal-cycles+)))

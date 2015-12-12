@@ -52,7 +52,7 @@ fx_clear2:
     dec do_play_fx
     ldx do_play_fx
     lda #32
-    sta @(+ screen 68),x
+;    sta @(+ screen 68),x
     sta @(+ screen 68 50),x
     sta @(+ screen 68 100),x
     sta @(+ screen 68 150),x
@@ -99,16 +99,16 @@ l:  sta @(+ #x1000 (* 32 8)),x
     ; Copy title screen.
     ldx #13
 l:  lda gfx_title_screen,x
-    sta @(+ screen 4),x
+    sta @(+ screen 26),x
     lda @(+ gfx_title_screen 14),x
-    sta @(+ screen 4 22),x
+    sta @(+ screen 26 22),x
     lda @(+ gfx_title_screen 28),x
-    sta @(+ screen 4 44),x
+    sta @(+ screen 26 44),x
     dex
     bpl -l
 
     ; Set title color.
-    ldx #66
+    ldx #110
     lda #@(+ multicolor cyan)
 l:  sta colors,x
     dex
@@ -130,7 +130,7 @@ l:  lsr $9004
     lda #%11111100          ; Our charset.
     sta $9005
 
-    lda #@(? (eq *tv* :pal) 52 37)
+    lda #@(? (eq *tv* :pal) 68 53)
 m:  cmp $9004
     bne -m
 
