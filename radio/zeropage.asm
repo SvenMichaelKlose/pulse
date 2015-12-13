@@ -34,7 +34,9 @@ save_x:             0
 last_audio_raster:  0
 rr_sample:          0
 curchar:            0
-current_zoom:       0 0
+current_zoom_x:     0 0
+current_zoom_y:     0 0
+ypos:               0
 
 ; Intro sounds.
 sound_start:

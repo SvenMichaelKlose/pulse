@@ -3,6 +3,28 @@ radio_timer = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
     org $1000
     $02 $10
 
+    jmp start
+
+    fill 16
+
+start:
+    lda #%11111100          ; Our charset.
+    sta $9005
+    ldx #7
+l:  lda #0
+    sta $1000,x
+    lda #$ff
+    sta $1008,x
+    dex
+    bpl -l
+
+    ldx #252
+    lda #0
+l:  sta screen,x
+    sta @(+ 253 screen),x
+    dex
+    bne -l
+
 load_8k:
     ldx #5
 l:  lda loader_cfg_8k,x
@@ -84,24 +106,53 @@ l:  lda do_play_radio
     ldx #0
     lda #white
 l:  sta colors,x
-    sta @(+ 256 colors),y
+    sta @(+ 256 colors),x
     dex
     bne -l
 
     lda #<zoomtabs
-    sta current_zoom
+    sta current_zoom_x
     lda #>zoomtabs
-    sta @(++ current_zoom)
+    sta @(++ current_zoom_x)
+    lda #<zoomtabs
+    sta current_zoom_y
+    lda #>zoomtabs
+    sta @(++ current_zoom_y)
 a:  lda #0
     sta scrx
     sta scry
+    lda #<gfx_disc
+    sta @(+ 1 mod_src)
+    lda #>gfx_disc
+    sta @(+ 2 mod_src)
 
-l:  jsr draw_zoomed_line
+    lda #0
+    sta ypos
+
+l:  ldy ypos
+    lda (current_zoom_y),y
+    bmi +o
+    tay
+    lda $edfd,y
+    clc
+    adc #<gfx_disc
+    php
+    sta @(+ 1 mod_src)
+    cpy #@(++ (/ 256 screen_columns))
+    lda #@(half (high screen))
+    rol
+    plp
+    adc #@(+ (- (high screen)) (high gfx_disc))
+    sta @(+ 2 mod_src)
+
+    jsr draw_zoomed_line
+    inc ypos
     inc scry
-    lda scry
-    cmp #5
-    bne -l
-    inc @(+ 1 mod_src)
+    jmp -l
+o:  ldx @(++ mod_zoom)
+    inx
+    stx current_zoom_x
+    stx current_zoom_Y
     jmp -a
 
 play_sample:
@@ -125,12 +176,16 @@ done:
 
 
 draw_zoomed_line:
-    lda current_zoom
+    lda scry
+    cmp #23
+    bcs +done
+    lda current_zoom_x
     sta @(++ mod_zoom)
-    lda @(++ current_zoom)
+    lda @(++ current_zoom_x)
     sta @(+ 2 mod_zoom)
     jsr scrcoladdr  ; Get screen address of line.
     bmi +s          ; Over left side of the screen…
+a:  jsr play_sample
 mod_zoom:
 l:  ldx zoomtabs    ; Get index into pixel.
     bmi +done       ; All pixels done.
@@ -142,13 +197,12 @@ mod_src:
 n:  sta (scr),y     ; Set pixel.
     inc @(++ mod_zoom) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
-    jsr play_sample
-    jmp -l
+    jmp -a
 
 s:  inc @(++ mod_zoom) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     bmi -s          ; Still over the left side.
-    jmp -l          ; Start drawing.
+    jmp -a          ; Start drawing.
 
 c:  lda (scr),y
     sta mod_clrtab
@@ -163,12 +217,6 @@ scrlines_l: @(maptimes [low (+ #x1e00 (* 22 _))] 23)
 scrlines_h: @(maptimes [high (+ #x1e00 (* 22 _))] 23)
 collines_l: @(maptimes [low (+ #x9600 (* 22 _))] 23)
 collines_h: @(maptimes [high (+ #x9600 (* 22 _))] 23)
-
-zoomtabs:
-    @(apply #'+ (maptimes [alet (- 22 _)
-                            (+ (maptimes [integer (* _ (/ 22 !))] !)
-                               (list 255))]
-                          22))
 
 clrtab:
 
@@ -202,3 +250,11 @@ loader_cfg_splash:
     $00 $10
     <splash_size @(++ >splash_size)
     $02 $10
+
+    fill @(- 256 (low *pc*))
+
+zoomtabs:
+    @(apply #'+ (maptimes [alet (- 22 _)
+                            (+ (maptimes [integer (* _ (/ 22 !))] !)
+                               (list 255))]
+                          22))
