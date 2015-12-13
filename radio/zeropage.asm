@@ -28,12 +28,13 @@ average:            0 0
 tleft:              0
 dleft:              0
 do_play_radio:      0
+save_x:             0
 
 ; Flight.
 last_audio_raster:  0
 rr_sample:          0
 curchar:            0
-zoom:               0
+current_zoom:       0 0
 
 ; Intro sounds.
 sound_start:

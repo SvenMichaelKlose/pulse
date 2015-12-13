@@ -64,26 +64,51 @@ l:  lda loader_cfg_splash,x
 
 
 flight:
+
+    ; Set timer for sample output synchronisation.
     lda #<radio_timer
     sta $9114
     lda #>radio_timer
     sta $9115
     lda #$40
     sta $911b
+
+    ; Init sample playing and halt until first buffer
+    ; has been loaded.
     lda #0
     sta rr_sample
     sta do_play_radio
 l:  lda do_play_radio
     beq -l
-l:  lda $911d
-    asl
-    bmi play_sample
-c:  jmp -l
 
-l:  lda $911d
-    asl
-    bmi play_sample
+    ldx #0
+    lda #white
+l:  sta colors,x
+    sta @(+ 256 colors),y
+    dex
+    bne -l
+
+    lda #<zoomtabs
+    sta current_zoom
+    lda #>zoomtabs
+    sta @(++ current_zoom)
+a:  lda #0
+    sta scrx
+    sta scry
+
+l:  jsr draw_zoomed_line
+    inc scry
+    lda scry
+    cmp #5
+    bne -l
+    inc @(+ 1 mod_src)
+    jmp -a
+
 play_sample:
+    lda $911d
+    asl
+    bpl +done
+    stx save_x
     ldx rr_sample
 mod_sample_getter:
     lda sample_buffer,x
@@ -92,11 +117,18 @@ mod_sample_getter:
     stx rr_sample
     lda #>radio_timer
     sta $9115
-    lda #$7f
+    lda #$40
     sta $911d
-    jmp -c
+    ldx save_x
+done:
+    rts
+
 
 draw_zoomed_line:
+    lda current_zoom
+    sta @(++ mod_zoom)
+    lda @(++ current_zoom)
+    sta @(+ 2 mod_zoom)
     jsr scrcoladdr  ; Get screen address of line.
     bmi +s          ; Over left side of the screen…
 mod_zoom:
@@ -105,19 +137,17 @@ l:  ldx zoomtabs    ; Get index into pixel.
     cpy #23         ; Over right side of the screen?
     bcs +done       ; Yes, done.
 mod_src:
-    lda $1234,x     ; Get pixel.
+    lda $ff00,x     ; Get pixel.
 ;    beq +c          ; Clear…
 n:  sta (scr),y     ; Set pixel.
-    inc @(+ mod_zoom) ; Step to next pixel index.
+    inc @(++ mod_zoom) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
+    jsr play_sample
     jmp -l
 
-s:  inc @(+ mod_zoom) ; Step to next pixel index.
+s:  inc @(++ mod_zoom) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     bmi -s          ; Still over the left side.
-    lda zoom        ; Initialise self–modifying pointer.
-    sta mod_zoom
-    sta @(+ mod_zoom)
     jmp -l          ; Start drawing.
 
 c:  lda (scr),y

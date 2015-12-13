@@ -195,6 +195,8 @@ radio_sync_audio:
 
 done:
     sei
+    ldx #$ff
+    txs
     lda #$7f
     sta $911b
     sta $911e
