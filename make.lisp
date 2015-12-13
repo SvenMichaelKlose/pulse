@@ -234,7 +234,10 @@
           '("primary-loader/models.asm"
             "radio/zeropage.asm"
             "radio/flight.asm"
+            "radio/disc.asm"
             "radio/loader.asm"
+            "game/screen.asm"
+            "game/high-segment.asm"
             "secondary-loader/start.asm")
           (+ "obj/flight." ! ".prg.vice.txt"))
     (exomize (+ "obj/flight." ! ".prg")
@@ -355,8 +358,7 @@
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
       (make-radio-wav *tv*)
-      (make-tape-audio *tv* "theme-splash" "media/splash/theme-boray.mp3" "3" "-48")
-      (make-tape-audio *tv* "theme-hiscore" "media/theme-lukas.mp3" "3" "-72")
+      (make-tape-audio *tv* "theme-splash" "media/splash/theme-boray.mp3" "3" "-64")
       (with-output-file o (+ "obj/splash-audio." tv ".bin")
         (wav2pwm o (fetch-file (+ "obj/theme-splash.downsampled." tv ".wav")) :pause-before 0))
       (make-tap nil)
@@ -374,7 +376,9 @@
   (make-model-detection)
   (make-splash-gfx)
   (break-up-splash-chars)
-  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-64"))
+  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56"))
+  (with-temporary *ram-audio-rate* 4000
+    (make-ram-audio "theme-hiscore" "media/intermediate/audio.wav" "3" "-72"))
 (when (make-version? :pal-tape)
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)
