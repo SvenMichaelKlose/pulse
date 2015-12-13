@@ -80,6 +80,9 @@ l:  lda $911d
     bmi play_sample
 c:  jmp -l
 
+l:  lda $911d
+    asl
+    bmi play_sample
 play_sample:
     ldx rr_sample
 mod_sample_getter:
@@ -93,8 +96,38 @@ mod_sample_getter:
     sta $911d
     jmp -c
 
-draw_object:
-    
+draw_zoomed_line:
+    jsr scrcoladdr  ; Get screen address of line.
+    bmi +s          ; Over left side of the screen…
+mod_zoom:
+l:  ldx zoomtabs    ; Get index into pixel.
+    bmi +done       ; All pixels done.
+    cpy #23         ; Over right side of the screen?
+    bcs +done       ; Yes, done.
+mod_src:
+    lda $1234,x     ; Get pixel.
+;    beq +c          ; Clear…
+n:  sta (scr),y     ; Set pixel.
+    inc @(+ mod_zoom) ; Step to next pixel index.
+    iny             ; Step to next pixel on screen.
+    jmp -l
+
+s:  inc @(+ mod_zoom) ; Step to next pixel index.
+    iny             ; Step to next pixel on screen.
+    bmi -s          ; Still over the left side.
+    lda zoom        ; Initialise self–modifying pointer.
+    sta mod_zoom
+    sta @(+ mod_zoom)
+    jmp -l          ; Start drawing.
+
+c:  lda (scr),y
+    sta mod_clrtab
+mod_clrtab:
+    lda clrtab
+    jmp -n
+
+done:
+    rts
 
 scrlines_l: @(maptimes [low (+ #x1e00 (* 22 _))] 23)
 scrlines_h: @(maptimes [high (+ #x1e00 (* 22 _))] 23)
@@ -106,6 +139,8 @@ zoomtabs:
                             (+ (maptimes [integer (* _ (/ 22 !))] !)
                                (list 255))]
                           22))
+
+clrtab:
 
 patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
 patch_16k_size = patch_8k_size

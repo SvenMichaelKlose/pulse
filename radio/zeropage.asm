@@ -33,6 +33,7 @@ do_play_radio:      0
 last_audio_raster:  0
 rr_sample:          0
 curchar:            0
+zoom:               0
 
 ; Intro sounds.
 sound_start:
