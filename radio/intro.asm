@@ -103,13 +103,13 @@ blink:
     ldx #16
     jsr laser2
 
-    lda #12
+    lda #9
     jsr show_text
     lda #10
     jsr show_text
     lda #11
     jsr show_text
-    lda #9
+    lda #12
     jsr show_text
     ldx #16
     jsr swait
@@ -137,11 +137,11 @@ l:  sta (col),y
     cpy #22
     bne -l
     inc sound_foreground
-    ldx #4
+    ldx #6
     jmp swait
     
 laser:
-    ldx #4
+    ldx #6
 laser2:
     lda #7
     sta sound_laser
