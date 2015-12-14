@@ -230,14 +230,17 @@ l:  ldx zoomtabs    ; Get index into pixel.
     bmi +done       ; All pixels done.
     cpy #23         ; Over right side of the screen?
     bcs +done       ; Yes, done.
+    lda (scr),y
+    and #%11000
+    cmp #0
+    bne +n
 mod_src:
     lda $ff00,x     ; Get pixel.
-;    beq +c          ; Clear…
-n:  sta (scr),y     ; Set pixel.
+    sta (scr),y     ; Set pixel.
 mod_col:
     lda $ff00,y     ; Get color.
     sta (col),y     ; Set color.
-    inc @(++ mod_zoom) ; Step to next pixel index.
+n:  inc @(++ mod_zoom) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     jmp -a
 
@@ -247,17 +250,8 @@ s:  inc @(++ mod_zoom) ; Step to next pixel index.
     bmi -s          ; Still over the left side.
     jmp -a          ; Start drawing.
 
-    ; Clear pixel if it belongs to our current image.
-c:  lda (scr),y
-    sta mod_clrtab
-mod_clrtab:
-    lda clrtab
-    jmp -n
-
 done:
     rts
-
-clrtab:
 
 patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
 patch_16k_size = patch_8k_size
