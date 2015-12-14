@@ -17,15 +17,22 @@ chars:
 chars_end:
 
 start:
-    lda #%11111100          ; Our charset.
+    ; Wait for retrace.
+l:  lsr $9004
+    bne -l
+
+    ; Charset at $1000.
+    lda #%11111100
     sta $9005
 
+    ; Copy character data to $1000.
     ldx #@(- chars_end chars)
 l:  lda chars,x
     sta $1000,x
     dex
     bpl -l
 
+    ; Clear the screen.
     ldx #252
     lda #0
 l:  sta screen,x
@@ -40,6 +47,14 @@ l:  lda loader_cfg_8k,x
     dex
     bpl -l
     jsr radio_start
+
+    ; Init sample playing and halt until first buffer has been loaded.
+    lda #0
+    sta rr_sample
+    sta do_play_radio
+l:  lda do_play_radio
+    beq -l
+
     jmp flight
 
 init_8k:
@@ -92,7 +107,6 @@ l:  lda loader_cfg_splash,x
     bpl -l
     jmp tape_loader_start
 
-
 flight:
     ; Set timer for sample output synchronisation.
     lda #<radio_timer
@@ -101,21 +115,6 @@ flight:
     sta $9115
     lda #$40
     sta $911b
-
-    ; Init sample playing and halt until first buffer
-    ; has been loaded.
-    lda #0
-    sta rr_sample
-    sta do_play_radio
-l:  lda do_play_radio
-    beq -l
-
-    ldx #0
-    lda #white
-l:  sta colors,x
-    sta @(+ 256 colors),x
-    dex
-    bne -l
 
     lda #<zoomtabs
     sta current_zoom_x
@@ -142,9 +141,12 @@ a:  lda #0
     lda #0
     sta ypos
 
+    ; Get number of source line to draw.
 l:  ldy ypos
     lda (current_zoom_y),y
-    bmi +o
+    bmi +o      ; End of image…
+
+    ; Calculate source screen and color data address of line.
     tay
     lda $edfd,y
     tax
@@ -170,9 +172,13 @@ l:  ldy ypos
     sta @(+ 2 mod_col)
 
     jsr draw_zoomed_line
+
+    ; Step to next line.
     inc ypos
     inc scry
     jmp -l
+
+    ; Step to next scaling factor and draw again.
 o:  ldx @(++ mod_zoom)
     inx
     stx current_zoom_x
@@ -180,9 +186,15 @@ o:  ldx @(++ mod_zoom)
     jmp -a
 
 play_sample:
-    lda $911d
-    asl
-    bpl +done
+    ; Check if we need to play a sample.
+    lda $911d           ; Get timer 1/VIA 1 underflow bit.
+    asl                 ; Shift it into the M flag.
+    bpl +done           ; Nothing to be played, yet…
+
+    ; Reset timer.
+    lda #>radio_timer
+    sta $9115
+
     stx save_x
     ldx rr_sample
 mod_sample_getter:
@@ -190,26 +202,29 @@ mod_sample_getter:
     sta $900e
     dex
     stx rr_sample
-    lda #>radio_timer
-    sta $9115
-    lda #$40
-    sta $911d
     ldx save_x
 done:
     rts
 
 
 draw_zoomed_line:
+    ; Skip if line is off–screen.
     lda scry
     cmp #23
     bcs +done
+
+    ; Init self–mod pointer into scaling table.
     lda current_zoom_x
     sta @(++ mod_zoom)
     lda @(++ current_zoom_x)
     sta @(+ 2 mod_zoom)
+
+    ; Calculate screen and color RAM pointers for first pixel.
     jsr scrcoladdr  ; Get screen address of line.
     bmi +s          ; Over left side of the screen…
+
 a:  jsr play_sample
+
 mod_zoom:
 l:  ldx zoomtabs    ; Get index into pixel.
     bmi +done       ; All pixels done.
@@ -226,11 +241,13 @@ mod_col:
     iny             ; Step to next pixel on screen.
     jmp -a
 
+    ; Step into screen from the left.
 s:  inc @(++ mod_zoom) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     bmi -s          ; Still over the left side.
     jmp -a          ; Start drawing.
 
+    ; Clear pixel if it belongs to our current image.
 c:  lda (scr),y
     sta mod_clrtab
 mod_clrtab:
@@ -239,11 +256,6 @@ mod_clrtab:
 
 done:
     rts
-
-scrlines_l: @(maptimes [low (+ #x1e00 (* 22 _))] 23)
-scrlines_h: @(maptimes [high (+ #x1e00 (* 22 _))] 23)
-collines_l: @(maptimes [low (+ #x9600 (* 22 _))] 23)
-collines_h: @(maptimes [high (+ #x9600 (* 22 _))] 23)
 
 clrtab:
 
