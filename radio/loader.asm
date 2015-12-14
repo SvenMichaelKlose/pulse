@@ -72,6 +72,7 @@ n:  lsr
     lsr
     lsr
     ldy tleft
+    ora #@(* orange 16)
 mod_sample_setter:
     sta sample_buffer,y
 

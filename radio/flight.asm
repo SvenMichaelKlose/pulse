@@ -5,16 +5,24 @@ radio_timer = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
 
     jmp start
 
-    fill 16
+    fill @(* 6 8)
+
+chars:
+    $00 $00 $00 $00 $00 $00 $00 $00
+    $AA $AA $AA $AA $AA $AA $AA $AA
+    $AA $00 $AA $00 $AA $00 $AA $00
+    $FF $FF $FF $FF $FF $FF $FF $FF
+    $FF $00 $FF $00 $FF $00 $FF $00
+    $00 $00 $00 $00 $00 $00 $00 $00
+chars_end:
 
 start:
     lda #%11111100          ; Our charset.
     sta $9005
-    ldx #7
-l:  lda #0
+
+    ldx #@(- chars_end chars)
+l:  lda chars,x
     sta $1000,x
-    lda #$ff
-    sta $1008,x
     dex
     bpl -l
 
@@ -86,7 +94,6 @@ l:  lda loader_cfg_splash,x
 
 
 flight:
-
     ; Set timer for sample output synchronisation.
     lda #<radio_timer
     sta $9114
@@ -121,10 +128,16 @@ l:  sta colors,x
 a:  lda #0
     sta scrx
     sta scry
-    lda #<gfx_disc
+    lda #<gfx_earth
     sta @(+ 1 mod_src)
-    lda #>gfx_disc
+    lda #>gfx_earth
     sta @(+ 2 mod_src)
+    lda #<colors_earth
+    sta @(+ 1 mod_col)
+    lda #>colors_earth
+    sta @(+ 2 mod_col)
+    lda #blue
+    sta curcol
 
     lda #0
     sta ypos
@@ -134,16 +147,27 @@ l:  ldy ypos
     bmi +o
     tay
     lda $edfd,y
+    tax
     clc
-    adc #<gfx_disc
+    adc #<gfx_earth
     php
     sta @(+ 1 mod_src)
+    txa
+    clc
+    adc #<colors_earth
+    sta @(+ 1 mod_col)
     cpy #@(++ (/ 256 screen_columns))
     lda #@(half (high screen))
     rol
     plp
-    adc #@(+ (- (high screen)) (high gfx_disc))
+    php
+    tax
+    adc #@(+ (- (high screen)) (high gfx_earth))
     sta @(+ 2 mod_src)
+    plp
+    txa
+    adc #@(+ (- (high screen)) (high colors_earth))
+    sta @(+ 2 mod_col)
 
     jsr draw_zoomed_line
     inc ypos
@@ -195,6 +219,9 @@ mod_src:
     lda $ff00,x     ; Get pixel.
 ;    beq +c          ; Clear…
 n:  sta (scr),y     ; Set pixel.
+mod_col:
+    lda $ff00,y     ; Get color.
+    sta (col),y     ; Set color.
     inc @(++ mod_zoom) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     jmp -a

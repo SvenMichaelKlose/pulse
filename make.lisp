@@ -234,7 +234,8 @@
           '("primary-loader/models.asm"
             "radio/zeropage.asm"
             "radio/flight.asm"
-            "radio/disc.asm"
+;            "radio/disc.asm"
+            "radio/earth.asm"
             "radio/loader.asm"
             "game/screen.asm"
             "game/high-segment.asm"
@@ -318,7 +319,7 @@
                             (fetch-file "obj/model-detection.bin"))
                          :start #x1001)
              (bin2pottap (string-list (fetch-file (+ "obj/intro.crunched." tv ".prg"))))
-             (bin2pottap (string-list (fetch-file (+ "obj/3k.crunched." tv ".prg"))))
+             (bin2pottap (string-list (fetch-file (+ "obj/3k.crunched." tv ".prg"))) :gap #x0c0000)
              (bin2pottap (string-list (fetch-file (+ "obj/flight.crunched." tv ".prg"))))
              (fetch-file "obj/radio0.tap")
              (fetch-file "obj/radio1.tap")
