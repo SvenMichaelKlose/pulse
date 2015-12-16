@@ -233,6 +233,8 @@
     (make (+ "obj/flight." ! ".prg")
           '("primary-loader/models.asm"
             "radio/zeropage.asm"
+            "radio/start.asm"
+            "radio/load-sequence.asm"
             "radio/flight.asm"
 ;            "radio/disc.asm"
             "radio/earth.asm"

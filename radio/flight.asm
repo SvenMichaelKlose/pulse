@@ -1,113 +1,6 @@
 radio_timer = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
 layer_mask = %11110000
 
-    org $1000
-    $02 $10
-
-    jmp start
-
-    fill @(* 6 8)
-
-chars:
-    $00 $00 $00 $00 $00 $00 $00 $00
-    $AA $AA $AA $AA $AA $AA $AA $AA
-    $AA $00 $AA $00 $AA $00 $AA $00
-    $FF $FF $FF $FF $FF $FF $FF $FF
-    $FF $00 $FF $00 $FF $00 $FF $00
-    $00 $00 $00 $00 $00 $00 $00 $00
-chars_end:
-
-start:
-    ; Wait for retrace.
-l:  lsr $9004
-    bne -l
-
-    ; Charset at $1000.
-    lda #%11111100
-    sta $9005
-
-    ; Copy character data to $1000.
-    ldx #@(- chars_end chars)
-l:  lda chars,x
-    sta $1000,x
-    dex
-    bpl -l
-
-    ; Clear the screen.
-    ldx #252
-    lda #0
-l:  sta screen,x
-    sta @(+ 253 screen),x
-    dex
-    bne -l
-
-load_8k:
-    ldx #5
-l:  lda loader_cfg_8k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jsr radio_start
-
-    ; Init sample playing and halt until first buffer has been loaded.
-    lda #0
-    sta rr_sample
-    sta do_play_radio
-l:  lda do_play_radio
-    beq -l
-
-    jmp flight
-
-init_8k:
-    ; Set patch vector called by game.
-    lda model
-    lsr
-    beq +n
-    jsr $2002
-n:
-
-    ; Load +16K block.
-    ldx #5
-l:  lda loader_cfg_16k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jsr radio_start
-    jmp flight
-
-init_16k:
-    ; Load +24K block.
-    ldx #5
-l:  lda loader_cfg_24k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jsr radio_start
-    jmp flight
-
-init_24k:
-    ; Load +32K block.
-    ldx #5
-l:  lda loader_cfg_32k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jsr radio_start
-    jmp flight
-
-init_32k:
-    ; Blank screen.
-    lda #0
-    sta $9002
-
-    ; Load splash screen.
-    ldx #5
-l:  lda loader_cfg_splash,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jmp tape_loader_start
-
 flight:
     ; Set timer for sample output synchronisation.
     lda #<radio_timer
@@ -117,14 +10,14 @@ flight:
     lda #$40
     sta $911b
 
-    lda #<zoomtabs
-    sta current_zoom_x
-    lda #>zoomtabs
-    sta @(++ current_zoom_x)
-    lda #<zoomtabs
-    sta current_zoom_y
-    lda #>zoomtabs
-    sta @(++ current_zoom_y)
+    lda #<scaling_offsets
+    sta current_scaling_x
+    lda #>scaling_offsets
+    sta @(++ current_scaling_x)
+    lda #<scaling_offsets
+    sta current_scaling_y
+    lda #>scaling_offsets
+    sta @(++ current_scaling_y)
 a:  lda #0
     sta scrx
     sta scry
@@ -149,7 +42,7 @@ a:  lda #0
 
     ; Get number of source line to draw.
 l:  ldy ypos
-    lda (current_zoom_y),y
+    lda (current_scaling_y),y
     bmi +o      ; End of image…
 
     ; Calculate source screen and color data address of line.
@@ -177,7 +70,7 @@ l:  ldy ypos
     adc #@(+ (- (high screen)) (high colors_earth))
     sta @(+ 2 mod_col)
 
-    jsr draw_zoomed_line
+    jsr draw_scaled_line
 
     ; Step to next line.
     inc ypos
@@ -190,10 +83,10 @@ o:
     jsr clear_line
 
     ; Step to next scaling factor and draw again.
-    ldx @(++ mod_zoom)
+    ldx @(++ mod_scaling)
     inx
-    stx current_zoom_x
-    stx current_zoom_Y
+    stx current_scaling_x
+    stx current_scaling_Y
     jmp -a
 
 play_sample:
@@ -235,17 +128,17 @@ l:  ldy scrx
 n:  iny
     jmp -l
 
-draw_zoomed_line:
+draw_scaled_line:
     ; Skip if line is off–screen.
     lda scry
     cmp #23
     bcs +done
 
     ; Init self–mod pointer into scaling table.
-    lda current_zoom_x
-    sta @(++ mod_zoom)
-    lda @(++ current_zoom_x)
-    sta @(+ 2 mod_zoom)
+    lda current_scaling_x
+    sta @(++ mod_scaling)
+    lda @(++ current_scaling_x)
+    sta @(+ 2 mod_scaling)
 
     ; Calculate screen and color RAM pointers for first pixel.
     jsr scrcoladdr  ; Get screen address of line.
@@ -253,8 +146,8 @@ draw_zoomed_line:
 
 a:  jsr play_sample
 
-mod_zoom:
-l:  ldx zoomtabs    ; Get index into pixel.
+mod_scaling:
+l:  ldx scaling_offsets    ; Get index into pixel.
     bmi +done       ; All pixels done.
     cpy #23         ; Over right side of the screen?
     bcs +done       ; Yes, done.
@@ -268,12 +161,12 @@ mod_src:
 mod_col:
     lda $ff00,y     ; Get color.
     sta (col),y     ; Set color.
-n:  inc @(++ mod_zoom) ; Step to next pixel index.
+n:  inc @(++ mod_scaling) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     jmp -a
 
     ; Step into screen from the left.
-s:  inc @(++ mod_zoom) ; Step to next pixel index.
+s:  inc @(++ mod_scaling) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     bmi -s          ; Still over the left side.
     jmp -a          ; Start drawing.
@@ -281,40 +174,9 @@ s:  inc @(++ mod_zoom) ; Step to next pixel index.
 done:
     rts
 
-patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
-patch_16k_size = patch_8k_size
-patch_24k_size = patch_8k_size
-patch_32k_size = patch_8k_size
-splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
-
-loader_cfg_8k:
-    $00 $20
-    <patch_8k_size @(++ >patch_8k_size)
-    <init_8k >init_8k
-
-loader_cfg_16k:
-    $00 $40
-    <patch_16k_size @(++ >patch_16k_size)
-    <init_16k >init_16k
-
-loader_cfg_24k:
-    $00 $60
-    <patch_24k_size @(++ >patch_24k_size)
-    <init_24k >init_24k
-
-loader_cfg_32k:
-    $00 $a0
-    <patch_32k_size @(++ >patch_32k_size)
-    <init_32k >init_32k
-
-loader_cfg_splash:
-    $00 $10
-    <splash_size @(++ >splash_size)
-    $02 $10
-
     fill @(- 256 (low *pc*))
 
-zoomtabs:
+scaling_offsets:
     @(apply #'+ (maptimes [alet (- 22 _)
                             (+ (maptimes [integer (* _ (/ 22 !))] !)
                                (list 255))]
