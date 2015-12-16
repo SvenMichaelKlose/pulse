@@ -10,14 +10,11 @@ flight:
     lda #$40
     sta $911b
 
-    lda #<scaling_offsets
-    sta current_scaling_x
+    lda #<@(+ 16 scaling_offsets)
+    sta current_scaling
     lda #>scaling_offsets
-    sta @(++ current_scaling_x)
-    lda #<scaling_offsets
-    sta current_scaling_y
-    lda #>scaling_offsets
-    sta @(++ current_scaling_y)
+    sta @(++ current_scaling)
+
 a:  lda #0
     sta scrx
     sta scry
@@ -29,21 +26,32 @@ a:  lda #0
     sta @(+ 1 mod_col)
     lda #>colors_earth
     sta @(+ 2 mod_col)
-    lda #blue
-    sta curcol
 
     lda #0
-    sta ypos
     sta current_layer
+
+    jsr draw_scaled_image
+
+    ; Step to next scaling factor and draw again.
+    ldx @(++ mod_scaling)
+    inx
+    stx current_scaling
+    jmp -a
+
+draw_scaled_image:
 
     ; Clear first line.
     jsr clear_line
     inc scry
 
+    ; Set line 0 of source graphics.
+    lda #0
+    sta ypos
+
     ; Get number of source line to draw.
 l:  ldy ypos
-    lda (current_scaling_y),y
-    bmi +o      ; End of image…
+    lda (current_scaling),y
+    bmi clear_line      ; End of image…
 
     ; Calculate source screen and color data address of line.
     tay
@@ -60,9 +68,9 @@ l:  ldy ypos
     cpy #@(++ (/ 256 screen_columns))
     lda #@(half (high screen))
     rol
+    tax
     plp
     php
-    tax
     adc #@(+ (- (high screen)) (high gfx_earth))
     sta @(+ 2 mod_src)
     plp
@@ -77,90 +85,74 @@ l:  ldy ypos
     inc scry
     jmp -l
 
-o:
-    ; Clear last line.
-    inc scry
-    jsr clear_line
-
-    ; Step to next scaling factor and draw again.
-    ldx @(++ mod_scaling)
-    inx
-    stx current_scaling_x
-    stx current_scaling_Y
-    jmp -a
-
-play_sample:
-    ; Check if we need to play a sample.
-    lda $911d           ; Get timer 1/VIA 1 underflow bit.
-    asl                 ; Shift it into the M flag.
-    bpl +done           ; Nothing to be played, yet…
-
-    ; Reset timer.
-    lda #>radio_timer
-    sta $9115
-
-    stx save_x
-    ldx rr_sample
-mod_sample_getter:
-    lda sample_buffer,x
-    sta $900e
-    dex
-    stx rr_sample
-    ldx save_x
-done:
-    rts
-
 clear_line:
+    ; Skip if line is off–screen.
     lda scry
-    cmp #23
-    bcs -done
+    cmp #screen_rows
+    bcs +done
+
     jsr scrcoladdr
-l:  ldy scrx
-    bmi +n
-    cmp #22
-    bcs -done
+
+l:  jsr play_sample
+
+    cpy #128
+    bcs +n
+    cpy #screen_columns
+    bcs +done
+
     lda (scr),y
     and #layer_mask
     cmp current_layer
     bne +n
+
     lda #0
     sta (scr),y
+
 n:  iny
     jmp -l
 
 draw_scaled_line:
+    jsr play_sample
+
     ; Skip if line is off–screen.
     lda scry
-    cmp #23
+    cmp #screen_rows
     bcs +done
 
     ; Init self–mod pointer into scaling table.
-    lda current_scaling_x
-    sta @(++ mod_scaling)
-    lda @(++ current_scaling_x)
+    lda current_scaling
+    sta @(+ 1 mod_scaling)
+    lda @(++ current_scaling)
     sta @(+ 2 mod_scaling)
 
     ; Calculate screen and color RAM pointers for first pixel.
     jsr scrcoladdr  ; Get screen address of line.
     bmi +s          ; Over left side of the screen…
 
+    ; Clear leftmost pixel.
+    jsr clear_pixel
+    iny
+
 a:  jsr play_sample
 
 mod_scaling:
-l:  ldx scaling_offsets    ; Get index into pixel.
-    bmi +done       ; All pixels done.
-    cpy #23         ; Over right side of the screen?
+l:  ldx scaling_offsets ; Get index into pixel.
+    bmi clear_pixel     ; All pixels done.
+    cpy #screen_columns ; Over right side of the screen?
     bcs +done       ; Yes, done.
+
     lda (scr),y
     and #layer_mask
     cmp current_layer
     bne +n
+
 mod_src:
-    lda $ff00,x     ; Get pixel.
-    sta (scr),y     ; Set pixel.
+    lda $ff00,x     ; Copy character.
+    sta (scr),y
 mod_col:
-    lda $ff00,y     ; Get color.
-    sta (col),y     ; Set color.
+    lda $ff00,y     ; Copy color.
+    sta (col),y
+
 n:  inc @(++ mod_scaling) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     jmp -a
@@ -170,6 +162,19 @@ s:  inc @(++ mod_scaling) ; Step to next pixel index.
     iny             ; Step to next pixel on screen.
     bmi -s          ; Still over the left side.
     jmp -a          ; Start drawing.
+
+clear_pixel:
+    jsr play_sample
+    cpy #screen_rows ; Off–screen?
+    bcs +done
+
+    lda (scr),y
+    and #layer_mask
+    cmp current_layer
+    bne +done
+
+    lda #0
+    sta (scr),y
 
 done:
     rts
