@@ -235,6 +235,7 @@
             "radio/zeropage.asm"
             "radio/start.asm"
             "radio/load-sequence.asm"
+            "radio/play-sample.asm"
             "radio/flight.asm"
 ;            "radio/disc.asm"
             "radio/earth.asm"
