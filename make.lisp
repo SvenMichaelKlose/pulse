@@ -34,6 +34,7 @@
 (load "bender/vic-20/cpu-cycles.lisp")
 (load "secondary-loader/bin2pottap.lisp")
 (load "radio/tap.lisp")
+(load "radio/scaling.lisp")
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
 

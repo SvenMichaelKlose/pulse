@@ -181,8 +181,6 @@ done:
 
     fill @(- 256 (low *pc*))
 
-scaling_offsets:
-    @(apply #'+ (maptimes [alet (- 22 _)
-                            (+ (maptimes [integer (* _ (/ 22 !))] !)
-                               (list 255))]
-                          22))
+scaling_offsets: @(make-scaling-offsets screen_columns)
+scaling_addrs_l:  @(make-scaling-addresses-low screen_columns)
+scaling_addrs_h:  @(make-scaling-addresses-high screen_columns)
