@@ -37,6 +37,7 @@ curchar:            0
 current_zoom_x:     0 0
 current_zoom_y:     0 0
 ypos:               0
+current_layer:      0
 
 ; Intro sounds.
 sound_start:

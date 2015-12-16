@@ -1,4 +1,5 @@
 radio_timer = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
+layer_mask = %11110000
 
     org $1000
     $02 $10
@@ -140,6 +141,11 @@ a:  lda #0
 
     lda #0
     sta ypos
+    sta current_layer
+
+    ; Clear first line.
+    jsr clear_line
+    inc scry
 
     ; Get number of source line to draw.
 l:  ldy ypos
@@ -178,8 +184,13 @@ l:  ldy ypos
     inc scry
     jmp -l
 
+o:
+    ; Clear last line.
+    inc scry
+    jsr clear_line
+
     ; Step to next scaling factor and draw again.
-o:  ldx @(++ mod_zoom)
+    ldx @(++ mod_zoom)
     inx
     stx current_zoom_x
     stx current_zoom_Y
@@ -206,6 +217,23 @@ mod_sample_getter:
 done:
     rts
 
+clear_line:
+    lda scry
+    cmp #23
+    bcs -done
+    jsr scrcoladdr
+l:  ldy scrx
+    bmi +n
+    cmp #22
+    bcs -done
+    lda (scr),y
+    and #layer_mask
+    cmp current_layer
+    bne +n
+    lda #0
+    sta (scr),y
+n:  iny
+    jmp -l
 
 draw_zoomed_line:
     ; Skip if line is off–screen.
@@ -231,8 +259,8 @@ l:  ldx zoomtabs    ; Get index into pixel.
     cpy #23         ; Over right side of the screen?
     bcs +done       ; Yes, done.
     lda (scr),y
-    and #%11000
-    cmp #0
+    and #layer_mask
+    cmp current_layer
     bne +n
 mod_src:
     lda $ff00,x     ; Get pixel.
