@@ -1,7 +1,7 @@
 (= *model* :vic-20)
 
-;(defconstant +versions+ '(:pal-tape))
-(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
+(defconstant +versions+ '(:pal-tape))
+;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :c64-master :shadowvic :wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -37,6 +37,7 @@
 (load "radio/scaling.lisp")
 (load "nipkow/src/wav2pwm.lisp")
 (load "game/files.lisp")
+(load "read-screen-designer.lisp")
 
 (defun tap-rate (tv)
   (integer (/ (? (eq tv :pal)
@@ -177,21 +178,25 @@
             "secondary-loader/loader.asm")
           (+ "obj/loader." ! ".prg.vice.txt"))))
 
-(defun make-splash-gfx ()
-  (make "obj/splash.chars.bin"
-        '("splash/gfx-chars.asm"))
-  (make "obj/splash.screen.bin"
-        '("splash/gfx-screen.asm"))
-  (make "obj/splash.colors.bin"
-        '("splash/gfx-colors.asm")))
+(defun splash-chars-0-127 ()
+  (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
+    (subseq chars 0 1024)))
 
-(defun break-up-splash-chars ()
-  (put-file "obj/splash.chars.0-127.bin" (subseq (fetch-file "obj/splash.chars.bin") 0 1024))
-  (put-file "obj/splash.chars.128-159.bin" (subseq (fetch-file "obj/splash.chars.bin") 1024 (+ 1024 256))))
+(defun splash-chars-128-159 ()
+  (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
+    (subseq chars 1024 (+ 1024 256))))
+
+(defun splash-screen ()
+  (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
+    screen))
+
+(defun splash-colours ()
+  (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
+    colours))
 
 (defun glued-game-and-splash-gfx (game)
   (+ (subseq (fetch-file game) 0 1024)
-     (fetch-file "obj/splash.chars.128-159.bin")
+     (splash-chars-128-159)
      (subseq (fetch-file game) (+ 1024 256))))
 
 (defun make-splash-prg ()
@@ -379,8 +384,6 @@
   (make-game :prg "compiled/pulse.prg" "obj/pulse.vice.txt"))
 (when (make-version? :pal-tape :ntsc-tape)
   (make-model-detection)
-  (make-splash-gfx)
-  (break-up-splash-chars)
   (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56"))
   (with-temporary *ram-audio-rate* 4000
     (make-ram-audio "theme-hiscore" "media/intermediate/audio.wav" "3" "-72"))

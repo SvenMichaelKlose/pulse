@@ -179,8 +179,6 @@ clear_pixel:
 done:
     rts
 
-    fill @(- 256 (low *pc*))
-
-scaling_offsets: @(make-scaling-offsets screen_columns)
-scaling_addrs_l:  @(make-scaling-addresses-low screen_columns)
-scaling_addrs_h:  @(make-scaling-addresses-high screen_columns)
+scaling_offsets: @(make-scaling-offsets 'scaling_offsets screen_columns)
+scaling_addrs_l:  @(make-scaling-addresses-low 'scaling_offsets screen_columns)
+scaling_addrs_h:  @(make-scaling-addresses-high 'scaling_offsets screen_columns)
