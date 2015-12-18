@@ -103,7 +103,7 @@ loader_configuration:
 
 ws = @(+ characters (* 63 8))
 we = @(+ ws 8)
-characters:     @(splash-chars-0-127)
-screen_data:    @(splash-screen)
-color_data:     @(splash-colours)
+characters:     @+splash-chars-0-127+
+screen_data:    @+splash-screen+
+color_data:     @+splash-colours+
 game_part:      @(subseq (fetch-file *current-game*) 1024 (+ 1024 256))
