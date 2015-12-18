@@ -111,28 +111,11 @@
 (defvar *splash-start* #x1234)
 (defvar *tape-loader-start* #x1234)
 
-(defun make-model-detection ()
-  (make "obj/model-detection.bin"
-        '("primary-loader/models.asm"
-          "primary-loader/model-detection.asm")
-        "obj/model-detection.vice.txt"))
-
-(defun make-loader-prg ()
-  (alet (downcase (symbol-name *tv*))
-    (make (+ "obj/loader." ! ".prg")
-          '("bender/vic-20/vic.asm"
-            "primary-loader/models.asm"
-            "primary-loader/zeropage.asm"
-            "bender/vic-20/basic-loader.asm"
-            "primary-loader/main.asm"
-            "secondary-loader/start.asm"
-            "secondary-loader/loader.asm")
-          (+ "obj/loader." ! ".prg.vice.txt"))))
-
 (load "splash/make.lisp")
 (load "radio/make.lisp")
 (load "expanded/make.lisp")
 (load "eyes/make.lisp")
+(load "primary-loader/make.lisp")
 
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
