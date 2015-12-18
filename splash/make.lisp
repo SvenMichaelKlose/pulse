@@ -1,3 +1,14 @@
+(defvar *bandwidth* 16)
+
+(defvar audio_shortest_pulse #x18)
+(defvar audio_longest_pulse #x28)
+(defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
+(defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
+
+(defun make-tape-audio (tv name file gain bass)
+  (make-wav name file gain bass tv (pwm-pulse-rate tv))
+  (make-conversion name tv (pwm-pulse-rate tv)))
+
 (defconstant +splash-chars-0-127+
   (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
     (subseq chars 0 1024)))

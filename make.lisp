@@ -12,48 +12,19 @@
 (defvar *tv* nil)
 (defvar *current-game* nil)
 
-(defvar *bandwidth* 16)
 (defvar *pulse-short* #x20)
 (defvar *pulse-long* #x30)
 (defvar *pulse-average* (+ *pulse-short* (half (- *pulse-long* *pulse-short*))))
 (defvar *tape-pulse* (* 8 *pulse-average*))
 
-(defvar audio_shortest_pulse #x18)
-(defvar audio_longest_pulse #x28)
-(defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
-(defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
-
 (defvar *ram-audio-rate* 2000)
 (defconstant +c64-pal-cycles+ 985248)
 
 (load "bender/vic-20/cpu-cycles.lisp")
-(load "secondary-loader/write.lisp")
 (load "radio/tap.lisp")
 (load "radio/scaling.lisp")
 (load "nipkow/src/wav2pwm.lisp")
-(load "game/files.lisp")
 (load "read-screen-designer.lisp")
-
-(defun tap-rate (tv)
-  (integer (/ (? (eq tv :pal)
-                 +cpu-cycles-pal+
-                 +cpu-cycles-ntsc+)
-              (* 8 *pulse-average*))))
-
-(defun print-bitrate-info ()
-  (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
-            (tap-rate :ntsc) (tap-rate :pal))
-  (print-pwm-info))
-
-(defun tile-rc (x)
-  (unless (first-pass?)
-    (+ (>> (- (low (get-label x)) (low (get-label 'background))) 3)
-       (get-label 'framemask)
-       (get-label 'foreground))))
-
-(defun check-zeropage-size ()
-  (when (< #x100 *pc*)
-    (error "Zero page overflow by ~A bytes." (- *pc* #x100))))
 
 (defun make-wav (name file gain bass tv rate)
   (sb-ext:run-program "/usr/bin/mplayer"
@@ -79,10 +50,6 @@
           (downsampled-audio-name name tv))
     :pty cl:*standard-output*))
 
-(defun make-tape-audio (tv name file gain bass)
-  (make-wav name file gain bass tv (pwm-pulse-rate tv))
-  (make-conversion name tv (pwm-pulse-rate tv)))
-
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
   (with-input-output-file in   in-file
@@ -99,22 +66,24 @@
                         ,from)
                       :pty cl:*standard-output*))
 
+(defun make-zip-archive (archive input-file)
+  (sb-ext:run-program "/usr/bin/zip"
+                      (list archive input-file)
+                      :pty cl:*standard-output*))
+
 (defun make (to files &optional (cmds nil))
   (apply #'assemble-files to files)
   (& cmds (make-vice-commands cmds "break .stop")))
 
-(defun make-game (version file cmds)
-  (make file
-        (@ [+ "game/" _] (pulse-files version))
-        cmds))
-
 (defvar *splash-start* #x1234)
 (defvar *tape-loader-start* #x1234)
 
+(load "game/make.lisp")
 (load "splash/make.lisp")
 (load "radio/make.lisp")
 (load "expanded/make.lisp")
 (load "eyes/make.lisp")
+(load "secondary-loader/make.lisp")
 (load "primary-loader/make.lisp")
 
 (defun padded-name (x)
@@ -132,16 +101,6 @@
         (make-eyes)
         (make-loader-prg)
         (values splash-size !)))))
-
-(defun check-end ()
-  (& (< #x1e00 *pc*)
-     *assign-blocks-to-segments?*
-     (error "End of program exceeds $1e00 by ~A bytes." (- *pc* #x1e00))))
-
-(defun make-zip-archive (archive input-file)
-  (sb-ext:run-program "/usr/bin/zip"
-                      (list archive input-file)
-                      :pty cl:*standard-output*))
 
 (defun make-tap (c64-master?)
   (with (tv        (downcase (symbol-name *tv*))

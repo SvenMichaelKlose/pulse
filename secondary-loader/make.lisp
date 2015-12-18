@@ -1,3 +1,14 @@
+(defun tap-rate (tv)                                                                          
+    (integer (/ (? (eq tv :pal)
+                   +cpu-cycles-pal+
+                   +cpu-cycles-ntsc+)
+                (* 8 *pulse-average*))))
+
+(defun print-bitrate-info ()
+  (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
+            (tap-rate :ntsc) (tap-rate :pal))
+  (print-pwm-info))
+
 (defun fastloader-byte (q i)
   (when (< i 0)
     (= i (+ 256 i)))

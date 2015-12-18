@@ -1,3 +1,18 @@
+(defun tile-rc (x)
+  (unless (first-pass?)
+    (+ (>> (- (low (get-label x)) (low (get-label 'background))) 3)
+       (get-label 'framemask)
+       (get-label 'foreground))))
+
+(defun check-zeropage-size ()
+  (when (< #x100 *pc*)
+    (error "Zero page overflow by ~A bytes." (- *pc* #x100))))
+
+(defun check-end ()
+  (& (< #x1e00 *pc*)
+     *assign-blocks-to-segments?*
+     (error "End of program exceeds $1e00 by ~A bytes." (- *pc* #x1e00))))
+
 (defun pulse-files (&optional (version nil))
   `("../bender/vic-20/vic.asm"
     "game.defs.asm"
@@ -52,3 +67,8 @@
     "foreground.asm"
     "level.asm"
     "check-end.asm"))
+
+(defun make-game (version file cmds)
+  (make file
+        (@ [+ "game/" _] (pulse-files version))
+        cmds))
