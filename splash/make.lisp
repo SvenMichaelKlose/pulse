@@ -9,25 +9,20 @@
   (make-filtered-wav name gain bass tv (pwm-pulse-rate tv))
   (make-conversion name tv (pwm-pulse-rate tv)))
 
-(defconstant +splash-chars-0-127+
+(defconstant *splash-chars-0-127* nil)
+(defconstant *splash-chars-128-159* nil)
+(defconstant *splash-screen* nil)
+(defconstant *splash-colours* nil)
+(when (make-version? :pal-tape :ntsc-tape)
   (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
-    (subseq chars 0 1024)))
-
-(defconstant +splash-chars-128-159+
-  (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
-    (subseq chars 1024 (+ 1024 256))))
-
-(defconstant +splash-screen+
-  (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
-    screen))
-
-(defconstant +splash-colours+
-  (with ((chars screen colours) (read-screen-designer-file "media/splash/splash-darkatx.txt"))
-    colours))
+    (= *splash-chars-0-127* (subseq chars 0 1024))
+    (= *splash-chars-128-159* (subseq chars 1024 (+ 1024 256)))
+    (= *splash-screen* screen)
+    (= *splash-colours* colours)))
 
 (defun glued-game-and-splash-gfx (game)
   (+ (subseq (fetch-file game) 0 1024)
-     +splash-chars-128-159+
+     *splash-chars-128-159*
      (subseq (fetch-file game) (+ 1024 256))))
 
 (defun make-splash-prg ()
