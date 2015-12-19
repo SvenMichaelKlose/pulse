@@ -1,7 +1,7 @@
 (= *model* :vic-20)
 
 (defconstant +versions+ '(:pal-tape))
-;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :wav)) ;:c64-master 
+;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :tape-wav)) ;:c64-master 
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -20,37 +20,14 @@
 (defvar *ram-audio-rate* 2000)
 (defconstant +c64-pal-cycles+ 985248)
 
+(defvar *tape-wav-rate* 41100)
+
 (load "bender/vic-20/cpu-cycles.lisp")
 (load "radio/tap.lisp")
 (load "radio/scaling.lisp")
+(load "nipkow/src/convert.lisp")
 (load "nipkow/src/wav2pwm.lisp")
 (load "read-screen-designer.lisp")
-
-(defun make-wav (name file)
-  (sb-ext:run-program "/usr/bin/mplayer"
-    (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name ".wav") file)
-    :pty cl:*standard-output*))
-
-(defun make-filtered-wav (name gain bass tv rate)
-  (sb-ext:run-program "/usr/bin/sox"
-    `(,(+ "obj/" name ".wav")
-      ,(+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
-      ,@(& bass `("bass" ,bass))
-      "lowpass" ,(princ (half rate) nil)
-      ,@(& gain `("compand" "0.3,1" "6:-70,-60,-20" "-1" "-90" "0.2" "gain" ,gain)))
-    :pty cl:*standard-output*))
-
-(defun downsampled-audio-name (name tv)
-  (+ "obj/" name ".downsampled." (downcase (symbol-name tv)) ".wav"))
-
-(defun make-conversion (name tv rate)
-  (sb-ext:run-program "/usr/bin/sox"
-    (list (+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
-          "-c" "1"
-          "-b" "16"
-          "-r" (princ rate nil)
-          (downsampled-audio-name name tv))
-    :pty cl:*standard-output*))
 
 (defun make-tape-wav (in-file out-file)
   (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
@@ -150,11 +127,11 @@
       (with-output-file o (+ "obj/splash-audio." tv ".bin")
         (wav2pwm o (fetch-file (+ "obj/theme-splash.downsampled." tv ".wav")) :pause-before 0))
       (make-tap nil)
-      (when (make-version? :wav)
-        (format t "Making ~A WAV file...~%" (symbol-name *tv*))
+      (when (make-version? :tape-wav)
+        (format t "Making ~A tape WAV file...~%" (symbol-name *tv*))
         (with-input-file i (+ "compiled/pulse." tv ".tap")
           (with-output-file o (+ "compiled/pulse." tv ".wav")
-            (tap2wav i o 48000 (cpu-cycles *tv*)))
+            (tap2wav i o *tape-wav-rate* (cpu-cycles *tv*)))
             (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
                               (+ "compiled/pulse." tv ".wav")))))))
 
