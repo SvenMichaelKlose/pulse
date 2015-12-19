@@ -35,13 +35,12 @@
   (alet (downcase (symbol-name *tv*))
     (make (+ "obj/flight." ! ".prg")
           '("primary-loader/models.asm"
-            "radio/zeropage.asm"
-            "radio/start.asm"
-            "radio/load-sequence.asm"
-            "radio/play-sample.asm"
-            "radio/flight.asm"
-;            "radio/disc.asm"
-            "radio/loader.asm"
+            "flight/zeropage.asm"
+            "flight/start.asm"
+            "flight/load-sequence.asm"
+            "flight/play-sample.asm"
+            "flight/flight.asm"
+            "flight/loader.asm"
             "game/screen.asm"
             "game/high-segment.asm"
             "secondary-loader/start.asm")

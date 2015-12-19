@@ -5,7 +5,7 @@
       (make (+ "obj/intro." ! ".prg")
             '("bender/vic-20/vic.asm"
               "primary-loader/models.asm"
-              "radio/zeropage.asm"
+              "flight/zeropage.asm"
               "eyes/start.asm"
               "secondary-loader/start.asm"
               "eyes/main.asm"

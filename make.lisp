@@ -23,8 +23,8 @@
 (defvar *tape-wav-rate* 41100)
 
 (load "bender/vic-20/cpu-cycles.lisp")
-(load "radio/tap.lisp")
-(load "radio/scaling.lisp")
+(load "flight/tap.lisp")
+(load "flight/scaling.lisp")
 (load "nipkow/src/convert.lisp")
 (load "nipkow/src/wav2pwm.lisp")
 (load "read-screen-designer.lisp")
@@ -59,7 +59,7 @@
 
 (load "game/make.lisp")
 (load "splash/make.lisp")
-(load "radio/make.lisp")
+(load "flight/make.lisp")
 (load "expanded/make.lisp")
 (load "eyes/make.lisp")
 (load "secondary-loader/make.lisp")

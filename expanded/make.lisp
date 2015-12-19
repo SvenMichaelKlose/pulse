@@ -55,7 +55,7 @@
             (+ "obj/patch-3k." ! ".bin.vice.txt"))
       (make (+ "obj/3k." ! ".prg")
             '("primary-loader/models.asm"
-              "radio/zeropage.asm"
+              "primary-loader/zeropage.asm"
               "expanded/init-3k.asm"
               "secondary-loader/start.asm")
             (+ "obj/3k." ! ".prg.vice.txt"))
