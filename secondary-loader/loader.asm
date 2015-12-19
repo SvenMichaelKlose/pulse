@@ -22,8 +22,6 @@ n:  dec tape_leader_countdown
 tape_loader_data:
     jsr tape_get_bit
     ror tape_current_byte
-;    lda tape_current_byte
-;    sta $900f
     dec tape_bit_counter
     beq byte_complete
 return_from_interrupt:
