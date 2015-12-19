@@ -5,8 +5,8 @@
 (defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
 (defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
 
-(defun make-tape-audio (tv name file gain bass)
-  (make-wav name file gain bass tv (pwm-pulse-rate tv))
+(defun make-tape-audio (tv name gain bass)
+  (make-filtered-wav name gain bass tv (pwm-pulse-rate tv))
   (make-conversion name tv (pwm-pulse-rate tv)))
 
 (defconstant +splash-chars-0-127+

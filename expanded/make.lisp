@@ -17,7 +17,8 @@
       (make-pwm out in))))
 
 (defun make-ram-audio (name file gain bass)
-  (make-wav name file gain bass :ram *ram-audio-rate*)
+  (make-wav name file)
+  (make-filtered-wav name gain bass :ram *ram-audio-rate*)
   (make-conversion name :ram *ram-audio-rate*)
   (convert-to-pwm "obj/get_ready.downsampled.ram.wav"
                   "obj/get_ready.pwm"))

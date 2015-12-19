@@ -26,12 +26,14 @@
 (load "nipkow/src/wav2pwm.lisp")
 (load "read-screen-designer.lisp")
 
-(defun make-wav (name file gain bass tv rate)
+(defun make-wav (name file)
   (sb-ext:run-program "/usr/bin/mplayer"
-    (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name "." (downcase (symbol-name tv)) ".wav") file)
-    :pty cl:*standard-output*)
+    (list "-vo" "null" "-vc" "null" "-ao" (+ "pcm:fast:file=obj/" name ".wav") file)
+    :pty cl:*standard-output*))
+
+(defun make-filtered-wav (name gain bass tv rate)
   (sb-ext:run-program "/usr/bin/sox"
-    `(,(+ "obj/" name "." (downcase (symbol-name tv)) ".wav")
+    `(,(+ "obj/" name ".wav")
       ,(+ "obj/" name "." (downcase (symbol-name tv)) ".filtered.wav")
       ,@(& bass `("bass" ,bass))
       "lowpass" ,(princ (half rate) nil)
@@ -152,7 +154,7 @@
             (= *splash-start* (- *tape-loader-start* splash-size))))
         (make-loaders tv game-labels))
       (make-radio-wav *tv*)
-      (make-tape-audio *tv* "theme-splash" "media/splash/theme-boray.mp3" "3" "-64")
+      (make-tape-audio *tv* "theme-splash" "3" "-64")
       (with-output-file o (+ "obj/splash-audio." tv ".bin")
         (wav2pwm o (fetch-file (+ "obj/theme-splash.downsampled." tv ".wav")) :pause-before 0))
       (make-tap nil)
@@ -168,9 +170,11 @@
   (make-game :prg "compiled/pulse.prg" "obj/pulse.vice.txt"))
 (when (make-version? :pal-tape :ntsc-tape)
   (make-model-detection)
-  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56"))
+  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
   (with-temporary *ram-audio-rate* 4000
     (make-ram-audio "theme-hiscore" "media/intermediate/audio.wav" "3" "-72"))
+  (make-wav "theme-splash" "media/splash/theme-boray.mp3")
+  (make-wav "radio" "media/radio.ogg"))
 (when (make-version? :pal-tape)
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)

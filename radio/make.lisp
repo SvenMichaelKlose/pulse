@@ -14,7 +14,7 @@
 
 (defun make-radio-wav (tv)
   (format t "Making radio…~%")
-  (make-wav "radio" "media/radio.ogg" "3" "-32" tv (half (radio-rate tv)))
+  (make-filtered-wav "radio" "3" "-32" tv (half (radio-rate tv)))
   (make-conversion "radio" tv (half (radio-rate tv)))
   (alet (downcase (symbol-name tv))
     (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
