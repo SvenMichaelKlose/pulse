@@ -1,3 +1,11 @@
+(defvar *earth-chars* nil)
+(defvar *earth-screen* nil)
+(defvar *earth-colours* nil)
+(with ((chars screen colours) (read-screen-designer-file "media/flight/earth.txt"))
+  (= *earth-chars* chars)
+  (= *earth-screen* screen)
+  (= *earth-colours* colours))
+
 (defvar radio_shortest_pulse #x18)
 (defvar radio_longest_pulse #x28)
 (defvar radio_pulse_width (- radio_longest_pulse radio_shortest_pulse))
@@ -33,7 +41,6 @@
             "radio/play-sample.asm"
             "radio/flight.asm"
 ;            "radio/disc.asm"
-            "radio/earth.asm"
             "radio/loader.asm"
             "game/screen.asm"
             "game/high-segment.asm"

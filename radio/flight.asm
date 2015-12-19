@@ -10,7 +10,7 @@ flight:
     lda #$40
     sta $911b
 
-    lda #<@(+ 16 scaling_offsets)
+    lda #<scaling_offsets
     sta current_scaling
     lda #>scaling_offsets
     sta @(++ current_scaling)
@@ -18,13 +18,13 @@ flight:
 a:  lda #0
     sta scrx
     sta scry
-    lda #<gfx_earth
+    lda #<earth_screen
     sta @(+ 1 mod_src)
-    lda #>gfx_earth
+    lda #>earth_screen
     sta @(+ 2 mod_src)
-    lda #<colors_earth
+    lda #<earth_colours
     sta @(+ 1 mod_col)
-    lda #>colors_earth
+    lda #>earth_colours
     sta @(+ 2 mod_col)
 
     lda #0
@@ -33,9 +33,9 @@ a:  lda #0
     jsr draw_scaled_image
 
     ; Step to next scaling factor and draw again.
-    ldx @(++ mod_scaling)
-    inx
-    stx current_scaling
+;    ldx @(++ mod_scaling)
+;    inx
+;    stx current_scaling
     jmp -a
 
 draw_scaled_image:
@@ -58,12 +58,12 @@ l:  ldy ypos
     lda $edfd,y
     tax
     clc
-    adc #<gfx_earth
+    adc #<earth_screen
     php
     sta @(+ 1 mod_src)
     txa
     clc
-    adc #<colors_earth
+    adc #<earth_colours
     sta @(+ 1 mod_col)
     cpy #@(++ (/ 256 screen_columns))
     lda #@(half (high screen))
@@ -71,11 +71,11 @@ l:  ldy ypos
     tax
     plp
     php
-    adc #@(+ (- (high screen)) (high gfx_earth))
+    adc #@(+ (- (high screen)) (high earth_screen))
     sta @(+ 2 mod_src)
     plp
     txa
-    adc #@(+ (- (high screen)) (high colors_earth))
+    adc #@(+ (- (high screen)) (high earth_colours))
     sta @(+ 2 mod_col)
 
     jsr draw_scaled_line
@@ -179,6 +179,9 @@ clear_pixel:
 done:
     rts
 
-scaling_offsets: @(make-scaling-offsets 'scaling_offsets screen_columns)
-scaling_addrs_l:  @(make-scaling-addresses-low 'scaling_offsets screen_columns)
-scaling_addrs_h:  @(make-scaling-addresses-high 'scaling_offsets screen_columns)
+scaling_offsets:    @(make-scaling-offsets 'scaling_offsets screen_columns)
+scaling_addrs_l:    @(make-scaling-addresses-low 'scaling_offsets screen_columns)
+scaling_addrs_h:    @(make-scaling-addresses-high 'scaling_offsets screen_columns)
+
+earth_screen:   @*earth-screen*
+earth_colours:  @*earth-colours*
