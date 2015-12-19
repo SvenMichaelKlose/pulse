@@ -1,7 +1,7 @@
 (= *model* :vic-20)
 
-;(defconstant +versions+ '(:pal-tape))
-(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :wav)) ;:c64-master 
+(defconstant +versions+ '(:pal-tape))
+;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :wav)) ;:c64-master 
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -122,7 +122,6 @@
              (fetch-file "obj/radio3.tap")
              (fastloader-block (fetch-file (+ "obj/splash.crunched." tv ".prg")))
              (fastloader-block (glued-game-and-splash-gfx *current-game*))
-;             (fetch-file (+ "obj/splash-audio." tv ".bin"))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))
           :original-cycles (& c64-master? (cpu-cycles *tv*))
           :converted-cycles (& c64-master? +c64-pal-cycles+)))
@@ -137,22 +136,15 @@
                  (+ "obj/game." tv ".prg")
                  (+ "obj/game." tv ".vice.txt"))
       (format t "Compressing game with exomizer...~%")
-      (sb-ext:run-program "/usr/local/bin/exomizer"
-                          `("sfx" "$1002"
-                            "-t" "20"
-                            "-n"
-                            "-Di_load_addr=$1002"
-                            "-o" ,(+ "obj/game.crunched." tv ".prg")
-                            ,(+ "obj/game." tv ".prg"))
-                          :pty cl:*standard-output*)
-      (let game-labels (get-labels)
+      (exomize (+ "obj/game." tv ".prg") (+ "obj/game.crunched." tv ".prg") "1002" "20")
+      (alet (get-labels)
         (when (== *splash-start* #x1234)
           ; Find out how much space the loader will occupy right below the screen.
-          (with ((splash-size memory-end) (make-loaders tv game-labels))
+          (with ((splash-size memory-end) (make-loaders tv !))
             (= *tape-loader-start* (- memory-end (- (get-label 'loader_end)
                                                     (get-label 'tape_loader))))
             (= *splash-start* (- *tape-loader-start* splash-size))))
-        (make-loaders tv game-labels))
+        (make-loaders tv !))
       (make-radio-wav *tv*)
       (make-tape-audio *tv* "theme-splash" "3" "-64")
       (with-output-file o (+ "obj/splash-audio." tv ".bin")
