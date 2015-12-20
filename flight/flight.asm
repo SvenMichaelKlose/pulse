@@ -14,6 +14,9 @@ flight:
 
     lda #0
     sta current_scaling
+    lda #10
+    sta origin_x
+    sta origin_y
 
 a:  ldx current_scaling
     lda scaling_addrs_l,x
@@ -21,9 +24,11 @@ a:  ldx current_scaling
     lda scaling_addrs_h,x
     sta @(++ ptr_current_scaling)
 
-    lda #10
+    lda origin_x
     sta scrx
+    lda origin_y
     sta scry
+
     lda #<earth_screen
     sta @(+ 1 mod_src)
     lda #>earth_screen
@@ -48,7 +53,9 @@ l:  jsr play_sample
     lda current_scaling
     cmp #21
     beq -a
-    inc current_scaling
+;    inc current_scaling
+    dec origin_x
+    dec origin_y
     jmp -a
 
 draw_scaled_image:
@@ -157,7 +164,7 @@ mod_src:
     lda $ff00,x     ; Copy character.
     sta (scr),y
 mod_col:
-    lda $ff00,y     ; Copy color.
+    lda $ff00,x     ; Copy color.
     sta (col),y
 
 n:  inc @(++ mod_scaling) ; Step to next pixel index.

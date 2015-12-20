@@ -40,6 +40,8 @@ ptr_current_scaling:    0 0
 ypos:                   0
 current_layer:          0
 last_loaded_chunk:      0
+origin_x:               0
+origin_y:               0
 
 ; Intro sounds.
 sound_start:
