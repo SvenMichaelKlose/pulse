@@ -10,12 +10,16 @@ flight:
     lda #$40
     sta $911b
 
-    lda #<scaling_offsets
+    lda #0
     sta current_scaling
-    lda #>scaling_offsets
-    sta @(++ current_scaling)
 
-a:  lda #0
+a:  ldx current_scaling
+    lda scaling_addrs_l,x
+    sta ptr_current_scaling
+    lda scaling_addrs_h,x
+    sta @(++ ptr_current_scaling)
+
+    lda #0
     sta scrx
     sta scry
     lda #<earth_screen
@@ -32,10 +36,17 @@ a:  lda #0
 
     jsr draw_scaled_image
 
+l:  jsr play_sample
+    lda chunks_loaded
+    cmp last_loaded_chunk
+    beq -l
+    sta last_loaded_chunk
+
     ; Step to next scaling factor and draw again.
-;    ldx @(++ mod_scaling)
-;    inx
-;    stx current_scaling
+    lda current_scaling
+    cmp #21
+    beq -a
+    inc current_scaling
     jmp -a
 
 draw_scaled_image:
@@ -50,7 +61,7 @@ draw_scaled_image:
 
     ; Get number of source line to draw.
 l:  ldy ypos
-    lda (current_scaling),y
+    lda (ptr_current_scaling),y
     bmi clear_line      ; End of image…
 
     ; Calculate source screen and color data address of line.
@@ -120,9 +131,9 @@ draw_scaled_line:
     bcs +done
 
     ; Init self–mod pointer into scaling table.
-    lda current_scaling
+    lda ptr_current_scaling
     sta @(+ 1 mod_scaling)
-    lda @(++ current_scaling)
+    lda @(++ ptr_current_scaling)
     sta @(+ 2 mod_scaling)
 
     ; Calculate screen and color RAM pointers for first pixel.

@@ -37,3 +37,7 @@ l:  sta screen,x
     sta @(+ 253 screen),x
     dex
     bne -l
+
+    lda #0
+    sta chunks_loaded
+    sta last_loaded_chunk

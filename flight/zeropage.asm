@@ -29,14 +29,17 @@ tleft:              0
 dleft:              0
 do_play_radio:      0
 save_x:             0
+chunks_loaded:      0
 
 ; Flight.
-last_audio_raster:  0
-rr_sample:          0
-curchar:            0
-current_scaling:    0 0
-ypos:               0
-current_layer:      0
+last_audio_raster:      0
+rr_sample:              0
+curchar:                0
+current_scaling:        0
+ptr_current_scaling:    0 0
+ypos:                   0
+current_layer:          0
+last_loaded_chunk:      0
 
 ; Intro sounds.
 sound_start:

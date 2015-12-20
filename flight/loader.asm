@@ -110,6 +110,7 @@ done:
     jmp return_from_interrupt
 
 radio_sync_data:
+    inc chunks_loaded
     jsr radio_get_bit
     lda #<radio_load_data
     sta $314
@@ -188,6 +189,7 @@ n:  dec dleft
     jmp return_from_interrupt
 
 radio_sync_audio:
+    inc chunks_loaded
     lda #<radio_play
     sta $314
     lda #>radio_play
