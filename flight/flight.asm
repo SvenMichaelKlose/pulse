@@ -18,7 +18,43 @@ flight:
     sta origin_x
     sta origin_y
 
-a:  ldx current_scaling
+    lda #0
+    sta current_layer
+
+a:  lda #<earth_screen
+    sta @(+ 1 mod_src)
+    lda #>earth_screen
+    sta @(+ 2 mod_src)
+    lda #<earth_colours
+    sta @(+ 1 mod_col)
+    lda #>earth_colours
+    sta @(+ 2 mod_col)
+
+    jsr draw_scaled_image
+
+    jsr wait_for_other_chunk
+
+    ; Step to next scaling factor and draw again.
+    lda current_scaling
+    cmp #21
+    beq -a
+    inc current_scaling
+    and #%11
+    bne -a
+    dec origin_x
+    dec origin_y
+    jmp -a
+
+wait_for_other_chunk:
+l:  jsr play_sample
+    lda chunks_loaded
+    cmp last_loaded_chunk
+    beq -l
+    sta last_loaded_chunk
+    rts
+
+draw_scaled_image:
+    ldx current_scaling
     lda scaling_addrs_l,x
     sta ptr_current_scaling
     lda scaling_addrs_h,x
@@ -28,37 +64,6 @@ a:  ldx current_scaling
     sta scrx
     lda origin_y
     sta scry
-
-    lda #<earth_screen
-    sta @(+ 1 mod_src)
-    lda #>earth_screen
-    sta @(+ 2 mod_src)
-    lda #<earth_colours
-    sta @(+ 1 mod_col)
-    lda #>earth_colours
-    sta @(+ 2 mod_col)
-
-    lda #0
-    sta current_layer
-
-    jsr draw_scaled_image
-
-l:  jsr play_sample
-    lda chunks_loaded
-    cmp last_loaded_chunk
-    beq -l
-    sta last_loaded_chunk
-
-    ; Step to next scaling factor and draw again.
-    lda current_scaling
-    cmp #21
-    beq -a
-;    inc current_scaling
-    dec origin_x
-    dec origin_y
-    jmp -a
-
-draw_scaled_image:
 
     ; Clear first line.
     jsr clear_line
