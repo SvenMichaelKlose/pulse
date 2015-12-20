@@ -1,5 +1,6 @@
 radio_timer     = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
 layer_mask      = %11110000
+scaled_columns  = 22
 source_columns  = 22
 source_rows     = 23
 
@@ -14,14 +15,18 @@ flight:
 
     lda #0
     sta current_scaling
-    lda #10
-    sta origin_x
-    sta origin_y
-
     lda #0
+stop:
     sta current_layer
 
-a:  lda #<earth_screen
+a:  
+    lda current_scaling
+    lsr
+    sta origin_x
+    lda current_scaling
+    lsr
+    sta origin_y
+    lda #<earth_screen
     sta @(+ 1 mod_src)
     lda #>earth_screen
     sta @(+ 2 mod_src)
@@ -34,15 +39,14 @@ a:  lda #<earth_screen
 
     jsr wait_for_other_chunk
 
-    ; Step to next scaling factor and draw again.
+    lda chunks_loaded
+    and #%11
+    bne -a
     lda current_scaling
     cmp #21
     beq -a
     inc current_scaling
-    and #%11
-    bne -a
-    dec origin_x
-    dec origin_y
+
     jmp -a
 
 wait_for_other_chunk:
@@ -68,6 +72,8 @@ draw_scaled_image:
     ; Clear first line.
     jsr clear_line
     inc scry
+    jsr clear_line
+    inc scry
 
     ; Set line 0 of source graphics.
     lda #0
@@ -76,7 +82,7 @@ draw_scaled_image:
     ; Get number of source line to draw.
 l:  ldy ypos
     lda (ptr_current_scaling),y
-    bmi clear_line      ; End of image…
+    bmi +c          ; End of image…
 
     ; Calculate source screen and color data address of line.
     tay
@@ -103,6 +109,9 @@ l:  ldy ypos
     inc ypos
     inc scry
     jmp -l
+
+c:  jsr clear_line
+    inc scry
 
 clear_line:
     ; Skip if line is off–screen.
@@ -198,9 +207,9 @@ clear_pixel:
 done:
     rts
 
-scaling_offsets:    @(make-scaling-offsets 'scaling_offsets screen_columns)
-scaling_addrs_l:    @(make-scaling-addresses-low 'scaling_offsets screen_columns)
-scaling_addrs_h:    @(make-scaling-addresses-high 'scaling_offsets screen_columns)
+scaling_offsets:    @(make-scaling-offsets 'scaling_offsets scaled_columns source_columns)
+scaling_addrs_l:    @(make-scaling-addresses-low 'scaling_offsets scaled_columns source_columns)
+scaling_addrs_h:    @(make-scaling-addresses-high 'scaling_offsets scaled_columns source_columns)
 
 srclines_l:   @(maptimes [low (* source_columns _)] source_rows)
 srclines_h:   @(maptimes [high (* source_columns _)] source_rows)
