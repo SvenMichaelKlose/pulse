@@ -1,5 +1,7 @@
-radio_timer = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
-layer_mask = %11110000
+radio_timer     = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
+layer_mask      = %11110000
+source_columns  = 22
+source_rows     = 23
 
 flight:
     ; Set timer for sample output synchronisation.
@@ -19,7 +21,7 @@ a:  ldx current_scaling
     lda scaling_addrs_h,x
     sta @(++ ptr_current_scaling)
 
-    lda #0
+    lda #10
     sta scrx
     sta scry
     lda #<earth_screen
@@ -66,27 +68,21 @@ l:  ldy ypos
 
     ; Calculate source screen and color data address of line.
     tay
-    lda $edfd,y
-    tax
+
+    lda srclines_l,y
     clc
     adc #<earth_screen
-    php
     sta @(+ 1 mod_src)
-    txa
+    lda srclines_h,y
+    adc #>earth_screen
+    sta @(+ 2 mod_src)
+
+    lda srclines_l,y
     clc
     adc #<earth_colours
     sta @(+ 1 mod_col)
-    cpy #@(++ (/ 256 screen_columns))
-    lda #@(half (high screen))
-    rol
-    tax
-    plp
-    php
-    adc #@(+ (- (high screen)) (high earth_screen))
-    sta @(+ 2 mod_src)
-    plp
-    txa
-    adc #@(+ (- (high screen)) (high earth_colours))
+    lda srclines_h,y
+    adc #>earth_colours
     sta @(+ 2 mod_col)
 
     jsr draw_scaled_line
@@ -193,6 +189,9 @@ done:
 scaling_offsets:    @(make-scaling-offsets 'scaling_offsets screen_columns)
 scaling_addrs_l:    @(make-scaling-addresses-low 'scaling_offsets screen_columns)
 scaling_addrs_h:    @(make-scaling-addresses-high 'scaling_offsets screen_columns)
+
+srclines_l:   @(maptimes [low (* source_columns _)] source_rows)
+srclines_h:   @(maptimes [high (* source_columns _)] source_rows)
 
 earth_screen:   @*earth-screen*
 earth_colours:  @*earth-colours*
