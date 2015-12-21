@@ -1,5 +1,9 @@
 ;(cl:proclaim '(optimize (speed 0) (space 0) (safety 3) (debug 3)))
 
+(defconstant +sample-bits+ 4)
+(defconstant +count-bits+ 8)
+(defconstant +window-bits+ (+ 1 +sample-bits+ +count-bits+))
+
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
   (with-input-file i from
@@ -25,12 +29,15 @@
 (defun make-window ()
   (aprog1 (make-queue)
     (dotimes (i 240)
-      (enqueue ! (print (mod i 16))))))
+      (enqueue ! (mod i 16)))))
 
-(defun adapt-sample (a s win sym)
-  (update-audio-model a s (queue-pop win) -1)
-  (update-audio-model a s sym 1)
-  (enqueue win sym))
+(defun adapt-sample (hi lo range a s win sym)
+  (with (h  (+ lo (integer (/ (integer (* range (aref s (++ sym)))) 256)) -1)
+         l  (+ lo (integer (/ (integer (* range (aref s sym))) 256))))
+    (update-audio-model a s (queue-pop win) -1)
+    (update-audio-model a s sym 1)
+    (enqueue win sym)
+    (values h l)))
 
 (defun arith-encode (num-bits i o)
   (with (top (<< 1 num-bits)
@@ -44,7 +51,6 @@
          lo  0
          (a s)  (init-audio-model)
          win    (make-window)
-         total  256
          pending-bits 0
          out0 #'(()
                   (princ 0 o)
@@ -64,9 +70,9 @@
         (print a)
         (| (<= range top)
            (error "Range overflow ~A." range))
-        (= hi (+ lo (integer (/ (integer (* range (aref s (++ !)))) total))))
-        (= lo (+ lo (integer (/ (integer (* range (aref s !))) total))))
-        (adapt-sample a s win !)
+        (with ((h l) (adapt-sample hi lo range a s win !))
+          (= hi h
+             lo l))
         (loop
           (?
             (< hi ha)       (out0)
@@ -105,9 +111,9 @@
              cnt    (integer (/ (integer (* total diff) range)))
              sym    (position-if [< cnt _] s))
         (write-byte sym o)
-        (= hi (+ lo (integer (/ (integer (* range (aref s (++ sym)))) total) -1)))
-        (= lo (+ lo (integer (/ (integer (* range (aref s sym))) total))))
-        (adapt-sample a s win sym)
+        (with ((h l) (adapt-sample hi lo range a s win sym))
+          (= hi h
+             lo l))
         (loop
           (?
             (| (>= lo ha)
@@ -134,6 +140,7 @@
 
 (defun compress-hiscore-theme ()
   (wav-to-4bit "obj/theme-hiscore.downsampled.ram.wav" "obj/hiscore.4bit.bin")
-  (compress (+ 4 4 8) "obj/hiscore.4bit.bin" "obj/hiscore-theme.bin"))
+  (compress +window-bits+ "obj/hiscore.4bit.bin" "obj/hiscore-theme.bin"))
 
 (compress-hiscore-theme)
+(quit)
