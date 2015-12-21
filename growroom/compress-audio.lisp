@@ -8,79 +8,6 @@
               nil
         (write-byte (bit-xor (>> ! 12) 8) o)))))
 
-(let f 0
-  (defun init-delta-compress ()
-    (= f 0))
-  (defun delta-compress (o x)
-    (write-byte (bit-and (byte (- x f)) 15) o)
-    (= f x)))
-
-(defun delta-compress-file (from to)
-  (init-delta-compress)
-  (with-input-file i from
-    (with-output-file o to
-      (awhile (read-byte i)
-              nil
-        (delta-compress o !)))))
-
-(let f 0
-  (defun init-ldelta-compress ()
-    (= f 0))
-  (defun ldelta-compress (o x)
-    (write (?
-             (< x f) (progn (++! f) 1)
-             (> x f) (progn (--! f) 255)
-             0)
-           o)
-    (= f x)))
-
-(defun ldelta-compress-file (from to)
-  (init-ldelta-compress)
-  (with-input-file i from
-    (with-output-file o to
-      (awhile (read-byte i)
-              nil
-        (ldelta-compress o !)))))
-
-(let f 0
-  (defun init-delta-uncompress ()
-    (= f 0))
-  (defun delta-uncompress (o x)
-    (write-byte (= f (byte (+ x f))) o)))
-
-(defun delta-uncompress-file (from to)
-  (init-delta-uncompress)
-  (with-input-file i from
-    (with-output-file o to
-      (awhile (read-byte i)
-              nil
-        (delta-uncompress o !)))))
-
-(defun test-delta-compression (in)
-  (format t "Delta compression with '~A'…~%" in)
-  (delta-compress-file "4bit.bin" "delta.bin")
-  (format t "Delta uncompression…~%")
-  (delta-uncompress-file "delta.bin" "undelta.bin")
-  (unless (equal (fetch-file "4bit.bin") (fetch-file "undelta.bin"))
-    (error "Failed.")))
-
-(defun get-probabilities (x num-bits)
-  (let top (<< 1 num-bits)
-    (alet (make-array 256)
-      (dotimes (i 256)
-        (= (aref ! i) 0))
-      (dotimes (i (length x))
-        (++! (aref ! (char-code (aref x i)))))
-      (with (total (apply #'+ (array-list !))
-             probs (make-array 256))
-        (dotimes (i 256)
-          (= (aref probs i) (list i (aref ! i))))
-        (alet (remove-if [zero? ._.] probs)
-          (format t "Total is ~A with ~A symbols.~%"
-                  (apply #'+ (@ #'cadr (array-list !)))
-                  (length !))
-          (sort ! :test #'((a b) (>= .a. .b.))))))))
-
 (defun make-denoms (probs)
   (aprog1 (make-array (++ (length probs)))
     (dotimes (i (length probs))
@@ -214,7 +141,6 @@
       (arith-decode probs num-bits num-bytes (make-bit-stream :in i) o))))
 
 (wav-to-4bit "obj/theme-hiscore.downsampled.ram.wav" "4bit.bin")
-;(delta-compress-file "4bit.bin" "delta.bin")
 ;(with-output-file o "numbers.bin" (princ (list-string '(5 6 7 8 9 0 1 2 3 4)) o))
 (compress 8 "4bit.bin" "hiscore-theme.bin")
 (quit)
