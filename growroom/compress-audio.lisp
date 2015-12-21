@@ -16,16 +16,13 @@
       (= (aref ! (++ i)) (+ (aref ! (++ i)) (aref ! i))))))
  
 (defun init-audio-model ()
-  (with (a (make-array 16)
-         s (make-array 17))
-    (= (aref s 0) 0)
-    (dotimes (i 16 (values a s))
-      (= (aref a i) 1)
-      (= (aref s (++ i)) (* (++ i) 1)))))
+  (values (list-array (maptimes [identity 16] 16))
+          (list-array (maptimes [* _ 16] 17))))
 
 (defun update-audio-model (a s x v)
   (unless (zero? (+ v (aref a x)))
     (= (aref a x) (+ v (aref a x)))
+    (++! x)
     (while (not (== x 17))
            nil
       (= (aref s x) (+ v (aref s x)))
@@ -44,7 +41,7 @@
          (a s)  (init-audio-model)
          win    (aprog1 (make-queue)
                   (dotimes (i 240)
-                    (enqueue ! 1)))
+                    (enqueue ! (print (mod i 16)))))
          total  256
          pending-bits 0
          out0 #'(()
@@ -60,18 +57,23 @@
                   (= hi (bit-and (bit-or (<< hi 1) hap) ma))
                   (= lo (bit-and (<< lo 1) ham))))
     (format t "~FTop: ~A~%" top)
+    (print a)
+    (print s)
     (awhile (read-byte i)
             nil
       (with (range (++ (- hi lo))
              total (aref s 16))
-;        (print a)
+        (print '***)
+        (print a)
+        (print s)
+
 ;        (format t "in: ~A, ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A, diff: ~A~%" ! s range hi lo (cadr (aref probs s)) (aref denoms s) (integer (/ (* range (aref denoms s)) total)))
         (| (<= range top)
            (error "Range overflow ~A." range))
-        (= hi (integer (+ lo (/ (* range (aref s (++ !))) total))))
-        (= lo (integer (+ lo (/ (* range (aref s !)) total))))
-        (update-audio-model a s ! 1)
+        (= hi (+ lo (integer (/ (integer (* range (aref s (++ !)))) total))))
+        (= lo (+ lo (integer (/ (integer (* range (aref s !))) total))))
         (update-audio-model a s (queue-pop win) -1)
+        (update-audio-model a s ! 1)
         (enqueue win !)
 ;        (format t "*Hi: ~A, lo: ~A~%" hi lo)
         (loop
@@ -109,13 +111,13 @@
            nil
       (with (range  (- hi lo -1)
              diff   (- value lo -1)
-             cnt    (/ (* total diff) range)
+             cnt    (integer (/ (integer (* total diff) range)))
              s      (position-if [< cnt _] denoms)
              c      (car (elt probs s)))
         (write-byte c o)
 ;        (format t "~Lin: ~A, ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A, diff: ~A, cnt: ~A~%" c s range hi lo (cadr (aref probs s)) (aref denoms s) diff (integer cnt))
-        (= hi (integer (+ lo (/ (* range (aref denoms (++ s))) total) -1)))
-        (= lo (integer (+ lo (/ (* range (aref denoms s)) total))))
+        (= hi (+ lo (integer (/ (integer (* range (aref denoms (++ s)))) total) -1)))
+        (= lo (+ lo (integer (/ (integer (* range (aref denoms s))) total))))
         (loop
           (?
             (| (>= lo ha)
@@ -142,5 +144,5 @@
 
 (wav-to-4bit "obj/theme-hiscore.downsampled.ram.wav" "4bit.bin")
 ;(with-output-file o "numbers.bin" (princ (list-string '(5 6 7 8 9 0 1 2 3 4)) o))
-(compress 8 "4bit.bin" "hiscore-theme.bin")
+(compress (+ 1 4 8) "4bit.bin" "hiscore-theme.bin")
 (quit)
