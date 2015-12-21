@@ -193,7 +193,7 @@ s:  inc @(++ mod_scaling) ; Step to next pixel index.
 
 clear_pixel:
     jsr play_sample
-    cpy #screen_rows ; Off–screen?
+    cpy #screen_columns ; Off–screen?
     bcs +done
 
     lda (scr),y
