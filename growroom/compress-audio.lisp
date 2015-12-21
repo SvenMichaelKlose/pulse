@@ -4,17 +4,11 @@
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
   (with-input-file i from
     (with-output-file o to
+      (adotimes 44 (read-byte i))
       (awhile (read-word i)
               nil
         (write-byte (bit-xor (>> ! 12) 8) o)))))
 
-(defun make-denoms (probs)
-  (aprog1 (make-array (++ (length probs)))
-    (dotimes (i (length probs))
-      (= (aref ! (++ i)) (cadr (aref probs i))))
-    (dotimes (i (length probs))
-      (= (aref ! (++ i)) (+ (aref ! (++ i)) (aref ! i))))))
- 
 (defun init-audio-model ()
   (values (list-array (maptimes [identity 16] 16))
           (list-array (maptimes [* _ 16] 17))))
@@ -28,6 +22,16 @@
       (= (aref s x) (+ v (aref s x)))
       (++! x))))
 
+(defun make-window ()
+  (aprog1 (make-queue)
+    (dotimes (i 240)
+      (enqueue ! (print (mod i 16))))))
+
+(defun adapt-sample (a s win sym)
+  (update-audio-model a s (queue-pop win) -1)
+  (update-audio-model a s sym 1)
+  (enqueue win sym))
+
 (defun arith-encode (num-bits i o)
   (with (top (<< 1 num-bits)
          ma  (-- top)
@@ -39,9 +43,7 @@
          hi  ma
          lo  0
          (a s)  (init-audio-model)
-         win    (aprog1 (make-queue)
-                  (dotimes (i 240)
-                    (enqueue ! (print (mod i 16)))))
+         win    (make-window)
          total  256
          pending-bits 0
          out0 #'(()
@@ -56,28 +58,16 @@
                   (++! pending-bits)
                   (= hi (bit-and (bit-or (<< hi 1) hap) ma))
                   (= lo (bit-and (<< lo 1) ham))))
-    (format t "~FTop: ~A~%" top)
-    (print a)
-    (print s)
     (awhile (read-byte i)
             nil
-      (with (range (++ (- hi lo))
-             total (aref s 16))
-        (print '***)
+      (with (range (++ (- hi lo)))
         (print a)
-        (print s)
-
-;        (format t "in: ~A, ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A, diff: ~A~%" ! s range hi lo (cadr (aref probs s)) (aref denoms s) (integer (/ (* range (aref denoms s)) total)))
         (| (<= range top)
            (error "Range overflow ~A." range))
         (= hi (+ lo (integer (/ (integer (* range (aref s (++ !)))) total))))
         (= lo (+ lo (integer (/ (integer (* range (aref s !))) total))))
-        (update-audio-model a s (queue-pop win) -1)
-        (update-audio-model a s ! 1)
-        (enqueue win !)
-;        (format t "*Hi: ~A, lo: ~A~%" hi lo)
+        (adapt-sample a s win !)
         (loop
-;          (format t "Hi: ~A, lo: ~A~%" hi lo)
           (?
             (< hi ha)       (out0)
             (>= lo  ha)     (out1)
@@ -92,7 +82,7 @@
     (with-output-file o out
       (arith-encode num-bits i (make-bit-stream :out o)))))
 
-(defun arith-decode (probs num-bits num-bytes i o)
+(defun arith-decode (num-bits num-bytes i o)
   (with (top    (<< 1 num-bits)
          ma     (-- top)
          ha     (half top)
@@ -102,8 +92,9 @@
          lq     (/ top 4)
          hi     ma
          lo     0
-         denoms (make-denoms probs)
-         total  (apply #'+ (@ #'cadr (array-list probs)))
+         (a s)  (init-audio-model)
+         win    (make-window)
+         total  256
          value   0)
     (adotimes 8
       (= value (+ (<< value 1) (read-byte i))))
@@ -112,12 +103,11 @@
       (with (range  (- hi lo -1)
              diff   (- value lo -1)
              cnt    (integer (/ (integer (* total diff) range)))
-             s      (position-if [< cnt _] denoms)
-             c      (car (elt probs s)))
-        (write-byte c o)
-;        (format t "~Lin: ~A, ~A, range: ~A, hi: ~A, lo: ~A p: ~A, d: ~A, diff: ~A, cnt: ~A~%" c s range hi lo (cadr (aref probs s)) (aref denoms s) diff (integer cnt))
-        (= hi (+ lo (integer (/ (integer (* range (aref denoms (++ s)))) total) -1)))
-        (= lo (+ lo (integer (/ (integer (* range (aref denoms s))) total))))
+             sym    (position-if [< cnt _] s))
+        (write-byte sym o)
+        (= hi (+ lo (integer (/ (integer (* range (aref s (++ sym)))) total) -1)))
+        (= lo (+ lo (integer (/ (integer (* range (aref s sym))) total))))
+        (adapt-sample a s win sym)
         (loop
           (?
             (| (>= lo ha)
@@ -136,13 +126,14 @@
             (return)))))))
 
 
-(defun uncompress (probs num-bits num-bytes in out)
+(defun uncompress (num-bits num-bytes in out)
   (format t "Arithmetic decoding of '~A' to '~A'…~%" in out)
   (with-input-file i in
     (with-output-file o out
-      (arith-decode probs num-bits num-bytes (make-bit-stream :in i) o))))
+      (arith-decode num-bits num-bytes (make-bit-stream :in i) o))))
 
-(wav-to-4bit "obj/theme-hiscore.downsampled.ram.wav" "4bit.bin")
-;(with-output-file o "numbers.bin" (princ (list-string '(5 6 7 8 9 0 1 2 3 4)) o))
-(compress (+ 1 4 8) "4bit.bin" "hiscore-theme.bin")
-(quit)
+(defun compress-hiscore-theme ()
+  (wav-to-4bit "obj/theme-hiscore.downsampled.ram.wav" "obj/hiscore.4bit.bin")
+  (compress (+ 4 4 8) "obj/hiscore.4bit.bin" "obj/hiscore-theme.bin"))
+
+(compress-hiscore-theme)
