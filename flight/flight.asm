@@ -16,7 +16,6 @@ flight:
     lda #0
     sta current_scaling
     lda #0
-stop:
     sta current_layer
 
 a:  
