@@ -3,9 +3,9 @@
 (defvar *earth-colours* nil)
 (when (make-version? :pal-tape :ntsc-tape)
   (with ((chars screen colours) (read-screen-designer-file "media/flight/earth.txt"))
-    (= *earth-chars* chars)
-    (= *earth-screen* screen)
-    (= *earth-colours* colours)))
+    (= *earth-chars* chars.)
+    (= *earth-screen* screen.)
+    (= *earth-colours* colours.)))
 
 (defvar radio_shortest_pulse #x18)
 (defvar radio_longest_pulse #x28)

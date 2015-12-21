@@ -16,19 +16,23 @@
     (list-string (f))))
 
 (defun read-screen-designer-file (name)
-  (with (char-data nil
-         screen    nil)
+  (with (char-data  (make-queue)
+         screens    (make-queue)
+         colours    (make-queue))
     (with-input-file i name
       (with (f #'(()
                    (alet (read-line i)
                      (?
-                       (head? ! ";char data")     (& (= char-data (read-bytes i))
-                                                     (f))
-                       (head? ! ";screen data0")  (& (read-line i)
-                                                     (= screen (read-bytes i)) (f))
-                       (head? ! ";colour data0")  (values char-data
-                                                          screen
-                                                          (& (read-line i)
-                                                             (read-bytes i)))
+                       (not !) (values (queue-list char-data)
+                                       (queue-list screens)
+                                       (queue-list colours))
+                       (head? ! ";char data")   (& (enqueue char-data (read-bytes i))
+                                                   (f))
+                       (head? ! ";screen data") (& (read-line i)
+                                                    (enqueue screens (read-bytes i))
+                                                    (f))
+                       (head? ! ";colour data") (& (read-line i)
+                                                   (enqueue colours (read-bytes i))
+                                                   (f))
                        (f)))))
         (f)))))
