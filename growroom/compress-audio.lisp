@@ -3,7 +3,7 @@
 
 (defconstant +sample-bits+ 4)
 (defconstant +count-bits+ 8)
-(defconstant +window-bits+ (+ 4 +sample-bits+ +count-bits+))
+(defconstant +window-bits+ (+ 1 +sample-bits+ +count-bits+))
 
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
@@ -40,9 +40,8 @@
   (with (h  (-- (+ lo (integer (/ (* range (aref s (++ sym))) 256))))
          l  (+ lo (integer (/ (* range (aref s sym)) 256))))
     (format dump "~A~%" l)
-;    (update-audio-model a s (queue-pop win) -1)
-;    (update-audio-model a s sym 1)
-(queue-pop win)
+    (update-audio-model a s (queue-pop win) -1)
+    (update-audio-model a s sym 1)
     (enqueue win sym)
     (values h l)))
 
@@ -98,6 +97,10 @@
             (& (< hi uq)
                (>= lo lq))  (outx)
             (return)))))
+    (++! pending-bits)
+    (? (< lo lq)
+       (out-plus-pending 0)
+       (out-plus-pending 1))
     (adotimes 8 (out0)))))
 
 (defun compress (num-bits in out)
@@ -161,7 +164,7 @@
           (= lo (<< lo 1))
           (= hi (<< hi 1))
           (= hi (bit-or hi 1))
-          (= value (+ (<< value 1) (read-byte i)))))))))
+          (= value (+ (<< value 1) (| (read-byte i) 0)))))))))
 
 (defun uncompress (num-bits num-bytes in out)
   (format t "Arithmetic decoding of '~A' to '~A'…~%" in out)
