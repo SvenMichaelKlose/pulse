@@ -1,18 +1,22 @@
 load_8k:
-    ldx #5
-l:  lda loader_cfg_8k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jsr radio_start
-
     ; Init sample playing and halt until first buffer has been loaded.
     lda #0
     sta rr_sample
     sta do_play_radio
-l:  lda do_play_radio
-    beq -l
 
+    ; Load +8K block.
+    ldy #<loader_cfg_8k
+    lda #>loader_cfg_8k
+
+do_flight:
+    sty @(+ 1 +l)
+    sta @(+ 2 +l)
+    ldx #5
+l:  lda $ffff,x
+    sta tape_ptr,x
+    dex
+    bpl -l
+    jsr radio_start
     jmp flight
 
 init_8k:
@@ -24,33 +28,21 @@ init_8k:
 n:
 
     ; Load +16K block.
-    ldx #5
-l:  lda loader_cfg_16k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jsr radio_start
-    jmp flight
+    ldy #<loader_cfg_16k
+    lda #>loader_cfg_16k
+    jmp do_flight
 
 init_16k:
     ; Load +24K block.
-    ldx #5
-l:  lda loader_cfg_24k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jsr radio_start
-    jmp flight
+    ldy #<loader_cfg_24k
+    lda #>loader_cfg_24k
+    jmp do_flight
 
 init_24k:
     ; Load +32K block.
-    ldx #5
-l:  lda loader_cfg_32k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-    jsr radio_start
-    jmp flight
+    ldy #<loader_cfg_32k
+    lda #>loader_cfg_32k
+    jmp do_flight
 
 init_32k:
     ; Blank screen.
