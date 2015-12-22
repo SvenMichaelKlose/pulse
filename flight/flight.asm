@@ -5,6 +5,9 @@ source_columns  = 22
 source_rows     = 23
 
 flight:
+l:  lda do_play_radio
+    beq -l
+
     ; Set timer for sample output synchronisation.
     lda #<radio_timer
     sta $9114
@@ -39,7 +42,7 @@ a:
     jsr wait_for_other_chunk
 
     lda chunks_loaded
-    and #%11
+    and #%1
     bne -a
     lda current_scaling
     cmp #21
