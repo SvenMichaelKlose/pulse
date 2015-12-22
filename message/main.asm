@@ -3,6 +3,7 @@ screen_columns = 22
     org $80
     data
 bars_probability:   0
+counter: 0
 s:  0 0
 d:  0 0
 last_random_value:  0
@@ -66,6 +67,7 @@ a:  lda #@(+ reverse black) ; Screen and border color.
 l:  jsr random
     and bars_probability
     beq +e
+    jsr random
     sta $900e
     lsr
     lda #white
@@ -86,7 +88,10 @@ e:  lda #@(+ white 8 (* 16 white))
     ldx #@(/ (- (? (eq *tv* :pal) 65 71) 8) 5)
 t:  dex
     bne -t
-    beq -a      ; (JMP)
+    dec counter
+    bne -a
+    lsr bars_probability
+    bne -a
 
 next_part:
     jmp next_part
