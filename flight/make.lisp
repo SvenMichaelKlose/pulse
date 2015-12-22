@@ -41,6 +41,7 @@
             "flight/load-sequence.asm"
             "flight/play-sample.asm"
             "flight/flight.asm"
+            "flight/draw.asm"
             "flight/loader.asm"
             "game/screen.asm"
             "game/high-segment.asm"
