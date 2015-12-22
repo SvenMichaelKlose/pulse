@@ -1,6 +1,15 @@
     org $1000
     $02 $10
 
+    ; Print `presents`.
+    ldx #@(- txt_presents_end txt_presents 1)
+l:  lda txt_presents,x
+    sta @(+ screen (* 10 22) 7),x
+    lda #white
+    sta @(+ colors (* 10 22) 7),x
+    dex
+    bpl -l
+
     ; Fill +3K area.
     ldx #0
     ldy #$07
@@ -36,6 +45,10 @@ load_flight:
     ldy #<loader_cfg_flight
     lda #>loader_cfg_flight
     jmp tape_loader_start
+
+txt_presents:
+    @(ascii2petscii "presents")
+txt_presents_end:
 
 flight_size = @(length (fetch-file (+ "obj/flight.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
