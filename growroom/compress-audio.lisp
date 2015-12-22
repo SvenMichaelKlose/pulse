@@ -1,9 +1,10 @@
 
 ;(cl:proclaim '(cl:optimize (cl:speed 0) (cl:space 0) (cl:safety 3) (cl:debug 3)))
+(cl:proclaim '(cl:optimize (cl:speed 3) (cl:space 0) (cl:safety 0) (cl:debug 0)))
 
 (defconstant +sample-bits+ 4)
 (defconstant +count-bits+ 8)
-(defconstant +window-bits+ (+ 1 +sample-bits+ +count-bits+))
+(defconstant +window-bits+ 16);(+ 1 +sample-bits+ +count-bits+))
 
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
@@ -33,10 +34,10 @@
       (enqueue ! (mod i 16)))))
 
 (defun adapt-sample (dump hi lo range a s win sym)
-  (format dump "~A h: ~A, l: ~A~%"
-          (+ lo (integer (/ (* range (aref s sym)) 256)))
-          (print-hexbyte (aref s (++ sym)) nil)
-          (print-hexbyte (aref s sym) nil))
+;  (format dump "~A h: ~A, l: ~A~%"
+;          (+ lo (integer (/ (* range (aref s sym)) 256)))
+;          (print-hexbyte (aref s (++ sym)) nil)
+;          (print-hexbyte (aref s sym) nil))
   (with (h  (-- (+ lo (integer (/ (* range (aref s (++ sym))) 256))))
          l  (+ lo (integer (/ (* range (aref s sym)) 256))))
     (format dump "~A~%" l)
@@ -82,11 +83,11 @@
       (with (range (++ (- hi lo)))
         (| (<= range top)
            (error "Range overflow ~A." range))
-        (format dump "~A, hi: ~A, lo: ~A, range: ~A~%"
-                (print-hexbyte ! nil)
-                (print-hexdword hi nil)
-                (print-hexdword lo nil)
-                (print-hexdword range nil))
+;        (format dump "~A, hi: ~A, lo: ~A, range: ~A~%"
+;                (print-hexbyte ! nil)
+;                (print-hexdword hi nil)
+;                (print-hexdword lo nil)
+;                (print-hexdword range nil))
         (with ((h l) (adapt-sample dump hi lo range a s win !))
           (= hi h
              lo l))
@@ -132,15 +133,13 @@
              diff   (++ (- value lo))
              cnt    (integer (/ (-- (* diff 256)) range))
              sym    (-- (position-if [< cnt _] s)))
-
-        (format dump "~A, hi: ~A, lo: ~A, range: ~A, diff: ~A, cnt: ~A~%"
-                (print-hexbyte sym nil)
-                (print-hexdword hi nil)
-                (print-hexdword lo nil)
-                (print-hexdword range nil)
-                (print-hexdword diff nil)
-                (print-hexdword cnt nil))
-
+;        (format dump "~A, hi: ~A, lo: ~A, range: ~A, diff: ~A, cnt: ~A~%"
+;                (print-hexbyte sym nil)
+;                (print-hexdword hi nil)
+;                (print-hexdword lo nil)
+;                (print-hexdword range nil)
+;                (print-hexdword diff nil)
+;                (print-hexdword cnt nil))
         (write-byte sym o)
         (with ((h l) (adapt-sample dump hi lo range a s win sym))
           (= hi h
@@ -151,9 +150,9 @@
                 nil
             (>= lo ha)
               (progn
-                (= value (- value ha))
-                (= lo (- lo ha))
-                (= hi (- hi ha)))
+                (= value (bit-and value ham))
+                (= lo (bit-and lo ham))
+                (= hi (bit-and hi ham)))
             (& (>= lo lq)
                (< hi uq))
               (progn
@@ -172,14 +171,18 @@
     (with-output-file o out
       (arith-decode num-bits num-bytes (make-bit-stream :in i) o))))
 
-(defun compress-hiscore-theme ()
-  (wav-to-4bit "obj/theme-hiscore.downsampled.ram.wav" "obj/hiscore.4bit.bin")
-  (compress +window-bits+ "obj/hiscore.4bit.bin" "obj/hiscore-theme.bin")
+(defun compress-audio (in out)
+  (wav-to-4bit in "obj/hiscore.4bit.bin")
+  (compress +window-bits+ "obj/hiscore.4bit.bin" out)
   (uncompress +window-bits+ (length (fetch-file "obj/hiscore.4bit.bin"))
-              "obj/hiscore-theme.bin" "obj/hiscore.decomp.bin")
-  (| (equal (fetch-file "obj/hiscore.4bit.bin")
+              out "obj/hiscore.decomp.bin")
+  (? (equal (fetch-file "obj/hiscore.4bit.bin")
             (fetch-file "obj/hiscore.decomp.bin"))
+     (format t "Decompression has been successful.~%")
      (error "Files don't match.")))
 
-(compress-hiscore-theme)
+(compress-audio "obj/theme-hiscore.downsampled.ram.wav"
+                "obj/hiscore-theme.bin")
+;(compress-audio "obj/theme-splash.downsampled.pal.wav"
+;                "obj/hiscore-theme.bin")
 (quit)
