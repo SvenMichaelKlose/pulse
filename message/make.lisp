@@ -2,7 +2,8 @@
   (alet (downcase (symbol-name *tv*))
     (with-temporary *imported-labels* nil
       (make (+ "obj/message." ! ".prg")
-            '("primary-loader/zeropage.asm"
+            '("bender/vic-20/vic.asm"
+              "primary-loader/zeropage.asm"
               "message/main.asm"
               "game/random.asm"
               "game/high-segment.asm"

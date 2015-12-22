@@ -1,6 +1,11 @@
+screen_columns = 22
+
     org $80
     data
 bars_probability:   0
+s:  0 0
+d:  0 0
+last_random_value:  0
     end
 
     org $1000
@@ -24,6 +29,9 @@ story:
     0
 
 intro:
+    lda #$ff
+    sta bars_probability
+
     ldx #253
 l:  lda #32
     sta @(-- screen),x
@@ -31,8 +39,6 @@ l:  lda #32
     dex
     bne -l
 
-    lda #@(* red 16)    ; Auxiliary color.
-    sta $900e
     lda #%11110010      ; Up/locase chars.
     sta $9005
 
@@ -58,6 +64,7 @@ a:  lda #@(+ reverse black) ; Screen and border color.
     iny
     sty @(++ d)
 l:  jsr random
+    and bars_probability
     beq +e
     sta $900e
     lsr
