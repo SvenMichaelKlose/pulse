@@ -71,8 +71,6 @@ l:  lda $0,x
     sta saved_zeropage,x
     lda @(- #x200 tape_leader_countdown),x
     sta saved_stack,x
-    lda loader_configuration,x
-    sta tape_ptr,x
     dex
     bpl -l
 
@@ -92,6 +90,8 @@ l:  dey
     stx $900c
     sta $900c
 
+    ldy #<loader_configuration
+    lda #>loader_configuration
     jmp tape_loader_start
 
 game_size = @(length (fetch-file (+ "obj/game.crunched." (downcase (symbol-name *tv*)) ".prg")))

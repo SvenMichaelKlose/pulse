@@ -13,12 +13,8 @@ l:  sta 0,x
     bne -l
 
     ; Load +3K RAM
-    ldx #5
-l:  lda loader_cfg_3k,x
-    sta tape_ptr,x
-    dex
-    bpl -l
-
+    ldy #<loader_cfg_3k
+    lda #>loader_cfg_3k
     jsr tape_loader_start
 
     lda #@(+ reverse black) ; Screen and border color.

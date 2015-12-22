@@ -1,4 +1,12 @@
 tape_loader_start:
+    sty @(+ 1 +l)
+    sta @(+ 2 +l)
+    ldx #5
+l:  lda $ffff,x
+    sta tape_ptr,x
+    dex
+    bpl -l
+
     lda $314            ; Save old IRQ vector.
     sta tape_old_irq
     lda $315

@@ -33,11 +33,8 @@ m:  sta $400,x
     sta @(++ model_patch)
 
 load_flight:
-    ldx #5
-l:  lda loader_cfg_flight,x
-    sta tape_ptr,x
-    dex
-    bpl -l
+    ldy #<loader_cfg_flight
+    lda #>loader_cfg_flight
     jmp tape_loader_start
 
 flight_size = @(length (fetch-file (+ "obj/flight.crunched." (downcase (symbol-name *tv*)) ".prg")))

@@ -50,11 +50,8 @@ init_32k:
     sta $9002
 
     ; Load splash screen.
-    ldx #5
-l:  lda loader_cfg_splash,x
-    sta tape_ptr,x
-    dex
-    bpl -l
+    ldy #<loader_cfg_splash
+    lda #>loader_cfg_splash
     jmp tape_loader_start
 
 patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))

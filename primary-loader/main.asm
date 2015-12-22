@@ -21,8 +21,6 @@ l:  lda $9004
     ldx #0
 l:  lda loaded_tape_loader,x
     sta @*tape-loader-start*,x
-    lda loader_cfg_intro,x
-    sta tape_ptr,x
     inx
     bne -l
 
@@ -31,6 +29,8 @@ l:  lda loaded_tape_loader,x
     and #$fd
     sta $911c
 
+    ldy #<loader_cfg_intro
+    lda #>loader_cfg_intro
     jmp tape_loader_start
 
 intro_size = @(length (fetch-file (+ "obj/intro.crunched." (downcase (symbol-name *tv*)) ".prg")))
