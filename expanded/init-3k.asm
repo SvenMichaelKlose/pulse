@@ -53,9 +53,9 @@ txt_presents_end:
 message_size = @(length (fetch-file (+ "obj/message." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_message:
-    $00 $10
+    $00 $14
     <message_size @(++ >message_size)
-    $00 $10
+    @(low *message-start*) @(high *message-start*)
 
 loaded_patch3k:
     @(fetch-file (+ "obj/patch-3k." (downcase (symbol-name *tv*)) ".bin"))

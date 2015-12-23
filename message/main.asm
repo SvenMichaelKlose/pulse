@@ -9,9 +9,7 @@ d:  0 0
 last_random_value:  0
     end
 
-    org $1000
-
-    jmp intro
+    org $1400
 
 story:
     @(ascii2petscii
@@ -29,7 +27,7 @@ story:
        " Good luck! Hit fire!")
     0
 
-intro:
+intro_message:
     lda #$ff
     sta bars_probability
 

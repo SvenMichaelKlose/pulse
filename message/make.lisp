@@ -1,3 +1,5 @@
+(defvar *message-start* nil)
+
 (defun make-message ()
   (alet (downcase (symbol-name *tv*))
     (with-temporary *imported-labels* nil
@@ -8,4 +10,5 @@
               "game/random.asm"
               "game/high-segment.asm"
               "secondary-loader/start.asm")
-            (+ "obj/message." ! ".prg.vice.txt")))))
+            (+ "obj/message." ! ".prg.vice.txt"))
+      (= *message-start* (get-label 'intro_message)))))
