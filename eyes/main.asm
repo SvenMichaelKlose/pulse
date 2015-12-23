@@ -24,6 +24,8 @@ l:  sta 0,x
     jsr clear_screen
 
     inc $9000
+    inc $9001
+    inc $9001
 
 l:  lda $9004
     bne -l

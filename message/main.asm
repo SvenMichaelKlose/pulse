@@ -33,13 +33,10 @@ intro:
     lda #$ff
     sta bars_probability
 
-    ldx #253
-l:  lda #32
-    sta @(-- screen),x
-    sta @(+ screen 252),x
-    dex
-    bne -l
+    jsr clear_screen
 
+    dec $9001
+    dec $9001
     lda #%11110010      ; Up/locase chars.
     sta $9005
 
@@ -94,7 +91,18 @@ t:  dex
     bne -a
 
 next_part:
-    jmp next_part
+    jsr clear_screen
+
+w:  jmp -w
+
+clear_screen:
+    ldx #253
+l:  lda #32
+    sta @(-- screen),x
+    sta @(+ screen 252),x
+    dex
+    bne -l
+    rts
 
 flight_size = @(length (fetch-file (+ "obj/flight.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
