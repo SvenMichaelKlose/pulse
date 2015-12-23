@@ -3,8 +3,8 @@ charset     = $1400
 screen      = $1000
 colors      = $9400
 
-screen_columns  = @(+ 22 (elt (vic-defaults *tv*) 0))
-screen_rows     = @(+ 23 (/ (elt (vic-defaults *tv*) 1) 8))
+screen_columns  = @(integer (+ 22 (elt (vic-defaults *tv*) 0)))
+screen_rows     = @(integer (+ 23 (/ (elt (vic-defaults *tv*) 1) 4)))
 
 charsetsize = @(* numchars 8)
 charsetmask = @(-- numchars)
