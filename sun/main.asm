@@ -3,6 +3,9 @@ charset     = $1000
 screen      = $1e00
 colors      = $9600
 
+screen_columns  = @(+ 22 (elt (vic-defaults *tv*) 0))
+screen_rows     = @(+ 23 (/ (elt (vic-defaults *tv*) 1) 4))
+
 charsetsize = @(* numchars 8)
 charsetmask = @(-- numchars)
 
@@ -55,5 +58,25 @@ last_random_value:  0
     end
 
 sun:
+    ; Configure VIC for maximum screen size.
+    ldx #@(- vic_config_end vic_config 1)
+l:  lda vic_config,x
+    sta $9000,x
+    dex
+    bpl -l
+
+    lda #0
+    sta $900f
+
+w:  jmp -w
+
+vic_config:
+    @(vic-horigin *tv* screen_columns)
+    @(vic-vorigin *tv* screen_rows)
+    screen_columns
+    @(* 2 screen_rows)
+    0
+    $cd     ; Screen at $1000, chars at $1400
+vic_config_end:
 
 sinetab:    @(large-sine)
