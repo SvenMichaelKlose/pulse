@@ -1,5 +1,15 @@
 (defvar *sun-start* nil)
 
+(defun max-screen-columns ()
+  (integer (+ 22 (elt (vic-defaults *tv*) 0))))
+
+(defun max-screen-rows ()
+  (alet (integer (+ 23 (/ (elt (vic-defaults *tv*) 1) 4)))
+    (let s (* (max-screen-columns) !)
+      (? (< 1024 s)
+         (- ! (integer (/ (- s 1024) (max-screen-columns))))
+         !))))
+
 (defun large-sine ()
   (let steps 256
     (with-queue q
