@@ -2,9 +2,7 @@ draw_circle:
     lda #0
     sta counter
 
-l:  lda #@(half screen_columns)
-    sta radius
-    lda counter
+l:  lda counter
     sta degrees
     lda #@(half screen_columns)
     sta xpos
@@ -14,6 +12,7 @@ l:  lda #@(half screen_columns)
 
     jsr draw_pixel
 
+    inc counter
     inc counter
     bne -l
     rts

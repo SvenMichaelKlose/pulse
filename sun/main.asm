@@ -65,11 +65,16 @@ last_random_value:  0
 sun:
     ; Clear screen.
     ldx #0
-    txa
-l:  sta $1000,x
+l:  lda #0
+    sta $1000,x
     sta $1100,x
     sta $1200,x
     sta $1300,x
+    lda #white
+    sta $9400,x
+    sta $9500,x
+    sta $9600,x
+    sta $9700,x
     dex
     bne -l
 
@@ -80,7 +85,12 @@ l:  lda vic_config,x
     dex
     bpl -l
 
-    jsr draw_circle
+    lda #@(* 1.5 screen_columns)
+    sta radius
+l:  jsr draw_circle
+    dec radius
+    bne -l
+
 ;    ldy #<loader_cfg_flight
 ;    lda #>loader_cfg_flight
 ;    jmp tape_loader_start
