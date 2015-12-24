@@ -7,6 +7,7 @@
       (make (+ "obj/message." ! ".prg")
             '("bender/vic-20/vic.asm"
               "primary-loader/zeropage.asm"
+              "primary-loader/models.asm"
               "message/main.asm"
               "game/random.asm"
               "game/high-segment.asm"

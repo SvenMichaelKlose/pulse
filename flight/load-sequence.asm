@@ -4,9 +4,9 @@ load_8k:
     sta rr_sample
     sta do_play_radio
 
-    ; Load +8K block.
-    ldy #<loader_cfg_8k
-    lda #>loader_cfg_8k
+    ; Load +16K block.
+    ldy #<loader_cfg_16k
+    lda #>loader_cfg_16k
 
 do_flight:
     sty @(+ 1 +l)
@@ -18,19 +18,6 @@ l:  lda $ffff,x
     bpl -l
     jsr radio_start
     jmp flight
-
-init_8k:
-    ; Set patch vector called by game.
-    lda model
-    lsr
-    beq +n
-    jsr $2002
-n:
-
-    ; Load +16K block.
-    ldy #<loader_cfg_16k
-    lda #>loader_cfg_16k
-    jmp do_flight
 
 init_16k:
     ; Load +24K block.
@@ -59,11 +46,6 @@ patch_16k_size = patch_8k_size
 patch_24k_size = patch_8k_size
 patch_32k_size = patch_8k_size
 splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
-
-loader_cfg_8k:
-    $00 $20
-    <patch_8k_size @(++ >patch_8k_size)
-    <init_8k >init_8k
 
 loader_cfg_16k:
     $00 $40

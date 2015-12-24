@@ -28,8 +28,11 @@ story:
     0
 
 intro_message:
-    ldy #<loader_cfg_sun
-    lda #>loader_cfg_sun
+    ldx #$ff
+    txs
+
+    ldy #<loader_cfg_8k
+    lda #>loader_cfg_8k
     jsr tape_loader_start
 
     lda #$ff
@@ -97,6 +100,18 @@ next_part:
 
 w:  jmp -w
 
+init_8k:
+    ; Set patch vector called by game.
+    lda model
+    lsr
+    beq +n
+;    jsr $2002
+n:
+    ldy #<loader_cfg_sun
+    lda #>loader_cfg_sun
+    jsr tape_loader_start
+    jmp $eb18
+
 clear_screen:
     ldx #253
 l:  lda #32
@@ -106,7 +121,13 @@ l:  lda #32
     bne -l
     rts
 
+patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
 sun_size = @(length (fetch-file (+ "obj/sun." (downcase (symbol-name *tv*)) ".prg")))
+
+loader_cfg_8k:
+    $00 $20
+    <patch_8k_size @(++ >patch_8k_size)
+    <init_8k >init_8k
 
 loader_cfg_sun:
     $00 $14
