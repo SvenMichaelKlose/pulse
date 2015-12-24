@@ -2,7 +2,8 @@
 
 (defun make-message ()
   (alet (downcase (symbol-name *tv*))
-    (with-temporary *imported-labels* nil
+    (with-temporaries (*imported-labels* nil
+                       *tape-loader-start-returning?* t)
       (make (+ "obj/message." ! ".prg")
             '("bender/vic-20/vic.asm"
               "primary-loader/zeropage.asm"

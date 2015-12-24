@@ -4,7 +4,7 @@ screen      = $1000
 colors      = $9400
 
 screen_columns  = @(max-screen-columns)
-screen_rows     = @(max-screen-rows)
+screen_rows     = @(max-screen-rows screen_columns)
 
 charsetsize = @(* numchars 8)
 charsetmask = @(-- numchars)
@@ -57,7 +57,22 @@ denominator: 0
 last_random_value:  0
     end
 
+    org $1400
+
+    $00 $00 $00 $00 $00 $00 $00 $00
+    $ff $ff $ff $ff $ff $ff $ff $ff
+
 sun:
+    ; Clear screen.
+    ldx #0
+    txa
+l:  sta $1000,x
+    sta $1100,x
+    sta $1200,x
+    sta $1300,x
+    dex
+    bne -l
+
     ; Configure VIC for maximum screen size.
     ldx #@(- vic_config_end vic_config 1)
 l:  lda vic_config,x
@@ -65,10 +80,19 @@ l:  lda vic_config,x
     dex
     bpl -l
 
-    lda #0
-    sta $900f
-
+    jsr draw_circle
+;    ldy #<loader_cfg_flight
+;    lda #>loader_cfg_flight
+;    jmp tape_loader_start
 w:  jmp -w
+
+reset_vic:
+    ldx #15
+l:  lda $ede4,x
+    sta $9000,x
+    dex
+    bpl -l
+    rts
 
 vic_config:
     @(vic-horigin *tv* screen_columns)
@@ -77,6 +101,16 @@ vic_config:
     @(* 2 screen_rows)
     0
     $cd     ; Screen at $1000, chars at $1400
+    0 0 0 0 0 0 0 0 0
+    9
+
 vic_config_end:
 
 sinetab:    @(large-sine)
+
+flight_size = @(length (fetch-file (+ "obj/flight.crunched." (downcase (symbol-name *tv*)) ".prg")))
+
+loader_cfg_flight:
+    $00 $10
+    <flight_size @(++ >flight_size)
+    $02 $10

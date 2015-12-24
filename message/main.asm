@@ -9,7 +9,7 @@ d:  0 0
 last_random_value:  0
     end
 
-    org $1400
+    org $1000
 
 story:
     @(ascii2petscii
@@ -28,6 +28,10 @@ story:
     0
 
 intro_message:
+    ldy #<loader_cfg_sun
+    lda #>loader_cfg_sun
+    jsr tape_loader_start
+
     lda #$ff
     sta bars_probability
 
@@ -102,9 +106,9 @@ l:  lda #32
     bne -l
     rts
 
-flight_size = @(length (fetch-file (+ "obj/flight.crunched." (downcase (symbol-name *tv*)) ".prg")))
+sun_size = @(length (fetch-file (+ "obj/sun." (downcase (symbol-name *tv*)) ".prg")))
 
-loader_cfg_flight:
-    $00 $10
-    <flight_size @(++ >flight_size)
-    $02 $10
+loader_cfg_sun:
+    $00 $14
+    <sun_size @(++ >sun_size)
+    @(low *sun-start*) @(high *sun-start*)

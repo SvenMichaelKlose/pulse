@@ -2,13 +2,13 @@ draw_circle:
     lda #0
     sta counter
 
-l:  lda #45
+l:  lda #@(half screen_columns)
     sta radius
     lda counter
     sta degrees
-    lda #32
+    lda #@(half screen_columns)
     sta xpos
-    lda #96
+    lda #@(half screen_rows)
     sta ypos
     jsr point_on_circle
 

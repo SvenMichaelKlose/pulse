@@ -1,13 +1,15 @@
 (defvar *sun-start* nil)
 
 (defun max-screen-columns ()
-  (integer (+ 22 (elt (vic-defaults *tv*) 0))))
+  (? (eq *tv* :pal)
+     31
+     (integer (+ 22 (elt (vic-defaults *tv*) 0)))))
 
-(defun max-screen-rows ()
+(defun max-screen-rows (cols)
   (alet (integer (+ 23 (/ (elt (vic-defaults *tv*) 1) 4)))
-    (let s (* (max-screen-columns) !)
+    (let s (* cols !)
       (? (< 1024 s)
-         (- ! (integer (/ (- s 1024) (max-screen-columns))))
+         (- ! (integer (/ (- s 1024) cols)))
          !))))
 
 (defun large-sine ()
@@ -18,6 +20,9 @@
         (enqueue q (integer (* 128 (degree-sin i))))))))
 
 (defun make-sun ()
+  (format t "Screen dimensions: ~Ax~A chars.~%"
+            (max-screen-columns)
+            (max-screen-rows (max-screen-columns)))
   (alet (downcase (symbol-name *tv*))
     (with-temporary *imported-labels* nil
       (make (+ "obj/sun." ! ".prg")
