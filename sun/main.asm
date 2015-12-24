@@ -85,7 +85,7 @@ l:  lda vic_config,x
     dex
     bpl -l
 
-    lda #@(* 1.5 screen_columns)
+    lda #@(* 2 screen_columns)
     sta radius
 l:  jsr draw_circle
     dec radius

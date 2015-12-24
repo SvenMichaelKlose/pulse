@@ -28,7 +28,8 @@ sinmul:
     jmp multiply
 
 point_on_circle:
-    lda radius
+    ldx radius
+    lda xlat_aspect,x
     sta result_decimals
     lda #0
     sta result
@@ -51,3 +52,6 @@ point_on_circle:
     tay
 
     rts
+
+xlat_aspect:
+    @(maptimes [integer (/ (* _ 3) 5)] (* 4 screen_columns))

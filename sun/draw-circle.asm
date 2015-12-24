@@ -13,6 +13,5 @@ l:  lda counter
     jsr draw_pixel
 
     inc counter
-    inc counter
     bne -l
     rts
