@@ -60,6 +60,17 @@ last_random_value:  0
     org $1400
 
 charset:
+    ; border color (black)
+    %01010101
+    %01010101
+    %01010101
+    %01010101
+    %01010101
+    %01010101
+    %01010101
+    %01010101
+
+    ; screen colour (yellow)
     %00000000
     %00000000
     %00000000
@@ -69,33 +80,35 @@ charset:
     %00000000
     %00000000
 
-    %10101010
-    %01010101
-    %10101010
-    %01010101
-    %10101010
-    %01010101
-    %10101010
-    %01010101
+    ; auxiliary colour (light yellow)
+    %11111111
+    %11111111
+    %11111111
+    %11111111
+    %11111111
+    %11111111
+    %11111111
+    %11111111
 
-    %11111111
-    %11111111
-    %11111111
-    %11111111
-    %11111111
-    %11111111
-    %11111111
-    %11111111
+    ; character colour (white)
+    %10101010
+    %10101010
+    %10101010
+    %10101010
+    %10101010
+    %10101010
+    %10101010
+    %10101010
 
 sun:
     ; Clear screen.
     ldx #0
-l:  lda #2
+l:  lda #3
     sta $1000,x
     sta $1100,x
     sta $1200,x
     sta $1300,x
-    lda #white
+    lda #@(+ multicolor white)
     sta $9400,x
     sta $9500,x
     sta $9600,x
@@ -111,10 +124,8 @@ l:  lda vic_config,x
     bpl -l
 
     lda #@(* 2 screen_columns)
+l:  pha
     sta radius
-l:  inc radius
-    inc radius
-    inc radius
     lda #0
     sta curchar
     jsr draw_circle
@@ -125,6 +136,15 @@ l:  inc radius
     sta curchar
     jsr draw_circle
     dec radius
+    dec radius
+    dec radius
+    lda #2
+    sta curchar
+    jsr draw_circle
+    pla
+    sec
+    sbc #1
+    cmp #3
     bne -l
 
 ;    ldy #<loader_cfg_flight
@@ -147,8 +167,9 @@ vic_config:
     @(* 2 screen_rows)
     0
     $cd     ; Screen at $1000, chars at $1400
-    0 0 0 0 0 0 0 0 0
-    8
+    0 0 0 0 0 0 0 0
+    @(* light_yellow 16)
+    @(+ (* yellow 16) reverse)
 
 vic_config_end:
 
