@@ -55,6 +55,7 @@ save_y:     0
 denominator: 0
 
 last_random_value:  0
+countdown:  0
     end
 
     org $1400
@@ -116,6 +117,9 @@ l:  lda #3
     dex
     bne -l
 
+l:  lsr $9004
+    bne -l
+
     ; Configure VIC for maximum screen size.
     ldx #@(- vic_config_end vic_config 1)
 l:  lda vic_config,x
@@ -128,20 +132,22 @@ l:  pha
     sta radius
     lda #0
     sta curchar
-    jsr draw_circle
+    jsr draw_random_point_on_circle
     dec radius
     dec radius
     dec radius
     lda #1
     sta curchar
-    jsr draw_circle
+    jsr draw_random_point_on_circle
     dec radius
     dec radius
     dec radius
     lda #2
     sta curchar
-    jsr draw_circle
+    jsr draw_random_point_on_circle
     pla
+    dec countdown
+    bne -l
     sec
     sbc #1
     cmp #3

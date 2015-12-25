@@ -35,7 +35,7 @@ intro_message:
     lda #>loader_cfg_8k
     jsr tape_loader_start
 
-    lda #$ff
+    lda #$3f
     sta bars_probability
 
     jsr clear_screen
@@ -96,6 +96,8 @@ t:  dex
     bne -a
 
 next_part:
+    lda #$19
+    sta $900f
     jsr clear_screen
 
 w:  jmp -w

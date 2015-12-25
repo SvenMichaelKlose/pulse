@@ -15,3 +15,14 @@ l:  lda counter
     inc counter
     bne -l
     rts
+
+draw_random_point_on_circle:
+    jsr random
+    sta degrees
+    lda #@(half screen_columns)
+    sta xpos
+    lda #@(half screen_rows)
+    sta ypos
+    jsr point_on_circle
+    jsr draw_pixel
+    rts
