@@ -95,7 +95,7 @@
                          (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
                             (fetch-file "obj/model-detection.bin"))
                          :start #x1001)
-             (fastloader-block (fetch-file (+ "obj/intro.crunched." tv ".prg")))
+             (fastloader-block (fetch-file (+ "obj/eyes." tv ".prg")))
              (fastloader-block (fetch-file (+ "obj/3k.crunched." tv ".prg")) :gap #x0c0000)
              (fastloader-block (fetch-file (+ "obj/message." tv ".prg")))
              (fastloader-block (fetch-file (+ "obj/8k.crunched." tv ".prg")))

@@ -33,7 +33,7 @@ l:  lda loaded_tape_loader,x
     lda #>loader_cfg_intro
     jmp tape_loader_start
 
-intro_size = @(length (fetch-file (+ "obj/intro.crunched." (downcase (symbol-name *tv*)) ".prg")))
+intro_size = @(length (fetch-file (+ "obj/eyes." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_intro:
     $00 $10

@@ -2,7 +2,7 @@
   (with-temporaries (*imported-labels* nil
                      *tape-loader-start-returning?* t)
     (alet (downcase (symbol-name *tv*))
-      (make (+ "obj/intro." ! ".prg")
+      (make (+ "obj/eyes." ! ".prg")
             '("bender/vic-20/vic.asm"
               "primary-loader/models.asm"
               "flight/zeropage.asm"
@@ -11,7 +11,7 @@
               "eyes/main.asm"
               "game/high-segment.asm"
               "expanded/print.asm")
-            (+ "obj/intro." ! ".prg.vice.txt"))
-      (exomize (+ "obj/intro." ! ".prg")
-               (+ "obj/intro.crunched." ! ".prg")
-               "1002" "20"))))
+            (+ "obj/eyes." ! ".prg.vice.txt")))))
+;      (exomize (+ "obj/eyes." ! ".prg")
+;               (+ "obj/eyes.crunched." ! ".prg")
+;               "1002" "20"))))
