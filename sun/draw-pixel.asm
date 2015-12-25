@@ -6,6 +6,6 @@ draw_pixel:
     bcs +n
     sty scry
     jsr scraddr
-    lda #1
+    lda curchar
     sta (scr),y
 n:  rts

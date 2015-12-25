@@ -35,7 +35,7 @@
               "sun/math.asm"
               "sun/multiply.asm"
               "sun/sine.asm"
-              "sun/pixel.asm"
+              "sun/draw-pixel.asm"
               "sun/draw-circle.asm"
               "game/random.asm"
               "game/high-segment.asm"

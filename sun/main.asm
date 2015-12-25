@@ -1,5 +1,4 @@
 numchars    = 128
-charset     = $1400
 screen      = $1000
 colors      = $9400
 
@@ -22,6 +21,7 @@ col:        0 0
 scrx:       0
 scry:       0
 curcol:     0
+curchar:    0
 
 pixel_mask: 0
 pixel_yreg: 0
@@ -59,13 +59,38 @@ last_random_value:  0
 
     org $1400
 
-    $00 $00 $00 $00 $00 $00 $00 $00
-    $ff $ff $ff $ff $ff $ff $ff $ff
+charset:
+    %00000000
+    %00000000
+    %00000000
+    %00000000
+    %00000000
+    %00000000
+    %00000000
+    %00000000
+
+    %10101010
+    %01010101
+    %10101010
+    %01010101
+    %10101010
+    %01010101
+    %10101010
+    %01010101
+
+    %11111111
+    %11111111
+    %11111111
+    %11111111
+    %11111111
+    %11111111
+    %11111111
+    %11111111
 
 sun:
     ; Clear screen.
     ldx #0
-l:  lda #0
+l:  lda #2
     sta $1000,x
     sta $1100,x
     sta $1200,x
@@ -87,7 +112,18 @@ l:  lda vic_config,x
 
     lda #@(* 2 screen_columns)
     sta radius
-l:  jsr draw_circle
+l:  inc radius
+    inc radius
+    inc radius
+    lda #0
+    sta curchar
+    jsr draw_circle
+    dec radius
+    dec radius
+    dec radius
+    lda #1
+    sta curchar
+    jsr draw_circle
     dec radius
     bne -l
 
@@ -112,7 +148,7 @@ vic_config:
     0
     $cd     ; Screen at $1000, chars at $1400
     0 0 0 0 0 0 0 0 0
-    9
+    8
 
 vic_config_end:
 
