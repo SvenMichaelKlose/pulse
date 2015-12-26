@@ -28,10 +28,10 @@
       (make (+ "obj/sun." ! ".prg")
             '("bender/vic-20/vic.asm"
               "primary-loader/zeropage.asm"
+              "sun/zeropage.asm"
+              "sun/charset.asm"
               "sun/main.asm"
               "sun/screen.asm"
-;              "sun/char.asm"
-;              "sun/blitter.asm"
               "sun/math.asm"
               "sun/multiply.asm"
               "sun/sine.asm"

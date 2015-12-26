@@ -18,3 +18,5 @@ no_reverse:
 no_inverse:
     ldy save_y
     rts
+
+sinetab:    @(large-sine)
