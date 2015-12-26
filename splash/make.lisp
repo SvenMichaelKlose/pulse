@@ -25,7 +25,7 @@
      *splash-chars-128-159*
      (subseq (fetch-file game) (+ 1024 256))))
 
-(defun make-splash-prg ()
+(defun make-splash ()
   (alet (downcase (symbol-name *tv*))
     (make (+ "obj/splash." ! ".prg")
           '("bender/vic-20/vic.asm"

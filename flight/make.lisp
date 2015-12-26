@@ -34,7 +34,8 @@
 (defun make-flight ()
   (alet (downcase (symbol-name *tv*))
     (make (+ "obj/flight." ! ".prg")
-          '("primary-loader/models.asm"
+          '("bender/vic-20/vic.asm"
+            "primary-loader/models.asm"
             "flight/zeropage.asm"
             "flight/start.asm"
             "flight/load-sequence.asm"

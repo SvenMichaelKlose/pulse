@@ -1,3 +1,6 @@
+screen_columns = 22
+screen_rows = 23
+
 screen = $1e00
 colors = $9600
 
