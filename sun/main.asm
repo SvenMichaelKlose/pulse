@@ -127,6 +127,22 @@ l:  lda vic_config,x
     dex
     bpl -l
 
+    ; Boost digital audio with distorted HF carrier.
+    lda #$0f
+    sta $900e
+    ldx #$7e
+    stx $900c
+    ldy #0
+l:  dey
+    bne -l
+    lda #$fe
+    stx $900c
+    stx $900c
+    sta $900c
+    sta $900c
+    stx $900c
+    sta $900c
+
     lda #@(* 2 screen_columns)
 l:  pha
     sta radius
@@ -173,8 +189,9 @@ vic_config:
     @(* 2 screen_rows)
     0
     $cd     ; Screen at $1000, chars at $1400
-    0 0 0 0 0 0 0 0
-    @(* light_yellow 16)
+    0 0 0 0
+    0 0 0 0
+    @(+ (* light_yellow 16) 15)
     @(+ (* yellow 16) reverse)
 
 vic_config_end:
@@ -187,3 +204,10 @@ loader_cfg_flight:
     $00 $10
     <flight_size @(++ >flight_size)
     $02 $10
+
+    fill @(- 256 (low *pc*))
+
+volumes:
+    @(apply #'+ (maptimes [let x _
+                            (maptimes [/ (* _ x) 16] 16)]
+                          16))
