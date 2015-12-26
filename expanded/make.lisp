@@ -27,8 +27,8 @@
 (defvar *tape-loader-start-returning?* nil)
 
 (defun make-8k (imported-labels)
-  (with-temporaries(*imported-labels* imported-labels
-                    *have-ram-audio-player?* t)
+  (with-temporaries (*imported-labels* imported-labels
+                     *have-ram-audio-player?* t)
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/8k." ! ".prg")
             '("expanded/init-8k.asm"

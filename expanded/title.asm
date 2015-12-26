@@ -52,7 +52,6 @@ fx_clear2:
     dec do_play_fx
     ldx do_play_fx
     lda #32
-;    sta @(+ screen 68),x
     sta @(+ screen 68 50),x
     sta @(+ screen 68 100),x
     sta @(+ screen 68 150),x
@@ -60,7 +59,6 @@ fx_clear2:
     sta @(+ screen 68 250),x
     sta @(+ screen 68 300),x
     sta @(+ screen 68 350),x
-;    sta @(+ screen 68 400),x
     jmp +cont_fx
 
 fx_wait:
