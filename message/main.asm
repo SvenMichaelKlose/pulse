@@ -129,6 +129,12 @@ n:
 ;    ldy #<loader_cfg_sun
 ;    lda #>loader_cfg_sun
 ;    jsr tape_loader_start
+
+    ; Stop tape motor.
+    lda $911c
+    ora #2
+    sta $911c
+
     jmp $eb18
 
 clear_screen:

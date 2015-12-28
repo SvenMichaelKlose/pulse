@@ -39,6 +39,7 @@
               "sun/draw-circle.asm"
               "game/random.asm"
               "game/high-segment.asm"
-              "secondary-loader/start.asm")
+              "secondary-loader/start.asm"
+              "sun/flight-loader.asm")
             (+ "obj/sun." ! ".prg.vice.txt"))
       (= *sun-start* (get-label 'sun)))))

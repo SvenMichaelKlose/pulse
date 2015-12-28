@@ -66,18 +66,20 @@ l:  pha
     cmp #3
     bne -l
 
-;    ldy #<loader_cfg_flight
-;    lda #>loader_cfg_flight
-;    jmp tape_loader_start
-w:  jmp -w
-
-reset_vic:
-    ldx #15
+    ldx #4
 l:  lda $ede4,x
     sta $9000,x
     dex
     bpl -l
-    rts
+    lda #0
+    sta $9002
+
+    ldx #0
+l:  lda flight_loader_start,x
+    sta flight_loader,x
+    inx
+    bne -l
+    jmp flight_loader
 
 vic_config:
     @(vic-horigin *tv* screen_columns)
@@ -90,12 +92,4 @@ vic_config:
     0 0 0 0
     @(+ (* light_yellow 16) 15)
     @(+ (* yellow 16) reverse)
-
 vic_config_end:
-
-flight_size = @(length (fetch-file (+ "obj/flight.crunched." (downcase (symbol-name *tv*)) ".prg")))
-
-loader_cfg_flight:
-    $00 $10
-    <flight_size @(++ >flight_size)
-    $02 $10

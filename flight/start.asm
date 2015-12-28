@@ -11,15 +11,18 @@ start:
 l:  lsr $9004
     bne -l
 
-    ; Charset at $1000.
-    lda #%11111100
+    lda #@(+ 128 22)
+    sta $9002
+    lda #$fc            ; Screen at $1e00, charset at $1000.
     sta $9005
+    lda #reverse
+    sta $900f
 
     ; Clear the screen.
-    ldx #252
+    ldx #253
     lda #0
-l:  sta screen,x
-    sta @(+ 253 screen),x
+l:  sta @(-- screen),x
+    sta @(+ 252 screen),x
     dex
     bne -l
 
