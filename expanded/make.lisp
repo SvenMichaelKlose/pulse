@@ -62,8 +62,8 @@
 
 (defun make-ram-audio2 (name file gain bass)
   (make-wav name file)
-  (make-filtered-wav name gain bass :ram *ram-audio-rate*)
-  (make-conversion name :ram *ram-audio-rate*)
+  (make-filtered-wav name gain bass :ram *ram-audio-rate2*)
+  (make-conversion name :ram *ram-audio-rate2*)
   (convert-to-pwm2 "obj/intermediate.downsampled.ram.wav"
                    "obj/intermediate.pwm"))
 

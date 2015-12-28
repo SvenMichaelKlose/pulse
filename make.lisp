@@ -18,6 +18,7 @@
 (defvar *tape-pulse* (* 8 *pulse-average*))
 
 (defvar *ram-audio-rate* 2000)
+(defvar *ram-audio-rate2* 3000)
 (defconstant +c64-pal-cycles+ 985248)
 
 (defvar *tape-wav-rate* 41100)

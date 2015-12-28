@@ -1,3 +1,5 @@
+timer2 = @(/ (cpu-cycles *tv*) *ram-audio-rate2*)
+
 sample_start2:  0 0
 sample_end2:    0 0
 bitpair: 6
@@ -6,7 +8,7 @@ play_audio_sample2:
     pha
     txa
     pha
-    lda #>timer
+    lda #>timer2
     sta $9115
 mod_sample_ptr2:
     lda $1234
@@ -82,9 +84,9 @@ l:  dey
     lda #6
     sta bitpair
 
-    lda #<timer
+    lda #<timer2
     sta $9114
-    lda #>timer
+    lda #>timer2
     sta $9115
 
     ; Set IRQ vector.
