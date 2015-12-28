@@ -1,11 +1,12 @@
 screen_columns = 22
 
     org $80
+
     data
 bars_probability:   0
-counter: 0
-s:  0 0
-d:  0 0
+counter:            0
+s:                  0 0
+d:                  0 0
 last_random_value:  0
     end
 
@@ -51,7 +52,7 @@ l:  dey
     lda #>loader_cfg_8k
     jsr tape_loader_start
 
-    lda #$3f
+    lda #$ff
     sta bars_probability
 
     jsr clear_screen
@@ -116,7 +117,7 @@ next_part:
     sta $900f
     jsr clear_screen
 
-w:  jmp -w
+    jmp @*sun-start*
 
 init_8k:
     ; Set patch vector called by game.
@@ -125,9 +126,9 @@ init_8k:
     beq +n
 ;    jsr $2002
 n:
-    ldy #<loader_cfg_sun
-    lda #>loader_cfg_sun
-    jsr tape_loader_start
+;    ldy #<loader_cfg_sun
+;    lda #>loader_cfg_sun
+;    jsr tape_loader_start
     jmp $eb18
 
 clear_screen:
@@ -140,14 +141,8 @@ l:  lda #32
     rts
 
 patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
-sun_size = @(length (fetch-file (+ "obj/sun." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_8k:
     $00 $20
     <patch_8k_size @(++ >patch_8k_size)
     <init_8k >init_8k
-
-loader_cfg_sun:
-    $00 $14
-    <sun_size @(++ >sun_size)
-    @(low *sun-start*) @(high *sun-start*)

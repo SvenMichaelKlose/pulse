@@ -30,10 +30,10 @@ m:  sta $400,x
 
     ; Check if there's only +3K RAM.
     lda model
-    beq load_flight
+    beq load_message
     lsr
-    bne load_flight
-    bcc load_flight
+    bne load_message
+    bcc load_message
 
     ; Only +3K. Set patch vector called by game.
     lda #$00
@@ -41,7 +41,7 @@ m:  sta $400,x
     lda #$04
     sta @(++ model_patch)
 
-load_flight:
+load_message:
     ldy #<loader_cfg_message
     lda #>loader_cfg_message
     jmp tape_loader_start
@@ -51,11 +51,22 @@ txt_presents:
 txt_presents_end:
 
 message_size = @(length (fetch-file (+ "obj/message." (downcase (symbol-name *tv*)) ".prg")))
+sun_size = @(length (fetch-file (+ "obj/sun." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_message:
     $00 $10
     <message_size @(++ >message_size)
-    @(low *message-start*) @(high *message-start*)
+    <load_sun >load_sun
 
 loaded_patch3k:
     @(fetch-file (+ "obj/patch-3k." (downcase (symbol-name *tv*)) ".bin"))
+
+load_sun:
+    ldy #<loader_cfg_sun
+    lda #>loader_cfg_sun
+    jmp tape_loader_start
+
+loader_cfg_sun:
+    $00 $14
+    <sun_size @(++ >sun_size)
+    @(low *message-start*) @(high *message-start*)
