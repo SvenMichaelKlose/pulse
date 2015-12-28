@@ -24,10 +24,13 @@
         (eq version :tap)      '("tape-loader.asm")
         '("../bender/vic-20/basic-loader.asm"))
 
-    ,@(? (eq version :virtual)
-         '("init-virtual.asm")
-         '("init.asm"))
-    "intro.asm"
+    ,@(?
+        (eq version :virtual)  '("init-virtual.asm")
+        (eq version :tap)      '("tape-release-init.asm")
+        '("init.asm"))
+
+    ,@(unless (eq version :tap)
+         '("intro.asm"))
 
     ,@(unless (eq version :virtual)
         '("low-segments.asm"))
