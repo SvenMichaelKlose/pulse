@@ -146,8 +146,9 @@
 (when (make-version? :pal-tape :ntsc-tape)
   (make-model-detection)
   (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
+  (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "3" "-72")
   (with-temporary *ram-audio-rate* 4000
-    (make-ram-audio "theme-hiscore" "media/intermediate/audio.wav" "3" "-72"))
+    (make-ram-audio "theme-hiscore" "media/intermediate/audio.wav" "16" "-72"))
   (make-wav "theme-splash" "media/splash/theme-boray.mp3")
   (make-wav "radio" "media/radio.ogg"))
 (when (make-version? :pal-tape)

@@ -11,6 +11,18 @@ title_screen:
     jsr game_over_screen
     jsr init_fx_player
 
+if @*have-ram-audio-player2?*
+    lda #<audioloop
+    sta sample_start2
+    lda #>audioloop
+    sta @(++ sample_start2)
+    lda #<audioloop_end
+    sta sample_end2
+    lda #>audioloop_end
+    sta @(++ sample_end2)
+    jsr start_player2
+end
+
 l:  lda #<txt_game
     sta s
     lda #>txt_game
@@ -197,6 +209,9 @@ end
     sta $9005
     lda #@(+ reverse blue)  ; Screen and border color.
     sta $900f
+if @*have-ram-audio-player2?*
+    jsr stop_player2
+end
     jmp post_patch
 
 ;;;;;;;;;;;;;;;;;;;;;;;;

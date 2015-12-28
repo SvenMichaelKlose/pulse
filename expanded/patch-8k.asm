@@ -17,3 +17,7 @@ patch8k:
     lda #>title_screen
     sta @(+ 2 patch_caller)
     jmp get_ready
+
+audioloop:
+    @(fetch-file "obj/intermediate.pwm")
+audioloop_end:
