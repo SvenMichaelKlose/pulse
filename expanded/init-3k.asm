@@ -62,6 +62,13 @@ loaded_patch3k:
     @(fetch-file (+ "obj/patch-3k." (downcase (symbol-name *tv*)) ".bin"))
 
 load_sun:
+    ldx #253
+l:  lda #32
+    sta @(-- screen),x
+    sta @(+ screen 252),x
+    dex
+    bne -l
+
     ldy #<loader_cfg_sun
     lda #>loader_cfg_sun
     jmp tape_loader_start
