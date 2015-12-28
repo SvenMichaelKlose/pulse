@@ -190,13 +190,13 @@ if @*have-ram-audio-player?*
     and #vic_8k
     beq +n
     lda #<sample_get_ready
-    sta @(+ 1 mod_sample_ptr)
+    sta sample_start
     lda #>sample_get_ready
-    sta @(+ 2 mod_sample_ptr)
+    sta @(+ 1 sample_start)
     lda #<sample_get_ready_end
+    sta sample_end
+    lda #>sample_get_ready_end
     sta @(+ 1 sample_end)
-    lda #<sample_get_ready_end
-    sta @(+ 2 sample_end)
     jsr start_player
 n:
 end

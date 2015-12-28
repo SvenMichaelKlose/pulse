@@ -3,6 +3,7 @@ timer = @(/ (cpu-cycles *tv*) *ram-audio-rate*)
 sample_start:   0 0
 sample_end:     0 0
 nibble: 0
+do_play_loop:   0
 
 play_audio_sample:
     pha
@@ -31,13 +32,18 @@ n:  sta $900e
 n:
 
     lda @(+ 1 mod_sample_ptr)
-    cmp #<sample_end
+    cmp sample_end
     bne +n
     lda @(+ 2 mod_sample_ptr)
-    cmp #>sample_end
+    cmp @(+ 1 sample_end)
     bne +n
 
-stop:
+    lda do_play_loop
+    beq no_loop
+    jsr restart_audio
+    jmp +n
+
+no_loop:
     lda #$7f        ; Disable NMI timer and interrupt.
     sta $911b
     lda #$7f
@@ -87,4 +93,10 @@ l:  dey
 
     ; Let the IRQ handler do everthing.
     cli
+
+restart_audio:
+    lda sample_start
+    sta @(+ 1 mod_sample_ptr)
+    lda @(+ 1 sample_start)
+    sta @(+ 2 mod_sample_ptr)
     rts
