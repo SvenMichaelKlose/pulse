@@ -5,9 +5,6 @@ colors      = $9400
 screen_columns  = @(max-screen-columns)
 screen_rows     = @(max-screen-rows screen_columns)
 
-charsetsize = @(* numchars 8)
-charsetmask = @(-- numchars)
-
     data
     org $80
 tmp:        0
@@ -23,24 +20,6 @@ scry:       0
 curcol:     0
 curchar:    0
 
-pixel_mask: 0
-pixel_yreg: 0
-char_x:     0
-char_y:     0
-
-octant:     0
-x0:         0
-y0:         0
-dx:         0
-x1:         0
-y1:         0
-dy:         0
-draw_line_error:    0
-draw_line_xreg:     0
-draw_line_yreg:     0
-
-next_char:  0
-
 counter:    0
 
 result:     0
@@ -52,7 +31,6 @@ xpos:       0
 ypos:       0
 save_x:     0
 save_y:     0
-denominator: 0
 
 last_random_value:  0
 countdown:  0
