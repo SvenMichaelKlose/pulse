@@ -12,20 +12,7 @@
         (+! acc v)))
     acc))
 
-(defun radio-rasters ()
-  (integer (+ (? (eq *tv* :pal) 0 1)
-              (/ (* (? (eq *tv* :pal)
-                       312
-                       261)
-                    50)
-                 (half (radio-rate *tv*))))))
-
 (defun radio-window-cycles ()
-;  (* (radio-rasters)
-;     (? (eq *tv* :pal)
-;        71
-;        65)
-;     256))
   (integer (* (/ (cpu-cycles *tv*)
                  (radio-rate *tv*))
               512)))
