@@ -15,12 +15,19 @@
 (defun radio-window-cycles ()
   (integer (* (/ (cpu-cycles *tv*)
                  (radio-rate *tv*))
-              512)))
+              256)))
+
+(defun radio-average-audio-chunk-cycles ()
+  (* radio_average_pulse 8 256))
+
+(defun radio-average-data-chunk-cycles ()
+  (- (radio-window-cycles)
+     (radio-average-audio-chunk-cycles)))
 
 (defun radio-data-size ()
   (with (tap-cycle-resolution   8
          bits-per-byte          8)
-    (integer (/ (half (radio-window-cycles))
+    (integer (/ (radio-average-data-chunk-cycles)
                 tap-cycle-resolution
                 *pulse-long*
                 bits-per-byte))))
@@ -41,8 +48,12 @@
     acc))
 
 (defun radio2tap (out in-wav in-bin &key (gap #x08000000) (lead-in? t))
-  (format t "Making radio TAP data for ~A…~% Window cycles: ~A~% Data size: ~A~%"
-          (symbol-name *tv*) (radio-window-cycles) (radio-data-size))
+  (format t "Making radio TAP data for ~A…~% Window cycles: ~A (~A audio, ~A data)~% Data size: ~A~%"
+          (symbol-name *tv*)
+          (radio-window-cycles)
+          (radio-average-audio-chunk-cycles)
+          (radio-average-data-chunk-cycles)
+          (radio-data-size))
   (adotimes 44
     (read-byte in-wav))
   (awhen gap

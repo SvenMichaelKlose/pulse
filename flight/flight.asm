@@ -1,4 +1,4 @@
-radio_timer     = @(/ (cpu-cycles *tv*) (half (radio-rate *tv*)))
+radio_timer     = @(/ (cpu-cycles *tv*) (radio-rate *tv*))
 layer_mask      = %11110000
 scaled_columns  = 22
 source_columns  = 22

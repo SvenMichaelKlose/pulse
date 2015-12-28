@@ -13,8 +13,7 @@
 (defvar radio_average_pulse (+ radio_shortest_pulse (half radio_pulse_width)))
 
 (defun radio-rate (tv)
-  (pwm-pulse-rate tv :shortest radio_shortest_pulse
-                     :width radio_pulse_width))
+  2000)
 
 (defun make-radio-tap (to in-wav bin)
   (with-output-file out to
@@ -23,8 +22,8 @@
 
 (defun make-radio-wav (tv)
   (format t "Making radio…~%")
-  (make-filtered-wav "radio" "3" "-32" tv (half (radio-rate tv)))
-  (make-conversion "radio" tv (half (radio-rate tv)))
+  (make-filtered-wav "radio" "3" "-32" tv (radio-rate tv))
+  (make-conversion "radio" tv (radio-rate tv))
   (alet (downcase (symbol-name tv))
     (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
       (make-radio-tap "obj/radio0.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))
