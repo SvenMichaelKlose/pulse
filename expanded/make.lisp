@@ -43,15 +43,15 @@
   (make-wav name file)
   (make-filtered-wav name gain bass :ram *ram-audio-rate*)
   (make-conversion name :ram *ram-audio-rate*)
-  (convert-to-pwm "obj/get_ready.downsampled.ram.wav"
-                  "obj/get_ready.pwm"))
+  (convert-to-pwm (+ "obj/" name ".downsampled.ram.wav")
+                  (+ "obj/" name ".pwm")))
 
 (defun make-ram-audio2 (name file gain bass)
   (make-wav name file)
   (make-filtered-wav name gain bass :ram *ram-audio-rate2*)
   (make-conversion name :ram *ram-audio-rate2*)
-  (convert-to-pwm2 "obj/intermediate.downsampled.ram.wav"
-                   "obj/intermediate.pwm"))
+  (convert-to-pwm2 (+ "obj/" name ".downsampled.ram.wav")
+                   (+ "obj/" name ".pwm")))
 
 (defvar *have-ram-audio-player?* nil)
 (defvar *have-ram-audio-player2?* nil)

@@ -131,8 +131,9 @@
         (make-loader))
       (make-radio-wav *tv*)
       (make-tape-audio *tv* "theme-splash" "2" "-64")
-      (with-output-file o (+ "obj/splash-audio." tv ".bin")
-        (wav2pwm o (fetch-file (+ "obj/theme-splash.downsampled." tv ".wav")) :pause-before 0))
+      (with-input-file i (+ "obj/theme-splash.downsampled." tv ".wav")
+        (with-output-file o (+ "obj/splash-audio." tv ".bin")
+          (wav2pwm o i :pause-before 0)))
       (make-tap nil)
       (when (make-version? :tape-wav)
         (format t "Making ~A tape WAV file...~%" (symbol-name *tv*))
@@ -148,8 +149,9 @@
   (make-model-detection)
   (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
   (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "12" "-64")
-  (with-temporary *ram-audio-rate* 4000
-    (make-ram-audio "theme-hiscore" "media/intermediate/audio.wav" "8" "-72"))
+  (make-ram-audio2 "intermediate2" "media/intermediate/audio2.wav" "12" "-64")
+;  (with-temporary *ram-audio-rate* 4000
+;    (make-ram-audio "theme-hiscore" "media/intermediate/audio.wav" "8" "-72"))
   (make-wav "theme-splash" "media/splash/theme-boray.mp3")
   (make-wav "radio" "media/radio.ogg"))
 (when (make-version? :pal-tape)
