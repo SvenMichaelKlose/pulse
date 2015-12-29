@@ -12,10 +12,11 @@
       (= i (toggle i)))))
 
 (let v 0
-  (defun dither-sample (x)
+  (defun reset-dithering ()
+    (= v 0))
+  (defun dithered-sample (x)
     (= v (+ v x)))
-  (defun set-dither-error (x)
-;    (print x)
+  (defun set-dithering-error (x)
     (= v (- v x))))
 
 (defun word-int (x)
@@ -30,11 +31,8 @@
          b 0)
     (awhile (read-word in)
             nil
-;            (print '----------)
-;      (print (word-int !))
-      (with (v (bit-xor (>> (word (dither-sample (word-int !))) 14) 2))
-;            (print v)
-        (set-dither-error (print (- (<< v 14) #x8000)))
+      (with (v (bit-xor (>> (word (dithered-sample (word-int !))) 14) 2))
+        (set-dithering-error (- (<< v 14) #x8000))
         (= b (bit-or b v)))
       (when (== i 3)
         (write-byte (byte b) out)
