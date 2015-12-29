@@ -219,6 +219,8 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 game_over_screen:
+    lda $ede5       ; Re–center screen shifted by grenade.
+    sta $9001
     lda #0
     sta $900a
     sta $900b
