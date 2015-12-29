@@ -5,24 +5,11 @@
          b 0)
     (awhile (read-word in)
             nil
-      (let v (integer (+ 8 (>> ! 12)))
+      (let v (bit-xor (>> ! 12) 8)
         (? i
            (= b v)
            (write-byte (byte (+ b (<< v 4))) out)))
       (= i (toggle i)))))
-
-(let v 0
-  (defun reset-dithering ()
-    (= v 0))
-  (defun dithered-sample (x)
-    (= v (+ v x)))
-  (defun set-dithering-error (x)
-    (= v (- v x))))
-
-(defun word-int (x)
-  (? (< #x7fff x)
-     (- x #x10000)
-     x))
 
 (defun make-pwm2 (out in)
   (adotimes 44
@@ -31,22 +18,23 @@
          b 0)
     (awhile (read-word in)
             nil
-      (with (v (bit-xor (>> (word (dithered-sample (word-int !))) 14) 2))
-        (set-dithering-error (- (<< v 14) #x8000))
+      (with (v (bit-xor (>> ! 14) 2))
         (= b (bit-or b v)))
-      (when (== i 3)
-        (write-byte (byte b) out)
-        (= b 0)
-        (= i -1))
-      (= b (<< b 2))
-      (++! i))))
+        (when (== i 3)
+          (write-byte (byte b) out)
+          (= b 0)
+          (= i -1))
+        (= b (<< b 2))
+        (++! i))))
 
 (defun convert-to-pwm (in-name out-name)
+  (format t "Converting `~A' to 4–bit audio `~A'…~%" in-name out-name)
   (with-input-file in in-name
     (with-output-file out out-name
       (make-pwm out in))))
 
 (defun convert-to-pwm2 (in-name out-name)
+  (format t "Converting `~A' to 2–bit audio `~A'…~%" in-name out-name)
   (with-input-file in in-name
     (with-output-file out out-name
       (make-pwm2 out in))))
