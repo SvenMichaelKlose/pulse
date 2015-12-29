@@ -41,12 +41,12 @@ relocate:
     sta @(+ +p 2)
     ldx #0
     ldy #2
-p:  lda $1201,x
+p:  lda $ff01,x
 q:  sta $1201,x
     inx
     bne -p
-    inc @(+ +p 2)
-    inc @(+ +p 2)
+    inc @(+ -p 2)
+    inc @(+ -q 2)
     dey
     bne -p
 done:
