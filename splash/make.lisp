@@ -34,7 +34,8 @@
             "splash/main.asm"
             "secondary-loader/start.asm"
             "splash/splash.asm"
-            "splash/audio-player.asm")
+            "splash/audio-player.asm"
+            "splash/start-game.asm")
           (+ "obj/splash." ! ".prg.vice.txt"))
     (exomize (+ "obj/splash." ! ".prg")
              (+ "obj/splash.crunched." ! ".prg")

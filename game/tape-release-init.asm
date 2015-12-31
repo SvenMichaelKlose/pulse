@@ -32,17 +32,27 @@ l:  sta hiscore,x
     dex
     bpl -l
 
+    dec $9000
+    dec $9000
     lda #%11111100      ; Our charset.
     sta $9005
     lda #@(* red 16)    ; Auxiliary color.
     sta $900e
+
+    ; Clear screen.
+    ldx #253
+l:  lda #32
+    sta @(-- screen),x
+    sta @(+ screen 252),x
+    dex
+    bne -l
 
     lda model           ; Avoid screen flicker.
     bne +n
     lda #@(+ reverse blue)  ; Screen and border color.
     sta $900f
 
-n:  lda $ede7           ; Unblank screen.
+    lda $ede7           ; Unblank screen.
     sta $9003
 
-    jmp game_over
+n:  jmp game_over

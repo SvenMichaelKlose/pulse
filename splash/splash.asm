@@ -29,6 +29,8 @@ o:  $9d $00 $00 ;sta $0000,x
     dey
     bne -p
 
+    inc $9000
+    inc $9000
     lda #$09        ; Black screen, white border.
     sta $900f
     lda #148        ; Unblank screen. 20 columns.
