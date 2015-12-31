@@ -1,9 +1,6 @@
 realstart = @(+ #x1000 charsetsize)
 
 main:
-    lda #reverse
-    sta $900f
-
     sei
     lda #$7f
     sta $912e       ; Disable and acknowledge interrupts.
@@ -40,9 +37,12 @@ l:  sta hiscore,x
     lda #@(* red 16)    ; Auxiliary color.
     sta $900e
 
-    lda model               ; Avoid screen flicker.
+    lda model           ; Avoid screen flicker.
     bne +n
     lda #@(+ reverse blue)  ; Screen and border color.
     sta $900f
 
-n:  jmp game_over
+n:  lda $ede7           ; Unblank screen.
+    sta $9003
+
+    jmp game_over

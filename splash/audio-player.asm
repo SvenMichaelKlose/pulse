@@ -75,11 +75,9 @@ start_game:
 
     ldy #4
 p:  ldx #0
+    stx $9003
 l:  $bd $00 $00 ;lda $0000,x
 m:  sta $1000,x
-    lda #0
-    sta colors,x
-    sta @(+ colors #x100),x
     inx
     bne -l
     inc @(+ -l 2)
