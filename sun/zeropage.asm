@@ -7,8 +7,6 @@ screen_rows     = @(max-screen-rows screen_columns)
 
     data
     org $80
-tmp:        0
-tmp2:       0
 
 s:          0 0
 d:          0 0
@@ -33,5 +31,10 @@ save_x:     0
 save_y:     0
 
 last_random_value:  0
+tmp:        0
+tmp2:       0
+tmpx:       0
+tmpy:       0
 countdown:  0
+
     end

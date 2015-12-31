@@ -40,6 +40,8 @@ l:  dey
     stx $900c
     sta $900c
 
+    ldx #64
+    stx countdown
     lda #@(* 2 screen_columns)
 l:  pha
     sta radius
@@ -61,6 +63,8 @@ l:  pha
     pla
     dec countdown
     bne -l
+    ldx #64
+    stx countdown
     sec
     sbc #1
     cmp #3
