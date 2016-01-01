@@ -36,7 +36,7 @@
               "sun/multiply.asm"
               "sun/sine.asm"
               "sun/draw-pixel.asm"
-              "sun/draw-circle.asm"
+              "sun/draw-random-points-on-circle.asm"
               "game/random.asm"
               "game/high-segment.asm"
               "secondary-loader/start.asm"
