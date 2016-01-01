@@ -26,7 +26,7 @@
 
     ,@(?
         (eq version :virtual)  '("init-virtual.asm")
-        (eq version :tap)      '("tape-release-init.asm")
+        (eq version :tap)      '("init-tape-release.asm")
         '("init.asm"))
 
     ,@(unless (eq version :tap)
