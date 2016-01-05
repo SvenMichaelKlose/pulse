@@ -26,9 +26,9 @@
   (make-conversion "radio" tv (radio-rate tv))
   (alet (downcase (symbol-name tv))
     (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
-      (make-radio-tap "obj/radio0.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))
-      (make-radio-tap "obj/radio1.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))
-      (make-radio-tap "obj/radio2.tap" in-wav (+ "obj/8k.crunched." ! ".prg")))))
+      (make-radio-tap "obj/radio0.tap" in-wav (+ "obj/8k.crunched." ! ".prg")))))
+;      (make-radio-tap "obj/radio1.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))
+;      (make-radio-tap "obj/radio2.tap" in-wav (+ "obj/8k.crunched." ! ".prg")))))
 
 (defun make-flight ()
   (alet (downcase (symbol-name *tv*))

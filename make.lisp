@@ -88,8 +88,6 @@
              (fastloader-block (fetch-file (+ "obj/8k.crunched." tv ".prg")))
              (fastloader-block (fetch-file (+ "obj/flight.crunched." tv ".prg")) :gap #xc0000)
              (fetch-file "obj/radio0.tap")
-             (fetch-file "obj/radio1.tap")
-             (fetch-file "obj/radio2.tap")
              (fastloader-block (fetch-file (+ "obj/splash.crunched." tv ".prg")))
              (fastloader-block (glued-game-and-splash-gfx *current-game*))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))
