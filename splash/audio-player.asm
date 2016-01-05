@@ -13,7 +13,6 @@ tape_audio_player:
     ; Play.
 f:  lda $9121       ; Reset the VIA2 CA1 status bit.
 l:  lda $912d       ; Read the VIA2 CA1 status bit.
-    and #2
     beq -l
 
     lda $9124       ; Read the timer's low byte which is your sample.
