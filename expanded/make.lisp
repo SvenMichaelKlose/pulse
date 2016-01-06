@@ -1,4 +1,4 @@
-(defun make-pwm (out in)
+(defun make-pcm4 (out in)
   (adotimes 44
     (read-byte in))
   (with (i nil
@@ -11,7 +11,7 @@
            (write-byte (byte (+ b (<< v 4))) out)))
       (= i (toggle i)))))
 
-(defun make-pwm2 (out in)
+(defun make-pcm2 (out in)
   (adotimes 44
     (read-byte in))
   (with (i 0
@@ -27,31 +27,31 @@
         (= b (<< b 2))
         (++! i))))
 
-(defun convert-to-pwm (in-name out-name)
+(defun convert-to-pcm4 (in-name out-name)
   (format t "Converting `~A' to 4–bit audio `~A'…~%" in-name out-name)
   (with-input-file in in-name
     (with-output-file out out-name
-      (make-pwm out in))))
+      (make-pcm4 out in))))
 
-(defun convert-to-pwm2 (in-name out-name)
+(defun convert-to-pcm2 (in-name out-name)
   (format t "Converting `~A' to 2–bit audio `~A'…~%" in-name out-name)
   (with-input-file in in-name
     (with-output-file out out-name
-      (make-pwm2 out in))))
+      (make-pcm2 out in))))
 
 (defun make-ram-audio (name file gain bass)
   (make-wav name file)
   (make-filtered-wav name gain bass :ram *ram-audio-rate*)
   (make-conversion name :ram *ram-audio-rate*)
-  (convert-to-pwm (+ "obj/" name ".downsampled.ram.wav")
-                  (+ "obj/" name ".pwm")))
+  (convert-to-pcm4 (+ "obj/" name ".downsampled.ram.wav")
+                   (+ "obj/" name ".pcm4")))
 
 (defun make-ram-audio2 (name file gain bass)
   (make-wav name file)
   (make-filtered-wav name gain bass :ram *ram-audio-rate2*)
   (make-conversion name :ram *ram-audio-rate2*)
-  (convert-to-pwm2 (+ "obj/" name ".downsampled.ram.wav")
-                   (+ "obj/" name ".pwm")))
+  (convert-to-pcm2 (+ "obj/" name ".downsampled.ram.wav")
+                   (+ "obj/" name ".pcm2")))
 
 (defvar *have-ram-audio-player?* nil)
 (defvar *have-ram-audio-player2?* nil)

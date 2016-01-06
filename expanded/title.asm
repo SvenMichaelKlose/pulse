@@ -296,6 +296,6 @@ txt_game:
 
 if @*have-ram-audio-player?*
 sample_get_ready:
-    @(fetch-file "obj/get_ready.pwm")
+    @(fetch-file "obj/get_ready.pcm4")
 sample_get_ready_end:
 end

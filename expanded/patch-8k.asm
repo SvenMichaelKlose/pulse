@@ -19,5 +19,5 @@ patch8k:
     jmp get_ready
 
 audioloop:
-    @(fetch-file "obj/intermediate.pwm")
+    @(fetch-file "obj/intermediate.pcm2")
 audioloop_end:
