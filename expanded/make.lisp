@@ -40,16 +40,16 @@
       (make-pcm2 out in))))
 
 (defun make-ram-audio (name file gain bass)
-  (make-wav name file)
-  (make-filtered-wav name gain bass :ram *ram-audio-rate*)
-  (make-conversion name :ram *ram-audio-rate*)
+  (nipkow-make-wav name file)
+  (nipkow-make-filtered-wav name gain bass :ram *ram-audio-rate*)
+  (nipkow-make-conversion name :ram *ram-audio-rate*)
   (convert-to-pcm4 (+ "obj/" name ".downsampled.ram.wav")
                    (+ "obj/" name ".pcm4")))
 
 (defun make-ram-audio2 (name file gain bass)
-  (make-wav name file)
-  (make-filtered-wav name gain bass :ram *ram-audio-rate2*)
-  (make-conversion name :ram *ram-audio-rate2*)
+  (nipkow-make-wav name file)
+  (nipkow-make-filtered-wav name gain bass :ram *ram-audio-rate2*)
+  (nipkow-make-conversion name :ram *ram-audio-rate2*)
   (convert-to-pcm2 (+ "obj/" name ".downsampled.ram.wav")
                    (+ "obj/" name ".pcm2")))
 

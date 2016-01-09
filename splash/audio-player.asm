@@ -1,6 +1,6 @@
 ; Minus half of VIA CA1 status bit test loop cycles and instructions to reinit.
 restart_delay = @(+ (half (+ 4 3 3)) 8)
-timer = @(- (* 8 audio_longest_pulse) restart_delay)
+timer = @(- (* 8 (nipkow-longest-pulse)) restart_delay)
 
 tape_audio_player:
     ; Initialize VIA2 timer 1.

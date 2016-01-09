@@ -6,8 +6,7 @@
 
 (defun print-bitrate-info ()
   (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
-            (tap-rate :ntsc) (tap-rate :pal))
-  (print-pwm-info))
+            (tap-rate :ntsc) (tap-rate :pal)))
 
 (defun fastloader-byte (q i)
   (when (< i 0)

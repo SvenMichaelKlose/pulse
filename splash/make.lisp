@@ -1,13 +1,6 @@
 (defvar *bandwidth* 16)
 
-(defvar audio_shortest_pulse #x18)
-(defvar audio_longest_pulse #x28)
-(defvar audio_pulse_width (- audio_longest_pulse audio_shortest_pulse))
-(defvar audio_average_pulse (+ audio_shortest_pulse (half audio_pulse_width)))
-
-(defun make-tape-audio (tv name gain bass)
-  (make-filtered-wav name gain bass tv (pwm-pulse-rate tv))
-  (make-conversion name tv (pwm-pulse-rate tv)))
+(defvar *nipkow-pulse-rate* 4400)
 
 (defconstant *splash-chars-0-127* nil)
 (defconstant *splash-chars-128-159* nil)

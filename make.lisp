@@ -1,7 +1,7 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:pal-tape))
-;(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :tape-wav)) ;:c64-master 
+;(defconstant +versions+ '(:ntsc-tape))
+(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :tape-wav)) ;:c64-master 
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -28,7 +28,6 @@
 (load "flight/tap.lisp")
 (load "flight/scaling.lisp")
 (load "nipkow/src/convert.lisp")
-(load "nipkow/src/wav2pwm.lisp")
 (load "read-screen-designer.lisp")
 
 (defun make-tape-wav (in-file out-file)
@@ -36,16 +35,6 @@
   (with-input-output-file in   in-file
                           out  out-file
     (tap2wav in out)))
-
-(defun exomize (from to addr target)
-  (sb-ext:run-program "/usr/local/bin/exomizer"
-                      `("sfx" ,(+ "$" addr)
-                        "-t" ,target
-                        "-n"
-                        ,(+ "-Di_load_addr=$" addr)
-                        "-o" ,to
-                        ,from)
-                      :pty cl:*standard-output*))
 
 (defun make-zip-archive (archive input-file)
   (sb-ext:run-program "/usr/bin/zip"
@@ -128,7 +117,7 @@
         (make-eyes)
         (make-loader))
       (make-radio-wav *tv*)
-      (make-tape-audio *tv* "theme-splash" "2" "-64")
+      (nipkow-convert "theme-splash" "2" "-64" *tv* *nipkow-pulse-rate*)
       (with-input-file i (+ "obj/theme-splash.downsampled." tv ".wav")
         (with-output-file o (+ "obj/splash-audio." tv ".bin")
           (wav2pwm o i :pause-before 0)))
@@ -148,10 +137,8 @@
   (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
   (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "12" "-64")
   (make-ram-audio2 "intermediate2" "media/intermediate/audio2.wav" "12" "-64")
-;  (with-temporary *ram-audio-rate* 4000
-;    (make-ram-audio "theme-hiscore" "media/intermediate/audio.wav" "8" "-72"))
-  (make-wav "theme-splash" "media/splash/theme-boray.mp3")
-  (make-wav "radio" "media/radio.ogg"))
+  (nipkow-make-wav "theme-splash" "media/splash/theme-boray.mp3")
+  (nipkow-make-wav "radio" "media/radio.ogg"))
 (when (make-version? :pal-tape)
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)
