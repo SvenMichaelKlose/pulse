@@ -50,12 +50,8 @@ n:  dec d
     bne +n
     dec @(++ d)
 n:  dec c
-    lda c
-    cmp #$ff
     bne -l
     dec @(++ c)
-    lda @(++ c)
-    cmp #$ff
     bne -l
     rts
 
@@ -102,7 +98,7 @@ cinfo:
 cinfo_patch:
     <loaded_patch_end >loaded_patch_end
     <patch_end >patch_end
-    <patch_size >patch_size
+    <patch_size @(++ >patch_size)
 cinfo_patch_end:
 cinfo_end:
 
