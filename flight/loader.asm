@@ -8,21 +8,7 @@ restart_delay = @(+ irq_break_delay irq_delay irq_handler_delay)
 timer = @(- (* 8 radio_longest_pulse) restart_delay)
 
 radio_start:
-    ; Boost digital audio with distorted HF carrier.
-    lda #$0f
-    sta $900e
-    ldx #$7e
-    stx $900c
-    ldy #0
-l:  dey
-    bne -l
-    lda #$fe
-    stx $900c
-    stx $900c
-    sta $900c
-    sta $900c
-    stx $900c
-    sta $900c
+    @(asm (fetch-file "shared/audio-boost.inc.asm"))
 
     lda #0
     sta tleft

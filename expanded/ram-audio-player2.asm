@@ -65,21 +65,7 @@ start_player2:
     lda @(++ sample_start2)
     sta @(+ 2 mod_sample_ptr2)
 
-    ; Boost digital audio.
-    lda #$00
-    sta $900e
-    ldx #$7e
-    stx $900c
-    ldy #0
-l:  dey
-    bne -l
-    lda #$fe
-    stx $900c
-    stx $900c
-    sta $900c
-    sta $900c
-    stx $900c
-    sta $900c
+    @(asm (fetch-file "shared/audio-boost.inc.asm"))
 
     lda #6
     sta bitpair
