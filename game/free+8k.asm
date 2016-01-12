@@ -84,12 +84,8 @@ n:  inc d
     bne +n
     inc @(++ d)
 n:  dec c
-    lda c
-    cmp #$ff
     bne -l
     dec @(++ c)
-    lda @(++ c)
-    cmp #$ff
     bne -l
     rts
 tramp_end:
@@ -112,7 +108,7 @@ cinfo_end:
 cinfo_game:
     <loaded_game >loaded_game
     $00 $10
-    <game_size >game_size
+    <game_size @(++ >game_size)
 cinfo_game_end:
 
 loaded_game:
