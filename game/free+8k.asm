@@ -1,3 +1,7 @@
+s = 0
+d = 2
+c = 4
+
 main:
     sei
     lda #$7f
@@ -5,8 +9,13 @@ main:
     sta $912d
     sta $911e       ; Disable restore key NMIs.
 
-stop:
-    ldy #@(- cinfo_patch_end cinfo_patch 1)
+l:  lsr $9004
+    bne -l
+    lda #0
+    sta $9002
+    sta $900f
+
+    ldy #@(- cinfo_patch_end cinfo 1)
     jsr copy_backwards
 
     ldx #0
@@ -40,9 +49,13 @@ n:  dec d
     cmp #$ff
     bne +n
     dec @(++ d)
-n:  dec counter
+n:  dec c
+    lda c
+    cmp #$ff
     bne -l
-    dec @(++ counter)
+    dec @(++ c)
+    lda @(++ c)
+    cmp #$ff
     bne -l
     rts
 
@@ -50,9 +63,13 @@ loaded_tramp:
     org $1f00
 
 tramp:
-    ldy #@(- cinfo_game_end cinfo_game 1)
+    ldy #@(- cinfo_game_end cinfo 1)
     jsr copy_forwards
-    jsr $2002
+    lda #vic_unexpanded
+    sta model
+;    jsr $2002
+    lda #@(+ 128 22)
+    sta $9002
     jmp $1002
 
 copy_forwards:
@@ -66,9 +83,13 @@ l:  lda (s),y
 n:  inc d
     bne +n
     inc @(++ d)
-n:  dec counter
+n:  dec c
+    lda c
+    cmp #$ff
     bne -l
-    dec @(++ counter)
+    dec @(++ c)
+    lda @(++ c)
+    cmp #$ff
     bne -l
     rts
 tramp_end:
@@ -84,19 +105,18 @@ cinfo:
 cinfo_patch:
     <loaded_patch_end >loaded_patch_end
     <patch_end >patch_end
-    <patch_size @(++ >patch_size)
+    <patch_size >patch_size
 cinfo_patch_end:
 cinfo_end:
 
 cinfo_game:
     <loaded_game >loaded_game
     $00 $10
-    <game_size @(++ >game_size)
+    <game_size >game_size
 cinfo_game_end:
 
 loaded_game:
     @(fetch-file "obj/game.8k.crunched.prg")
 
 loaded_patch:
-    "XXXXXXXXX"
     @(fetch-file "obj/free+8k.crunched.pal.prg")

@@ -10,6 +10,8 @@
 (defvar *tape-release?* nil)
 (defvar *free+8k?* nil)
 
+(defvar *video?* nil) ; Nipkow player experimental foo.
+
 (defvar *tv* nil)
 (defvar *current-game* nil)
 
@@ -139,10 +141,6 @@
 
 (when (make-version? :free)
   (make-game :prg "compiled/pulse.prg" "obj/pulse.vice.txt"))
-(when (make-version? :pal-tape)
-  (make-model-detection)
-  (nipkow-make-wav "theme-splash" "media/splash/theme-boray.mp3")
-  (nipkow-make-wav "radio" "media/radio.ogg"))
 (when (make-version? :pal-tape :ntsc-tape :free+8k)
   (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
   (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "12" "-64")
@@ -157,6 +155,11 @@
              "1002" "20")
     (make-8k "free+8k" (get-labels))
     (make-free+8k)))
+
+(when (make-version? :pal-tape :ntsc-tape :free+8k)
+  (make-model-detection)
+  (nipkow-make-wav "theme-splash" "media/splash/theme-boray.mp3")
+  (nipkow-make-wav "radio" "media/radio.ogg"))
 
 (when (make-version? :pal-tape)
   (make-all-games :pal))

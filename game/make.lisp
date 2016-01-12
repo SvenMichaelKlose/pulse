@@ -80,8 +80,7 @@
 (defun make-free+8k ()
   (make "compiled/pulse.8k.prg"
         '("bender/vic-20/vic.asm"
-          "game/game.defs.asm"
-          "game/zeropage.asm"
+          "primary-loader/models.asm"
           "bender/vic-20/basic-loader.asm"
           "game/free+8k.asm")
         "compiled/pulse.8k.prg.vice.txt"))

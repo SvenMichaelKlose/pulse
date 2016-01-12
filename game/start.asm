@@ -1,8 +1,8 @@
 game_over:
 if @(| *tape-release?* *free+8k?*)
 patch_caller:
-    ; Test if patch is set for unexpanded machines.
-    lda @(++ model_patch)
+    ; Call patch if this VIC model is expanded.
+    lda model
     beq +n
     jmp (model_patch)
 n:
