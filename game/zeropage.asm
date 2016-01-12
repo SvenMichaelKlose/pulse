@@ -28,6 +28,7 @@ s:                    0 0 ; Source pointer.
 dl:
 d:                    0 0 ; Destination pointer.
 sr:                       ; Scrolling tile right of triple.
+counter:                  ; Tile redraw counter.
 scr:                  0 0 ; Screen pointer.
 dr:
 col:                  0 0 ; Colour RAM pointer.
@@ -60,7 +61,6 @@ tiles_c:              0 0 0 0 0 0 ; Leftmost character of scrolling tile triples
 next_foreground_char: 0   ; Next free char for scrolling tiles.
 sm:                   0 0 ; Scrolling tile middle.
 
-counter:              0 ; Tile redraw counter.
 repetition:           0 ; Vertical repetitions of tiles.
 level_pos:            0 ; Position in level data.
 level_delay:          0 ; Delay until next tile is decoded from level data.

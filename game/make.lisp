@@ -21,7 +21,7 @@
 
     ,@(?
         (eq version :virtual)  '("no-loader.asm")
-        (eq version :tap)      '("tape-loader.asm")
+        (in? version :tap :free+8k) '("tape-loader.asm")
         '("../bender/vic-20/basic-loader.asm"))
 
     ,@(?
@@ -30,9 +30,9 @@
         '("init.asm"))
 
     ,@(unless (eq version :tap)
-         '("intro.asm"))
+        '("intro.asm"))
 
-    ,@(unless (eq version :virtual)
+    ,@(unless (in? version :virtual)
         '("low-segments.asm"))
 
     "gfx-sprites.asm"
@@ -74,4 +74,14 @@
 (defun make-game (version file cmds)
   (make file
         (@ [+ "game/" _] (pulse-files version))
-        cmds))
+        cmds)
+  version)
+
+(defun make-free+8k ()
+  (make "compiled/pulse.8k.prg"
+        '("bender/vic-20/vic.asm"
+          "game/game.defs.asm"
+          "game/zeropage.asm"
+          "bender/vic-20/basic-loader.asm"
+          "game/free+8k.asm")
+        "compiled/pulse.8k.prg.vice.txt"))

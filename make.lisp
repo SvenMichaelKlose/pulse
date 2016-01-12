@@ -1,14 +1,15 @@
 (= *model* :vic-20)
 
-;(defconstant +versions+ '(:ntsc-tape))
-(defconstant +versions+ '(:free :pal-tape :ntsc-tape :shadowvic :tape-wav)) ;:c64-master 
+(defconstant +versions+ '(:free+8k))
+;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic :tape-wav)) ;:c64-master 
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
 
 (defvar *virtual?* nil)
-(defvar *video?* nil)
 (defvar *tape-release?* nil)
+(defvar *free+8k?* nil)
+
 (defvar *tv* nil)
 (defvar *current-game* nil)
 
@@ -21,7 +22,7 @@
 (defvar *ram-audio-rate2* 3000)
 (defconstant +c64-pal-cycles+ 985248)
 
-(defvar *tape-wav-rate* 41100)
+(defvar *tape-wav-rate* 48000)
 
 (load "bender/vic-20/vic.lisp")
 (load "bender/vic-20/cpu-cycles.lisp")
@@ -61,15 +62,18 @@
 (defun padded-name (x)
   (list-string (+ (string-list x) (maptimes [identity #\ ] (- 16 (length x))))))
 
+(defun make-primary-loader-tap (tv)
+  (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
+              (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
+                 (fetch-file "obj/model-detection.bin"))
+              :start #x1001))
+
 (defun make-tap (c64-master?)
   (with (tv        (downcase (symbol-name *tv*))
          out-name  (+ "compiled/pulse." tv (? c64-master? ".c64-master" "") ".tap"))
     (with-output-file o out-name
       (write-tap o
-          (+ (bin2cbmtap (cddr (string-list (fetch-file (+ "obj/loader." tv ".prg"))))
-                         (+ (padded-name (+ "PULSE (" (upcase tv) ")"))
-                            (fetch-file "obj/model-detection.bin"))
-                         :start #x1001)
+          (+ (make-primary-loader-tap tv)
              (fastloader-block (fetch-file (+ "obj/eyes." tv ".prg")))
              (fastloader-block (fetch-file (+ "obj/3k.crunched." tv ".prg")) :gap #x0c0000)
              (fastloader-block (fetch-file (+ "obj/message." tv ".prg")))
@@ -95,6 +99,15 @@
         (= *tape-loader-start* (- (get-label 'memory_end) loader-size))
         (= *splash-start* (- *tape-loader-start* splash-size))))))
 
+(defun make-tapwav (tv)
+  (when (make-version? :tape-wav)
+    (format t "Making ~A tape WAV file...~%" (symbol-name *tv*))
+    (with-input-file i (+ "compiled/pulse." tv ".tap")
+      (with-output-file o (+ "compiled/pulse." tv ".wav")
+        (tap2wav i o *tape-wav-rate* (cpu-cycles *tv*)))
+        (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
+                          (+ "compiled/pulse." tv ".wav")))))
+
 (defun make-all-games (tv-standard)
   (with-temporaries (*tv* tv-standard
                      *tape-release?* t)
@@ -109,7 +122,7 @@
         (when (== *splash-start* #x1234)
           (get-loader-address !))
         (make-splash)
-        (make-8k !)
+        (make-8k "8k" !)
         (make-flight)
         (make-sun)
         (make-message)
@@ -122,23 +135,29 @@
         (with-output-file o (+ "obj/splash-audio." tv ".bin")
           (wav2pwm o i :pause-before 0)))
       (make-tap nil)
-      (when (make-version? :tape-wav)
-        (format t "Making ~A tape WAV file...~%" (symbol-name *tv*))
-        (with-input-file i (+ "compiled/pulse." tv ".tap")
-          (with-output-file o (+ "compiled/pulse." tv ".wav")
-            (tap2wav i o *tape-wav-rate* (cpu-cycles *tv*)))
-            (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
-                              (+ "compiled/pulse." tv ".wav")))))))
+      (make-tapwav tv))))
 
 (when (make-version? :free)
   (make-game :prg "compiled/pulse.prg" "obj/pulse.vice.txt"))
-(when (make-version? :pal-tape :ntsc-tape)
+(when (make-version? :pal-tape)
   (make-model-detection)
-  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
-  (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "12" "-64")
-  (make-ram-audio2 "intermediate2" "media/intermediate/audio2.wav" "12" "-64")
   (nipkow-make-wav "theme-splash" "media/splash/theme-boray.mp3")
   (nipkow-make-wav "radio" "media/radio.ogg"))
+(when (make-version? :pal-tape :ntsc-tape :free+8k)
+  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
+  (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "12" "-64")
+  (make-ram-audio2 "intermediate2" "media/intermediate/audio2.wav" "12" "-64"))
+(awhen (make-version? :free+8k)
+  (with-temporaries (*tv*        :pal
+                     *model*     :vic-20+xk
+                     *free+8k?*  t)
+    (make-game ! "obj/game.8k.prg" "obj/game.8k.vice.txt")
+    (exomize (+ "obj/game.8k.prg")
+             (+ "obj/game.8k.crunched.prg")
+             "1002" "20")
+    (make-8k "free+8k" (get-labels))
+    (make-free+8k)))
+
 (when (make-version? :pal-tape)
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)

@@ -57,12 +57,12 @@
 (defvar *have-ram-audio-player2?* nil)
 (defvar *tape-loader-start-returning?* nil)
 
-(defun make-8k (imported-labels)
+(defun make-8k (name imported-labels)
   (with-temporaries (*imported-labels* imported-labels
                      *have-ram-audio-player?* t
                      *have-ram-audio-player2?* t)
     (alet (downcase (symbol-name *tv*))
-      (make (+ "obj/8k." ! ".prg")
+      (make (+ "obj/" name "." ! ".prg")
             '("expanded/init-8k.asm"
               "expanded/patch-8k.asm"
               "expanded/sprites-vic-preshifted.asm"
@@ -71,9 +71,9 @@
               "expanded/gfx-title.asm"
               "expanded/ram-audio-player.asm"
               "expanded/ram-audio-player2.asm")
-            (+ "obj/8k." ! ".prg.vice.txt"))
-      (exomize (+ "obj/8k." ! ".prg")
-               (+ "obj/8k.crunched." ! ".prg")
+            (+ "obj/" name "." ! ".prg.vice.txt"))
+      (exomize (+ "obj/" name "." ! ".prg")
+               (+ "obj/" name ".crunched." ! ".prg")
                "2002" "52"))))
 
 (defun make-3k (imported-labels)
