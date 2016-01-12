@@ -29,9 +29,9 @@ copy_cinfo:
     ldx #@(- cinfo_end cinfo 1)
 l:  lda cinfo,y
     sta s,x
-    dex
     dey
-    bne -l
+    dex
+    bpl -l
     rts
 
 copy_backwards:
@@ -65,9 +65,9 @@ loaded_tramp:
 tramp:
     ldy #@(- cinfo_game_end cinfo 1)
     jsr copy_forwards
-    lda #vic_unexpanded
+    lda #vic_8k
     sta model
-;    jsr $2002
+    jsr $2002
     lda #@(+ 128 22)
     sta $9002
     jmp $1002
@@ -88,6 +88,7 @@ n:  dec c
     dec @(++ c)
     bne -l
     rts
+
 tramp_end:
 
     org @(+ loaded_tramp (- tramp_end tramp))
