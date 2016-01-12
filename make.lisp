@@ -156,7 +156,7 @@
     (make-8k "free+8k" (get-labels))
     (make-free+8k)))
 
-(when (make-version? :pal-tape :ntsc-tape :free+8k)
+(when (make-version? :pal-tape :ntsc-tape)
   (make-model-detection)
   (nipkow-make-wav "theme-splash" "media/splash/theme-boray.mp3")
   (nipkow-make-wav "radio" "media/radio.ogg"))
