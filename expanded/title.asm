@@ -35,8 +35,12 @@ m:  lda #0
     lda #>fx_write_text
     ldy #1
     jsr show_fx
-    ldx #@(? (eq *tv* :pal) 25 30)
-    jsr fx_wait
+    ldx #30
+    lda $ede4
+    cmp #5
+    bne +n
+    ldx #25
+n:  jsr fx_wait
     jsr fx_clear
     jsr inc_s
     ldy #0
@@ -140,7 +144,11 @@ l:  lsr $9004
     lda #%11111100          ; Our charset.
     sta $9005
 
-    lda #@(? (eq *tv* :pal) 68 53)
+    lda #68
+    ldx $ede4
+    cmp #5
+    bne +m
+    lda #53
 m:  cmp $9004
     bne -m
 
@@ -201,8 +209,12 @@ if @*have-ram-audio-player?*
 n:
 end
 
-    ldx #@(* 2 (? (eq *tv* :pal) 50 60))
-    jsr wait
+    ldx #@(* 2 50)
+    lda $ede4
+    cmp #5
+    bne +n
+    ldx #@(* 2 60)
+n:  jsr wait
 
     jsr wait_for_screen_bottom
     lda #%11111100          ; Our charset.
@@ -242,8 +254,12 @@ game_over_screen:
     jsr strout
 
     jsr show_screen
-    ldx #@(* 3 (? (eq *tv* :pal) 50 60))
-    jmp wait
+    ldx #@(* 3 50)
+    lda $ede4
+    cmp #5
+    bne +n
+    ldx #@(* 3 60)
+n:  jmp wait
 
 
 ;;;;;;;;;;;;;

@@ -31,6 +31,14 @@ story:
 intro_message:
     ldx #$ff
     txs
+    lda #@(/ (- 71 8) 5)
+    sta @(++ mod_line)
+    lda $ede4
+    cmp #5
+    beq +n
+    lda #@(/ (- 65 8) 5)
+    sta @(++ mod_line)
+n:
 
     ; Boost digital audio with distorted HF carrier.
     lda #$0f
@@ -104,6 +112,7 @@ f:  sta (s),y
 
 e:  lda #@(+ white 8 (* 16 white))
     sta $900f
+mod_line:
     ldx #@(/ (- (? (eq *tv* :pal) 65 71) 8) 5)
 t:  dex
     bne -t
