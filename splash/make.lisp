@@ -1,6 +1,6 @@
 (defvar *bandwidth* 16)
 
-(defvar *nipkow-pulse-rate* 4400)
+(defvar *nipkow-pulse-rate* 4000)
 
 (defconstant *splash-chars-0-127* nil)
 (defconstant *splash-chars-128-159* nil)
