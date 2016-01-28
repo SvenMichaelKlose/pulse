@@ -74,8 +74,6 @@ l:  lda $0,x
     dex
     bpl -l
 
-    @(asm (fetch-file "shared/audio-boost.inc.asm"))
-
     ldy #<loader_configuration
     lda #>loader_configuration
     jmp tape_loader_start
@@ -87,8 +85,6 @@ loader_configuration:
     <game_size @(++ >game_size)
     <splash >splash
 
-ws = @(+ characters (* 63 8))
-we = @(+ ws 8)
 characters:     @*splash-chars-0-127*
 screen_data:    @*splash-screen*
 color_data:     @*splash-colours*
