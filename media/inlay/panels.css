@@ -1,6 +1,6 @@
-
 .container {
     height: 4in;
+    min-height: 4in;
     overflow: hidden;
 }
 
@@ -8,6 +8,7 @@
     float: left;
     border: 1px black;
     font-size: .125in;
+    min-height: inherit;
 }
 
 h1 {
@@ -15,41 +16,43 @@ h1 {
 }
 
 .tail {
-    width: 1in;
-    min-width: 1in;
+    width: 1.25cm;
+    max-width: 1.25cm;
+    min-width: 1.25cm;
 }
 
 .spine {
-    width: .5in;
-    min-width: .5in;
+    width: 0.6cm;
+    max-width: 0.6cm;
+    min-width: 0.6cm;
 }
 
 .front {
-    width: 2.5625 in;
-    min-width: 2.5625 in;
+    width: 5.4cm;
+    max-width: 5.4cm;
+    min-width: 5.4cm;
 }
 
 .page1 {
-    width: 2.5in;
-    min-width: 2.5in;
+    width: 5.39cm;
+    max-width: 5.39cm;
+    min-width: 5.39cm;
 }
 
 .page2 {
-    width: 2.4375in;
-    min-width: 2.4375in;
+    width: 5.38cm;
+    max-width: 5.38cm;
+    min-width: 5.38cm;
 }
 
 .page3 {
-    width: 2.375in;
-    min-width: 2.4375in;
+    width: 5.37cm;
+    max-width: 5.37cm;
+    min-width: 5.37cm;
 }
 
 .page4 {
-    width: 2.3125in;
-    min-width: 2.4375in;
-}
-
-.page4 {
-    width: 2.25in;
-    min-width: 2.4375in;
+    width: 5.36cm;
+    max-width: 5.36cm;
+    min-width: 5.36cm;
 }

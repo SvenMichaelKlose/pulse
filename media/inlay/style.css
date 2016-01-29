@@ -1,3 +1,50 @@
 h1 {
     font-size: .18in;
 }
+
+.cover {
+    background-image: url("pulsecover2.jpg");
+    background-size: 5.2in;
+    background-position: 10%;
+}
+
+.logo {
+    position: absolute;
+    width: 2in;
+    top: -0.05in;
+    left: 1.48in;
+}
+
+.vic20 {
+    position: absolute;
+    width: 1in;
+    top: 3.45in;
+    left: 2.95in;
+}
+
+.vic20small {
+    position: absolute;
+    width: .5in;
+    top: 0;
+    left: .925in;
+}
+
+.eyes_spine {
+    position: absolute;
+    width: .5in;
+    top: 3.42in;
+    left: .925in;
+}
+
+.spine {
+    background-color: black;
+    background-image: url("vertical_logo.png");
+    background-size: 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+ol {
+    margin-left: 1.5em;
+    list-style-type: decimal;
+}
