@@ -67,6 +67,7 @@
               "expanded/patch-8k.asm"
               "expanded/sprites-vic-preshifted.asm"
               "expanded/title.asm"
+              "expanded/hiscore-table.asm"
               "expanded/print.asm"
               "expanded/gfx-title.asm"
               "expanded/ram-audio-player.asm"

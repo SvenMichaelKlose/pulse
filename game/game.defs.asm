@@ -7,6 +7,8 @@ max_fire_interval = 4
 min_fire_interval = 2
 
 num_score_digits  = 8
+num_name_digits   = 4
+num_hiscore_entries = 10
 lifes_on_screen   = @(+ screen 1)
 score_on_screen   = @(+ screen 4)
 hiscore_on_screen = @(+ screen 12 1)
