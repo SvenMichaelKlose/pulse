@@ -53,14 +53,14 @@
   (convert-to-pcm2 (+ "obj/" name ".downsampled.ram.wav")
                    (+ "obj/" name ".pcm2")))
 
-(defvar *have-ram-audio-player?* nil)
-(defvar *have-ram-audio-player2?* nil)
+(defvar *have-get-ready-sound?* nil)
+(defvar *have-hiscore-table?* nil)
 (defvar *tape-loader-start-returning?* nil)
 
 (defun make-8k (name imported-labels)
   (with-temporaries (*imported-labels* imported-labels
-                     *have-ram-audio-player?* t
-                     *have-ram-audio-player2?* nil)
+                     *have-get-ready-sound?*  t
+                     *have-hiscore-table?*    t)
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/" name "." ! ".prg")
             '("expanded/init-8k.asm"
@@ -70,8 +70,7 @@
               "expanded/hiscore-table.asm"
               "expanded/print.asm"
               "expanded/gfx-title.asm"
-              "expanded/ram-audio-player.asm"
-              "expanded/ram-audio-player2.asm")
+              "expanded/ram-audio-player.asm")
             (+ "obj/" name "." ! ".prg.vice.txt"))
       (exomize (+ "obj/" name "." ! ".prg")
                (+ "obj/" name ".crunched." ! ".prg")

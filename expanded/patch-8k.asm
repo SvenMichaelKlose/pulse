@@ -17,9 +17,3 @@ patch8k:
     lda #>title_screen
     sta @(+ 2 patch_caller)
     jmp get_ready
-
-if @*have-ram-audio-player2?*
-audioloop:
-    @(fetch-file "obj/intermediate.pcm2")
-audioloop_end:
-end

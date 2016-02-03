@@ -13,18 +13,6 @@ title_screen:
 reenter_title:
     jsr init_fx_player
 
-if @*have-ram-audio-player2?*
-    lda #<audioloop
-    sta sample_start2
-    lda #>audioloop
-    sta @(++ sample_start2)
-    lda #<audioloop_end
-    sta sample_end2
-    lda #>audioloop_end
-    sta @(++ sample_end2)
-    jsr start_player2
-end
-
 l:  lda #<txt_game
     sta s
     lda #>txt_game
@@ -48,10 +36,10 @@ n:  jsr fx_wait
     ldy #0
     lda (s),y
     bne -m
-if @*have-ram-audio-player?*
+if @*have-hiscore-table?*
     jmp hiscore_table
 end
-if @(not *have-ram-audio-player?*)
+if @(not *have-hiscore-table?*)
     beq -l
 end
 
@@ -200,7 +188,7 @@ get_ready:
     jsr strout
 
     jsr show_screen
-if @*have-ram-audio-player?*
+if @*have-get-ready-sound?*
     lda model
     and #vic_8k
     beq +n
@@ -228,9 +216,6 @@ n:  jsr wait
     sta $9005
     lda #@(+ reverse blue)  ; Screen and border color.
     sta $900f
-if @*have-ram-audio-player2?*
-    jsr stop_player2
-end
     jmp post_patch
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -266,11 +251,11 @@ game_over_screen:
     cmp #5
     bne +n
     ldx #@(* 3 60)
-if @*have-ram-audio-player?*
+if @*have-hiscore-table?*
 n:  jsr wait
     jmp hiscore_table
 end
-if @(not *have-ram-audio-player?*)
+if @(not *have-hiscore-table?*)
 n:  jmp wait
 end
 
@@ -323,7 +308,7 @@ txt_game:
     255 255
     @(ascii2petscii "   Hit fire to play!") 0 0
 
-if @*have-ram-audio-player?*
+if @*have-get-ready-sound?*
 sample_get_ready:
     @(fetch-file "obj/get_ready.pcm4")
 sample_get_ready_end:
