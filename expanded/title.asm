@@ -9,6 +9,8 @@ title_screen:
     sta curcol
 
     jsr game_over_screen
+
+reenter_title:
     jsr init_fx_player
 
 if @*have-ram-audio-player2?*
@@ -46,7 +48,12 @@ n:  jsr fx_wait
     ldy #0
     lda (s),y
     bne -m
+if @*have-ram-audio-player?*
+    jmp hiscore_table
+end
+if @(not *have-ram-audio-player?*)
     beq -l
+end
 
 fx_write_text:
     dec tmp
@@ -259,7 +266,13 @@ game_over_screen:
     cmp #5
     bne +n
     ldx #@(* 3 60)
+if @*have-ram-audio-player?*
+n:  jsr wait
+    jmp hiscore_table
+end
+if @(not *have-ram-audio-player?*)
 n:  jmp wait
+end
 
 
 ;;;;;;;;;;;;;

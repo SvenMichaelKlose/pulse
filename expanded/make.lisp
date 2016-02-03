@@ -60,7 +60,7 @@
 (defun make-8k (name imported-labels)
   (with-temporaries (*imported-labels* imported-labels
                      *have-ram-audio-player?* t
-                     *have-ram-audio-player2?* t)
+                     *have-ram-audio-player2?* nil)
     (alet (downcase (symbol-name *tv*))
       (make (+ "obj/" name "." ! ".prg")
             '("expanded/init-8k.asm"

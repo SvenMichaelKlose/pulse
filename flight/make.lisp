@@ -16,17 +16,19 @@
   2000)
 
 (defun make-radio-tap (to in-wav bin)
-  (with-output-file out to
-    (with-input-file in-bin bin
-      (radio2tap out in-wav in-bin))))
+  (| (file-exists? to)
+     (with-output-file out to
+       (with-input-file in-bin bin
+         (radio2tap out in-wav in-bin)))))
 
 (defun make-radio-wav (tv)
-  (format t "Making radio…~%")
-  (nipkow-make-filtered-wav "radio" "3" "-32" tv (radio-rate tv))
-  (nipkow-make-conversion "radio" tv (radio-rate tv))
-  (alet (downcase (symbol-name tv))
-    (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
-      (make-radio-tap "obj/radio0.tap" in-wav (+ "obj/8k.crunched." ! ".prg")))))
+  (unless (file-exists? "obj/radio0.tap")
+    (format t "Making radio…~%")
+    (nipkow-make-filtered-wav "radio" "3" "-32" tv (radio-rate tv))
+    (nipkow-make-conversion "radio" tv (radio-rate tv))
+    (alet (downcase (symbol-name tv))
+      (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
+        (make-radio-tap "obj/radio0.tap" in-wav (+ "obj/8k.crunched." ! ".prg"))))))
 
 (defun make-flight ()
   (alet (downcase (symbol-name *tv*))

@@ -21,7 +21,6 @@ l:  beq +n
 n:  asl
     asl
     and #15
-stop:
     sta $900e
 
     dec bitpair
