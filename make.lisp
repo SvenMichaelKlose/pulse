@@ -16,7 +16,7 @@
 (defvar *current-game* nil)
 
 (defvar *pulse-short* #x20)
-(defvar *pulse-long* #x30)
+(defvar *pulse-long* #x40)
 (defvar *pulse-average* (+ *pulse-short* (half (- *pulse-long* *pulse-short*))))
 (defvar *tape-pulse* (* 8 *pulse-average*))
 
