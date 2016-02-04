@@ -14,6 +14,13 @@ main:
     jsr $2002
 n:
 
+    ; Init +16K patch.
+    lsr
+    lsr
+    bcc +n
+    jsr $4002
+n:
+
     ; Copy code to $200-3ff.
     ldx #0
 l:  lda @(- stackmem 128),x

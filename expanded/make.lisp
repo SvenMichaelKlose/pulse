@@ -57,6 +57,18 @@
 (defvar *have-hiscore-table?* nil)
 (defvar *tape-loader-start-returning?* nil)
 
+(defun make-16k (name imported-labels)
+  (with-temporary *imported-labels* imported-labels
+    (alet (downcase (symbol-name *tv*))
+      (make (+ "obj/" name "." ! ".prg")
+            '("expanded/init-16k.asm"
+              "expanded/patch-16k.asm"
+              "expanded/ram-audio-player2.asm")
+            (+ "obj/" name "." ! ".prg.vice.txt"))
+      (exomize (+ "obj/" name "." ! ".prg")
+               (+ "obj/" name ".crunched." ! ".prg")
+               "4002" "52"))))
+
 (defun make-8k (name imported-labels)
   (with-temporaries (*imported-labels* imported-labels
                      *have-get-ready-sound?*  t

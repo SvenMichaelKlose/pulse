@@ -42,9 +42,9 @@ init_32k:
     jmp tape_loader_start
 
 patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
-patch_16k_size = patch_8k_size
-patch_24k_size = patch_8k_size
-patch_32k_size = patch_8k_size
+patch_16k_size = @(length (fetch-file (+ "obj/16k.crunched." (downcase (symbol-name *tv*)) ".prg")))
+;patch_24k_size = patch_8k_size
+;patch_32k_size = patch_8k_size
 splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_16k:
