@@ -27,17 +27,17 @@
           *pulse-long*)))
 
 (defun radio-average-data-chunk-cycles ()
-  (- (radio-window-cycles)
-     (radio-pilot-length)
-     (radio-average-audio-chunk-cycles)))
+  (* 1.5 (- (radio-window-cycles)
+            (radio-pilot-length)
+            (radio-average-audio-chunk-cycles))))
 
 (defun radio-data-size ()
   (with (tap-cycle-resolution   8
          bits-per-byte          8)
     (integer (/ (radio-average-data-chunk-cycles)
-                tap-cycle-resolution
                 *pulse-long*
-                bits-per-byte))))
+                bits-per-byte
+                tap-cycle-resolution))))
 
 (defun radio2tap-data (out in-bin)
   (let acc 0
