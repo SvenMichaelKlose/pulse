@@ -15,7 +15,7 @@ l:  lda $ffff,x
     sta $314
     lda #@(high *tape-loader-start*)
     sta $315
-    lda #16
+    lda #64
     sta tape_leader_countdown
     lda #8
     sta tape_bit_counter

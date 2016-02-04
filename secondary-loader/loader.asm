@@ -11,7 +11,7 @@ tape_loader:
     ldx #<tape_loader_data ;leader_long
     ldy #>tape_loader_data ;leader_long
 restart_loader:
-    lda #16
+    lda #64
     sta tape_leader_countdown
     stx $314
     sty $315

@@ -23,7 +23,7 @@
     (enqueue q (bit-and gap 255))
     (enqueue q (bit-and (>> gap 8) 255))
     (enqueue q (>> gap 16))
-    (adotimes 32 (enqueue q *pulse-short*))
+    (adotimes 128 (enqueue q *pulse-short*))
     (enqueue q *pulse-long*)
     (dosequence (i x (list-string (queue-list q)))
       (fastloader-byte q i))))
