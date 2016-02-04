@@ -1,5 +1,7 @@
 ; Copyright (c) 2015 Sven Michael Klose <pixel@hugbox.org>
 
+(defvar *radio-pilot-length* 48)
+
 (defun radio2tap-audio (out in-wav)
   (let acc radio_shortest_pulse
     (write-byte radio_shortest_pulse out)
@@ -21,7 +23,7 @@
   (* radio_average_pulse 8 256))
 
 (defun radio-pilot-length ()
-  (* 8 (+ (* 16 *pulse-short*)
+  (* 8 (+ (* *radio-pilot-length* *pulse-short*)
           *pulse-long*)))
 
 (defun radio-average-data-chunk-cycles ()
@@ -64,7 +66,7 @@
   (awhen gap
     (write-dword ! out))
   (when lead-in?
-    (adotimes 32 (write-byte *pulse-short* out))
+    (adotimes *radio-pilot-length* (write-byte *pulse-short* out))
     (write-byte *pulse-long* out))
   (let window-cycles (radio-window-cycles)
     (while (peek-char in-bin)

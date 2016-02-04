@@ -29,7 +29,7 @@ radio_start:
 radio_start_data:
     lda #@(radio-data-size)
     sta dleft
-    lda #16
+    lda #@(half *radio-pilot-length*)
     sta tape_leader_countdown
     lda #8
     sta tape_bit_counter
@@ -121,7 +121,7 @@ radio_detect:
     ldx #<radio_load_data
     ldy #>radio_load_data
 restart_loader:
-    lda #16
+    lda #@(half *radio-pilot-length*)
     sta tape_leader_countdown
     stx $314
     sty $315
