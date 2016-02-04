@@ -16,6 +16,12 @@ l:  lda #white
     dex
     bne -l
 
+    ldx #@(-- txt_fame_len)
+l:  lda txt_fame,x
+    sta @(+ screen (half (- 22 txt_fame_len))),x
+    dex
+    bpl -l
+
 loop:
     ldx #1
     jsr wait
@@ -33,7 +39,7 @@ l:  lda #4
     lda #@(-- num_score_digits)
     jsr nstrout
 
-    lda #13
+    lda #14
     sta scrx
     lda #@(-- num_name_digits)
     jsr nstrout
@@ -112,6 +118,11 @@ l:  lda (s),y
 n:
 
     rts
+
+txt_fame:
+    @(ascii2petscii "Hall Of Fame")
+txt_fame_end:
+txt_fame_len = @(- txt_fame_end txt_fame)
 
 hiscores:
     @(apply #'nconc (maptimes [+ (maptimes [identity #\0] num_score_digits)
