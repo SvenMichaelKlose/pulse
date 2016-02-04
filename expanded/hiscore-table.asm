@@ -1,3 +1,14 @@
+fxcol:  0
+hcolors:
+    blue
+    cyan
+    white
+    cyan
+    blue
+    purple
+    red
+    purple
+
 hiscore_table:
     ldx #$ff
     txs
@@ -5,16 +16,12 @@ hiscore_table:
     jsr set_text_mode
     jsr clear_screen
 
-    lda #0
-    sta framecounter
+    ldx #0
+    stx framecounter
+    ldx #2
+    stx framecounter_high
 
     jsr show_screen
-    ldx #0
-l:  lda #white
-    sta colors,x
-    sta @(+ 256 colors),x
-    dex
-    bne -l
 
     ldx #@(-- txt_fame_len)
 l:  lda txt_fame,x
@@ -50,10 +57,26 @@ l:  lda #4
     cmp #21
     bcc -l
 
+    ; Color effect
+    ldx #0
+    inc fxcol
+    ldy fxcol
+l:  iny
+    tya
+    and #7
+    tay
+    lda hcolors,y
+    sta colors,x
+    sta @(+ 256 colors),x
+    dex
+    bne -l
+
     lda hiscore_entry
     bne +edit
 
     dec framecounter
+    bne -loop
+    dec framecounter_high
     bne -loop
     jmp reenter_title
 
