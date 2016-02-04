@@ -13,15 +13,20 @@
     acc))
 
 (defun radio-window-cycles ()
-  (integer (* (/ (cpu-cycles *tv*)
-                 (radio-rate *tv*))
-              256)))
+  (* (/ (cpu-cycles *tv*)
+        (radio-rate *tv*))
+     256))
 
 (defun radio-average-audio-chunk-cycles ()
   (* radio_average_pulse 8 256))
 
+(defun radio-pilot-length ()
+  (* 8 (+ (* 16 *pulse-short*)
+          *pulse-long*)))
+
 (defun radio-average-data-chunk-cycles ()
   (- (radio-window-cycles)
+     (radio-pilot-length)
      (radio-average-audio-chunk-cycles)))
 
 (defun radio-data-size ()
