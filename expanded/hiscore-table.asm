@@ -74,10 +74,18 @@ l:  iny
     lda hiscore_entry
     bne +edit
 
+    lda #0              ; Fetch joystick status.
+    sta $9113
+    lda $9111
+    tay
+    and #joy_fire
+    beq +done
+
     dec framecounter
     bne -loop
     dec framecounter_high
     bne -loop
+done:
     jmp reenter_title
 
 edit:
@@ -109,9 +117,11 @@ n:  tya
 n:  lda #0          ;Fetch rest of joystick status.
     sta $9122
     lda $9120
-    bmi -loop
+    bmi +l
 
     rts
+
+l:  jmp loop
 
 nstrout:
     pha
