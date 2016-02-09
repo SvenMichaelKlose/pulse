@@ -1,3 +1,6 @@
+body {
+}
+
 h1 {
     font-size: .18in;
 }
@@ -47,4 +50,16 @@ h1 {
 ol {
     margin-left: 1.5em;
     list-style-type: decimal;
+}
+
+em {
+    font-style: italic;
+}
+
+h1, b {
+    font-weight: bold;
+}
+
+.denial {
+    text-align: center;
 }

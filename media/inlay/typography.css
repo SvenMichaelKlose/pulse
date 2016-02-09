@@ -13,8 +13,7 @@
     line-height: 1.5em;
 }
 
-.h1 {
-	text-align: center;
+h1 {
     font-size: 2.25em;
 }
 
@@ -30,7 +29,7 @@
 	text-align: left;
 }
 
-.headingtext {
+.h2 {
     font-size: 0.875em;
 	text-align: center;
 }
