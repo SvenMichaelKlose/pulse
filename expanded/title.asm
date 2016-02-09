@@ -280,8 +280,7 @@ txt_game:
 
     @(ascii2petscii "        GAME:") 255 255
     @(ascii2petscii "        pixel") 255
-    @(ascii2petscii " (Sven Michael Klose)") 255 255
-    @(ascii2petscii "    www.hugbox.org") 0
+    @(ascii2petscii " (Sven Michael Klose)") 0
 ;   @(ascii2petscii "                      ") 255 255 255 255
 
     255
