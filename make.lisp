@@ -27,7 +27,6 @@
 (defvar *tape-wav-rate* 48000)
 
 (load "bender/vic-20/vic.lisp")
-(load "bender/vic-20/cpu-cycles.lisp")
 (load "flight/tap.lisp")
 (load "flight/scaling.lisp")
 (load "nipkow/src/convert.lisp")
