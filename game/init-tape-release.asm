@@ -8,6 +8,7 @@ main:
     sta $911e       ; Disable restore key NMIs.
 
     ; Init +8K patch.
+stop:
     lda model
     lsr
     beq +n
@@ -15,9 +16,9 @@ main:
 n:
 
     ; Init +16K patch.
-    lsr
-    lsr
-    bcc +n
+    lda model
+    and #%100
+    beq +n
     jsr $4002
 n:
 
