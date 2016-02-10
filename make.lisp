@@ -2,6 +2,7 @@
 
 (defconstant +versions+ '(:pal-tape))
 ;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic)) ; :tape-wav))
+(defvar *tape-wav-sine?* t) ; Much better audio but slow to build.
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -30,12 +31,6 @@
 (load "flight/scaling.lisp")
 (load "nipkow/src/convert.lisp")
 (load "read-screen-designer.lisp")
-
-(defun make-tape-wav (in-file out-file)
-  (format t "Making tape WAV '~A' of '~A'...~%" out-file in-file)
-  (with-input-output-file in   in-file
-                          out  out-file
-    (tap2wav in out)))
 
 (defun make-zip-archive (archive input-file)
   (sb-ext:run-program "/usr/bin/zip"
@@ -102,9 +97,9 @@
     (format t "Making ~A tape WAV file...~%" (symbol-name *tv*))
     (with-input-file i (+ "compiled/pulse." tv ".tap")
       (with-output-file o (+ "compiled/pulse." tv ".wav")
-        (tap2wav i o *tape-wav-rate* (cpu-cycles *tv*)))
-        (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
-                          (+ "compiled/pulse." tv ".wav")))))
+        (tap2wav i o *tape-wav-rate* (cpu-cycles *tv*) :sine? *tape-wav-sine?*)))
+    (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
+                      (+ "compiled/pulse." tv ".wav"))))
 
 (defun make-all-games (tv-standard)
   (with-temporaries (*tv* tv-standard
