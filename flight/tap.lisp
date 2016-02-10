@@ -1,6 +1,6 @@
 ; Copyright (c) 2015 Sven Michael Klose <pixel@hugbox.org>
 
-(defvar *radio-pilot-length* 48)
+(defvar *radio-pilot-length* 16)
 
 (defun radio2tap-audio (out in-wav)
   (let acc radio_shortest_pulse
@@ -24,12 +24,13 @@
 
 (defun radio-pilot-length ()
   (* 8 (+ (* *radio-pilot-length* *pulse-short*)
-          *pulse-long*)))
+          *pulse-long*
+          *pulse-short*)))
 
 (defun radio-average-data-chunk-cycles ()
-  (* 1.5 (- (radio-window-cycles)
-            (radio-pilot-length)
-            (radio-average-audio-chunk-cycles))))
+  (* 1.35 (- (radio-window-cycles)
+             (radio-pilot-length)
+             (radio-average-audio-chunk-cycles))))
 
 (defun radio-data-size ()
   (with (tap-cycle-resolution   8
@@ -39,7 +40,14 @@
                 bits-per-byte
                 tap-cycle-resolution))))
 
+(defun radio2tap-pilot (out)
+  (adotimes *radio-pilot-length*
+    (write-byte *pulse-short* out))
+  (write-byte *pulse-long* out)
+  (write-byte *pulse-short* out))   ; Buffer switch sync.
+
 (defun radio2tap-data (out in-bin)
+  (radio2tap-pilot out)
   (let acc 0
     (adotimes ((radio-data-size))
       (when (peek-char in-bin)
@@ -54,7 +62,7 @@
             (= x (>> x 1))))))
     acc))
 
-(defun radio2tap (out in-wav in-bin &key (gap #x08000000) (lead-in? t))
+(defun radio2tap (out in-wav in-bin &key (gap #x08000000))
   (format t "Making radio TAP data for ~A…~% Window cycles: ~A (~A audio, ~A data)~% Data size: ~A~%"
           (symbol-name *tv*)
           (radio-window-cycles)
@@ -65,9 +73,6 @@
     (read-byte in-wav))
   (awhen gap
     (write-dword ! out))
-  (when lead-in?
-    (adotimes *radio-pilot-length* (write-byte *pulse-short* out))
-    (write-byte *pulse-long* out))
   (let window-cycles (radio-window-cycles)
     (while (peek-char in-bin)
            nil

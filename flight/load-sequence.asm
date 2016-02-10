@@ -19,19 +19,7 @@ l:  lda $ffff,x
     jsr radio_start
     jmp flight
 
-;init_16k:
-;    ; Load +24K block.
-;    ldy #<loader_cfg_24k
-;    lda #>loader_cfg_24k
-;    jmp do_flight
-
-;init_24k:
-;    ; Load +32K block.
-;    ldy #<loader_cfg_32k
-;    lda #>loader_cfg_32k
-;    jmp do_flight
-
-init_32k:
+load_splash:
     ; Blank screen.
     lda #0
     sta $9002
@@ -43,25 +31,12 @@ init_32k:
 
 patch_8k_size = @(length (fetch-file (+ "obj/8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
 patch_16k_size = @(length (fetch-file (+ "obj/16k.crunched." (downcase (symbol-name *tv*)) ".prg")))
-;patch_24k_size = patch_8k_size
-;patch_32k_size = patch_8k_size
 splash_size = @(length (fetch-file (+ "obj/splash.crunched." (downcase (symbol-name *tv*)) ".prg")))
 
 loader_cfg_16k:
     $00 $40
     <patch_16k_size @(++ >patch_16k_size)
-;    <init_16k >init_16k
-    <init_32k >init_32k
-
-;loader_cfg_24k:
-;    $00 $60
-;    <patch_24k_size @(++ >patch_24k_size)
-;    <init_24k >init_24k
-
-;loader_cfg_32k:
-;    $00 $a0
-;    <patch_32k_size @(++ >patch_32k_size)
-;    <init_32k >init_32k
+    <load_splash >load_splash
 
 loader_cfg_splash:
     $00 $10

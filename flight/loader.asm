@@ -15,10 +15,6 @@ radio_start:
     lda #<timer
     sta current_low
     jsr radio_start_data
-    lda #<radio_detect
-    sta $314
-    lda #>radio_detect
-    sta $315
     lda #%00000000      ; VIA1 T1 one-shot mode
     sta $912b
     lda #%10000010      ; CA1 enable (tape pulse)
@@ -27,6 +23,10 @@ radio_start:
     rts
 
 radio_start_data:
+    lda #<radio_detect
+    sta $314
+    lda #>radio_detect
+    sta $315
     lda #@(radio-data-size)
     sta dleft
     lda #@(half *radio-pilot-length*)
@@ -89,10 +89,6 @@ done:
     sta average
     sta @(++ average)
     jsr radio_start_data
-    lda #<radio_sync_data
-    sta $314
-    lda #>radio_sync_data
-    sta $315
     jmp return_from_interrupt
 
 radio_sync_data:
@@ -102,6 +98,8 @@ radio_sync_data:
     sta $314
     lda #>radio_load_data
     sta $315
+
+    ; Switch audio buffer.
     lda @(+ 2 mod_sample_setter)
     sta @(+ 2 mod_sample_getter)
     eor #1
@@ -118,8 +116,8 @@ radio_detect:
     ldy #>radio_detect
     lda tape_leader_countdown
     bpl restart_loader
-    ldx #<radio_load_data
-    ldy #>radio_load_data
+    ldx #<radio_sync_data
+    ldy #>radio_sync_data
 restart_loader:
     lda #@(half *radio-pilot-length*)
     sta tape_leader_countdown
@@ -136,7 +134,7 @@ radio_get_bit:
     lda $912d               ; Get timer underflow bit.
     ldx #@(high *tape-pulse*) ; Restart timer.
     stx $9125
-    ldx $9121
+    ldx $9121               ; Acknowledge pulse interrupt.
     asl     ; Move underflow bit into carry.
     asl
     rts
@@ -164,6 +162,7 @@ n:  dec tape_counter        ; All bytes loaded?
 n:  dec dleft
     bne return_from_interrupt
 
+    ; Switch to loading audio samples.
     lda #<radio_sync_audio
     sta $314
     lda #>radio_sync_audio
@@ -176,6 +175,7 @@ n:  dec dleft
 
 radio_sync_audio:
     inc chunks_loaded
+    jsr radio_get_bit
     lda #<radio_play
     sta $314
     lda #>radio_play
@@ -192,10 +192,4 @@ done:
     sta $912d   ; Acknowledge tape pulse interrupt.
     sta $912e   ; Turn off tape pulse interrupt.
 
-    ldx #0
-    lda #8
-l:  sta sample_buffer,x
-    sta @(+ 256 sample_buffer),x
-    dex
-    bne -l
     jmp (tape_callback)
