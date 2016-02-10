@@ -1,7 +1,7 @@
 (= *model* :vic-20)
 
 (defconstant +versions+ '(:pal-tape))
-;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic)) ; :tape-wav :c64-master))
+;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic)) ; :tape-wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -22,7 +22,6 @@
 
 (defvar *ram-audio-rate* 2000)
 (defvar *ram-audio-rate2* 3000)
-(defconstant +c64-pal-cycles+ 985248)
 
 (defvar *tape-wav-rate* 48000)
 
@@ -69,9 +68,9 @@
                  (fetch-file "obj/model-detection.bin"))
               :start #x1001))
 
-(defun make-tap (c64-master?)
+(defun make-tap ()
   (with (tv        (downcase (symbol-name *tv*))
-         out-name  (+ "compiled/pulse." tv (? c64-master? ".c64-master" "") ".tap"))
+         out-name  (+ "compiled/pulse." tv ".tap"))
     (with-output-file o out-name
       (write-tap o
           (+ (make-primary-loader-tap tv)
@@ -84,9 +83,7 @@
              (fetch-file "obj/radio0.tap")
              (fastloader-block (fetch-file (+ "obj/splash.crunched." tv ".prg")))
              (fastloader-block (glued-game-and-splash-gfx *current-game*))
-             (fetch-file (+ "obj/splash-audio." tv ".bin")))
-          :original-cycles (& c64-master? (cpu-cycles *tv*))
-          :converted-cycles (& c64-master? +c64-pal-cycles+)))
+             (fetch-file (+ "obj/splash-audio." tv ".bin")))))
     (make-zip-archive (+ out-name ".zip") out-name)))
 
 (defun get-loader-address (imported-labels)
@@ -136,7 +133,7 @@
       (with-input-file i (+ "obj/theme-splash.downsampled." tv ".wav")
         (with-output-file o (+ "obj/splash-audio." tv ".bin")
           (wav2pwm o i :pause-before 0)))
-      (make-tap nil)
+      (make-tap)
       (make-tapwav tv))))
 
 (when (make-version? :free)
@@ -165,10 +162,6 @@
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)
   (make-all-games :ntsc))
-(when (make-version? :c64-master)
-  (with-temporary *tv* :pal
-    (format t "Making master with C64 timing…~%")
-    (make-tap t)))
 (when (make-version? :shadowvic)
   (with-temporary *virtual?* t
     (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt")))
