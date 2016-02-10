@@ -129,7 +129,7 @@
         (make-eyes)
         (make-loader))
       (make-radio-wav *tv*)
-      (nipkow-convert "theme-splash" "3" "-64" *tv* *nipkow-pulse-rate*)
+      (nipkow-convert "theme-splash" "3" "-60" *tv* *nipkow-pulse-rate*)
       (with-input-file i (+ "obj/theme-splash.downsampled." tv ".wav")
         (with-output-file o (+ "obj/splash-audio." tv ".bin")
           (wav2pwm o i :pause-before 0)))
