@@ -23,7 +23,7 @@
 (defvar *ram-audio-rate* 2000)
 (defvar *ram-audio-rate2* 3000)
 
-(defvar *tape-wav-rate* 48000)
+(defvar *tape-wav-rate* 44100)
 
 (load "bender/vic-20/vic.lisp")
 (load "flight/tap.lisp")

@@ -1,4 +1,8 @@
 fxcol:  0
+
+current_entry: 0
+name_position: 0
+
 hcolors:
     blue
     cyan
@@ -50,6 +54,7 @@ l:  lda #4
     sta scrx
     lda #@(-- num_name_digits)
     jsr nstrout
+
 
     inc scry
     inc scry
