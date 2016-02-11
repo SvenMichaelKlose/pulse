@@ -1,3 +1,5 @@
+hiscore_entry_size = @(+ num_score_digits num_name_digits)
+
 fxcol:  0
 
 current_entry: 0
@@ -20,6 +22,100 @@ hiscore_table:
     jsr set_text_mode
     jsr clear_screen
 
+    ; Check if a new entry is in order.
+    lda #<hiscores
+    sta s
+    lda #>hiscores
+    sta @(++ s)
+    lda #10
+    sta tmp
+
+    ; Compare score with hiscore.
+check_entry:
+    ldy #0
+loop:
+    lda last_score,y
+    cmp (s),y
+    beq +next_digit
+    bcc +next_entry
+
+    ; Move down lesser scores.
+    lda s
+    cmp #<last_hiscore
+    bne +n
+    lda @(++ s)
+    cmp #>last_hiscore
+    beq no_move
+n:
+
+    lda #<last_hiscore
+    sta d
+    lda #>last_hiscore
+    sta @(++ d)
+
+    lda #<second_last_hiscore
+    sta col
+    lda #>second_last_hiscore
+    sta @(++ col)
+
+copy:
+    ldy #@(-- num_score_digits)                                                                      
+l:  lda (col),y
+    sta (d),y
+    dey
+    bpl -l
+
+    lda col
+    cmp s
+    bne +n
+    lda @(++ col)
+    cmp @(++ s)
+    beq +no_move
+n:
+
+    lda d
+    sec
+    sbc #hiscore_entry_size
+    sta d
+    bcs +n
+    dec @(++ d)
+n:
+
+    lda col
+    sec
+    sbc #hiscore_entry_size
+    sta col
+    bcs +n
+    dec @(++ col)
+n:
+
+    jmp copy
+
+no_move:
+    ; Copy new score.
+    ldy #@(-- num_score_digits)                                                                      
+l:  lda last_score,y
+    sta (s),y
+    dey
+    bpl -l
+    jmp +done
+
+next_digit:
+    iny
+    cpy #num_score_digits
+    bne -loop
+
+next_entry:
+    lda s
+    clc
+    adc #hiscore_entry_size
+    sta s
+    bcc +n
+    inc @(++ s)
+n:  dec tmp
+    bne -check_entry
+
+done:
     ldx #0
     stx framecounter
     ldx #2
@@ -166,3 +262,7 @@ hiscores:
     @(apply #'nconc (maptimes [+ (maptimes [identity #\0] num_score_digits)
                                  (maptimes [identity #\A] num_name_digits)]
                               num_hiscore_entries))
+hiscores_end:
+
+last_hiscore = @(- hiscores_end hiscore_entry_size)
+second_last_hiscore = @(- last_hiscore hiscore_entry_size)

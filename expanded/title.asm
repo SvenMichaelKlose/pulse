@@ -5,6 +5,12 @@ title_screen:
     ldx #$ff
     txs
 
+    ldx #@(-- num_score_digits)
+l:  lda score_on_screen,x
+    sta last_score,x
+    dex
+    bpl -l
+
     lda #white
     sta curcol
 
@@ -312,3 +318,5 @@ sample_get_ready:
     @(fetch-file "obj/get_ready.pcm4")
 sample_get_ready_end:
 end
+
+last_score: fill num_score_digits
