@@ -1,5 +1,6 @@
 hiscore_entry_size = @(+ num_score_digits num_name_digits)
 
+joystick_processed: 0
 fxcol:  0
 
 current_entry: 0
@@ -18,32 +19,38 @@ hcolors:
 hiscore_table:
     ldx #$ff
     txs
+    stx current_entry
+    inx
+    stx joystick_processed
+    lda #num_score_digits
+    sta name_position
     jsr hide_screen
     jsr set_text_mode
     jsr clear_screen
 
     ; Check if a new entry is in order.
     lda #<hiscores
-    sta s
+    sta sm
     lda #>hiscores
-    sta @(++ s)
+    sta @(++ sm)
     lda #10
     sta tmp
 
     ; Compare score with hiscore.
 check_entry:
     ldy #0
+    inc current_entry
 loop:
     lda last_score,y
-    cmp (s),y
+    cmp (sm),y
     beq +next_digit
     bcc +next_entry
 
     ; Move down lesser scores.
-    lda s
+    lda sm
     cmp #<last_hiscore
     bne +n
-    lda @(++ s)
+    lda @(++ sm)
     cmp #>last_hiscore
     beq no_move
 n:
@@ -66,10 +73,10 @@ l:  lda (col),y
     bpl -l
 
     lda col
-    cmp s
+    cmp sm
     bne +n
     lda @(++ col)
-    cmp @(++ s)
+    cmp @(++ sm)
     beq +no_move
 n:
 
@@ -93,9 +100,9 @@ n:
 
 no_move:
     ; Copy new score.
-    ldy #@(-- num_score_digits)                                                                      
+    ldy #@(-- num_score_digits)
 l:  lda last_score,y
-    sta (s),y
+    sta (sm),y
     dey
     bpl -l
     jmp +done
@@ -106,14 +113,16 @@ next_digit:
     bne -loop
 
 next_entry:
-    lda s
+    lda sm
     clc
     adc #hiscore_entry_size
-    sta s
+    sta sm
     bcc +n
-    inc @(++ s)
+    inc @(++ sm)
 n:  dec tmp
     bne -check_entry
+    lda #$ff
+    sta current_entry
 
 done:
     ldx #0
@@ -140,6 +149,8 @@ loop:
     sta @(++ s)
     lda #2
     sta scry
+    lda #0
+    sta tmp
 
 l:  lda #4
     sta scrx
@@ -151,7 +162,23 @@ l:  lda #4
     lda #@(-- num_name_digits)
     jsr nstrout
 
+    ; Blink currently edited name character.
+    lda current_entry
+    bmi +n
+    cmp tmp
+    bne +n
+    lda framecounter
+    and #%1000
+    beq +n
+    lda name_position
+    sec
+    sbc #num_score_digits
+    tay
+    lda #$20
+    sta (scr),y
+n:
 
+    inc tmp
     inc scry
     inc scry
     lda scry
@@ -172,56 +199,115 @@ l:  iny
     dex
     bne -l
 
-    lda hiscore_entry
-    bne +edit
+    lda current_entry
+    bpl +edit
 
     lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
-    tay
     and #joy_fire
     beq +done
 
     dec framecounter
-    bne -loop
+    bne +l
     dec framecounter_high
-    bne -loop
+    bne +l
 done:
     jmp reenter_title
 
+l:  jmp -loop
+
 edit:
+    inc framecounter
+    lda joystick_processed
+    beq +n
+
+    lda #0              ; Fetch joystick status.
+    sta $9113
+    lda $9111
+    and #@(bit-or joy_fire (bit-or joy_up (bit-or joy_down joy_left)))
+    eor #@(bit-or joy_fire (bit-or joy_up (bit-or joy_down joy_left)))
+    bne -l
+    lda #0          ;Fetch rest of joystick status.
+    sta $9122
+    lda $9120
+    bpl -l
+n:  
+
+stop:
     ; Edit new entry.
     lda #0              ; Fetch joystick status.
+    sta joystick_processed
     sta $9113
     lda $9111
     tay
     and #joy_fire
     bne no_fire
+    inc joystick_processed
+    jmp -done
 
 no_fire:
     ; Joystick up.
 n:  tya
     and #joy_up
     bne +n
+    ldy name_position
+    lda (sm),y
+    cmp #90
+    bne +k
+    lda #32
+    jmp +m
+k:  cmp #32
+    bne +k
+    lda #65
+    jmp +m
+k:  clc
+    adc #1
+m:  sta (sm),y
+    inc joystick_processed
+    jmp -loop
 
     ; Joystick down.
 n:  tya
     and #joy_down
     bne +n
+    ldy name_position
+    lda (sm),y
+    cmp #65
+    bne +k
+    lda #32
+    jmp +m
+k:  cmp #32
+    bne +k
+    lda #90
+    jmp +m
+k:  sec
+    sbc #1
+m:  sta (sm),y
+    inc joystick_processed
+    jmp -loop
 
     ; Joystick left.
 n:  tya
     and #joy_left
     bne +n
+    lda name_position
+    cmp #num_score_digits
+    beq +l
+    dec name_position
+    inc joystick_processed
+    jmp -loop
 
     ; Joystick right.
 n:  lda #0          ;Fetch rest of joystick status.
     sta $9122
     lda $9120
     bmi +l
-
-    rts
-
+    lda name_position
+    cmp #@(+ num_score_digits (-- num_name_digits))
+    beq +l
+    inc name_position
+    inc joystick_processed
 l:  jmp loop
 
 nstrout:
