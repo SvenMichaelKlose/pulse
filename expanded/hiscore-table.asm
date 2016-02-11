@@ -91,7 +91,7 @@ n:
     sta @(++ col)
 
 copy:
-    ldy #@(-- num_score_digits)                                                                      
+    ldy #@(-- hiscore_entry_size)
 l:  lda (col),y
     sta (d),y
     dey
@@ -123,6 +123,8 @@ n:
 
     jmp copy
 
+u:  jmp -check_entry
+
 no_move:
     ; Copy new score.
     ldy #@(-- num_score_digits)
@@ -130,7 +132,17 @@ l:  lda last_score,y
     sta (sm),y
     dey
     bpl -l
-    jmp +done
+
+    ; Clear name.
+    ldy #num_score_digits
+    ldx #num_name_digits
+    lda #32
+l:  sta (sm),y
+    iny
+    dex
+    bne -l
+
+    jmp start_editing
 
 next_digit:
     iny
@@ -145,9 +157,17 @@ next_entry:
     bcc +n
     inc @(++ sm)
 n:  dec tmp
-    bne -check_entry
+    bne -u
     lda #$ff
     sta current_entry
+    jmp +done
+
+start_editing:
+    ; Star tune.
+    lda model
+    and #vic_16k
+    beq +done
+    jsr $4003
 
 done:
     ldx #0
@@ -238,7 +258,12 @@ l:  iny
     dec framecounter_high
     bne +l
 done:
-    jmp reenter_title
+    ; Stop tune.
+    lda model
+    and #vic_16k
+    beq +n
+    jsr $4006
+n:  jmp reenter_title
 
 l:  jmp -loop
 
@@ -259,7 +284,6 @@ edit:
     bpl -l
 n:  
 
-stop:
     ; Edit new entry.
     lda #0              ; Fetch joystick status.
     sta joystick_processed

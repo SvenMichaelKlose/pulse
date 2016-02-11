@@ -41,10 +41,7 @@ n:
     cmp @(++ sample_end2)
     bne +n
 
-    lda sample_start2
-    sta @(+ 1 mod_sample_ptr2)
-    lda @(++ sample_start2)
-    sta @(+ 2 mod_sample_ptr2)
+    jsr sample_has_ended
 
 n:  pla
     tax
