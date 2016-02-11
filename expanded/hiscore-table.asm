@@ -1,4 +1,5 @@
 hiscore_entry_size = @(+ num_score_digits num_name_digits)
+cursor_index = 127
 
 joystick_processed: 0
 fxcol:  0
@@ -27,6 +28,30 @@ hiscore_table:
     jsr hide_screen
     jsr set_text_mode
     jsr clear_screen
+
+    ; Copy charset to RAM.
+    ldx #0
+l:  lda $8800,x
+    sta $1000,x
+    lda $8900,x
+    sta $1100,x
+    lda $8a00,x
+    sta $1200,x
+    lda $8b00,x
+    sta $1300,x
+    dex
+    bne -l
+
+    ; Make cursor.
+    ldx #7
+    lda #255
+l:  sta @(+ #x1000 (* 8 cursor_index)),x
+    dex
+    bpl -l
+
+    ; Switch to RAM charset.
+    lda #%11111100      ; Our charset.
+    sta $9005
 
     ; Check if a new entry is in order.
     lda #<hiscores
@@ -162,7 +187,7 @@ l:  lda #4
     lda #@(-- num_name_digits)
     jsr nstrout
 
-    ; Blink currently edited name character.
+    ; Display cursor.
     lda current_entry
     bmi +n
     cmp tmp
@@ -174,7 +199,7 @@ l:  lda #4
     sec
     sbc #num_score_digits
     tay
-    lda #$20
+    lda #cursor_index
     sta (scr),y
 n:
 
@@ -346,7 +371,7 @@ txt_fame_len = @(- txt_fame_end txt_fame)
 
 hiscores:
     @(apply #'nconc (maptimes [+ (maptimes [identity #\0] num_score_digits)
-                                 (maptimes [identity #\A] num_name_digits)]
+                                 (maptimes [identity #\ ] num_name_digits)]
                               num_hiscore_entries))
 hiscores_end:
 
