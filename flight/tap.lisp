@@ -69,7 +69,7 @@
     (unless (zero? !)
       (write-dword (<< ! 8) out))))
 
-(defun radio2tap (out in-wav in-bin &key (gap #x00400000))
+(defun radio2tap (out in-wav in-bin &key (gap #x080000))
   (format t "Making radio TAP data for ~A…~% Window cycles: ~A (~A audio, ~A data)~% Data size: ~A~%"
           (symbol-name *tv*)
           (radio-window-cycles)
