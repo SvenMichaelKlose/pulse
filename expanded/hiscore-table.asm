@@ -263,7 +263,16 @@ done:
     and #vic_16k
     beq +n
     jsr $4006
-n:  jmp reenter_title
+n:  
+
+    ; Clear old score.
+    ldx #@(-- num_score_digits)
+    lda #48
+m:  sta last_score,x
+    dex
+    bpl -m
+
+    jmp reenter_title
 
 l:  jmp -loop
 
