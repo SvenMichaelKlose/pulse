@@ -394,7 +394,8 @@ txt_fame_end:
 txt_fame_len = @(- txt_fame_end txt_fame)
 
 hiscores:
-    @(apply #'nconc (maptimes [+ (maptimes [identity #\0] num_score_digits)
+    @(apply #'nconc (maptimes [+ (maptimes [identity #\0] (-- num_score_digits))
+                                 (list #\3)
                                  (maptimes [identity #\ ] num_name_digits)]
                               num_hiscore_entries))
 hiscores_end:
