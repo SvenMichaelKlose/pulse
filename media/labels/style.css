@@ -1,0 +1,56 @@
+body {
+    text-align: center;
+}
+
+.label {
+    float: left;
+    width: 9cm;
+    max-width: 9cm;
+    min-width: 9cm;
+    height: 4cm;
+    min-height: 4cm;
+    border: 1px solid black;
+}
+
+.top, .middle, .bottom {
+    vertical-align: middle;
+}
+
+.top, .middle {
+    height: 1.5cm;
+    min-height: 1.5cm;
+}
+
+.middle {
+    margin-left: 0.25cm;
+    margin-right: 0.25cm;
+}
+
+.bottom {
+    height: 1cm;
+    min-height: 1cm;
+}
+
+h1 {
+    font-size: 0.8cm;
+    font-weight: bold;
+}
+
+.logo {
+    position: absolute;
+    width: 2in;
+    top: -0.05in;
+    left: 1.48in;
+}
+
+.eyes, .vic20 {
+    width: 1cm;
+}
+
+.eyes {
+    float: left;
+}
+
+.vic20 {
+    float: right;
+}
