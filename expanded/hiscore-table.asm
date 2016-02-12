@@ -2,6 +2,7 @@ hiscore_entry_size = @(+ num_score_digits num_name_digits)
 cursor_index = 127
 
 joystick_processed: 0
+fire_pressed: 0
 fxcol:  0
 
 current_entry: 0
@@ -22,6 +23,7 @@ hiscore_table:
     txs
     stx current_entry
     inx
+    stx fire_pressed
     stx joystick_processed
     lda #num_score_digits
     sta name_position
@@ -244,19 +246,27 @@ l:  iny
     dex
     bne -l
 
-    lda current_entry
-    bpl +edit
-
     lda #0              ; Fetch joystick status.
     sta $9113
     lda $9111
     and #joy_fire
-    beq +done
+    bne +no_fire
+    lda #1
+    sta fire_pressed
+    jmp +m
+no_fire:
+    lda fire_pressed
+    bne +done
+m:
+
+    lda current_entry
+    bpl +edit
 
     dec framecounter
     bne +l
     dec framecounter_high
     bne +l
+
 done:
     ; Stop tune.
     lda model
@@ -299,14 +309,8 @@ n:
     sta $9113
     lda $9111
     tay
-    and #joy_fire
-    bne no_fire
-    inc joystick_processed
-    jmp -done
 
-no_fire:
     ; Joystick up.
-n:  tya
     and #joy_up
     bne +n
     ldy name_position
