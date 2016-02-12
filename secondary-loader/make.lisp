@@ -17,12 +17,19 @@
                    *pulse-long*))
      (= i (>> i 1))))
 
+(defun make-gap (q x)
+  (adotimes ((-- (/ x *pulse-long* 8)))
+    (enqueue q *pulse-long*))
+  (alet (integer (+ (* *pulse-long* 8) (mod x (* *pulse-long* 8))))
+    (unless (zero? !)
+      (enqueue q #x00)
+      (enqueue q (bit-and ! 255))
+      (enqueue q (bit-and (>> ! 8) 255))
+      (enqueue q (>> ! 16)))))
+
 (defun fastloader-block (x &key (gap #x080000))
   (with-queue q
-    (enqueue q #x00)
-    (enqueue q (bit-and gap 255))
-    (enqueue q (bit-and (>> gap 8) 255))
-    (enqueue q (>> gap 16))
+    (make-gap q gap)
     (adotimes 128 (enqueue q *pulse-short*))
     (enqueue q *pulse-long*)
     (dosequence (i x (list-string (queue-list q)))

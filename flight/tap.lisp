@@ -62,7 +62,14 @@
             (= x (>> x 1))))))
     acc))
 
-(defun radio2tap (out in-wav in-bin &key (gap #x08000000))
+(defun radiogap (out x)
+  (adotimes ((-- (/ x *pulse-long* 8)))
+    (write-byte *pulse-long* out))
+  (alet (integer (+ (* *pulse-long* 8) (mod x (* *pulse-long* 8))))
+    (unless (zero? !)
+      (write-dword (<< ! 8) out))))
+
+(defun radio2tap (out in-wav in-bin &key (gap #x00400000))
   (format t "Making radio TAP data for ~A…~% Window cycles: ~A (~A audio, ~A data)~% Data size: ~A~%"
           (symbol-name *tv*)
           (radio-window-cycles)
@@ -72,7 +79,7 @@
   (adotimes 44
     (read-byte in-wav))
   (awhen gap
-    (write-dword ! out))
+    (radiogap out !))
   (let window-cycles (radio-window-cycles)
     (while (peek-char in-bin)
            nil
@@ -86,8 +93,8 @@
                 t-data t-audio (/ t-audio 256))
         (? (< total window-cycles)
            (when (peek-char in-bin)
-             (let r (integer (- window-cycles total))
-               (format t ", filling up ~A" (/ r 8))
-               (write-dword (<< r 8) out)))
+             (alet (integer (- window-cycles total))
+               (format t ", filling up ~A" (/ ! 8))
+               (radiogap out !)))
            (error "~%Chunk overflow. No sync pulse."))
         (terpri)))))
