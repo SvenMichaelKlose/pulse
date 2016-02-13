@@ -8,12 +8,12 @@
 
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
-  (with-input-file i from
-    (with-output-file o to
-      (adotimes 44 (read-byte i))
-      (awhile (read-word i)
-              nil
-        (write-byte (bit-xor (>> ! 12) 8) o)))))
+  (with-io i from
+           o to
+    (adotimes 44 (read-byte i))
+    (awhile (read-word i)
+            nil
+      (write-byte (bit-xor (>> ! 12) 8) o))))
 
 (defun init-audio-model ()
   (values (list-array (maptimes [identity 16] 16))
@@ -106,9 +106,9 @@
 
 (defun compress (num-bits in out)
   (format t "Arithmetic encoding of '~A' to '~A'…~%" in out)
-  (with-input-file i in
-    (with-output-file o out
-      (arith-encode num-bits i (make-bit-stream :out o)))))
+  (with-io i in
+           o out
+    (arith-encode num-bits i (make-bit-stream :out o))))
 
 (defun arith-decode (num-bits num-bytes i o)
   (++! num-bytes)
@@ -167,9 +167,9 @@
 
 (defun uncompress (num-bits num-bytes in out)
   (format t "Arithmetic decoding of '~A' to '~A'…~%" in out)
-  (with-input-file i in
-    (with-output-file o out
-      (arith-decode num-bits num-bytes (make-bit-stream :in i) o))))
+  (with-io i in
+           o out
+    (arith-decode num-bits num-bytes (make-bit-stream :in i) o)))
 
 (defun compress-audio (in out)
   (wav-to-4bit in "obj/hiscore.4bit.bin")

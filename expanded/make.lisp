@@ -29,15 +29,15 @@
 
 (defun convert-to-pcm4 (in-name out-name)
   (format t "Converting `~A' to 4–bit audio `~A'…~%" in-name out-name)
-  (with-input-file in in-name
-    (with-output-file out out-name
-      (make-pcm4 out in))))
+  (with-io in in-name
+           out out-name
+    (make-pcm4 out in)))
 
 (defun convert-to-pcm2 (in-name out-name)
   (format t "Converting `~A' to 2–bit audio `~A'…~%" in-name out-name)
-  (with-input-file in in-name
-    (with-output-file out out-name
-      (make-pcm2 out in))))
+  (with-io in in-name
+           out out-name
+      (make-pcm2 out in)))
 
 (defun make-ram-audio (name file gain bass)
   (nipkow-make-wav name file)

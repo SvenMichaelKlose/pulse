@@ -17,9 +17,9 @@
 
 (defun make-radio-tap (to in-wav bin)
   (| (file-exists? to)
-     (with-output-file out to
-       (with-input-file in-bin bin
-         (radio2tap out in-wav in-bin)))))
+     (with-io in-bin bin
+              out to
+       (radio2tap out in-wav in-bin))))
 
 (defun make-radio-wav (tv)
   (unless (file-exists? "obj/radio0.tap")

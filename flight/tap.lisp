@@ -1,5 +1,3 @@
-; Copyright (c) 2015 Sven Michael Klose <pixel@hugbox.org>
-
 (defvar *radio-pilot-length* 16)
 
 (defun radio2tap-audio (out in-wav)
@@ -76,6 +74,8 @@
           (radio-average-audio-chunk-cycles)
           (radio-average-data-chunk-cycles)
           (radio-data-size))
+  (= (stream-track-input-location? in-wav) nil)
+  (= (stream-track-input-location? in-bin) nil)
   (adotimes 44
     (read-byte in-wav))
   (awhen gap
