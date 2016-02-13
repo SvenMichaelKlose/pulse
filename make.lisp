@@ -1,6 +1,6 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:pal-tape)) ; :tape-wav))
+(defconstant +versions+ '(:pal-tape :tape-wav))
 ;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic)) ; :tape-wav))
 (defvar *tape-wav-sine?* t) ; Much better audio but slow to build.
 
@@ -95,8 +95,9 @@
 (defun make-tapwav (tv)
   (when (make-version? :tape-wav)
     (format t "Making ~A tape WAV file...~%" (symbol-name *tv*))
-    (with-input-file i (+ "compiled/pulse." tv ".tap")
-      (with-output-file o (+ "compiled/pulse." tv ".wav")
+    (alet (+ "compiled/pulse." tv)
+      (with-io i (+ ! ".tap")
+               o (+ ! ".wav")
         (tap2wav i o *tape-wav-rate* (cpu-cycles *tv*) :sine? *tape-wav-sine?*)))
     (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
                       (+ "compiled/pulse." tv ".wav"))))
@@ -125,18 +126,20 @@
         (make-loader))
       (make-radio-wav *tv*)
       (nipkow-convert "theme-splash" "3" "-60" *tv* *nipkow-pulse-rate*)
-      (with-input-file i (+ "obj/theme-splash.downsampled." tv ".wav")
-        (with-output-file o (+ "obj/splash-audio." tv ".bin")
-          (wav2pwm o i :pause-before 0 :skip-first (/ *nipkow-pulse-rate* 4))))
+      (with-io i (+ "obj/theme-splash.downsampled." tv ".wav")
+               o (+ "obj/splash-audio." tv ".bin")
+        (wav2pwm o i :pause-before 0 :skip-first #x330))
       (make-tap)
       (make-tapwav tv))))
 
 (when (make-version? :free)
   (make-game :prg "compiled/pulse.prg" "obj/pulse.vice.txt"))
+
 (when (make-version? :pal-tape :ntsc-tape :free+8k)
   (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
   (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "12" "-64")
   (make-ram-audio2 "intermediate2" "media/intermediate/audio2.wav" "12" "-64"))
+
 (awhen (make-version? :free+8k)
   (with-temporaries (*tv*        :pal
                      *model*     :vic-20+xk
