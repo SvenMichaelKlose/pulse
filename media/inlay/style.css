@@ -6,7 +6,7 @@ h1 {
 }
 
 .cover {
-    background-image: url("pulsecover2.jpg");
+    background-image: url("pulsecover3.jpg");
     background-size: 5.2in;
     background-position: 10%;
 }
@@ -22,7 +22,7 @@ h1 {
     position: absolute;
     width: 1in;
     top: 3.45in;
-    left: 2.95in;
+    left: 1.525in;
 }
 
 .vic20small {
