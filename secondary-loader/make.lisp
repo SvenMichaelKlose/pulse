@@ -33,4 +33,4 @@
     (adotimes 128 (enqueue q *pulse-short*))
     (enqueue q *pulse-long*)
     (dosequence (i x (list-string (queue-list q)))
-      (fastloader-byte q i))))
+      (fastloader-byte q (char-code i)))))
