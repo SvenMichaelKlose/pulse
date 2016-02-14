@@ -299,6 +299,10 @@ m:
     dec framecounter_high
     bne +l
 
+    ; Don't jump into game.
+    lda #0
+    sta current_entry
+
 done:
     ; Stop tune.
     lda model
