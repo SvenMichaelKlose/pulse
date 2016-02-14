@@ -6,48 +6,45 @@ draw_random_point_on_circle:
     and #$0f
     ora #@(* light_yellow 16)
     sta $900e
-    lda #0
-    sta xpos
-    sta ypos
     jsr point_on_circle
     stx tmpx
     sty tmpy
 
     txa
     clc
-    adc #@(half screen_columns)
+    adc cxpos
     tax
     tya
     clc
-    adc #@(half screen_rows)
+    adc cypos
     tay
     jsr draw_pixel
 
-    lda #@(half screen_columns)
+    lda cxpos
     clc
     adc tmpx
     tax
-    lda #@(half screen_rows)
+    lda cypos
     sec
     sbc tmpy
     tay
     jsr draw_pixel
 
-    lda #@(half screen_columns)
+    lda cxpos
     sec
     sbc tmpx
     tax
-    lda #@(half screen_rows)
+    lda cypos
     sec
     sbc tmpy
     tay
     jsr draw_pixel
 
-    lda #@(half screen_columns)
+    lda cxpos
     sec
     sbc tmpx
     tax
-    lda #@(half screen_rows)
+    lda cypos
     clc
     adc tmpy
     tay

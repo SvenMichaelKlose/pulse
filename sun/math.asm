@@ -35,9 +35,6 @@ point_on_circle:
     sta result
     lda degrees
     jsr sinmul
-    lda xpos
-    clc
-    adc result
     tax
 
     lda radius
@@ -46,9 +43,6 @@ point_on_circle:
     sta result
     lda degrees
     jsr cosmul
-    lda ypos
-    clc
-    adc result
     tay
 
     rts

@@ -37,6 +37,10 @@ l:  lda vic_config,x
     lda #@(* 2.3 screen_columns)
 l:  pha
     sta radius
+    lda #@(half screen_columns)
+    sta cxpos
+    lda #@(half screen_rows)
+    sta cypos
     lda #0
     sta curchar
     jsr draw_random_point_on_circle
@@ -92,7 +96,7 @@ n:  sec
     cmp #3
     bne -l
 
-    ldx #4
+n:  ldx #4
 l:  lda $ede4,x
     sta $9000,x
     dex
