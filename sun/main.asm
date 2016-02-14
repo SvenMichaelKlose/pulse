@@ -34,7 +34,7 @@ l:  lda vic_config,x
 
     ldx #chars_per_circle
     stx countdown
-    lda #@(* 2.3 screen_columns)
+    lda #@(* 2.4 screen_columns)
 l:  pha
     sta radius
     lda #@(half screen_columns)
