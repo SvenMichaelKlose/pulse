@@ -1,3 +1,5 @@
+chars_per_circle = 90
+
 sun:
     ; Clear screen.
     ldx #0
@@ -24,23 +26,9 @@ l:  lda vic_config,x
     dex
     bpl -l
 
-    ; Boost digital audio with distorted HF carrier.
-    lda #$0f
-    sta $900e
-    ldx #$7e
-    stx $900c
-    ldy #0
-l:  dey
-    bne -l
-    lda #$fe
-    stx $900c
-    stx $900c
-    sta $900c
-    sta $900c
-    stx $900c
-    sta $900c
+    @(asm (fetch-file "shared/audio-boost.inc.asm"))
 
-    ldx #64
+    ldx #chars_per_circle
     stx countdown
     lda #@(* 2 screen_columns)
 l:  pha
@@ -63,7 +51,7 @@ l:  pha
     pla
     dec countdown
     bne -l
-    ldx #64
+    ldx #chars_per_circle
     stx countdown
     sec
     sbc #1
