@@ -1,5 +1,9 @@
 chars_per_circle = 100
 
+mercury_countdown: screen_rows
+mercury_x: @(-- screen_columns)
+mercury_y: 0
+
 sun:
     ; Clear screen.
     ldx #0
@@ -30,7 +34,7 @@ l:  lda vic_config,x
 
     ldx #chars_per_circle
     stx countdown
-    lda #@(* 2 screen_columns)
+    lda #@(* 2.3 screen_columns)
 l:  pha
     sta radius
     lda #0
@@ -51,9 +55,39 @@ l:  pha
     pla
     dec countdown
     bne -l
+
     ldx #chars_per_circle
     stx countdown
-    sec
+    ldx mercury_countdown
+    beq +n
+
+    ; Mercury fly–by.
+    pha
+
+    lda mercury_x
+    sta scrx
+    lda mercury_y
+    sta scry
+    jsr scraddr
+    lda #3
+    sta (scr),y
+
+    dec mercury_x
+    inc mercury_y
+
+    lda mercury_x
+    sta scrx
+    lda mercury_y
+    sta scry
+    jsr scraddr
+    lda #4
+    sta (scr),y
+
+    dec mercury_countdown
+    pla
+    jmp -l
+
+n:  sec
     sbc #1
     cmp #3
     bne -l

@@ -1,3 +1,12 @@
+scrcoladdr:
+    jsr scraddr
+    lda scr
+    sta col
+    lda @(++ scr)
+    ora #$94
+    sta @(++ col)
+    rts
+
 scraddr:
     ldy scry
     lda screenlines_l,y
