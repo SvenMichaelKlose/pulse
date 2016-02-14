@@ -314,7 +314,11 @@ m:  sta last_score,x
     dex
     bpl -m
 
+    ; Return to title when editing, otherwise restart the game.
+    lda current_entry
+    bmi +r
     jmp reenter_title
+r:  jmp get_ready
 
 l:  jmp -loop
 
