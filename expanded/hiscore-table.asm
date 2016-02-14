@@ -199,12 +199,44 @@ loop:
     lda #0
     sta tmp
 
-l:  lda #4
+index_column = 2
+score_column = 6
+name_column = 15
+
+l:
+    lda #index_column
+    sta scrx
+    jsr scrcoladdr
+
+    lda tmp
+    cmp #9
+    bne +n
+
+    lda #@(char-code #\1)
+    sta (scr),y
+    lda #@(char-code #\0)
+    iny
+    sta (scr),y
+    jmp +m
+
+n:  lda #@(char-code #\ )
+    sta (scr),y
+    lda #@(char-code #\0)
+    sec
+    adc tmp
+    iny
+    sta (scr),y
+
+m:  iny
+    lda #@(char-code #\.)
+    sta (scr),y
+
+    lda #score_column
     sta scrx
     lda #@(-- num_score_digits)
     jsr nstrout
 
-    lda #14
+    lda #name_column
     sta scrx
     lda #@(-- num_name_digits)
     jsr nstrout
