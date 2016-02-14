@@ -145,11 +145,7 @@ l:  lsr $9004
     lda #%11111100          ; Our charset.
     sta $9005
 
-    lda #48
-    ldx $ede4
-    cmp #5
-    bne +m
-    lda #53
+    lda #@(? (eq *tv* :pal) 63 50)
 m:  cmp $9004
     bne -m
 
