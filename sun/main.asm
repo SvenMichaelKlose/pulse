@@ -1,4 +1,4 @@
-chars_per_circle = 90
+chars_per_circle = 100
 
 sun:
     ; Clear screen.
