@@ -35,7 +35,7 @@ m:  lda #0
     lda $ede4
     cmp #5
     bne +n
-    ldx #25
+    ldx #@(delay-frames 25)
 n:  jsr fx_wait
     jsr fx_clear
     jsr inc_s
@@ -206,12 +206,8 @@ if @*have-get-ready-sound?*
 n:
 end
 
-    ldx #@(* 2 50)
-    lda $ede4
-    cmp #5
-    bne +n
-    ldx #@(* 2 60)
-n:  jsr wait
+    ldx #@(delay-frames (* 2 50))
+    jsr wait
 
     jsr wait_for_screen_bottom
     lda #%11111100          ; Our charset.
@@ -248,13 +244,9 @@ game_over_screen:
     jsr strout
 
     jsr show_screen
-    ldx #@(* 3 50)
-    lda $ede4
-    cmp #5
-    bne +n
-    ldx #@(* 3 60)
+    ldx #@(delay-frames (* 3 50))
 if @*have-hiscore-table?*
-n:  jsr wait
+    jsr wait
     jmp hiscore_table
 end
 if @(not *have-hiscore-table?*)

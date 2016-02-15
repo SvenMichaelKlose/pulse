@@ -28,6 +28,11 @@
 (load "nipkow/src/convert.lisp")
 (load "read-screen-designer.lisp")
 
+(defun delay-frames (x)
+  (? (eq *tv* :pal)
+     x
+     (integer (/ (* x 60) 50))))
+
 (defun make-zip-archive (archive input-file)
   (sb-ext:run-program "/usr/bin/zip"
                       (list archive input-file)

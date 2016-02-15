@@ -114,7 +114,7 @@ blink:
     jsr show_text
     lda #12
     jsr show_text
-    ldx #16
+    ldx #@(delay-frames 16)
     jsr swait
 
     lda #15
@@ -140,13 +140,13 @@ l:  sta (col),y
     cpy #22
     bne -l
     inc sound_foreground
-    ldx #6
+    ldx #@(delay-frames 6)
     jmp swait
     
 laser:
-    ldx #6
+    ldx #@(delay-frames 6)
 laser2:
-    lda #7
+    lda #@(delay-frames 7)
     sta sound_laser
     jmp swait
 
