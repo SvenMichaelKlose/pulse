@@ -1,12 +1,14 @@
-(defun tap-rate (tv)                                                                          
-    (integer (/ (? (eq tv :pal)
-                   +cpu-cycles-pal+
-                   +cpu-cycles-ntsc+)
-                (* 8 *pulse-average*))))
+(defvar *pulse-average* nil)
+(defvar *pulse-short* nil)
+(defvar *pulse-long* nil)
+(defvar *pulse-interval* #x20)
+(defvar *tape-pulse* nil)
 
-(defun print-bitrate-info ()
-  (format t "Fast loader rates:~% ~A Bd (NTSC)~% ~A Bd (PAL)~%"
-            (tap-rate :ntsc) (tap-rate :pal)))
+(defun set-fastloader-rate (tv rate)
+  (= *pulse-average* (integer (/ (cpu-cycles tv) rate 8)))
+  (= *pulse-short* (- *pulse-average* (half *pulse-interval*)))
+  (= *pulse-long* (+ *pulse-average* (half *pulse-interval*)))
+  (= *tape-pulse* (* 8 *pulse-average*)))
 
 (defun fastloader-byte (q i)
   (when (< i 0)

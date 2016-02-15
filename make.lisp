@@ -1,6 +1,6 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:pal-tape :tape-wav))
+(defconstant +versions+ '(:pal-tape :ntsc-tape)) ; :tape-wav))
 ;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic :tape-wav))
 (defvar *tape-wav-sine?* t) ; Much better audio but slow to build.
 
@@ -16,14 +16,10 @@
 (defvar *tv* nil)
 (defvar *current-game* nil)
 
-(defvar *pulse-short* #x20)
-(defvar *pulse-long* #x40)
-(defvar *pulse-average* (+ *pulse-short* (half (- *pulse-long* *pulse-short*))))
-(defvar *tape-pulse* (* 8 *pulse-average*))
-
 (defvar *ram-audio-rate* 2000)
 (defvar *ram-audio-rate2* 3000)
 
+(defvar *fastloader-rate* 3000)
 (defvar *tape-wav-rate* 44100)
 
 (load "bender/vic-20/vic.lisp")
@@ -69,15 +65,15 @@
     (with-output-file o out-name
       (write-tap o
           (+ (make-primary-loader-tap tv)
-             (fastloader-block (fetch-file (+ "obj/eyes." tv ".prg")))
-             (fastloader-block (fetch-file (+ "obj/3k.crunched." tv ".prg")) :gap #x0c0000)
-             (fastloader-block (fetch-file (+ "obj/message." tv ".prg")))
-             (fastloader-block (fetch-file (+ "obj/sun." tv ".prg")))
-             (fastloader-block (fetch-file (+ "obj/8k.crunched." tv ".prg")))
-             (fastloader-block (fetch-file (+ "obj/flight.crunched." tv ".prg")) :gap #xc0000)
+             (fastloader-block (fetch-file (+ "obj/eyes." tv ".prg")) :gap #x10000)
+             (fastloader-block (fetch-file (+ "obj/3k.crunched." tv ".prg")) :gap #xc0000)
+             (fastloader-block (fetch-file (+ "obj/message." tv ".prg")) :gap #x60000)
+             (fastloader-block (fetch-file (+ "obj/sun." tv ".prg")) :gap #x10000)
+             (fastloader-block (fetch-file (+ "obj/8k.crunched." tv ".prg")) :gap #x10000)
+             (fastloader-block (fetch-file (+ "obj/flight.crunched." tv ".prg")) :gap #x40000)
              (fetch-file "obj/radio0.tap")
-             (fastloader-block (fetch-file (+ "obj/splash.crunched." tv ".prg")))
-             (fastloader-block (glued-game-and-splash-gfx *current-game*))
+             (fastloader-block (fetch-file (+ "obj/splash.crunched." tv ".prg")) :gap #x10000)
+             (fastloader-block (glued-game-and-splash-gfx *current-game*) :gap #x80000)
              (fetch-file (+ "obj/splash-audio." tv ".bin"))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))))
     (make-zip-archive (+ out-name ".zip") out-name)))
@@ -129,7 +125,7 @@
       (nipkow-convert "theme-splash" "3" "-60" *tv* *nipkow-pulse-rate*)
       (with-io i (+ "obj/theme-splash.downsampled." tv ".wav")
                o (+ "obj/splash-audio." tv ".bin")
-        (wav2pwm o i :pause-before 0 :skip-first #x5c0))
+        (wav2pwm o i :pause-before 0 :skip-first #x600))
       (make-tap)
       (make-tapwav tv))))
 
@@ -158,13 +154,14 @@
   (nipkow-make-wav "radio" "media/radio.ogg"))
 
 (when (make-version? :pal-tape)
+  (set-fastloader-rate :pal *fastloader-rate*)
   (make-all-games :pal))
 (when (make-version? :ntsc-tape)
+  (set-fastloader-rate :ntsc *fastloader-rate*)
   (make-all-games :ntsc))
 (when (make-version? :shadowvic)
   (with-temporary *virtual?* t
     (make-game :virtual "compiled/virtual.bin" "obj/virtual.vice.txt")))
 
-(print-bitrate-info)
 (format t "Done making 'Pulse'. See directory 'compiled/'.~%")
 (quit)

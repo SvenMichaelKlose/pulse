@@ -26,9 +26,9 @@
           *pulse-short*)))
 
 (defun radio-average-data-chunk-cycles ()
-  (* 1.35 (- (radio-window-cycles)
-             (radio-pilot-length)
-             (radio-average-audio-chunk-cycles))))
+  (* 1.3 (- (radio-window-cycles)
+            (radio-pilot-length)
+            (radio-average-audio-chunk-cycles))))
 
 (defun radio-data-size ()
   (with (tap-cycle-resolution   8
@@ -67,7 +67,7 @@
     (unless (zero? !)
       (write-dword (<< ! 8) out))))
 
-(defun radio2tap (out in-wav in-bin &key (gap #x080000))
+(defun radio2tap (out in-wav in-bin &key (gap #x60000))
   (format t "Making radio TAP data for ~A…~% Window cycles: ~A (~A audio, ~A data)~% Data size: ~A~%"
           (symbol-name *tv*)
           (radio-window-cycles)
