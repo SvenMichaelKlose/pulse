@@ -32,5 +32,5 @@
     (make-gap q gap)
     (adotimes 128 (enqueue q *pulse-short*))
     (enqueue q *pulse-long*)
-    (dosequence (i x (list-string (queue-list q)))
+    (dosequence (i x (list-string (@ #'code-char (queue-list q))))
       (fastloader-byte q (char-code i)))))

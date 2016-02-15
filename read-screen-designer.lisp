@@ -3,8 +3,8 @@
        (? (eq #\$ (peek-char s))
           (progn
             (read-char s)
-            (read-hex s))
-          (read-number s))]
+            (code-char (read-hex s)))
+          (code-char (read-number s)))]
      (split "," (subseq i 7) :test #'string==)))
 
 (defun read-bytes (i)
