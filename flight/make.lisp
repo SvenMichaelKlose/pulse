@@ -16,13 +16,13 @@
   2000)
 
 (defun make-radio-tap (to in-wav bin)
-  (| (file-exists? to)
+  (| nil ;(file-exists? to)
      (with-io in-bin bin
               out to
        (radio2tap out in-wav in-bin))))
 
 (defun make-radio-wav (tv)
-  (unless (file-exists? "obj/radio0.tap")
+  (unless nil ;(file-exists? "obj/radio0.tap")
     (format t "Making radio…~%")
     (nipkow-make-filtered-wav "radio" "3" "-32" tv (radio-rate tv))
     (nipkow-make-conversion "radio" tv (radio-rate tv))
