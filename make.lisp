@@ -1,6 +1,6 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:pal-tape)); :tape-wav))
+(defconstant +versions+ '(:pal-tape :tape-wav))
 ;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic :tape-wav))
 (defvar *tape-wav-sine?* t) ; Much better audio but slow to build.
 
@@ -78,6 +78,7 @@
              (fetch-file "obj/radio0.tap")
              (fastloader-block (fetch-file (+ "obj/splash.crunched." tv ".prg")))
              (fastloader-block (glued-game-and-splash-gfx *current-game*))
+             (fetch-file (+ "obj/splash-audio." tv ".bin"))
              (fetch-file (+ "obj/splash-audio." tv ".bin")))))
     (make-zip-archive (+ out-name ".zip") out-name)))
 
@@ -128,7 +129,7 @@
       (nipkow-convert "theme-splash" "3" "-60" *tv* *nipkow-pulse-rate*)
       (with-io i (+ "obj/theme-splash.downsampled." tv ".wav")
                o (+ "obj/splash-audio." tv ".bin")
-        (wav2pwm o i :pause-before 0 :skip-first #x540))
+        (wav2pwm o i :pause-before 0 :skip-first #x5c0))
       (make-tap)
       (make-tapwav tv))))
 
