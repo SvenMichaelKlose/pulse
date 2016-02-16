@@ -1,15 +1,33 @@
+@page { margin: 0; }
+
+html {
+    max-width: 21cm;
+}
+
 body {
     text-align: center;
+    margin-top: 2.3cm;
+    margin-left: 1.5cm;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.container {
 }
 
 .label {
     float: left;
-    width: 9cm;
-    max-width: 9cm;
-    min-width: 9cm;
-    height: 4cm;
-    min-height: 4cm;
-    border: 1px solid black;
+    width: 8.9cm;
+    max-width: 8.9cm;
+    min-width: 8.9cm;
+    height: 4.2cm;
+    min-height: 4.2cm;
+}
+
+.right {
+    margin-left: 2mm;
 }
 
 .top, .middle, .bottom {
