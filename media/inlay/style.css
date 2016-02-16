@@ -65,3 +65,7 @@ h1, b {
 .denial {
     text-align: center;
 }
+
+.distribution * {
+    margin: 0;
+}
