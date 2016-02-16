@@ -1,6 +1,6 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:pal-tape :ntsc-tape)) ; :tape-wav))
+(defconstant +versions+ '(:pal-tape :tape-wav))
 ;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic :tape-wav))
 (defvar *tape-wav-sine?* t) ; Much better audio but slow to build.
 
@@ -70,12 +70,12 @@
     (with-output-file o out-name
       (write-tap o
           (+ (make-primary-loader-tap tv)
-             (fastloader-block (fetch-file (+ "obj/eyes." tv ".prg")) :gap #x10000)
+             (fastloader-block (fetch-file (+ "obj/eyes." tv ".prg")) :gap #x80000)
              (fastloader-block (fetch-file (+ "obj/3k.crunched." tv ".prg")) :gap #xc0000)
              (fastloader-block (fetch-file (+ "obj/message." tv ".prg")) :gap #x60000)
-             (fastloader-block (fetch-file (+ "obj/sun." tv ".prg")) :gap #x10000)
-             (fastloader-block (fetch-file (+ "obj/8k.crunched." tv ".prg")) :gap #x10000)
-             (fastloader-block (fetch-file (+ "obj/flight.crunched." tv ".prg")) :gap #x40000)
+             (fastloader-block (fetch-file (+ "obj/sun." tv ".prg")) :gap #x80000)
+             (fastloader-block (fetch-file (+ "obj/8k.crunched." tv ".prg")) :gap #x40000)
+             (fastloader-block (fetch-file (+ "obj/flight.crunched." tv ".prg")) :gap #x80000)
              (fetch-file "obj/radio0.tap")
              (fastloader-block (fetch-file (+ "obj/splash.crunched." tv ".prg")) :gap #x10000)
              (fastloader-block (glued-game-and-splash-gfx *current-game*) :gap #x80000)
