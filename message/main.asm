@@ -129,16 +129,6 @@ next_part:
     jmp @*sun-start*
 
 init_8k:
-    ; Set patch vector called by game.
-    lda model
-    lsr
-    beq +n
-;    jsr $2002
-n:
-;    ldy #<loader_cfg_sun
-;    lda #>loader_cfg_sun
-;    jsr tape_loader_start
-
     ; Stop tape motor.
     lda $911c
     ora #2
