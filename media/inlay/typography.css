@@ -62,35 +62,3 @@ h1 {
 	padding: 0em;
 	margin: 0em;
 }
-
-input,
-.formlabel {
-	display: block;
-}
-
-form .formlabel,
-form .inputtext,
-form .textarea {
-	margin: 0px;
-}
-
-form .formlabel {
-	font-weight: bold;
-}
-
-form .textarea {
-	display: block;
-}
-
-.form-select option {
-    margin-top: 0em;
-    margin-bottom: 0em;
-}
-
-abbr {
-    letter-spacing: 0.1em;
-}
-
-.kerning {
-    letter-spacing: -0.05em;
-}

@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 .container {
     height: 4in;
     min-height: 4in;
@@ -16,43 +20,49 @@ h1 {
 }
 
 .tail {
-    width: 1.25cm;
-    max-width: 1.25cm;
-    min-width: 1.25cm;
+    width: 2.4cm;
+    max-width: 2.4cm;
+    min-width: 2.4cm;
 }
 
 .spine {
-    width: 0.6cm;
-    max-width: 0.6cm;
-    min-width: 0.6cm;
+    width: 1.5cm;
+    max-width: 1.5cm;
+    min-width: 1.5cm;
 }
 
 .front {
-    width: 5.4cm;
-    max-width: 5.4cm;
-    min-width: 5.4cm;
+    width: 2.5625in;
+    max-width: 2.5625in;
+    min-width: 2.5625in;
 }
 
 .page1 {
-    width: 5.39cm;
-    max-width: 5.39cm;
-    min-width: 5.39cm;
+    width: 2.5in;
+    max-width: 2.5in;
+    min-width: 2.5in;
 }
 
 .page2 {
-    width: 5.38cm;
-    max-width: 5.38cm;
-    min-width: 5.38cm;
+    width: 2.4375in;
+    max-width: 2.4375in;
+    min-width: 2.4375in;
 }
 
 .page3 {
-    width: 4.10cm;
-    max-width: 4.10cm;
-    min-width: 4.10cm;
+    width: 2.375in;
+    max-width: 2.375in;
+    min-width: 2.375in;
 }
 
 .page4 {
-    width: 5.36cm;
-    max-width: 5.36cm;
-    min-width: 5.36cm;
+    width: 2.3125in;
+    max-width: 2.3125in;
+    min-width: 2.3125in;
+}
+
+.page5 {
+    width: 2.25in;
+    max-width: 2.25in;
+    min-width: 2.25in;
 }
