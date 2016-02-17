@@ -17,30 +17,31 @@ h1 {
     position: absolute;
     width: 2in;
     top: -0.05in;
-    left: 1.48in;
+    left: 1.53in;
 }
 
 .vic20 {
     position: absolute;
     width: 1in;
     top: 3.45in;
-    left: 1.525in;
+    left: 1.575in;
 }
 
 .vic20small {
     position: absolute;
     width: .5in;
     top: 0;
-    left: .925in;
+    left: .995in;
 }
 
 .eyes_spine {
     position: absolute;
     width: .5in;
     top: 3.42in;
-    left: .925in;
+    left: .995in;
 }
 
+.tail,
 .spine {
     background-color: black;
     background-image: url("vertical_logo.png");
@@ -68,4 +69,12 @@ h1, b {
 
 .distribution * {
     margin: 0;
+}
+
+.storyend {
+    margin-bottom: .3in;
+}
+
+hr {
+    width: 33.33%;
 }
