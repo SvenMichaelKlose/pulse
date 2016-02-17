@@ -1,10 +1,23 @@
 @page { margin: 0; }
 
 html {
+/*
     max-width: 21cm;
+    max-height: 29,7cm;
+*/
+}
+
+.smeg {
+    float: left;
+    min-width: 21cm;
+    min-height: 2.4cm;
+    border: 1px solid green;
 }
 
 body {
+/*
+    background: black;
+*/
     text-align: center;
     margin-top: 2.3cm;
     margin-left: 1.5cm;
@@ -22,8 +35,8 @@ body {
     width: 8.9cm;
     max-width: 8.9cm;
     min-width: 8.9cm;
-    height: 4.2cm;
-    min-height: 4.2cm;
+    height: 4.1cm;
+    min-height: 4.1cm;
 }
 
 .right {
@@ -39,6 +52,13 @@ body {
     min-height: 1.5cm;
 }
 
+.top {
+    background-image: url("logo.png");
+    background-size: 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .middle {
     margin-left: 0.25cm;
     margin-right: 0.25cm;
@@ -47,6 +67,9 @@ body {
 .bottom {
     height: 1cm;
     min-height: 1cm;
+/*
+    color: white;
+*/
 }
 
 h1 {
