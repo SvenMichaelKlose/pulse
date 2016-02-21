@@ -1,4 +1,4 @@
-chars_per_circle = 100
+initial_outer_radius = @(* (? (eq *tv* :pal) 2.3 2.4) screen_columns)
 
 mercury_countdown: @(-- (smaller-screen-axis))
 mercury_x: @(-- screen_columns)
@@ -32,10 +32,12 @@ l:  lda vic_config,x
 
     @(asm (fetch-file "shared/audio-boost.inc.asm"))
 
-    ldx #chars_per_circle
-    stx countdown
-    lda #@(* (? (eq *tv* :pal) 2.3 2.4) screen_columns)
+    lda #initial_outer_radius
     sta outer_radius
+loop:
+    lda outer_radius
+    asl
+    sta countdown
 l:  lda outer_radius
     sta radius
     lda #@(half screen_columns)
@@ -60,8 +62,6 @@ l:  lda outer_radius
     dec countdown
     bne -l
 
-    ldx #chars_per_circle
-    stx countdown
     ldx mercury_countdown
     beq +n
 
@@ -86,12 +86,12 @@ l:  lda outer_radius
     sta (scr),y
 
     dec mercury_countdown
-    jmp -l
+    jmp -loop
 
 n:  dec outer_radius
     lda outer_radius
     cmp #3
-    bne -l
+    bne -loop
 
 n:  ldx #4
 l:  lda $ede4,x
