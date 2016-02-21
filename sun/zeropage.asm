@@ -36,6 +36,7 @@ tmp2:       0
 tmpx:       0
 tmpy:       0
 countdown:  0
+outer_radius: 0
 
 cxpos:      0
 cypos:      0

@@ -12,6 +12,11 @@
          (- ! (integer (/ (- s 1024) cols)))
          !))))
 
+(defun smaller-screen-axis ()
+  (? (< (get-label 'screen_rows) (get-label 'screen_columns))
+     (get-label 'screen_rows)
+     (get-label 'screen_columns)))
+
 (defun large-sine ()
   (let steps 256
     (with-queue q

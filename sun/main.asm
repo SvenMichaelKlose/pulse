@@ -1,6 +1,6 @@
 chars_per_circle = 100
 
-mercury_countdown: screen_rows
+mercury_countdown: @(-- (smaller-screen-axis))
 mercury_x: @(-- screen_columns)
 mercury_y: 0
 
@@ -35,7 +35,8 @@ l:  lda vic_config,x
     ldx #chars_per_circle
     stx countdown
     lda #@(* (? (eq *tv* :pal) 2.3 2.4) screen_columns)
-l:  pha
+    sta outer_radius
+l:  lda outer_radius
     sta radius
     lda #@(half screen_columns)
     sta cxpos
@@ -56,7 +57,6 @@ l:  pha
     lda #2
     sta curchar
     jsr draw_random_point_on_circle
-    pla
     dec countdown
     bne -l
 
@@ -66,8 +66,6 @@ l:  pha
     beq +n
 
     ; Mercury fly–by.
-    pha
-
     lda mercury_x
     sta scrx
     lda mercury_y
@@ -88,11 +86,10 @@ l:  pha
     sta (scr),y
 
     dec mercury_countdown
-    pla
     jmp -l
 
-n:  sec
-    sbc #1
+n:  dec outer_radius
+    lda outer_radius
     cmp #3
     bne -l
 
