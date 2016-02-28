@@ -15,8 +15,9 @@ html {
 }
 
 body {
-/*
     background: black;
+    color: white;
+/*
 */
     text-align: center;
     margin-top: 2.3cm;
@@ -35,12 +36,12 @@ body {
     width: 8.9cm;
     max-width: 8.9cm;
     min-width: 8.9cm;
-    height: 4.1cm;
+    height: 4.183333333cm;
     min-height: 4.1cm;
 }
 
 .right {
-    margin-left: 2mm;
+    margin-left: 3mm;
 }
 
 .top, .middle, .bottom {
@@ -65,6 +66,7 @@ body {
 }
 
 .bottom {
+    margin-top: 1.3em;
     height: 1cm;
     min-height: 1cm;
 /*
