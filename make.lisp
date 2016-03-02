@@ -1,8 +1,8 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:pal-tape :tape-wav))
-;(defconstant +versions+ '(:free :free+8k :pal-tape :ntsc-tape :shadowvic :tape-wav))
-(defvar *tape-wav-sine?* t) ; Much better audio but slow to build.
+;(defconstant +versions+ '(:free :free+8k :shadowvic))
+;(defconstant +versions+ '(:pal-tape :tape-wav))
+(defconstant +versions+ '(:ntsc-tape :tape-wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -100,7 +100,7 @@
     (alet (+ "compiled/pulse." tv)
       (with-io i (+ ! ".tap")
                o (+ ! ".wav")
-        (tap2wav i o *tape-wav-rate* (cpu-cycles *tv*) :sine? *tape-wav-sine?*)))
+        (tap2wav i o *tape-wav-rate* (cpu-cycles *tv*))))
     (make-zip-archive (+ "compiled/pulse." tv ".wav.zip")
                       (+ "compiled/pulse." tv ".wav"))))
 
