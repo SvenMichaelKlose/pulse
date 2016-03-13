@@ -4,11 +4,6 @@ start_game:
     lda #46         ; 23 rows
     sta $9003
 
-    ; Stop tape motor.
-    lda $911c
-    ora #2
-    sta $911c
-
     ldy #4
 p:  ldx #0
     stx $9003
