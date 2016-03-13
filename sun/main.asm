@@ -37,7 +37,11 @@ l:  lda vic_config,x
 loop:
     lda outer_radius
     asl
-    sta countdown
+    ldx mercury_countdown
+    beq +n
+    lsr
+    lsr
+n:  sta countdown
 l:  lda outer_radius
     sta radius
     lda #@(half screen_columns)
