@@ -5,7 +5,6 @@ random:
     asl
     adc #0
     eor vicreg_rasterhi
-    eor #1
     sta last_random_value
     rts
 end block
