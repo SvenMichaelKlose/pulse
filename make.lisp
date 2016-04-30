@@ -1,8 +1,6 @@
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:free :free+8k :free+16k :shadowvic))
-;(defconstant +versions+ '(:pal-tape :tape-wav))
-;(defconstant +versions+ '(:ntsc-tape :tape-wav))
+(defconstant +versions+ '(:free :free+8k :free+16k :shadowvic :pal-tape :ntsc-tape :tape-wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -143,27 +141,37 @@
   (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "12" "-64")
   (make-ram-audio2 "intermediate2" "media/intermediate/audio2.wav" "12" "-64"))
 
-(awhen (make-version? :free+8k)
-  (with-temporaries (*tv*        :pal
-                     *model*     :vic-20+xk
+(defun make-static+8k ()
+  (with-temporaries (*model*     :vic-20+xk
                      *free+8k?*  t)
-    (make-game ! "obj/game.8k.prg" "obj/game.8k.vice.txt")
+    (make-game :free+8k "obj/game.8k.prg" "obj/game.8k.vice.txt")
     (exomize (+ "obj/game.8k.prg")
              (+ "obj/game.8k.crunched.prg")
              "1002" "20")
     (make-8k "free+8k" (get-labels))
     (make-free+8k)))
 
-(awhen (make-version? :free+16k)
-  (with-temporaries (*tv*        :pal
-                     *model*     :vic-20+xk
+(defun make-static+16k ()
+  (with-temporaries (*model*      :vic-20+xk
                      *free+16k?*  t)
-    (make-game ! "obj/game.16k.prg" "obj/game.16k.vice.txt")
+    (make-game :free+16k "obj/game.16k.prg" "obj/game.16k.vice.txt")
     (exomize (+ "obj/game.16k.prg")
              (+ "obj/game.16k.crunched.prg")
              "1002" "20")
     (make-16k "free+16k" (get-labels))
     (make-free+16k)))
+
+(when (make-version? :free+8k)
+  (with-temporary *tv* :pal
+    (make-static+8k))
+  (with-temporary *tv* :ntsc
+    (make-static+8k)))
+
+(when (make-version? :free+16k)
+  (with-temporary *tv* :pal
+    (make-static+16k))
+  (with-temporary *tv* :ntsc
+    (make-static+16k)))
 
 (when (make-version? :pal-tape :ntsc-tape)
   (make-model-detection)

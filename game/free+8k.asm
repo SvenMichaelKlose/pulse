@@ -99,7 +99,7 @@ tramp_end:
 
 game_size = @(length (fetch-file "obj/game.8k.crunched.prg"))
 
-patch_size = @(length (fetch-file "obj/free+8k.crunched.pal.prg"))
+patch_size = @(length (fetch-file (+ "obj/free+8k.crunched." (downcase (symbol-name *tv*)) ".prg")))
 loaded_patch_end = @(+ loaded_patch (-- patch_size))
 patch_end = @(+ #x2000 (-- patch_size))
 
@@ -112,7 +112,7 @@ cinfo_patch_end:
 cinfo_end:
 
 if @*free+16k?*
-patch_size2 = @(length (fetch-file "obj/free+16k.crunched.pal.prg"))
+patch_size2 = @(length (fetch-file (+ "obj/free+16k.crunched." (downcase (symbol-name *tv*)) ".prg")))
 loaded_patch_end2 = @(+ loaded_patch2 (-- patch_size2))
 patch_end2 = @(+ #x4000 (-- patch_size2))
 
@@ -133,9 +133,9 @@ loaded_game:
     @(fetch-file "obj/game.8k.crunched.prg")
 
 loaded_patch:
-    @(fetch-file "obj/free+8k.crunched.pal.prg")
+    @(fetch-file (+ "obj/free+8k.crunched." (downcase (symbol-name *tv*)) ".prg"))
 
 if @*free+16k?*
 loaded_patch2:
-    @(fetch-file "obj/free+16k.crunched.pal.prg")
+    @(fetch-file (+ "obj/free+16k.crunched." (downcase (symbol-name *tv*)) ".prg"))
 end

@@ -80,17 +80,19 @@
   version)
 
 (defun make-free+8k ()
-  (make "compiled/pulse.8k.prg"
-        '("bender/vic-20/vic.asm"
-          "primary-loader/models.asm"
-          "bender/vic-20/basic-loader.asm"
-          "game/free+8k.asm")
-        "compiled/pulse.8k.prg.vice.txt"))
+  (alet (downcase (symbol-name *tv*))
+    (make (+ "compiled/pulse.8k." ! ".prg")
+          '("bender/vic-20/vic.asm"
+            "primary-loader/models.asm"
+            "bender/vic-20/basic-loader.asm"
+            "game/free+8k.asm")
+          (+ "compiled/pulse.8k." ! ".prg.vice.txt"))))
 
 (defun make-free+16k ()
-  (make "compiled/pulse.16k.prg"
-        '("bender/vic-20/vic.asm"
-          "primary-loader/models.asm"
-          "bender/vic-20/basic-loader.asm"
-          "game/free+8k.asm")
-        "compiled/pulse.16k.prg.vice.txt"))
+  (alet (downcase (symbol-name *tv*))
+    (make (+ "compiled/pulse.16k." ! ".prg")
+          '("bender/vic-20/vic.asm"
+            "primary-loader/models.asm"
+            "bender/vic-20/basic-loader.asm"
+            "game/free+8k.asm")
+          (+ "compiled/pulse.16k." ! ".prg.vice.txt"))))
