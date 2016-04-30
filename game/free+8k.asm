@@ -15,6 +15,11 @@ l:  lsr $9004
     sta $9002
     sta $900f
 
+if @*free+16k?*
+    ldy #@(- cinfo_patch_end2 cinfo 1)
+    jsr copy_backwards
+end
+
     ldy #@(- cinfo_patch_end cinfo 1)
     jsr copy_backwards
 
@@ -61,9 +66,12 @@ loaded_tramp:
 tramp:
     ldy #@(- cinfo_game_end cinfo 1)
     jsr copy_forwards
-    lda #vic_8k
+    lda #@(+ vic_8k vic_16k)
     sta model
     jsr $2002
+if @*free+16k?*
+    jsr $4002
+end
     lda #@(+ 128 22)
     sta $9002
     jmp $1002
@@ -90,6 +98,7 @@ tramp_end:
     org @(+ loaded_tramp (- tramp_end tramp))
 
 game_size = @(length (fetch-file "obj/game.8k.crunched.prg"))
+
 patch_size = @(length (fetch-file "obj/free+8k.crunched.pal.prg"))
 loaded_patch_end = @(+ loaded_patch (-- patch_size))
 patch_end = @(+ #x2000 (-- patch_size))
@@ -102,6 +111,18 @@ cinfo_patch:
 cinfo_patch_end:
 cinfo_end:
 
+if @*free+16k?*
+patch_size2 = @(length (fetch-file "obj/free+16k.crunched.pal.prg"))
+loaded_patch_end2 = @(+ loaded_patch2 (-- patch_size2))
+patch_end2 = @(+ #x4000 (-- patch_size2))
+
+cinfo_patch2:
+    <loaded_patch_end2 >loaded_patch_end2
+    <patch_end2 >patch_end2
+    <patch_size2 @(++ >patch_size2)
+cinfo_patch_end2:
+end
+
 cinfo_game:
     <loaded_game >loaded_game
     $00 $10
@@ -113,3 +134,8 @@ loaded_game:
 
 loaded_patch:
     @(fetch-file "obj/free+8k.crunched.pal.prg")
+
+if @*free+16k?*
+loaded_patch2:
+    @(fetch-file "obj/free+16k.crunched.pal.prg")
+end

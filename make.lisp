@@ -1,8 +1,8 @@
 (= *model* :vic-20)
 
-;(defconstant +versions+ '(:free :free+8k :shadowvic))
+(defconstant +versions+ '(:free :free+8k :free+16k :shadowvic))
 ;(defconstant +versions+ '(:pal-tape :tape-wav))
-(defconstant +versions+ '(:ntsc-tape :tape-wav))
+;(defconstant +versions+ '(:ntsc-tape :tape-wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -10,6 +10,7 @@
 (defvar *virtual?* nil)
 (defvar *tape-release?* nil)
 (defvar *free+8k?* nil)
+(defvar *free+16k?* nil)
 
 (defvar *video?* nil) ; Nipkow player experimental foo.
 
@@ -138,7 +139,7 @@
   (make-game :prg "compiled/pulse.prg" "obj/pulse.vice.txt"))
 
 (when (make-version? :pal-tape :ntsc-tape :free+8k)
-  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-56")
+  (make-ram-audio "get_ready" "media/intermediate/get_ready.wav" "3" "-64")
   (make-ram-audio2 "intermediate" "media/intermediate/audio.wav" "12" "-64")
   (make-ram-audio2 "intermediate2" "media/intermediate/audio2.wav" "12" "-64"))
 
@@ -153,10 +154,21 @@
     (make-8k "free+8k" (get-labels))
     (make-free+8k)))
 
+(awhen (make-version? :free+16k)
+  (with-temporaries (*tv*        :pal
+                     *model*     :vic-20+xk
+                     *free+16k?*  t)
+    (make-game ! "obj/game.16k.prg" "obj/game.16k.vice.txt")
+    (exomize (+ "obj/game.16k.prg")
+             (+ "obj/game.16k.crunched.prg")
+             "1002" "20")
+    (make-16k "free+16k" (get-labels))
+    (make-free+16k)))
+
 (when (make-version? :pal-tape :ntsc-tape)
   (make-model-detection)
   (nipkow-make-wav "theme-splash" "media/splash/theme-boray.mp3")
-  (nipkow-make-wav "radio" "media/radio.ogg"))
+  (nipkow-make-wav "radio" "media/radiodenial.wav"))
 
 (when (make-version? :pal-tape)
   (set-fastloader-rate :pal *fastloader-rate*)

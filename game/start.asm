@@ -1,5 +1,5 @@
 game_over:
-if @(| *tape-release?* *free+8k?*)
+if @(| *tape-release?* *free+8k?* *free+16k?*)
 patch_caller:
     ; Call patch if this VIC model is expanded.
     lda model

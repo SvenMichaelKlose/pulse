@@ -21,7 +21,7 @@
 
     ,@(?
         (eq version :virtual)  '("no-loader.asm")
-        (in? version :tap :free+8k) '("tape-loader.asm")
+        (in? version :tap :free+8k :free+16k) '("tape-loader.asm")
         '("../bender/vic-20/basic-loader.asm"))
 
     ,@(?
@@ -50,6 +50,8 @@
     "math.asm"
     "bullet.asm"
     "bits.asm"
+    ,@(when (in? version :virtual)
+        '("virtual-repositioning.asm"))
     "tiles.asm"
     "sinetab.asm"
     "sprites.asm"
@@ -84,3 +86,11 @@
           "bender/vic-20/basic-loader.asm"
           "game/free+8k.asm")
         "compiled/pulse.8k.prg.vice.txt"))
+
+(defun make-free+16k ()
+  (make "compiled/pulse.16k.prg"
+        '("bender/vic-20/vic.asm"
+          "primary-loader/models.asm"
+          "bender/vic-20/basic-loader.asm"
+          "game/free+8k.asm")
+        "compiled/pulse.16k.prg.vice.txt"))
