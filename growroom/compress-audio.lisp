@@ -40,7 +40,7 @@
 ;          (print-hexbyte (aref s sym) nil))
   (with (h  (-- (+ lo (integer (/ (* range (aref s (++ sym))) 256))))
          l  (+ lo (integer (/ (* range (aref s sym)) 256))))
-    (format dump "~A~%" l)
+;    (format dump "~A~%" l)
     (update-audio-model a s (queue-pop win) -1)
     (update-audio-model a s sym 1)
     (enqueue win sym)
@@ -76,7 +76,7 @@
                   (++! pending-bits)
                   (= hi (bit-and (bit-or (<< hi 1) hap) ma))
                   (= lo (bit-and (<< lo 1) ham))))
-        (with-output-file dump "comp.txt"
+(let dump nil ;(with-output-file dump "comp.txt"
 
     (awhile (read-byte i)
             nil
@@ -178,10 +178,10 @@
               out "obj/hiscore.decomp.bin")
   (? (equal (fetch-file "obj/hiscore.4bit.bin")
             (fetch-file "obj/hiscore.decomp.bin"))
-     (format t "Decompression has been successful.~%")
+     (format t "Files match. (De)compression has been successful.~%")
      (error "Files don't match.")))
 
-(compress-audio "obj/theme-hiscore.downsampled.ram.wav"
+(compress-audio "obj/intermediate.ram.filtered.wav"
                 "obj/hiscore-theme.bin")
 ;(compress-audio "obj/theme-splash.downsampled.pal.wav"
 ;                "obj/hiscore-theme.bin")
