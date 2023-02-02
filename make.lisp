@@ -1,6 +1,7 @@
+(cl:proclaim '(optimize (speed 3) (space 0) (safety 0) (debug 0)))
 (= *model* :vic-20)
 
-(defconstant +versions+ '(:free :free+8k :free+16k :shadowvic :pal-tape :ntsc-tape :tape-wav))
+(defconstant +versions+ '(:free :free+8k :free+16k :shadowvic :pal-tape :ntsc-tape)); :tape-wav))
 
 (defun make-version? (&rest x)
   (some [member _ +versions+] x))
@@ -20,6 +21,10 @@
 
 (defvar *fastloader-rate* 3000)
 (defvar *tape-wav-rate* 44100)
+
+(defvar *nipkow-inversion?* t)
+
+(var *exomizer* "/usr/local/bin/exomizer-2.0.10")
 
 (load "bender/vic-20/vic.lisp")
 (load "flight/tap.lisp")
@@ -112,7 +117,10 @@
                  (+ "obj/game." tv ".prg")
                  (+ "obj/game." tv ".vice.txt"))
       (format t "Compressing game with exomizer...~%")
-      (exomize (+ "obj/game." tv ".prg") (+ "obj/game.crunched." tv ".prg") "1002" "20")
+      (exomize (+ "obj/game." tv ".prg")
+               (+ "obj/game.crunched." tv ".prg")
+               "1002" "20"
+               :path *exomizer*)
       (alet (get-labels)
         (when (== *splash-start* #x1234)
           (get-loader-address !))
@@ -147,7 +155,8 @@
     (make-game :free+8k "obj/game.8k.prg" "obj/game.8k.vice.txt")
     (exomize (+ "obj/game.8k.prg")
              (+ "obj/game.8k.crunched.prg")
-             "1002" "20")
+             "1002" "20"
+             :path *exomizer*)
     (make-8k "free+8k" (get-labels))
     (make-free+8k)))
 
@@ -157,7 +166,8 @@
     (make-game :free+16k "obj/game.16k.prg" "obj/game.16k.vice.txt")
     (exomize (+ "obj/game.16k.prg")
              (+ "obj/game.16k.crunched.prg")
-             "1002" "20")
+             "1002" "20"
+             :path *exomizer*)
     (make-16k "free+16k" (get-labels))
     (make-free+16k)))
 

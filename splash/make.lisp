@@ -32,4 +32,5 @@
           (+ "obj/splash." ! ".prg.vice.txt"))
     (exomize (+ "obj/splash." ! ".prg")
              (+ "obj/splash.crunched." ! ".prg")
-             "1002" "20")))
+             "1002" "20"
+             :path *exomizer*)))
