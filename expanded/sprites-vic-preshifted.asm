@@ -126,6 +126,7 @@ draw_preshifted_sprite:
     ora shift_offsets,y
     sta sprite_data_top
 
+    ; Pre-calculate some.
     lda sprites_y,x
     and #7
     sta sprite_shift_y

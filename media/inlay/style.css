@@ -1,6 +1,10 @@
-@page { margin: 0; }
+@page {
+    margin: 0;
+}
 
 body {
+    margin-top: 4mm;
+    margin-left: 4mm;
 }
 
 h1 {
@@ -16,29 +20,29 @@ h1 {
 .logo {
     position: absolute;
     width: 2in;
-    top: -0.05in;
-    left: 1.53in;
+    top: 0.1in; /* -0.05in; */
+    left: 1.68748in; /* 1.53in; */
 }
 
 .vic20 {
     position: absolute;
     width: 1in;
-    top: 3.45in;
-    left: 1.575in;
+    top: 3.60748in; /* 3.45in; */
+    left: 1,73248in; /* 1.575in; */
 }
 
 .vic20small {
     position: absolute;
     width: .5in;
-    top: 0;
-    left: .995in;
+    top: 0,15748in; /* 0; */
+    left: 1.15248in; /* .995in; */
 }
 
 .eyes_spine {
     position: absolute;
     width: .5in;
-    top: 3.42in;
-    left: .995in;
+    top: 3.57748in; /* 3.42in; */
+    left: 1.15248in; /* .995in; */
 }
 
 .tail,

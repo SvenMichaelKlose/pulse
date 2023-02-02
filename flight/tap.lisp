@@ -50,7 +50,7 @@
     (adotimes ((radio-data-size))
       (when (peek-char in-bin)
             nil
-        (let x (read-char in-bin)
+        (let x (read-byte in-bin)
           (dotimes (j 8)
             (let v (? (zero? (bit-and x 1))
                       *pulse-short*

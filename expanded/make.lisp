@@ -67,7 +67,8 @@
             (+ "obj/" name "." ! ".prg.vice.txt"))
       (exomize (+ "obj/" name "." ! ".prg")
                (+ "obj/" name ".crunched." ! ".prg")
-               "4002" "52"))))
+               "4002" "52"
+               :path *exomizer*))))
 
 (defun make-8k (name imported-labels)
   (with-temporaries (*imported-labels* imported-labels
@@ -86,7 +87,8 @@
             (+ "obj/" name "." ! ".prg.vice.txt"))
       (exomize (+ "obj/" name "." ! ".prg")
                (+ "obj/" name ".crunched." ! ".prg")
-               "2002" "52"))))
+               "2002" "52"
+               :path *exomizer*))))
 
 (defun make-3k (imported-labels)
   (with-temporary *imported-labels* imported-labels
@@ -106,4 +108,5 @@
             (+ "obj/3k." ! ".prg.vice.txt"))
       (exomize (+ "obj/3k." ! ".prg")
                (+ "obj/3k.crunched." ! ".prg")
-               "1002" "20"))))
+               "1002" "20"
+               :path *exomizer*))))

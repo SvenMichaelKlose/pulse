@@ -51,5 +51,3 @@ draw_random_point_on_circle:
     jsr draw_pixel
 
     rts
-
-cscale_venus:   @(maptimes [integer (* 0.4 _)] (* 2.4 screen_columns))
