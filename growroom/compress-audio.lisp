@@ -4,7 +4,7 @@
 (cl:proclaim '(cl:optimize (cl:speed 3) (cl:space 0) (cl:safety 0) (cl:debug 0)))
 
 (defconstant +symbols+ 16)
-(defconstant +window-size+ 256)
+(defconstant +window-size+ 16)
 (defconstant +precision-bits+ 16)
 
 (defun wav-to-4bit (from to)
@@ -67,31 +67,32 @@
          out0 #'(()
                   (out-plus-pending 0)
                   (= hi (bit-and (bit-or (<< hi 1) 1) ma))
-                  (= lo (bit-and (<< lo 1) ma))))
+                  (= lo (bit-and (<< lo 1) ma)))
+         enc [(with (range (++ (- hi lo)))
+                (| (<= range top)
+                   (error "Range overflow ~A." range))
+                (with ((h l) (adapt-sample lo range a s win _))
+                  (= hi h
+                     lo l))
+                (loop
+                  (?
+                    (< hi ha)
+                      (out0)
+                    (>= lo ha)
+                      (progn
+                        (out-plus-pending 1)
+                        (= hi (bit-and (bit-or (<< hi 1) 1) ma))
+                        (= lo (bit-and (<< lo 1) ma)))
+                    (& (< hi uq)
+                       (>= lo lq))
+                      (progn
+                        (++! pending-bits)
+                        (= hi (bit-and (bit-or (<< hi 1) hap) ma))
+                        (= lo (bit-and (<< lo 1) ham)))
+                    (return))))])
     (awhile (read-byte i)
             nil
-      (with (range (++ (- hi lo)))
-        (| (<= range top)
-           (error "Range overflow ~A." range))
-        (with ((h l) (adapt-sample lo range a s win !))
-          (= hi h
-             lo l))
-        (loop
-          (?
-            (< hi ha)
-              (out0)
-            (>= lo ha)
-              (progn
-                (out-plus-pending 1)
-                (= hi (bit-and (bit-or (<< hi 1) 1) ma))
-                (= lo (bit-and (<< lo 1) ma)))
-            (& (< hi uq)
-               (>= lo lq))
-              (progn
-                (++! pending-bits)
-                (= hi (bit-and (bit-or (<< hi 1) hap) ma))
-                (= lo (bit-and (<< lo 1) ham)))
-            (return)))))
+      (enc !))
     (++! pending-bits)
     (? (< lo lq)
        (out-plus-pending 0)
