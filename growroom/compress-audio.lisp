@@ -1,11 +1,9 @@
-
-;(cl:proclaim '(cl:optimize (cl:speed 0) (cl:space 0) (cl:safety 3) (cl:debug 3)))
+;(cl:proclaim '(cl:optimize (cl:speed 1) (cl:space 0) (cl:safety 3) (cl:debug 3)))
 (cl:proclaim '(cl:optimize (cl:speed 3) (cl:space 0) (cl:safety 0) (cl:debug 0)))
 
 (defconstant +symbols+ 16)
-(defconstant +sample-bits+ 4)
-(defconstant +count-bits+ 8)
-(defconstant +window-bits+ 16);(+ 1 +sample-bits+ +count-bits+))
+(defconstant +window-size+ 240)
+(defconstant +precision-bits+ 16)
 
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
@@ -17,22 +15,25 @@
       (write-byte (bit-xor (>> ! 12) 8) o))))
 
 (defun init-audio-model ()
-  (values (list-array (maptimes [0 identity (integer (/ 256 +symbols+))] +symbols+))
-          (list-array (maptimes [* _ (integer (/ 256 +symbols+))] (++ +symbols+)))))
+  (values (list-array (maptimes [identity 0] +symbols+))
+          (list-array (maptimes [identity 0] (++ +symbols+)))))
 
 (defun update-audio-model (a s x v)
-  (unless (zero? (+ v (aref a x)))
-    (= (aref a x) (+ v (aref a x)))
-    (++! x)
-    (while (not (== x (++ +symbols+)))
-           nil
-      (= (aref s x) (+ v (aref s x)))
-      (++! x))))
+  (= (aref a x) (+ v (aref a x)))
+  (++! x)
+  (while (not (== x (++ +symbols+)))
+         nil
+    (= (aref s x) (+ v (aref s x)))
+    (++! x)))
 
-(defun make-window ()
+(defun make-window (a s)
+  (dotimes (i +symbols+)
+    (update-audio-model a s i 1))
   (aprog1 (make-queue)
-    (dotimes (i +symbols+)
-      (enqueue ! (mod i +symbols+)))))
+    (dotimes (i +window-size+)
+      (let sym (mod i +symbols+)
+        (update-audio-model a s sym 1)
+        (enqueue ! sym)))))
 
 (defun adapt-sample (lo range a s win sym)
   (with (total (aref s +symbols+)
@@ -54,7 +55,7 @@
          hi     ma
          lo     0
          (a s)  (init-audio-model)
-         win    (make-window)
+         win    (make-window a s)
          pending-bits 0
          out-plus-pending
               [(write-byte _ o)
@@ -112,7 +113,7 @@
          hi     ma
          lo     0
          (a s)  (init-audio-model)
-         win    (make-window)
+         win    (make-window a s)
          value   0)
     (adotimes num-bits
       (= value (+ (<< value 1) (read-byte i))))
@@ -155,8 +156,8 @@
 
 (defun compress-audio (in out)
   (wav-to-4bit in "obj/hiscore.4bit.bin")
-  (compress +window-bits+ "obj/hiscore.4bit.bin" out)
-  (uncompress +window-bits+ (length (fetch-file "obj/hiscore.4bit.bin"))
+  (compress +precision-bits+ "obj/hiscore.4bit.bin" out)
+  (uncompress +precision-bits+ (length (fetch-file "obj/hiscore.4bit.bin"))
               out "obj/hiscore.decomp.bin")
   (? (equal (fetch-file "obj/hiscore.4bit.bin")
             (fetch-file "obj/hiscore.decomp.bin"))
