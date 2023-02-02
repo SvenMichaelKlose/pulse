@@ -14,5 +14,4 @@
             (+ "obj/eyes." ! ".prg.vice.txt")))))
 ;      (exomize (+ "obj/eyes." ! ".prg")
 ;               (+ "obj/eyes.crunched." ! ".prg")
-;               "1002" "20"
-;               :path *exomizer*))))
+;               "1002" "20"))))

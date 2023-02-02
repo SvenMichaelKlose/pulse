@@ -26,7 +26,7 @@
     (format t "Making radio…~%")
     (nipkow-make-filtered-wav "radio" "3" "-32" tv (radio-rate tv))
     (nipkow-make-conversion "radio" tv (radio-rate tv))
-    (!= (downcase (symbol-name tv))
+    (alet (downcase (symbol-name tv))
       (with-input-file in-wav (+ "obj/radio.downsampled." ! ".wav")
         (make-radio-tap "obj/radio0.tap" in-wav (+ "obj/16k.crunched." ! ".prg"))))))
 
@@ -48,5 +48,4 @@
           (+ "obj/flight." ! ".prg.vice.txt"))
     (exomize (+ "obj/flight." ! ".prg")
              (+ "obj/flight.crunched." ! ".prg")
-             "1002" "20"
-             :path *exomizer*)))
+             "1002" "20")))

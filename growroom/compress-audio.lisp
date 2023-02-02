@@ -156,18 +156,20 @@
            o out
     (arith-decode num-bits num-bytes (make-bit-stream :in i) o)))
 
-(defun compress-file (in out)
-  (compress +precision-bits+ in out)
-  (uncompress +precision-bits+ (length (fetch-file in)) out "obj/compress.tmp")
-  (? (equal (fetch-file in)
-            (fetch-file "obj/compress.tmp"))
+(defun compress-audio (in out)
+  (wav-to-4bit in "obj/hiscore.4bit.bin")
+  (compress +precision-bits+ "obj/hiscore.4bit.bin" out)
+  (uncompress +precision-bits+ (length (fetch-file "obj/hiscore.4bit.bin"))
+              out "obj/hiscore.decomp.bin")
+  (? (equal (fetch-file "obj/hiscore.4bit.bin")
+            (fetch-file "obj/hiscore.decomp.bin"))
      (format t "Files match. (De)compression has been successful.~%")
      (error "Files don't match.")))
 
-;(compress-file "growroom/arukanoido"
-;               "obj/aru.comp")
-(wav-to-4bit "obj/theme-splash.downsampled.pal.wav" "obj/test-audio.4bit.bin")
-(compress-file "obj/test-audio.4bit.bin"
+;(compress-audio "growroom/arukanoido"
+;                "growroom/aru.comp")
+(compress-audio "obj/theme-splash.downsampled.pal.wav"
                 "obj/test-audio.ari.bin")
-
+;(compress-audio "obj/theme-splash.downsampled.pal.wav"
+;                "obj/hiscore-theme.bin")
 (quit)
