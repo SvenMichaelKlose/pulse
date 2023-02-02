@@ -31,12 +31,13 @@
 
 (defun make-window ()
   (aprog1 (make-queue)
-    (dotimes (i 240)
+    (dotimes (i +symbols+)
       (enqueue ! (mod i +symbols+)))))
 
 (defun adapt-sample (lo range a s win sym)
-  (with (h  (-- (+ lo (integer (/ (* range (aref s (++ sym))) 256))))
-         l  (+ lo (integer (/ (* range (aref s sym)) 256))))
+  (with (total (aref s +symbols+)
+         h     (-- (+ lo (integer (/ (* range (aref s (++ sym))) total))))
+         l     (+ lo (integer (/ (* range (aref s sym)) total))))
     (update-audio-model a s (queue-pop win) -1)
     (update-audio-model a s sym 1)
     (enqueue win sym)
