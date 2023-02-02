@@ -2,6 +2,7 @@
 ;(cl:proclaim '(cl:optimize (cl:speed 0) (cl:space 0) (cl:safety 3) (cl:debug 3)))
 (cl:proclaim '(cl:optimize (cl:speed 3) (cl:space 0) (cl:safety 0) (cl:debug 0)))
 
+(defconstant +symbols+ 16)
 (defconstant +sample-bits+ 4)
 (defconstant +count-bits+ 8)
 (defconstant +window-bits+ 16);(+ 1 +sample-bits+ +count-bits+))
@@ -16,14 +17,14 @@
       (write-byte (bit-xor (>> ! 12) 8) o))))
 
 (defun init-audio-model ()
-  (values (list-array (maptimes [identity 16] 16))
-          (list-array (maptimes [* _ 16] 17))))
+  (values (list-array (maptimes [0 identity (integer (/ 256 +symbols+))] +symbols+))
+          (list-array (maptimes [* _ (integer (/ 256 +symbols+))] (++ +symbols+)))))
 
 (defun update-audio-model (a s x v)
   (unless (zero? (+ v (aref a x)))
     (= (aref a x) (+ v (aref a x)))
     (++! x)
-    (while (not (== x 17))
+    (while (not (== x (++ +symbols+)))
            nil
       (= (aref s x) (+ v (aref s x)))
       (++! x))))
@@ -31,16 +32,11 @@
 (defun make-window ()
   (aprog1 (make-queue)
     (dotimes (i 240)
-      (enqueue ! (mod i 16)))))
+      (enqueue ! (mod i +symbols+)))))
 
-(defun adapt-sample (dump hi lo range a s win sym)
-;  (format dump "~A h: ~A, l: ~A~%"
-;          (+ lo (integer (/ (* range (aref s sym)) 256)))
-;          (print-hexbyte (aref s (++ sym)) nil)
-;          (print-hexbyte (aref s sym) nil))
+(defun adapt-sample (lo range a s win sym)
   (with (h  (-- (+ lo (integer (/ (* range (aref s (++ sym))) 256))))
          l  (+ lo (integer (/ (* range (aref s sym)) 256))))
-;    (format dump "~A~%" l)
     (update-audio-model a s (queue-pop win) -1)
     (update-audio-model a s sym 1)
     (enqueue win sym)
@@ -67,42 +63,36 @@
          out0 #'(()
                   (out-plus-pending 0)
                   (= hi (bit-and (bit-or (<< hi 1) 1) ma))
-                  (= lo (bit-and (<< lo 1) ma)))
-         out1 #'(()
-                  (out-plus-pending 1)
-                  (= hi (bit-and (bit-or (<< hi 1) 1) ma))
-                  (= lo (bit-and (<< lo 1) ma)))
-         outx #'(()
-                  (++! pending-bits)
-                  (= hi (bit-and (bit-or (<< hi 1) hap) ma))
-                  (= lo (bit-and (<< lo 1) ham))))
-(let dump nil ;(with-output-file dump "comp.txt"
-
+                  (= lo (bit-and (<< lo 1) ma))))
     (awhile (read-byte i)
             nil
       (with (range (++ (- hi lo)))
         (| (<= range top)
            (error "Range overflow ~A." range))
-;        (format dump "~A, hi: ~A, lo: ~A, range: ~A~%"
-;                (print-hexbyte ! nil)
-;                (print-hexdword hi nil)
-;                (print-hexdword lo nil)
-;                (print-hexdword range nil))
-        (with ((h l) (adapt-sample dump hi lo range a s win !))
+        (with ((h l) (adapt-sample lo range a s win !))
           (= hi h
              lo l))
         (loop
           (?
-            (< hi ha)       (out0)
-            (>= lo ha)      (out1)
+            (< hi ha)
+              (out0)
+            (>= lo ha)
+              (progn
+                (out-plus-pending 1)
+                (= hi (bit-and (bit-or (<< hi 1) 1) ma))
+                (= lo (bit-and (<< lo 1) ma)))
             (& (< hi uq)
-               (>= lo lq))  (outx)
+               (>= lo lq))
+              (progn
+                (++! pending-bits)
+                (= hi (bit-and (bit-or (<< hi 1) hap) ma))
+                (= lo (bit-and (<< lo 1) ham)))
             (return)))))
     (++! pending-bits)
     (? (< lo lq)
        (out-plus-pending 0)
        (out-plus-pending 1))
-    (adotimes 8 (out0)))))
+    (adotimes 8 (out0))))
 
 (defun compress (num-bits in out)
   (format t "Arithmetic encoding of '~A' to '~A'…~%" in out)
@@ -115,7 +105,6 @@
   (with (top    (<< 1 num-bits)
          ma     (-- top)
          ha     (half top)
-         hap    (++ ha)
          ham    (-- ha)
          uq     (* 3 (/ top 4))
          lq     (/ top 4)
@@ -124,7 +113,6 @@
          (a s)  (init-audio-model)
          win    (make-window)
          value   0)
-        (with-output-file dump "decomp.txt"
     (adotimes num-bits
       (= value (+ (<< value 1) (read-byte i))))
     (while (not (zero? (--! num-bytes)))
@@ -133,15 +121,8 @@
              diff   (++ (- value lo))
              cnt    (integer (/ (-- (* diff 256)) range))
              sym    (-- (position-if [< cnt _] s)))
-;        (format dump "~A, hi: ~A, lo: ~A, range: ~A, diff: ~A, cnt: ~A~%"
-;                (print-hexbyte sym nil)
-;                (print-hexdword hi nil)
-;                (print-hexdword lo nil)
-;                (print-hexdword range nil)
-;                (print-hexdword diff nil)
-;                (print-hexdword cnt nil))
         (write-byte sym o)
-        (with ((h l) (adapt-sample dump hi lo range a s win sym))
+        (with ((h l) (adapt-sample lo range a s win sym))
           (= hi h
              lo l))
         (loop
@@ -163,7 +144,7 @@
           (= lo (<< lo 1))
           (= hi (<< hi 1))
           (= hi (bit-or hi 1))
-          (= value (+ (<< value 1) (| (read-byte i) 0)))))))))
+          (= value (+ (<< value 1) (| (read-byte i) 0))))))))
 
 (defun uncompress (num-bits num-bytes in out)
   (format t "Arithmetic decoding of '~A' to '~A'…~%" in out)
@@ -181,8 +162,10 @@
      (format t "Files match. (De)compression has been successful.~%")
      (error "Files don't match.")))
 
-(compress-audio "obj/intermediate.ram.filtered.wav"
-                "obj/hiscore-theme.bin")
+;(compress-audio "growroom/arukanoido"
+;                "growroom/aru.comp")
+(compress-audio "obj/theme-splash.downsampled.pal.wav"
+                "obj/test-audio.ari.bin")
 ;(compress-audio "obj/theme-splash.downsampled.pal.wav"
 ;                "obj/hiscore-theme.bin")
 (quit)
