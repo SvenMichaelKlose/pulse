@@ -1,8 +1,10 @@
+; Based on https://marknelson.us/posts/2014/10/19/data-compression-with-arithmetic-coding.html
+
 ;(cl:proclaim '(cl:optimize (cl:speed 1) (cl:space 0) (cl:safety 3) (cl:debug 3)))
 (cl:proclaim '(cl:optimize (cl:speed 3) (cl:space 0) (cl:safety 0) (cl:debug 0)))
 
 (defconstant +symbols+ 16)
-(defconstant +window-size+ 240)
+(defconstant +window-size+ 256)
 (defconstant +precision-bits+ 16)
 
 (defun wav-to-4bit (from to)
@@ -121,7 +123,7 @@
            nil
       (with (range  (++ (- hi lo))
              diff   (++ (- value lo))
-             cnt    (integer (/ (-- (* diff 256)) range))
+             cnt    (integer (/ (-- (* diff (aref s +symbols+))) range))
              sym    (-- (position-if [< cnt _] s)))
         (write-byte sym o)
         (with ((h l) (adapt-sample lo range a s win sym))
