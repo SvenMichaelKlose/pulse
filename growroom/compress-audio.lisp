@@ -1,10 +1,11 @@
 ; Based on https://marknelson.us/posts/2014/10/19/data-compression-with-arithmetic-coding.html
 
-;(cl:proclaim '(cl:optimize (cl:speed 1) (cl:space 0) (cl:safety 3) (cl:debug 3)))
-(cl:proclaim '(cl:optimize (cl:speed 3) (cl:space 0) (cl:safety 0) (cl:debug 0)))
+(cl:proclaim '(cl:optimize (cl:speed 1) (cl:space 0) (cl:safety 3) (cl:debug 3)))
+;(cl:proclaim '(cl:optimize (cl:speed 3) (cl:space 0) (cl:safety 0) (cl:debug 0)))
 
-(defconstant +symbols+ 16)
-(defconstant +window-size+ 16)
+(defconstant +symbols+ 17)
+(defconstant *esc* 16)
+(defconstant +window-size+ 256)
 (defconstant +precision-bits+ 16)
 
 (defun wav-to-4bit (from to)
@@ -92,6 +93,8 @@
                     (return))))])
     (awhile (read-byte i)
             nil
+;      (unless (position ! (queue-list win))
+;        (enc *esc*))
       (enc !))
     (++! pending-bits)
     (? (< lo lq)
@@ -117,39 +120,42 @@
          lo     0
          (a s)  (init-audio-model)
          win    (make-window a s)
-         value   0)
+         value   0
+         dec    #'(()
+                    (with (range  (++ (- hi lo))
+                           diff   (++ (- value lo))
+                           cnt    (integer (/ (-- (* diff (aref s +symbols+))) range))
+                           sym    (-- (position-if [< cnt _] s))
+                           (h l)  (adapt-sample lo range a s win sym))
+                      (= hi h
+                         lo l)
+                      (loop
+                        (?
+                          (< hi ha)
+                              nil
+                          (>= lo ha)
+                            (progn
+                              (= value (bit-and value ham))
+                              (= lo (bit-and lo ham))
+                              (= hi (bit-and hi ham)))
+                          (& (>= lo lq)
+                             (< hi uq))
+                            (progn
+                              (= value (- value lq))
+                              (= lo (- lo lq))
+                              (= hi (- hi lq)))
+                          (return sym))
+                        (= lo (<< lo 1))
+                        (= hi (<< hi 1))
+                        (= hi (bit-or hi 1))
+                        (= value (+ (<< value 1) (| (read-byte i) 0))))
+                      sym)))
     (adotimes num-bits
       (= value (+ (<< value 1) (read-byte i))))
     (while (not (zero? (--! num-bytes)))
            nil
-      (with (range  (++ (- hi lo))
-             diff   (++ (- value lo))
-             cnt    (integer (/ (-- (* diff (aref s +symbols+))) range))
-             sym    (-- (position-if [< cnt _] s)))
-        (write-byte sym o)
-        (with ((h l) (adapt-sample lo range a s win sym))
-          (= hi h
-             lo l))
-        (loop
-          (?
-            (< hi ha)
-                nil
-            (>= lo ha)
-              (progn
-                (= value (bit-and value ham))
-                (= lo (bit-and lo ham))
-                (= hi (bit-and hi ham)))
-            (& (>= lo lq)
-               (< hi uq))
-              (progn
-                (= value (- value lq))
-                (= lo (- lo lq))
-                (= hi (- hi lq)))
-            (return))
-          (= lo (<< lo 1))
-          (= hi (<< hi 1))
-          (= hi (bit-or hi 1))
-          (= value (+ (<< value 1) (| (read-byte i) 0))))))))
+        ;(unless (== sym *esc*) (write-byte sym o))
+      (write-byte (dec) o))))
 
 (defun uncompress (num-bits num-bytes in out)
   (format t "Arithmetic decoding of '~A' to '~A'…~%" in out)
@@ -159,15 +165,15 @@
 
 (defun compress-file (in out)
   (compress +precision-bits+ in out)
-  (uncompress +precision-bits+ (length (fetch-file in)) out "obj/compress.tmp")
+  (uncompress +precision-bits+ (length (fetch-file in)) out "obj/test-audio.decomp.tmp")
   (? (equal (fetch-file in)
-            (fetch-file "obj/compress.tmp"))
+            (fetch-file "obj/test-audio.decomp.tmp"))
      (format t "Files match. (De)compression has been successful.~%")
      (error "Files don't match.")))
 
 ;(compress-file "growroom/arukanoido"
 ;               "obj/aru.comp")
-(wav-to-4bit "obj/theme-splash.downsampled.pal.wav" "obj/test-audio.4bit.bin")
+(wav-to-4bit "obj/radio.downsampled.pal.wav" "obj/test-audio.4bit.bin")
 (compress-file "obj/test-audio.4bit.bin"
                 "obj/test-audio.ari.bin")
 
