@@ -8,6 +8,11 @@
 (defconstant +window-size+ 256)
 (defconstant +precision-bits+ 16)
 
+(defstruct model
+  occs
+  sums
+)
+
 (defun wav-to-4bit (from to)
   (format t "Converting '~A' to 4-bit '~A'…~%" from to)
   (with-io i from
@@ -18,32 +23,32 @@
       (write-byte (bit-xor (>> ! 12) 8) o))))
 
 (defun init-audio-model ()
-  (values (list-array (maptimes [identity 0] +symbols+))
-          (list-array (maptimes [identity 0] (++ +symbols+)))))
+  (make-model :occs (list-array (maptimes [identity 0] +symbols+))
+              :sums (list-array (maptimes [identity 0] (++ +symbols+)))))
 
-(defun update-audio-model (a s x v)
-  (= (aref a x) (+ v (aref a x)))
+(defun update-audio-model (m x v)
+  (= (aref (model-occs m) x) (+ v (aref (model-occs m) x)))
   (++! x)
   (while (not (== x (++ +symbols+)))
          nil
-    (= (aref s x) (+ v (aref s x)))
+    (= (aref (model-sums m) x) (+ v (aref (model-sums m) x)))
     (++! x)))
 
-(defun make-window (a s)
+(defun make-window (m)
   (dotimes (i +symbols+)
-    (update-audio-model a s i 1))
+    (update-audio-model m i 1))
   (aprog1 (make-queue)
     (dotimes (i +window-size+)
       (let sym (mod i +symbols+)
-        (update-audio-model a s sym 1)
+        (update-audio-model m sym 1)
         (enqueue ! sym)))))
 
-(defun adapt-sample (lo range a s win sym)
-  (with (total (aref s +symbols+)
-         h     (-- (+ lo (integer (/ (* range (aref s (++ sym))) total))))
-         l     (+ lo (integer (/ (* range (aref s sym)) total))))
-    (update-audio-model a s (queue-pop win) -1)
-    (update-audio-model a s sym 1)
+(defun adapt-sample (lo range m win sym)
+  (with (total (aref (model-sums m) +symbols+)
+         h     (-- (+ lo (integer (/ (* range (aref (model-sums m) (++ sym))) total))))
+         l     (+ lo (integer (/ (* range (aref (model-sums m) sym)) total))))
+    (update-audio-model m (queue-pop win) -1)
+    (update-audio-model m sym 1)
     (enqueue win sym)
     (values h l)))
 
@@ -57,8 +62,8 @@
          lq     (/ top 4)
          hi     ma
          lo     0
-         (a s)  (init-audio-model)
-         win    (make-window a s)
+         m      (init-audio-model)
+         win    (make-window m)
          pending-bits 0
          out-plus-pending
               [(write-byte _ o)
@@ -72,7 +77,7 @@
          enc [(with (range (++ (- hi lo)))
                 (| (<= range top)
                    (error "Range overflow ~A." range))
-                (with ((h l) (adapt-sample lo range a s win _))
+                (with ((h l) (adapt-sample lo range m win _))
                   (= hi h
                      lo l))
                 (loop
@@ -118,15 +123,15 @@
          lq     (/ top 4)
          hi     ma
          lo     0
-         (a s)  (init-audio-model)
-         win    (make-window a s)
+         m      (init-audio-model)
+         win    (make-window m)
          value   0
          dec    #'(()
                     (with (range  (++ (- hi lo))
                            diff   (++ (- value lo))
-                           cnt    (integer (/ (-- (* diff (aref s +symbols+))) range))
-                           sym    (-- (position-if [< cnt _] s))
-                           (h l)  (adapt-sample lo range a s win sym))
+                           cnt    (integer (/ (-- (* diff (aref (model-sums m) +symbols+))) range))
+                           sym    (-- (position-if [< cnt _] (model-sums m)))
+                           (h l)  (adapt-sample lo range m win sym))
                       (= hi h
                          lo l)
                       (loop
